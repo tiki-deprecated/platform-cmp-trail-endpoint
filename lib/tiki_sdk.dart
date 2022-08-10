@@ -2,7 +2,6 @@ library tiki_sdk;
 
 /// TIKI Dart SDK API
 abstract class TikiSdk {
-
   /// Get the SDK instance.
   TikiSdk get instance;
 
@@ -43,12 +42,11 @@ abstract class TikiSdk {
   /// throw an error.
   /// The source can add cross-origin references to other chains, by passing a list
   /// URIs in [crossChainRefs]
-  Future<String?> assignOwnership(UseCaseEnum useCase, {
-    Map<String, String> metadata,
-    String source,
-    String consentOrigin,
-    List<Uri> crossChainRefs
-  });
+  Future<String?> assignOwnership(UseCaseEnum useCase,
+      {Map<String, String> metadata,
+      String source,
+      String consentOrigin,
+      List<Uri> crossChainRefs});
 
   /// Check ownership
   ///
@@ -59,10 +57,8 @@ abstract class TikiSdk {
   /// Other [userAddress] and [source] can be used. In that case, the SDK will check
   /// ownership in the backup.
   /// Return a boolean for the ownership and null if no registry is found.
-  Future<String?> checkOwnership(UseCaseEnum useCase, {
-    String source,
-    String userAddress
-  });
+  Future<String?> checkOwnership(UseCaseEnum useCase,
+      {String source, String userAddress});
 
   /// Give consent By Id
   ///
@@ -72,9 +68,8 @@ abstract class TikiSdk {
   /// If the source has consent out of the chain, it must provide the [existingConsent]
   /// description for the user.
   /// If the [ownershipHash] cannot be found in the chain, it returns an error.
-  Future<String> giveConsentById(String ownershipHash, {
-    String existingConsent
-  });
+  Future<String> giveConsentById(String ownershipHash,
+      {String existingConsent});
 
   /// Give consent By Use Case
   ///
@@ -83,9 +78,8 @@ abstract class TikiSdk {
   /// If the source has consent out of the chain, it must provide the [existingConsent]
   /// description for the user.
   ///
-  Future<String> giveConsentByUseCase(UseCaseEnum useCase, {
-    String source, String existingConsent
-  });
+  Future<String> giveConsentByUseCase(UseCaseEnum useCase,
+      {String source, String existingConsent});
 
   /// Revoke consent By Id
   ///
@@ -117,9 +111,6 @@ abstract class TikiSdk {
   /// Check for the latest consent for the useCase.
   /// Return a boolean for the consent and null if no registry is found.
   Future<String> checkConsentByUseCase(UseCaseEnum useCase, {String source});
-
 }
 
-enum UseCaseEnum{
-  all
-}
+enum UseCaseEnum { all }
