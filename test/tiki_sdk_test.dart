@@ -1,7 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
-
-import 'package:tiki_sdk/tiki_sdk.dart';
+import 'package:test/test.dart';
 
 void main() {
-
+  test('test', () => expect(1, 1));
 }
