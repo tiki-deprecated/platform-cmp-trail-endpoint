@@ -1,5 +1,5 @@
-name: tiki_sdk
-description: TIKI SDK
+name: tiki_sdk_dart
+description: TIKI SDK - Dart
 version: 0.0.1
 homepage: https://github.com/tiki/tiki-sdk-dart
 
