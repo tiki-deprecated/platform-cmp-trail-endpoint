@@ -6,6 +6,11 @@ homepage: https://github.com/tiki/tiki-sdk-dart
 environment:
   sdk: ">=2.17.0 <3.0.0"
 
+dependencies: 
+  collection: ^1.16.0
+  pointycastle: ^3.6.1
+
+
 dev_dependencies:
   test: ^1.21.4
   flutter_lints: ^2.0.1
