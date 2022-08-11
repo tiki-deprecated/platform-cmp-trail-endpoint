@@ -19,7 +19,7 @@ class TikiSdk {
   /// chain, with all others operating in a read-only capacity.
   List<String> _ids = [];
 
-  TikiSdk(this.origin, {String? apiKey}) : this._apiKey = apiKey;
+  TikiSdk(this.origin, {String? apiKey}) : _apiKey = apiKey;
 
   Future<TikiSdk> init({List<String>? ids}) async {
     if (ids != null) _ids = ids;
