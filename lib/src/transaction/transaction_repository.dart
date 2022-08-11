@@ -1,6 +1,5 @@
-import 'package:collection/collection.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_sdk_dart/src/transaction/transaction_model.dart';
+import 'transaction_model.dart';
 
 class TransactionRepository {
   final Database _db;

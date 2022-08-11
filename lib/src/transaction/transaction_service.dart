@@ -1,9 +1,13 @@
 import 'dart:typed_data';
 
 import 'transaction_model.dart';
+import 'transaction_repository.dart';
 
 class TransactionService {
   final TransactionRepository _repository;
+
+  TransactionService({database})
+      : _repository = TransactionRepository(database);
 
   /// Creates a [TransactionModel] with [contents].
   ///
