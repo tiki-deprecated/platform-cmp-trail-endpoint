@@ -4,7 +4,7 @@ import 'dart:typed_data';
 class TransactionModel{
 
   /// The number indicating the set of transaction validation rules to follow.
-  static const int ver = 1;
+  final int ver;
   
   /// The SHA-3 hash of the public key used for transaction signature.
   final String address;
@@ -31,6 +31,7 @@ class TransactionModel{
   final Uint8List? contents;
 
   TransactionModel(
+    this.ver,
     this.address, 
     this.timestamp, 
     this.assetRef, 
@@ -38,6 +39,7 @@ class TransactionModel{
     this.contents);
 
   TransactionModel.fromMap(Map<String,dynamic> map) :
+    ver = map['ver'],
     address = map['address']!,
     timestamp = map['timestamp']!,
     assetRef = map['asset_ref']!,
