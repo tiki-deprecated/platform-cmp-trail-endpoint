@@ -10,7 +10,7 @@ class BlockRepository {
     throw UnimplementedError();
   }
 
-  BlockModel get(String address, String signature) {
+  BlockModel get(String hash, String chain) {
     throw UnimplementedError();
   }
 
