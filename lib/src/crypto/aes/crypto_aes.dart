@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/block/aes.dart';
 import 'package:pointycastle/block/modes/cbc.dart';
@@ -14,7 +15,6 @@ import 'package:pointycastle/padded_block_cipher/padded_block_cipher_impl.dart';
 import 'package:pointycastle/paddings/pkcs7.dart';
 
 import '../crypto_utils.dart' as utils;
-import '../isolate/isolate.dart';
 import 'crypto_aes_key.dart';
 
 CryptoAESKey generate() => CryptoAESKey(utils.secureRandom().nextBytes(32));

@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:pointycastle/asymmetric/oaep.dart';
@@ -16,7 +17,6 @@ import 'package:pointycastle/key_generators/rsa_key_generator.dart';
 import 'package:pointycastle/signers/rsa_signer.dart';
 
 import '../crypto_utils.dart' as utils;
-import '../isolate/isolate.dart';
 import 'crypto_rsa_private_key.dart';
 import 'crypto_rsa_public_key.dart';
 

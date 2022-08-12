@@ -16,8 +16,7 @@ class TransactionService {
   /// [TransactionModel.assetRef] should be `0x00`.
   /// If the wallet does not have the private key for [address], throws and error.
   Future<TransactionModel> createTransaction(String address,
-      {Uint8List? contents, String? assetRef}) {
-    throw UnimplementedError();
+      {Uint8List? contents, String? assetRef}) {throw UnimplementedError();
   }
 
   /// Validates the transaction.
