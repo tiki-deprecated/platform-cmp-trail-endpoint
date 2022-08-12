@@ -33,4 +33,9 @@ class TransactionService {
   Future<void> cacheTransaction(TransactionModel transaction) async {
     throw UnimplementedError();
   }
+
+/// Serializes the transaction to be included in the block body.
+  String serialize(TransactionModel transaction){
+    throw UnimplementedError();
+  }
 }
