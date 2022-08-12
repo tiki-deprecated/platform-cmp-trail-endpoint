@@ -6,15 +6,15 @@ class TransactionRepository {
 
   TransactionRepository(this._db);
 
-  Future<void> cache(TransactionModel transaction){
+  Future<void> save(TransactionModel transaction){
     throw UnimplementedError();
   }
 
-  TransactionModel getFromCache(String address, String signature) {
+  TransactionModel get(String address, String signature) {
     throw UnimplementedError();
   }
 
-  Future<void> deleteFromCache(TransactionModel transaction){
+  Future<void> delete(TransactionModel transaction){
     throw UnimplementedError();
   }
 }

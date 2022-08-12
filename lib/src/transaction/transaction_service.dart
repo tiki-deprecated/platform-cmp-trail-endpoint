@@ -30,6 +30,7 @@ class TransactionService {
   }
 
   /// Saves the transaction in the local database, to improve performance.
-  Future<void> cacheTransaction(TransactionModel transaction) async {throw UnimplementedError();
+  Future<void> cacheTransaction(TransactionModel transaction) async {
+    throw UnimplementedError();
   }
 }
