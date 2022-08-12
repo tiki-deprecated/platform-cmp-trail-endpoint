@@ -47,8 +47,13 @@ class TransactionModel {
   /// including the contents.
   late final Uint8List signature;
 
-  TransactionModel(this.version, this.address, this.timestamp, this.assetRef,
-      this.signature, this.contents);
+  TransactionModel({
+    required this.version, 
+    required this.address, 
+    required this.timestamp, 
+    required this.signature, 
+    this.assetRef,
+    this.contents});
 
   TransactionModel.fromMap(Map<String, dynamic> map)
       : version = map['version'],
@@ -72,4 +77,5 @@ class TransactionModel {
       'block_hash' : blockHash
     };
   }
+
 }
