@@ -7,9 +7,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/src/wallet/crypto/aes/crypto_aes.dart' as aes;
-import 'package:tiki_sdk_dart/src/wallet/crypto/aes/crypto_aes_key.dart';
-import 'package:tiki_sdk_dart/src/wallet/crypto/crypto_utils.dart' as utils;
+import 'package:tiki_sdk_dart/src/crypto/aes/crypto_aes.dart' as aes;
+import 'package:tiki_sdk_dart/src/crypto/aes/crypto_aes_key.dart';
+import 'package:tiki_sdk_dart/src/crypto/crypto_utils.dart' as utils;
 
 void main() {
   group('crypto-aes unit tests', () {

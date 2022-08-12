@@ -16,8 +16,7 @@ class TransactionService {
   /// [TransactionModel.assetRef] should be `0x00`.
   /// If the wallet does not have the private key for [address], throws and error.
   Future<TransactionModel> createTransaction(String address,
-      {Uint8List? contents, String? assetRef}) {
-    throw UnimplementedError();
+      {Uint8List? contents, String? assetRef}) {throw UnimplementedError();
   }
 
   /// Validates the transaction.
@@ -32,6 +31,11 @@ class TransactionService {
 
   /// Saves the transaction in the local database, to improve performance.
   Future<void> cacheTransaction(TransactionModel transaction) async {
+    throw UnimplementedError();
+  }
+
+/// Serializes the transaction to be included in the block body.
+  String serialize(TransactionModel transaction){
     throw UnimplementedError();
   }
 }
