@@ -6,21 +6,23 @@ class XchainRepository {
 
   final Database _db;
 
-  XchainRepository(this._db);
+  XchainRepository(this._db) {
+    createTable();
+  }
 
-  Future<void> createTable() async {
+  void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-        xchain_id INTEGER PRIMARY KEY AUTO INCREMENT,
+        xchain_id INTEGER PRIMARY KEY,
         last_checked INTEGER,
-        uri TEXT NOT NULL UNIQUE,
+        uri TEXT NOT NULL UNIQUE
       );
     ''');
   }
 
   void save(XchainModel xchain) {
     try {
-      _db.execute("INSERT INTO $table VALUES (${xchain.toSqlValues()})");
+      _db.execute("INSERT INTO $table VALUES (${xchain.toSqlValues()});");
     } catch (e) {
       print(e);
       rethrow;
@@ -51,6 +53,18 @@ class XchainRepository {
     return _select(whereStmt: 'WHERE last_checked > $sinceInSeconds');
   }
 
+  void updateLastCheckedByUri(DateTime lastChecked, String uri) {
+    XchainModel chain = getByUri(uri)!;
+    _db.execute('''UPDATE $table 
+      SET last_checked = ${lastChecked.millisecondsSinceEpoch ~/ 1000}'
+      WHERE id = ${chain.xchainId};
+      ''');
+  }
+
+  void deleteById(int id) {
+    _db.execute("DELETE FROM $table WHERE xchain_id = $id;");
+  }
+
   List<XchainModel> _paged(page, {String? whereStmt}) {
     List<XchainModel> pagedXchains = _select(page: page, whereStmt: whereStmt);
     if (pagedXchains.length == 100) pagedXchains.addAll(_paged(page + 1));
@@ -58,22 +72,18 @@ class XchainRepository {
   }
 
   // TODO verificar where sem ser raw
-  List<XchainModel> _select({int page = 0, String? whereStmt = 'WHERE 1=1'}) {
+  List<XchainModel> _select({int page = 0, String? whereStmt}) {
     int offset = page * 100;
     ResultSet results = _db.select('''
-        SELECT *.$table as xchain
+        SELECT *
         FROM $table 
-        $whereStmt
-        OFFSET $offset LIMIT 100
+        ${whereStmt ?? ''}
+       LIMIT $offset,100;
         ''');
     List<XchainModel> xchains = [];
     for (final Row row in results) {
       xchains.add(XchainModel.fromMap(row));
     }
     return xchains;
-  }
-
-  void deleteById(int id) {
-    _db.execute("DELETE FROM $table WHERE xchain_id = $id");
   }
 }
