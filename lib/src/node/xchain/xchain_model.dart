@@ -10,14 +10,14 @@ class XchainModel {
   });
 
   XchainModel.fromMap(Map<String, dynamic> map)
-      : xchainId = map['xchainId'],
-        lastChecked = map['lastChecked'] != null ? 
-          DateTime.fromMillisecondsSinceEpoch(map['lastChecked']*1000) : null,
+      : xchainId = map['id'],
+        lastChecked = map['last_checked'] != null ? 
+          DateTime.fromMillisecondsSinceEpoch(map['last_checked']*1000) : null,
         uri = map['uri'];
 
   Map<String, dynamic> toMap() {
     return {
-      'xchain_id': xchainId,
+      'id': xchainId,
       'last_checked': lastChecked,
       'uri': uri,
     };
@@ -30,7 +30,7 @@ class XchainModel {
   @override
   String toString() {
     return '''XchainModel
-      xchain_id: $xchainId,
+      id: $xchainId,
       last_checked: $lastChecked,
       uri: $uri,
     ''';
