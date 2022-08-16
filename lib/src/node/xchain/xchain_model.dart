@@ -11,7 +11,8 @@ class XchainModel {
 
   XchainModel.fromMap(Map<String, dynamic> map)
       : xchainId = map['xchainId'],
-        lastChecked = map['lastChecked'],
+        lastChecked = map['lastChecked'] != null ? 
+          DateTime.fromMillisecondsSinceEpoch(map['lastChecked']*1000) : null,
         uri = map['uri'];
 
   Map<String, dynamic> toMap() {
@@ -23,7 +24,7 @@ class XchainModel {
   }
 
   String toSqlValues() {
-    return '$xchainId, $lastChecked, $uri';
+    return "$xchainId, $lastChecked, '$uri'";
   }
 
   @override
