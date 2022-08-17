@@ -12,29 +12,34 @@ class XchainService {
 
   XchainService(Database db) : _repository = XchainRepository(db);
 
-  void syncSince(DateTime lastChecked) {
-    // retrieve all chains that were not synced since lastChecked
-    // and loop through
+  /// Retrieves all chains that were not synced since [lastChecked]
+  /// and updates them with [WasabiService].
+  Future<void>  syncSince(DateTime lastChecked) async {
     // _sync(chain);
   }
 
-  void syncChain(XchainModel xchain) {
-    // retrieve the chain from the database and sync it
-    // if the chain was not added, throw an error
+  /// Retrieves the [chain] from the database and updates them with [WasabiService].
+  /// If the [chain] was not added, throws an error.
+  Future<void>  syncChain(XchainModel chain) async {
     // _sync(chain);
   }
 
-  void add(XchainModel chain) {
+  /// Adds the [chain] to the database and updates it with [WasabiService].
+  /// If the [chain] was already added, throws and error.
+  Future<void>  add(XchainModel chain) async {
     try {
       _repository.save(chain);
+      _sync(chain);
     } catch (e) {
       _log.warning('Xchain add error: ${e.toString()}');
     }
   }
 
-  // retrieve the latest [BlockModel] that we have in database and ask for the
-  // most recent ones from [BackupService].
-  void _sync(XchainModel chain) {
+  /// Syncs the [chain] by retrieving the latest [BlockModel] from [BlockService] 
+  /// and ask for the most recent ones from [WasabiService].
+  Future<void> _sync(XchainModel chain) async {
+    // BlockService.getLastBlock()
+    // WasabiService.getChain
     throw UnimplementedError();
   }
 }
