@@ -1,9 +1,13 @@
-class NodeService{
-  
-  init()
+class NodeService {
+  init() {
+    throw UnimplementedError();
+  }
 
-  write()
+  write() {
+    throw UnimplementedError();
+  }
 
-  read()
-
+  read() {
+    throw UnimplementedError();
+  }
 }

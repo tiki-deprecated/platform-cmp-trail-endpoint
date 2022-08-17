@@ -43,21 +43,21 @@ class XchainRepository {
     return xchains.isNotEmpty ? xchains[0] : null;
   }
 
-  List<XchainModel> getSince(DateTime since) {
+  List<XchainModel> getBefore(DateTime since) {
     int sinceInSeconds = since.millisecondsSinceEpoch ~/ 1000;
     return _select(whereStmt: 'WHERE last_checked < $sinceInSeconds');
   }
 
   List<XchainModel> getAfter(DateTime since) {
     int sinceInSeconds = since.millisecondsSinceEpoch ~/ 1000;
-    return _select(whereStmt: 'WHERE last_checked > $sinceInSeconds');
+    return _select(whereStmt: 'WHERE last_checked >= $sinceInSeconds');
   }
 
   void updateLastCheckedByUri(DateTime lastChecked, String uri) {
     XchainModel chain = getByUri(uri)!;
     _db.execute('''UPDATE $table 
       SET last_checked = ${lastChecked.millisecondsSinceEpoch ~/ 1000}'
-      WHERE id = ${chain.xchainId};
+      WHERE id = ${chain.id};
       ''');
   }
 

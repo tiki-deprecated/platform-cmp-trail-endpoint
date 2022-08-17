@@ -6,16 +6,16 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/ecc/api.dart';
 import 'package:pointycastle/ecc/curves/secp256r1.dart';
 import 'package:pointycastle/key_generators/api.dart';
 import 'package:pointycastle/key_generators/ec_key_generator.dart';
 
+import '../isolate.dart';
 import '../utils.dart' as utils;
-import 'crypto_ec_private_key.dart';
-import 'crypto_ec_public_key.dart';
+import 'ec_private_key.dart';
+import 'ec_public_key.dart';
 
 Future<AsymmetricKeyPair<CryptoECPublicKey, CryptoECPrivateKey>>
     generateAsync() =>
