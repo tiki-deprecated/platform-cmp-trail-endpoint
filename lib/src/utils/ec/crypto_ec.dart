@@ -13,7 +13,7 @@ import 'package:pointycastle/ecc/curves/secp256r1.dart';
 import 'package:pointycastle/key_generators/api.dart';
 import 'package:pointycastle/key_generators/ec_key_generator.dart';
 
-import '../crypto_utils.dart' as utils;
+import '../utils.dart' as utils;
 import 'crypto_ec_private_key.dart';
 import 'crypto_ec_public_key.dart';
 

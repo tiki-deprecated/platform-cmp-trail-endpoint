@@ -14,8 +14,8 @@ import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/padded_block_cipher/padded_block_cipher_impl.dart';
 import 'package:pointycastle/paddings/pkcs7.dart';
 
-import '../crypto_utils.dart' as utils;
-import 'crypto_aes_key.dart';
+import '../utils.dart' as utils;
+import 'aes_key.dart';
 
 CryptoAESKey generate() => CryptoAESKey(utils.secureRandom().nextBytes(32));
 
