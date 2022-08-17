@@ -17,7 +17,7 @@ void main() {
   group('block repository tests', () {
     BlockRepository repository = BlockRepository(db);
     XchainRepository xc_repository = XchainRepository(db);
-    XchainModel xchain = XchainModel(xchainId: 123, uri: 'teste');
+    XchainModel xchain = XchainModel(id: 123, uri: 'teste');
     xc_repository.save(xchain);
     test('save blocks, retrieve all', () {
       BlockModel block1 = _generateBlockModel();
@@ -37,7 +37,7 @@ BlockModel _generateBlockModel() => BlockModel(
     version: 1,
     previousHash: String.fromCharCodes(
         List.generate(50, (index) => Random().nextInt(33) + 89)),
-    xchain: XchainModel(xchainId: 123, uri: 'teste'),
+    xchain: XchainModel(id: 123, uri: 'teste'),
     transactionRoot: '',
     transactionCount: 0,
     timestamp: DateTime.now());
