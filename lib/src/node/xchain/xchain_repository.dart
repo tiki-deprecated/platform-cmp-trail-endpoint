@@ -13,7 +13,7 @@ class XchainRepository {
   void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-        xchain_id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY,
         last_checked INTEGER,
         uri TEXT NOT NULL UNIQUE
       );
@@ -34,7 +34,7 @@ class XchainRepository {
   }
 
   XchainModel? getById(int id) {
-    List<XchainModel> xchains = _select(whereStmt: 'WHERE xchain_id = $id');
+    List<XchainModel> xchains = _select(whereStmt: 'WHERE id = $id');
     return xchains.isNotEmpty ? xchains[0] : null;
   }
 
@@ -62,7 +62,7 @@ class XchainRepository {
   }
 
   void deleteById(int id) {
-    _db.execute("DELETE FROM $table WHERE xchain_id = $id;");
+    _db.execute("DELETE FROM $table WHERE id = $id;");
   }
 
   List<XchainModel> _paged(page, {String? whereStmt}) {

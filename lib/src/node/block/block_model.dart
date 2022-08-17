@@ -34,19 +34,19 @@ class BlockModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'blockId': blockId,
+      'block_id': blockId,
       'version': version,
-      'previousHash': previousHash,
+      'previous_hash': previousHash,
       'xchain': xchain.toMap(),
-      'transactionRoot': transactionRoot,
-      'transactionCount': transactionCount,
+      'transaction_root': transactionRoot,
+      'transaction_count': transactionCount,
       'timestamp': timestamp.millisecondsSinceEpoch
     };
   }
 
   String toSqlValues() {
     return '''$blockId, $version, '$previousHash', ${xchain.xchainId},
-      '$transactionRoot', $transactionCount, $timestamp''';
+      '$transactionRoot', $transactionCount, ${timestamp.millisecondsSinceEpoch ~/ 1000}''';
   }
 
   @override
@@ -58,7 +58,7 @@ class BlockModel {
       'xchain': ${xchain.toString()},
       'transactionRoot': $transactionRoot,
       'transactionCount': $transactionCount,
-      'timestamp': ${timestamp.millisecondsSinceEpoch}
+      'timestamp': $timestamp
     ''';
   }
 }

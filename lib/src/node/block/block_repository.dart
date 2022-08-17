@@ -1,12 +1,13 @@
 import 'package:sqlite3/sqlite3.dart';
+import '../xchain/xchain_model.dart';
+import '../xchain/xchain_repository.dart';
 import 'block_model.dart';
 
 class BlockRepository {
-
   static const table = 'blocks';
   final Database _db;
 
-   BlockRepository(this._db) {
+  BlockRepository(this._db) {
     createTable();
   }
 
@@ -15,11 +16,11 @@ class BlockRepository {
       CREATE TABLE IF NOT EXISTS $table (
           block_id INTEGER PRIMARY KEY,
           version INTEGER NOT NULL,
-          previous_hash TEXT NOT NULL,
-          block_id INTEGER NOT NULL,
+          previous_hash TEXT NOT NULL UNIQUE,
+          xchain_id INTEGER NOT NULL,
           transaction_root TEXT NOT NULL,
-          transaction_count INTEGER NOT NULL
-          timestamp INTEGER NOT NULL;
+          transaction_count INTEGER NOT NULL,
+          timestamp INTEGER NOT NULL
       );
     ''');
   }
@@ -33,8 +34,9 @@ class BlockRepository {
     }
   }
 
-  List<BlockModel> getAll() {
-    return _paged(0);
+  List<BlockModel> getAll(XchainModel xchainModel) {
+    String whereStmt = 'WHERE xchain_id = ${xchainModel.xchainId}';
+    return _paged(0, whereStmt: whereStmt);
   }
 
   BlockModel? getById(int id) {
@@ -43,16 +45,17 @@ class BlockRepository {
   }
 
   BlockModel? getByPreviousHash(String hash) {
-    List<BlockModel> blocks = _select(whereStmt: 'WHERE previous_hash = ${hash.trim()}');
+    List<BlockModel> blocks =
+        _select(whereStmt: 'WHERE previous_hash = ${hash.trim()}');
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
-  List<BlockModel> getBefore(DateTime before) {
+  List<BlockModel> getBefore(DateTime before, XchainModel xchain) {
     int beforeInSeconds = before.millisecondsSinceEpoch ~/ 1000;
     return _select(whereStmt: 'WHERE timestamp < $beforeInSeconds');
   }
 
-  List<BlockModel> getAfter(DateTime since) {
+  List<BlockModel> getAfter(DateTime since, XchainModel xchain) {
     int sinceInSeconds = since.millisecondsSinceEpoch ~/ 1000;
     return _select(whereStmt: 'WHERE last_checked >= $sinceInSeconds');
   }
@@ -67,14 +70,32 @@ class BlockRepository {
   List<BlockModel> _select({int page = 0, String? whereStmt}) {
     int offset = page * 100;
     ResultSet results = _db.select('''
-        SELECT *
-        FROM $table 
+        SELECT 
+          blocks.block_id,
+          blocks.version,
+          blocks.previous_hash,
+          blocks.xchain_id,
+          blocks.transaction_root,
+          blocks.transaction_count,
+          blocks.timestamp,
+          xchains.id,
+          xchains.last_checked,
+          xchains.uri
+        FROM $table as blocks
+        INNER JOIN ${XchainRepository.table} as xchains
+        ON blocks.xchain_id = xchains.id
         ${whereStmt ?? ''}
         LIMIT $offset,100;
         ''');
     List<BlockModel> blocks = [];
     for (final Row row in results) {
-      blocks.add(BlockModel.fromMap(row));
+      row['xchain'] = {
+        'id': row['xchains.id'],
+        'last_checked': row['xchains.last_checked'],
+        'uri': row['xchains.uri'],
+      };
+      BlockModel block = BlockModel.fromMap(row);
+      blocks.add(block);
     }
     return blocks;
   }
