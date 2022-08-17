@@ -28,7 +28,7 @@ class TransactionRepository {
     ''');
   }
 
- void save(TransactionModel transaction) {
+  void save(TransactionModel transaction) {
     try {
       _db.execute("INSERT INTO $table VALUES (${transaction.toSqlValues()});");
     } catch (e) {
@@ -43,19 +43,22 @@ class TransactionRepository {
   }
 
   TransactionModel? getById(int id) {
-    List<TransactionModel> transactions = _select(whereStmt: 'WHERE block_id = $id');
+    List<TransactionModel> transactions =
+        _select(whereStmt: 'WHERE block_id = $id');
     return transactions.isNotEmpty ? transactions[0] : null;
   }
 
-   List<TransactionModel> getByAssetRef(String assetRef) {
+  List<TransactionModel> getByAssetRef(String assetRef) {
     List<TransactionModel> transactions =
         _select(whereStmt: 'WHERE previous_hash = $assetRef');
     return transactions;
   }
 
   List<TransactionModel> _paged(page, {String? whereStmt}) {
-    List<TransactionModel> pagedTransactions = _select(page: page, whereStmt: whereStmt);
-    if (pagedTransactions.length == 100) pagedTransactions.addAll(_paged(page + 1));
+    List<TransactionModel> pagedTransactions =
+        _select(page: page, whereStmt: whereStmt);
+    if (pagedTransactions.length == 100)
+      pagedTransactions.addAll(_paged(page + 1));
     return pagedTransactions;
   }
 
@@ -100,22 +103,22 @@ class TransactionRepository {
         'transaction_root': row['blocks.transaction_root'],
         'transaction_count': row['blocks.transaction_count'],
         'timestamp': row['blocks.timestamp'],
-        'xchain' : XchainModel.fromMap({
+        'xchain': XchainModel.fromMap({
           'id': row['xchains.id'],
           'last_checked': row['xchains.last_checked'],
           'uri': row['xchains.uri'],
         })
       };
       Map<String, dynamic> transactionMap = {
-          'id' : row['txn.id'],
-          'version' : row['txn.version'],
-          'address' : row['txn.address'],
-          'contents' : row['txn.contents'],
-          'asset_ref' : row['txn.asset_ref'],
-          'merkel_proof' : row['txn.merkel_proof'],
-          'timestamp' : row['txn.timestamp'],
-          'signature' : row['txn.signature'],
-          'block' : BlockModel.fromMap(blockMap)
+        'id': row['txn.id'],
+        'version': row['txn.version'],
+        'address': row['txn.address'],
+        'contents': row['txn.contents'],
+        'asset_ref': row['txn.asset_ref'],
+        'merkel_proof': row['txn.merkel_proof'],
+        'timestamp': row['txn.timestamp'],
+        'signature': row['txn.signature'],
+        'block': BlockModel.fromMap(blockMap)
       };
       TransactionModel transaction = TransactionModel.fromMap(transactionMap);
       transactions.add(transaction);

@@ -9,8 +9,8 @@ import 'dart:isolate';
 typedef ComputeCallback<Q, R> = FutureOr<R> Function(Q message);
 
 /// The dart:io implementation of [isolate.compute].
-Future<R> compute<Q, R>(ComputeCallback<Q, R> callback, Q message, { String? debugLabel }) async {
-
+Future<R> compute<Q, R>(ComputeCallback<Q, R> callback, Q message,
+    {String? debugLabel}) async {
   final Flow flow = Flow.begin();
   Timeline.startSync('$debugLabel: start', flow: flow);
   final RawReceivePort port = RawReceivePort();
@@ -49,7 +49,7 @@ Future<R> compute<Q, R>(ComputeCallback<Q, R> callback, Q message, { String? deb
   }
 
   final dynamic response = await completer.future;
-  if(response == null) {
+  if (response == null) {
     throw RemoteError('Isolate exited without result or error.', '');
   }
 
@@ -119,7 +119,8 @@ Future<void> _spawn<Q, R>(_IsolateConfiguration<Q, R> configuration) async {
   late final List<dynamic> computationResult;
 
   try {
-    computationResult = _buildSuccessResponse(await configuration.applyAndTime());
+    computationResult =
+        _buildSuccessResponse(await configuration.applyAndTime());
   } catch (e, s) {
     computationResult = _buildErrorResponse(e, s);
   }

@@ -20,7 +20,6 @@ import 'ec_public_key.dart';
 Future<AsymmetricKeyPair<CryptoECPublicKey, CryptoECPrivateKey>>
     generateAsync() =>
         compute((_) => generate(), "").then((keyPair) => keyPair);
-        
 
 AsymmetricKeyPair<CryptoECPublicKey, CryptoECPrivateKey> generate() {
   final ECKeyGeneratorParameters keyGeneratorParameters =

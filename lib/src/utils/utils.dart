@@ -152,5 +152,4 @@ Uint8List hexDecode(String message) {
   }
 
   return output;
-  
 }

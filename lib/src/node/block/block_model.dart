@@ -1,7 +1,6 @@
 import '../xchain/xchain_model.dart';
 
 class BlockModel {
-
   int? id;
   int version;
   String previousHash;
