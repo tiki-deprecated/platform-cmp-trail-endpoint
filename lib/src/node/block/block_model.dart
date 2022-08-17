@@ -1,10 +1,8 @@
-import 'package:logging/logging.dart';
-
 import '../xchain/xchain_model.dart';
 
 class BlockModel {
 
-  int? blockId;
+  int? id;
   int version;
   String previousHash;
   XchainModel xchain;
@@ -13,7 +11,7 @@ class BlockModel {
   DateTime timestamp;
 
   BlockModel({
-    this.blockId,
+    this.id,
     this.version = 1,
     required this.previousHash,
     required this.xchain,
@@ -23,10 +21,10 @@ class BlockModel {
   });
 
   BlockModel.fromMap(Map<String, dynamic> map)
-      : blockId = map['block_id'],
+      : id = map['id'],
         version = map['version'],
         previousHash = map['previous_hash'],
-        xchain = XchainModel.fromMap(map['xchain']),
+        xchain = map['xchain'],
         transactionRoot = map['transaction_root'],
         transactionCount = map['transaction_count'],
         timestamp =
@@ -34,7 +32,7 @@ class BlockModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'block_id': blockId,
+      'id': id,
       'version': version,
       'previous_hash': previousHash,
       'xchain': xchain.toMap(),
@@ -45,14 +43,14 @@ class BlockModel {
   }
 
   String toSqlValues() {
-    return '''$blockId, $version, '$previousHash', ${xchain.xchainId},
+    return '''$id, $version, '$previousHash', ${xchain.id},
       '$transactionRoot', $transactionCount, ${timestamp.millisecondsSinceEpoch ~/ 1000}''';
   }
 
   @override
   String toString() {
     return '''BlockModel
-      'blockId': $blockId,
+      'id': $id,
       'version': $version,
       'previousHash': $previousHash,
       'xchain': ${xchain.toString()},
