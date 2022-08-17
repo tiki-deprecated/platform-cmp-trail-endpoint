@@ -14,7 +14,7 @@ class BlockRepository {
   void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-          block_id INTEGER PRIMARY KEY,
+          id INTEGER PRIMARY KEY,
           version INTEGER NOT NULL,
           previous_hash TEXT NOT NULL UNIQUE,
           xchain_id INTEGER NOT NULL,
@@ -35,7 +35,7 @@ class BlockRepository {
   }
 
   List<BlockModel> getAll(XchainModel xchainModel) {
-    String whereStmt = 'WHERE xchain_id = ${xchainModel.xchainId}';
+    String whereStmt = 'WHERE xchain_id = ${xchainModel.id}';
     return _paged(0, whereStmt: whereStmt);
   }
 
@@ -71,16 +71,16 @@ class BlockRepository {
     int offset = page * 100;
     ResultSet results = _db.select('''
         SELECT 
-          blocks.block_id,
-          blocks.version,
-          blocks.previous_hash,
-          blocks.xchain_id,
-          blocks.transaction_root,
-          blocks.transaction_count,
-          blocks.timestamp,
-          xchains.id,
-          xchains.last_checked,
-          xchains.uri
+          blocks.id as 'blocks.id',
+          blocks.version as 'blocks.version',
+          blocks.previous_hash as 'blocks.previous_hash',
+          blocks.xchain_id as 'blocks.xchain_id',
+          blocks.transaction_root as 'blocks.transaction_root',
+          blocks.transaction_count as 'blocks.transaction_count',
+          blocks.timestamp as 'blocks.timestamp',
+          xchains.id as 'xchains.id',
+          xchains.last_checked as 'xchains.last_checked',
+          xchains.uri as 'xchains.uri'
         FROM $table as blocks
         INNER JOIN ${XchainRepository.table} as xchains
         ON blocks.xchain_id = xchains.id
@@ -89,12 +89,20 @@ class BlockRepository {
         ''');
     List<BlockModel> blocks = [];
     for (final Row row in results) {
-      row['xchain'] = {
+      Map<String, dynamic> blockMap = {
+        'id': row['blocks.id'],
+        'version': row['blocks.version'],
+        'previous_hash': row['blocks.previous_hash'],
+        'transaction_root': row['blocks.transaction_root'],
+        'transaction_count': row['blocks.transaction_count'],
+        'timestamp': row['blocks.timestamp']
+      };
+      blockMap['xchain'] = XchainModel.fromMap({
         'id': row['xchains.id'],
         'last_checked': row['xchains.last_checked'],
         'uri': row['xchains.uri'],
-      };
-      BlockModel block = BlockModel.fromMap(row);
+      });
+      BlockModel block = BlockModel.fromMap(blockMap);
       blocks.add(block);
     }
     return blocks;
