@@ -18,10 +18,10 @@ void main() {
   final db = sqlite3.openInMemory();
   group('backup repository tests', () {
     BackupRepository repository = BackupRepository(db);
-    BlockRepository blk_repository = BlockRepository(db);
-    XchainRepository xc_repository = XchainRepository(db);
+    BlockRepository blkRepository = BlockRepository(db);
+    XchainRepository xcRepository = XchainRepository(db);
     XchainModel xchain = XchainModel(id: 123, uri: 'teste');
-    xc_repository.save(xchain);
+    xcRepository.save(xchain);
     BlockModel blk = BlockModel(
         id: 123,
         version: 1,
@@ -31,7 +31,7 @@ void main() {
         transactionRoot: '',
         transactionCount: 0,
         timestamp: DateTime.now());
-    blk_repository.save(blk);
+    blkRepository.save(blk);
     test('save bkps, retrieve all', () {
       BackupModel bkp1 = _generateBackupModel(blk);
       BackupModel bkp2 = _generateBackupModel(blk);

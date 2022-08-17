@@ -9,8 +9,6 @@ import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_model.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
-import 'package:tiki_sdk_dart/src/node/xchain/xchain_service.dart';
-import 'package:tiki_sdk_dart/src/utils/rsa/rsa.dart';
 
 void main() {
   final db = sqlite3.openInMemory();
@@ -24,10 +22,10 @@ void main() {
       repository.save(chain2);
       repository.save(chain3);
       expect(1, 1);
-      XchainModel chain_original = XchainModel(uri: "ORIGINAL");
-      repository.save(chain_original);
-      XchainModel chain_duplicate = XchainModel(uri: "ORIGINAL");
-      expect(() => repository.save(chain_duplicate), throwsException);
+      XchainModel chainOriginal = XchainModel(uri: "ORIGINAL");
+      repository.save(chainOriginal);
+      XchainModel chainDuplicate = XchainModel(uri: "ORIGINAL");
+      expect(() => repository.save(chainDuplicate), throwsException);
       List<XchainModel> chains = repository.getAll();
       expect(chains.length, 4);
     });

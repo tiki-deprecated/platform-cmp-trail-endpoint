@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
-
 import '../block/block_model.dart';
 
 /// A transaction in the blockchain.
@@ -69,8 +67,8 @@ class TransactionModel {
       other is TransactionModel &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          listEquals(contents, other.contents) &&
-          listEquals(merkelProof, other.merkelProof) &&
+          // listEquals(contents, other.contents) &&
+          // listEquals(merkelProof, other.merkelProof) &&
           signature == signature &&
           timestamp == other.timestamp;
 

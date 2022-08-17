@@ -16,9 +16,9 @@ void main() {
   final db = sqlite3.openInMemory();
   group('block repository tests', () {
     BlockRepository repository = BlockRepository(db);
-    XchainRepository xc_repository = XchainRepository(db);
+    XchainRepository xcRepository = XchainRepository(db);
     XchainModel xchain = XchainModel(id: 123, uri: 'teste');
-    xc_repository.save(xchain);
+    xcRepository.save(xchain);
     test('save blocks, retrieve all', () {
       BlockModel block1 = _generateBlockModel();
       BlockModel block2 = _generateBlockModel();
