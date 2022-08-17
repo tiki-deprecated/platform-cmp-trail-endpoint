@@ -13,7 +13,7 @@ import 'package:pointycastle/asn1/primitives/asn1_octet_string.dart';
 import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
 import 'package:pointycastle/ecc/api.dart';
 
-import 'crypto_ec_public_key.dart';
+import 'ec_public_key.dart';
 
 class CryptoECPrivateKey extends ECPrivateKey {
   CryptoECPrivateKey(BigInt? d, ECDomainParameters? parameters)

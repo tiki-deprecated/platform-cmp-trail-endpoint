@@ -10,7 +10,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_model.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_service.dart';
-import 'package:tiki_sdk_dart/src/utils/rsa/crypto_rsa.dart';
+import 'package:tiki_sdk_dart/src/utils/rsa/rsa.dart';
 
 void main() {
   final db = sqlite3.openInMemory();

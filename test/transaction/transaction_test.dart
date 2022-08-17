@@ -27,8 +27,8 @@ void main() {
       repository.save(block2);
       repository.save(block3);
       expect(1, 1);
-      List<BlockModel> blocks = repository.getAll(xchain);
-      expect(blocks.length, 3);
+      List<BlockModel> chains = repository.getAll(xchain);
+      expect(chains.length, 3);
     });
   });
 }

@@ -14,8 +14,8 @@ import 'package:pointycastle/key_generators/api.dart';
 import 'package:pointycastle/key_generators/ec_key_generator.dart';
 
 import '../utils.dart' as utils;
-import 'crypto_ec_private_key.dart';
-import 'crypto_ec_public_key.dart';
+import 'ec_private_key.dart';
+import 'ec_public_key.dart';
 
 Future<AsymmetricKeyPair<CryptoECPublicKey, CryptoECPrivateKey>>
     generateAsync() =>

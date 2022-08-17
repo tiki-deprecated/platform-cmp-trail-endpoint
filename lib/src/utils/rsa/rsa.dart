@@ -17,8 +17,8 @@ import 'package:pointycastle/key_generators/rsa_key_generator.dart';
 import 'package:pointycastle/signers/rsa_signer.dart';
 
 import '../utils.dart' as utils;
-import 'crypto_rsa_private_key.dart';
-import 'crypto_rsa_public_key.dart';
+import 'rsa_private_key.dart';
+import 'rsa_public_key.dart';
 
 AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> generate() {
   final keyGen = RSAKeyGenerator()

@@ -84,7 +84,7 @@ class BackupRepository {
         INNER JOIN ${XchainRepository.table} as xchains
         ON blocks.xchain_id = xchains.id 
         AND bkp.block_id = blocks.id
-        ${whereStmt ?? ''}
+        ${whereStmt ?? 'WHERE 1=1'}
         LIMIT $offset,100;
         ''');
     List<BackupModel> backups = [];

@@ -2,13 +2,13 @@ import '../block/block_model.dart';
 
 /// The model for blocks backed up in the object storage.
 class BackupModel {
-  int id;
+  int? id;
   String signature;
   DateTime timestamp;
   BlockModel block;
 
   BackupModel({
-    required this.id,
+    this.id,
     required this.signature,
     required this.timestamp,
     required this.block,
@@ -30,7 +30,7 @@ class BackupModel {
   }
 
   String toSqlValues() {
-    return "$id, $signature, ${timestamp.millisecondsSinceEpoch ~/ 1000}, ${block.id}";
+    return "$id, '$signature', ${timestamp.millisecondsSinceEpoch ~/ 1000}, ${block.id}";
   }
 
   @override

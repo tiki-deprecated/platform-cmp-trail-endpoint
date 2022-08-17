@@ -14,7 +14,7 @@ import 'package:pointycastle/asn1/primitives/asn1_octet_string.dart';
 import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 
-import 'crypto_rsa_public_key.dart';
+import 'rsa_public_key.dart';
 
 class CryptoRSAPrivateKey extends RSAPrivateKey {
   CryptoRSAPrivateKey(
