@@ -17,15 +17,16 @@ class BackupModel {
   BackupModel.fromMap(Map<String, dynamic> map)
       : id = map['id'],
         signature = map['signature'],
-        timestamp = DateTime.fromMillisecondsSinceEpoch(map['timestamp']*1000),
+        timestamp =
+            DateTime.fromMillisecondsSinceEpoch(map['timestamp'] * 1000),
         block = map['block'];
 
   Map<String, dynamic> toMap() {
     return {
-      'id' : id,
-      'signature' : signature,
-      'timestamp' : timestamp,
-      'block' : block
+      'id': id,
+      'signature': signature,
+      'timestamp': timestamp,
+      'block': block
     };
   }
 
@@ -42,6 +43,4 @@ class BackupModel {
       'block' : $block
     ''';
   }
-
 }
-

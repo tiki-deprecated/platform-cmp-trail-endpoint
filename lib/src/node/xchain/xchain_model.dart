@@ -11,8 +11,9 @@ class XchainModel {
 
   XchainModel.fromMap(Map<String, dynamic> map)
       : id = map['id'],
-        lastChecked = map['last_checked'] != null ? 
-          DateTime.fromMillisecondsSinceEpoch(map['last_checked']*1000) : null,
+        lastChecked = map['last_checked'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(map['last_checked'] * 1000)
+            : null,
         uri = map['uri'];
 
   Map<String, dynamic> toMap() {
