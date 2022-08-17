@@ -23,14 +23,15 @@ void main() {
     XchainModel xchain = XchainModel(id: 123, uri: 'teste');
     xc_repository.save(xchain);
     BlockModel blk = BlockModel(
-      id: 123,
-      version: 1,
-      previousHash: String.fromCharCodes(
-          List.generate(50, (index) => Random().nextInt(33) + 89)),
-      xchain: xchain,
-      transactionRoot: '',
-      transactionCount: 0,
-      timestamp: DateTime.now());
+        id: 123,
+        version: 1,
+        previousHash: String.fromCharCodes(
+            List.generate(50, (index) => Random().nextInt(33) + 89)),
+        xchain: xchain,
+        transactionRoot: '',
+        transactionCount: 0,
+        timestamp: DateTime.now());
+    blk_repository.save(blk);
     test('save bkps, retrieve all', () {
       BackupModel bkp1 = _generateBackupModel(blk);
       BackupModel bkp2 = _generateBackupModel(blk);
@@ -45,8 +46,5 @@ void main() {
   });
 }
 
-BackupModel _generateBackupModel(BlockModel block) => BackupModel(
-      signature : 'dsa', 
-      timestamp : DateTime.now(),
-      block : block
-);
+BackupModel _generateBackupModel(BlockModel block) =>
+    BackupModel(signature: 'dsa', timestamp: DateTime.now(), block: block);

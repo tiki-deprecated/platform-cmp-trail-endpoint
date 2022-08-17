@@ -85,9 +85,9 @@ class TransactionRepository {
           ${XchainRepository.table}.uri as 'xchains.uri'
         FROM $table as txns
         INNER JOIN ${BlockRepository.table} as blocks
+        ON txn.block_id = blocks.id
         INNER JOIN ${XchainRepository.table} as xchains
         ON blocks.xchain_id = xchains.id 
-        AND txn.block_id = blocks.id
         ${whereStmt ?? ''}
         LIMIT $offset,100;
         ''');

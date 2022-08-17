@@ -68,7 +68,7 @@ class BackupRepository {
           $table.id as 'bkp.id',
           $table.signature as 'bkp.signature',
           $table.timestamp as 'bkp.timestamp',
-          $table.block_id as 'bkp.block_id'L
+          $table.block_id as 'bkp.block_id',
           ${BlockRepository.table}.id as 'blocks.id',
           ${BlockRepository.table}.version as 'blocks.version',
           ${BlockRepository.table}.previous_hash as 'blocks.previous_hash',
@@ -79,11 +79,11 @@ class BackupRepository {
           ${XchainRepository.table}.id as 'xchains.id',
           ${XchainRepository.table}.last_checked as 'xchains.last_checked',
           ${XchainRepository.table}.uri as 'xchains.uri'
-        FROM $table as bkp
-        INNER JOIN ${BlockRepository.table} as blocks
-        INNER JOIN ${XchainRepository.table} as xchains
-        ON blocks.xchain_id = xchains.id 
-        AND bkp.block_id = blocks.id
+        FROM $table as backup
+        INNER JOIN ${BlockRepository.table}
+          ON backup.block_id = blocks.id
+        INNER JOIN ${XchainRepository.table}
+          ON blocks.xchain_id = xchain.id 
         ${whereStmt ?? 'WHERE 1=1'}
         LIMIT $offset,100;
         ''');
@@ -103,9 +103,9 @@ class BackupRepository {
         })
       };
       Map<String, dynamic> bkpMap = {
-        'id': row['id'],
-        'signature': row['signature'],
-        'timestamp': row['timestamp'],
+        'id': row['bkp.id'],
+        'signature': row['bkp.signature'],
+        'timestamp': row['bkp.timestamp'],
         'block': BlockModel.fromMap(blockMap)
       };
       BackupModel bkp = BackupModel.fromMap(bkpMap);
