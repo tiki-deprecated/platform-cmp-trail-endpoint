@@ -4,7 +4,8 @@ import '../block/block_model.dart';
 
 /// A transaction in the blockchain.
 class TransactionModel {
-  int? id;
+  int? seq;
+  String? id;
   final int version;
   final String address;
   final Uint8List contents;
@@ -14,15 +15,22 @@ class TransactionModel {
   late final DateTime timestamp;
   late final String signature;
 
-  TransactionModel({
-    this.version = 1,
-    required this.address,
-    required this.contents,
-    this.assetRef = '0x00',
-  });
+  TransactionModel(
+      {this.seq,
+      this.id,
+      this.version = 1,
+      required this.address,
+      required this.contents,
+      this.assetRef = '0x00',
+      this.merkelProof,
+      this.block,
+      timestamp}) {
+    this.timestamp = timestamp ?? DateTime.now();
+  }
 
   TransactionModel.fromMap(Map<String, dynamic> map)
-      : id = map['transaction_id'],
+      : seq = map['seq'],
+        id = map['id'],
         version = map['version'],
         address = map['address'],
         contents = map['contents'],
@@ -31,20 +39,6 @@ class TransactionModel {
         block = map['block'],
         timestamp = map['timestamp'],
         signature = map['signature'];
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'version': version,
-      'address': address,
-      'contents': contents,
-      'asset_ref': assetRef,
-      'merkel_proof': merkelProof,
-      'block': block,
-      'timestamp': timestamp,
-      'signature': signature
-    };
-  }
 
   @override
   String toString() => """TransactionModel{
@@ -58,29 +52,15 @@ class TransactionModel {
       'timestamp': $timestamp,
       'signature': $signature
     }
-  }
-""";
+  }""";
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is TransactionModel &&
           runtimeType == other.runtimeType &&
-          id == other.id &&
-          // listEquals(contents, other.contents) &&
-          // listEquals(merkelProof, other.merkelProof) &&
-          signature == signature &&
-          timestamp == other.timestamp;
+          id == other.id;
 
   @override
-  int get hashCode =>
-      id.hashCode ^
-      contents.hashCode ^
-      merkelProof.hashCode ^
-      signature.hashCode ^
-      timestamp.hashCode;
-
-  String toSqlValues() =>
-      ''''$id', '$version', '$address', '$contents', '$assetRef', '$merkelProof', 
-    '${block?.id}', '${timestamp.millisecondsSinceEpoch ~/ 1000}', '$signature''';
+  int get hashCode => id.hashCode;
 }

@@ -15,7 +15,8 @@ class TransactionRepository {
   Future<void> createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-          id INTEGER PRIMARY KEY,
+          seq INTEGER PRIMARY KEY,
+          id STRING,
           version INTEGER NOT NULL,
           address TEXT NOT NULL,
           contents BLOB NOT NULL,
@@ -28,43 +29,31 @@ class TransactionRepository {
     ''');
   }
 
-  void save(TransactionModel transaction) {
-    try {
-      _db.execute("INSERT INTO $table VALUES (${transaction.toSqlValues()});");
-    } catch (e) {
-      print(e);
-      rethrow;
-    }
+  TransactionModel save(TransactionModel transaction) {
+    _db.execute('''INSERT INTO $table VALUES 
+        ('${transaction.id}', '${transaction.version}', '${transaction.address}', 
+        '${transaction.contents}', '${transaction.assetRef}', '${transaction.merkelProof}', 
+        '${transaction.block?.id}', '${transaction.timestamp.millisecondsSinceEpoch ~/ 1000}', 
+        '${transaction.signature}');''');
+    return getById(transaction.id!)!;
   }
 
-  List<TransactionModel> getByBlock(BlockModel block) {
-    String whereStmt = 'WHERE block_id = ${block.id}';
-    return _paged(0, whereStmt: whereStmt);
+  List<TransactionModel> getByBlock(String blockId) {
+    String whereStmt = 'WHERE block_id = $blockId';
+    return _select(whereStmt: whereStmt);
   }
 
-  TransactionModel? getById(int id) {
+  TransactionModel? getById(String id) {
     List<TransactionModel> transactions =
         _select(whereStmt: 'WHERE block_id = $id');
     return transactions.isNotEmpty ? transactions[0] : null;
   }
 
-  List<TransactionModel> getByAssetRef(String assetRef) {
-    List<TransactionModel> transactions =
-        _select(whereStmt: 'WHERE previous_hash = $assetRef');
-    return transactions;
+  Future<void> remove(String id) async {
+    _db.execute('DELETE FROM $table WHERE id = $id;');
   }
 
-  List<TransactionModel> _paged(page, {String? whereStmt}) {
-    List<TransactionModel> pagedTransactions =
-        _select(page: page, whereStmt: whereStmt);
-    if (pagedTransactions.length == 100)
-      pagedTransactions.addAll(_paged(page + 1));
-    return pagedTransactions;
-  }
-
-  // TODO verificar where sem ser raw
-  List<TransactionModel> _select({int page = 0, String? whereStmt}) {
-    int offset = page * 100;
+  List<TransactionModel> _select({int? page, String? whereStmt}) {
     ResultSet results = _db.select('''
         SELECT 
           $table.id as 'txn.id',
@@ -87,29 +76,33 @@ class TransactionRepository {
           ${XchainRepository.table}.last_checked as 'xchains.last_checked',
           ${XchainRepository.table}.uri as 'xchains.uri'
         FROM $table as txns
-        INNER JOIN ${BlockRepository.table} as blocks
+        LEFT JOIN ${BlockRepository.table} as blocks
         ON txn.block_id = blocks.id
-        INNER JOIN ${XchainRepository.table} as xchains
+        LEFT JOIN ${XchainRepository.table} as xchains
         ON blocks.xchain_id = xchains.id 
         ${whereStmt ?? ''}
-        LIMIT $offset,100;
+        ${page == null ? '' : 'LIMIT ${page * 100},100'};
         ''');
     List<TransactionModel> transactions = [];
     for (final Row row in results) {
-      Map<String, dynamic> blockMap = {
-        'id': row['blocks.id'],
-        'version': row['blocks.version'],
-        'previous_hash': row['blocks.previous_hash'],
-        'transaction_root': row['blocks.transaction_root'],
-        'transaction_count': row['blocks.transaction_count'],
-        'timestamp': row['blocks.timestamp'],
-        'xchain': XchainModel.fromMap({
-          'id': row['xchains.id'],
-          'last_checked': row['xchains.last_checked'],
-          'uri': row['xchains.uri'],
-        })
-      };
-      Map<String, dynamic> transactionMap = {
+      Map<String, dynamic>? blockMap = row['blocks.id'] == null
+          ? null
+          : {
+              'id': row['blocks.id'],
+              'version': row['blocks.version'],
+              'previous_hash': row['blocks.previous_hash'],
+              'transaction_root': row['blocks.transaction_root'],
+              'transaction_count': row['blocks.transaction_count'],
+              'timestamp': row['blocks.timestamp'],
+              'xchain': row['xchains.id'] == null
+                  ? null
+                  : XchainModel.fromMap({
+                      'id': row['xchains.id'],
+                      'last_checked': row['xchains.last_checked'],
+                      'uri': row['xchains.uri'],
+                    })
+            };
+      Map<String, dynamic>? transactionMap = {
         'id': row['txn.id'],
         'version': row['txn.version'],
         'address': row['txn.address'],
@@ -118,7 +111,7 @@ class TransactionRepository {
         'merkel_proof': row['txn.merkel_proof'],
         'timestamp': row['txn.timestamp'],
         'signature': row['txn.signature'],
-        'block': BlockModel.fromMap(blockMap)
+        'block': blockMap == null ? null : BlockModel.fromMap(blockMap)
       };
       TransactionModel transaction = TransactionModel.fromMap(transactionMap);
       transactions.add(transaction);
