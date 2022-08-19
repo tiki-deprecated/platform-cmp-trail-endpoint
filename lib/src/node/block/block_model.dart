@@ -1,16 +1,16 @@
 import '../xchain/xchain_model.dart';
 
 class BlockModel {
-  int? id;
+  int? seq;
+  String? id;
   int version;
   String previousHash;
-  XchainModel xchain;
+  XchainModel? xchain;
   String transactionRoot;
   int transactionCount;
   DateTime timestamp;
 
   BlockModel({
-    this.id,
     this.version = 1,
     required this.previousHash,
     required this.xchain,
@@ -20,7 +20,8 @@ class BlockModel {
   });
 
   BlockModel.fromMap(Map<String, dynamic> map)
-      : id = map['id'],
+      : seq = map['seq'],
+        id = map['id'],
         version = map['version'],
         previousHash = map['previous_hash'],
         xchain = map['xchain'],
@@ -34,16 +35,11 @@ class BlockModel {
       'id': id,
       'version': version,
       'previous_hash': previousHash,
-      'xchain': xchain.toMap(),
+      'xchain': xchain?.toMap(),
       'transaction_root': transactionRoot,
       'transaction_count': transactionCount,
       'timestamp': timestamp.millisecondsSinceEpoch
     };
-  }
-
-  String toSqlValues() {
-    return '''$id, $version, '$previousHash', ${xchain.id},
-      '$transactionRoot', $transactionCount, ${timestamp.millisecondsSinceEpoch ~/ 1000}''';
   }
 
   @override

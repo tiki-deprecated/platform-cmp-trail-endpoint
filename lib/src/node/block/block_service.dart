@@ -14,38 +14,22 @@ class BlockService {
 
   /// Creates a new block from a list of transactions.
   ///
-  /// Calculates the [BlockModel.transactionRoot] from [transactions] list
-  /// and the [BlockModel.previousHash].
+  /// Calculates the [BlockModel.transactionRoot] from [transactions] list.
+  /// Calculates the [BlockModel.previousHash].
   /// Updates the [transactions] in [TransactionService] with block id.
   /// Backup the new block with [BackupService].
-  Future<BlockModel> mint(List<TransactionModel> transactions) async {
-    throw UnimplementedError();
-  }
-
-  Future<BlockModel> getById() async {
-    throw UnimplementedError();
-  }
-
-  Future<BlockModel> getByPreviousHash() async {
-    throw UnimplementedError();
-  }
-
-  Future<BlockModel> getByTransactionRoot() async {
+  Future<BlockModel> create(List<TransactionModel> transactions) async {
     throw UnimplementedError();
   }
 
   /// Loads a block from the chain by its hash. If the id is provided, it loads
   /// by the id and check the hash for equality and integrity.
-  Future<BlockModel> load(String hash, {int? id, String? chain}) async {
+  Future<BlockModel> get(String id, {int? xchainId}) async {
     throw UnimplementedError();
   }
 
   /// Validates the block.
-  Future<bool> validate(
-    BlockModel block, {
-    checkHash = true,
-    checkMerkelRoot = false,
-  }) async {
+  Future<bool> validate(BlockModel block) async {
     throw UnimplementedError();
   }
 
