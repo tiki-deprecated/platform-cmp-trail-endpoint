@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:sqlite3/sqlite3.dart';
 
 import '../transaction/transaction_model.dart';
@@ -19,7 +21,10 @@ class BlockService {
   /// Updates the [transactions] in [TransactionService] with block id.
   /// Backup the new block with [BackupService].
   Future<BlockModel> create(List<TransactionModel> transactions) async {
-    throw UnimplementedError();
+    Uint8List transactionRoot = await _calculateTransactionRoot(transactions);
+    BlockModel? lastBlock = _repository.getLast();
+    String previousHash = lastBlock == null ? await _rootBlockHash() : 
+      await _calculateHash(lastBlock);
   }
 
   /// Loads a block from the chain by its hash. If the id is provided, it loads
@@ -42,8 +47,10 @@ class BlockService {
     return '';
   }
 
-  Future<String> _calculateTransactionRoot(
-      List<TransactionModel> transactions) async {
+  Future<String> _rootBlockHash() async {
     return '';
   }
+
+  Future<Uint8List> _calculateTransactionRoot(
+      List<TransactionModel> transactions) async {}
 }

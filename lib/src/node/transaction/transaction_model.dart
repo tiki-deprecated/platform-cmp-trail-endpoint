@@ -19,12 +19,13 @@ class TransactionModel {
       {this.seq,
       this.id,
       this.version = 1,
-      required this.address,
-      required this.contents,
-      this.assetRef = '0x00',
+      required this.address, //
+      required this.contents, //
+      this.assetRef = '0x00', //
+      timestamp, // 
       this.merkelProof,
       this.block,
-      timestamp}) {
+      }) {
     this.timestamp = timestamp ?? DateTime.now();
   }
 
@@ -53,6 +54,18 @@ class TransactionModel {
       'signature': $signature
     }
   }""";
+
+  TransactionModel.deserialize(Uint8List transaction)
+
+  Uint8List serialize(){
+      [length][this.address -> Uint8List]
+      
+      
+      required this.address, //
+      required this.contents, //
+      this.assetRef = '0x00', //
+      timestamp, // 
+  }
 
   @override
   bool operator ==(Object other) =>

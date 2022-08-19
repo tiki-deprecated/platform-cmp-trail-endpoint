@@ -7,7 +7,7 @@ import 'dart:math';
 
 import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_sdk_dart/src/node/backup/backup_model.dart';
+import 'package:tiki_sdk_dart/src/node/backup/backup_block_model.dart';
 import 'package:tiki_sdk_dart/src/node/backup/backup_repository.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
@@ -23,7 +23,7 @@ void main() {
     XchainModel xchain = XchainModel(id: 123, uri: 'teste');
     xcRepository.save(xchain);
     BlockModel blk = BlockModel(
-        id: 123,
+        seq: 123,
         version: 1,
         previousHash: String.fromCharCodes(
             List.generate(50, (index) => Random().nextInt(33) + 89)),

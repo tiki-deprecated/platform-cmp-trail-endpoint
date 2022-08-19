@@ -127,7 +127,7 @@ Uint8List removePadding(Uint8List message, {int pad = 0}) {
   return message.sublist(0, paddingStart + 1);
 }
 
-Uint8List sha256(Uint8List message, {bool sha3 = false}) {
+Uint8List sha256(Uint8List message, {bool sha3 = true}) {
   Digest digest = sha3 ? Digest("SHA3-256") : Digest("SHA-256");
   return digest.process(message);
 }

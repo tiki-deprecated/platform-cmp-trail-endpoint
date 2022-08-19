@@ -1,5 +1,5 @@
 import 'package:sqlite3/sqlite3.dart';
-import '../../utils/db/page_model.dart';
+import '../../utils/page_model.dart';
 import '../xchain/xchain_model.dart';
 import '../xchain/xchain_repository.dart';
 import 'block_model.dart';
@@ -48,12 +48,17 @@ class BlockRepository {
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
+  BlockModel? getLast({XchainModel? xchainModel}) {
+    List<BlockModel> blocks = _select(whereStmt: 'WHERE xchain_id = ${xchainModel.id}');
+    return blocks.isNotEmpty ? blocks.first : null;
+  }
+
   List<BlockModel> getAfter(DateTime since, XchainModel xchain) {
     int sinceInSeconds = since.millisecondsSinceEpoch ~/ 1000;
     return _select(whereStmt: 'WHERE timestamp >= $sinceInSeconds');
   }
 
-  List<BlockModel> _select({int? page, String whereStmt = 'WHERE 1=1'}) {
+  List<BlockModel> _select({int? page, String whereStmt = 'WHERE 1=1', bool last = false}) {
     String limit = page != null ? 'LIMIT ${page * 100},100' : '';
     ResultSet results = _db.select('''
         SELECT 
@@ -71,7 +76,8 @@ class BlockRepository {
         LEFT JOIN ${XchainRepository.table} as xchains
         ON blocks.xchain_id = xchains.id
         $whereStmt
-        $limit;
+        ${last ? 'ORDER BY blocks.seq DESC' : ''};
+        $limit
         ''');
     List<BlockModel> blocks = [];
     for (final Row row in results) {

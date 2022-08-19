@@ -7,8 +7,11 @@ class KeystoreService {
   KeystoreModel create() {
     KeystoreModel keys = KeystoreModel();
     _repository.save(keys);
+    // call backup to save pubkey
     return keys;
   }
+
+  // address is sha3-256 public key
 
   Future<KeystoreModel?> get(String address) async => await _repository.get(address);
 

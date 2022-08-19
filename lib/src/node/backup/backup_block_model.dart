@@ -7,7 +7,7 @@ class BackupModel {
   DateTime timestamp;
   BlockModel block;
 
-  BackupModel({
+  BackupBlockModel({
     this.id,
     required this.signature,
     required this.timestamp,

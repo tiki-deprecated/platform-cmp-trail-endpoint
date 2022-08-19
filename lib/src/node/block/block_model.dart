@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import '../xchain/xchain_model.dart';
 
 class BlockModel {
@@ -6,11 +8,12 @@ class BlockModel {
   int version;
   String previousHash;
   XchainModel? xchain;
-  String transactionRoot;
+  Uint8List transactionRoot;
   int transactionCount;
   DateTime timestamp;
 
   BlockModel({
+    this.seq,
     this.version = 1,
     required this.previousHash,
     required this.xchain,

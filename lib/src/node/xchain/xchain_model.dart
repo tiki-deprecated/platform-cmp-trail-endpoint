@@ -7,6 +7,7 @@ class XchainModel {
     this.id,
     this.lastChecked,
     required this.uri,
+    required this.pubkey
   });
 
   XchainModel.fromMap(Map<String, dynamic> map)

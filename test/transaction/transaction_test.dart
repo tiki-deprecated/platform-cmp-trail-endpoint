@@ -11,6 +11,7 @@ import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_model.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
+import 'package:tiki_sdk_dart/src/utils/page_model.dart';
 
 void main() {
   final db = sqlite3.openInMemory();
@@ -27,8 +28,8 @@ void main() {
       repository.save(block2);
       repository.save(block3);
       expect(1, 1);
-      List<BlockModel> chains = repository.getAll(xchain);
-      expect(chains.length, 3);
+      PageModel<BlockModel> blocks = repository.getAll(xchain);
+      expect(blocks.items.length, 3);
     });
   });
 }

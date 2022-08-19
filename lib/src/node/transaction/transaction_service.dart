@@ -36,15 +36,18 @@ class TransactionService {
     return txn;
   }
 
-  /// Validates the transaction hash adn merkel proof (if present).
+  /// Validates the transaction hash and merkel proof (if present).
   Future<bool> validateIntegrity(TransactionModel transaction) async {
     KeystoreModel? txnKey = await _keystore.get(transaction.address);
+    // check hash with public key
+    // check merkel proof with private key?
     return true;
   }
 
   /// Validates the transaction signature.
   Future<bool> validateAuthor(TransactionModel transaction) async {
     KeystoreModel? txnKey = await _keystore.get(transaction.address);
+    // verify signature with public key
     return true;
   }
 
@@ -64,10 +67,14 @@ class TransactionService {
   }
 
   Future<String> _sign(TransactionModel txn, KeystoreModel key) async {
+    // sign with private key
+    // signature should be null
     return '';
   }
 
   Future<String> _hash(TransactionModel txn, KeystoreModel key) async {
+    // hash with public key
+    // should include signature
     return '';
   }
 }
