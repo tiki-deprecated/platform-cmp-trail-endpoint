@@ -153,3 +153,8 @@ Uint8List hexDecode(String message) {
 
   return output;
 }
+
+Uint8List serializeInt(int value){
+  Uint8List uint8List = encodeBigInt(BigInt.from(value));
+  return Uint8List.fromList([uint8List.length,...uint8List]);
+}

@@ -1,31 +1,34 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
+import '../../utils/utils.dart';
 import '../block/block_model.dart';
 
 /// A transaction in the blockchain.
 class TransactionModel {
+  late final int version;
+  late final String address;
+  late final DateTime timestamp;
+  late final String assetRef;
+  Uint8List? signature;
+  late final Uint8List contents;
+
   int? seq;
-  String? id;
-  final int version;
-  final String address;
-  final Uint8List contents;
-  final String assetRef;
+  Uint8List? id;
   Uint8List? merkelProof;
   BlockModel? block;
-  late final DateTime timestamp;
-  late final String signature;
 
-  TransactionModel(
-      {this.seq,
-      this.id,
-      this.version = 1,
-      required this.address, //
-      required this.contents, //
-      this.assetRef = '0x00', //
-      timestamp, // 
-      this.merkelProof,
-      this.block,
-      }) {
+  TransactionModel({
+    this.seq,
+    this.id,
+    this.version = 1,
+    required this.address,
+    required this.contents,
+    this.assetRef = '0x00',
+    timestamp,
+    this.merkelProof,
+    this.block,
+  }) {
     this.timestamp = timestamp ?? DateTime.now();
   }
 
@@ -55,16 +58,46 @@ class TransactionModel {
     }
   }""";
 
-  TransactionModel.deserialize(Uint8List transaction)
+  TransactionModel.deserialize(
+    Uint8List transaction,
+  ) {
+    int currentPos = 0;
+    List<Uint8List> parts = [];
+    for (int i = 0; i < 5; i++) {
+      int size = transaction[currentPos];
+      currentPos++;
+      int endPos = currentPos + size;
+      parts.add(transaction.sublist(currentPos, endPos));
+      currentPos = endPos;
+    }
+    version = decodeBigInt(parts[0]).toInt();
+    address = String.fromCharCodes(parts[1]);
+    timestamp = DateTime.fromMillisecondsSinceEpoch(
+        decodeBigInt(parts[2]).toInt() * 1000);
+    assetRef = String.fromCharCodes(parts[3]);
+    signature = parts[4][0] == 0 ? null : parts[4];
+    contents = transaction.sublist(currentPos + 2);
+  }
 
-  Uint8List serialize(){
-      [length][this.address -> Uint8List]
-      
-      
-      required this.address, //
-      required this.contents, //
-      this.assetRef = '0x00', //
-      timestamp, // 
+  Uint8List serialize() {
+    Uint8List serializedVersion = serializeInt(version);
+    Uint8List serializedAddress =
+        Uint8List.fromList([address.codeUnits.length, ...address.codeUnits]);
+    int timestampInSeconds = (timestamp.millisecondsSinceEpoch ~/ 1000);
+    Uint8List serializedTimestamp = serializeInt(timestampInSeconds);
+    Uint8List serializedAssetRef =
+        Uint8List.fromList([assetRef.codeUnits.length, ...assetRef.codeUnits]);
+    Uint8List serializedSignature = Uint8List.fromList(
+        signature != null ? [signature!.length, ...signature!] : [1, 0]);
+    Uint8List serializedContents = Uint8List.fromList([1, 0, ...contents]);
+    return Uint8List.fromList([
+      ...serializedVersion,
+      ...serializedAddress,
+      ...serializedTimestamp,
+      ...serializedAssetRef,
+      ...serializedSignature,
+      ...serializedContents,
+    ]);
   }
 
   @override

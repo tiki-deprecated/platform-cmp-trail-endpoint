@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:sqlite3/sqlite3.dart';
 import '../block/block_model.dart';
 import '../block/block_repository.dart';
@@ -35,7 +37,7 @@ class TransactionRepository {
         '${transaction.contents}', '${transaction.assetRef}', '${transaction.merkelProof}', 
         '${transaction.block?.id}', '${transaction.timestamp.millisecondsSinceEpoch ~/ 1000}', 
         '${transaction.signature}');''');
-    return getById(transaction.id!)!;
+    return getById(base64Url.encode(transaction.id!))!;
   }
 
   List<TransactionModel> getByBlock(String blockId) {

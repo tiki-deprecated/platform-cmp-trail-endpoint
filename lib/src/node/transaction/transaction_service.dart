@@ -1,13 +1,16 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
-import '../keystore/keystore_model.dart';
-import '../keystore/keystore_service.dart';
+import '../../utils/rsa/rsa.dart';
+import '../../utils/utils.dart';
+import '../keys/keys_model.dart';
+import '../keys/keys_service.dart';
 import 'transaction_model.dart';
 import 'transaction_repository.dart';
 
 class TransactionService {
   final TransactionRepository _repository;
-  final KeystoreService _keystore = KeystoreService();
+  final KeysService _keystore = KeysService();
 
   TransactionService({database})
       : _repository = TransactionRepository(database);
@@ -23,22 +26,21 @@ class TransactionService {
       {required String address,
       required Uint8List contents,
       String assetRef = '0x00'}) async {
-    KeystoreModel? key = await _keystore.get(address);
+    KeysModel? key = await _keystore.get(address);
     if (key == null) {
-      throw Exception(
-          'Check the address. No private key found for: $address.');
+      throw Exception('Check the address. No private key found for: $address.');
     }
     TransactionModel txn = TransactionModel(
         address: address, contents: contents, assetRef: assetRef);
-    txn.signature = await _sign(txn, key);
-    txn.id = await _hash(txn, key);
+    txn.signature = sign(key.privateKey, txn.serialize());
+    txn.id = sha256(txn.serialize());
     txn = _repository.save(txn);
     return txn;
   }
 
   /// Validates the transaction hash and merkel proof (if present).
   Future<bool> validateIntegrity(TransactionModel transaction) async {
-    KeystoreModel? txnKey = await _keystore.get(transaction.address);
+    KeysModel? txnKey = await _keystore.get(transaction.address);
     // check hash with public key
     // check merkel proof with private key?
     return true;
@@ -46,7 +48,7 @@ class TransactionService {
 
   /// Validates the transaction signature.
   Future<bool> validateAuthor(TransactionModel transaction) async {
-    KeystoreModel? txnKey = await _keystore.get(transaction.address);
+    KeysModel? txnKey = await _keystore.get(transaction.address);
     // verify signature with public key
     return true;
   }
@@ -66,15 +68,8 @@ class TransactionService {
     throw UnimplementedError();
   }
 
-  Future<String> _sign(TransactionModel txn, KeystoreModel key) async {
-    // sign with private key
-    // signature should be null
-    return '';
-  }
+  Future<String> _hash(TransactionModel txn, KeysModel key) async {
 
-  Future<String> _hash(TransactionModel txn, KeystoreModel key) async {
-    // hash with public key
-    // should include signature
     return '';
   }
 }
