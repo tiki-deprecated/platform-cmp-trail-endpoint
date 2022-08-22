@@ -1,16 +1,17 @@
 import 'dart:typed_data';
 
+import '../../utils/utils.dart';
 import '../xchain/xchain_model.dart';
 
 class BlockModel {
   int? seq;
-  String? id;
+  Uint8List? id;
   int version;
-  String previousHash;
+  Uint8List previousHash;
   XchainModel? xchain;
   Uint8List transactionRoot;
   int transactionCount;
-  DateTime timestamp;
+  late final DateTime timestamp;
 
   BlockModel({
     this.seq,
@@ -19,8 +20,10 @@ class BlockModel {
     required this.xchain,
     required this.transactionRoot,
     required this.transactionCount,
-    required this.timestamp,
-  });
+    timestamp,
+  }){
+    this.timestamp = timestamp ?? DateTime.now();
+  }
 
   BlockModel.fromMap(Map<String, dynamic> map)
       : seq = map['seq'],
@@ -43,6 +46,20 @@ class BlockModel {
       'transaction_count': transactionCount,
       'timestamp': timestamp.millisecondsSinceEpoch
     };
+  }
+
+  Uint8List header() {
+    Uint8List serializedVersion = serializeInt(version);
+    Uint8List serializedTimestamp =
+        serializeInt(timestamp.millisecondsSinceEpoch ~/ 1000);
+    Uint8List serializedPreviousHash = previousHash;
+    Uint8List serializedTransactionRoot = transactionRoot;
+    return Uint8List.fromList([
+      ...serializedVersion,
+      ...serializedTimestamp,
+      ...serializedPreviousHash,
+      ...serializedTransactionRoot
+    ]);
   }
 
   @override

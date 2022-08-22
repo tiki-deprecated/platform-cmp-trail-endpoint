@@ -49,7 +49,7 @@ class BlockRepository {
   }
 
   BlockModel? getLast({XchainModel? xchainModel}) {
-    List<BlockModel> blocks = _select(whereStmt: 'WHERE xchain_id = ${xchainModel.id}');
+    List<BlockModel> blocks = _select(whereStmt: 'WHERE xchain_id = ${xchainModel?.id}');
     return blocks.isNotEmpty ? blocks.first : null;
   }
 

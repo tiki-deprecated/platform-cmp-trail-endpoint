@@ -3,9 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-class KeystoreModel {
+import '../../utils/rsa/rsa_private_key.dart';
+
+class KeysModel {
   late final String address;
-  late final String? privateKey;
+  late final CryptoRSAPrivateKey privateKey;
 
   static fromMap(jsonDecode) {}
 

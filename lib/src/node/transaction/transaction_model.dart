@@ -7,9 +7,9 @@ import '../block/block_model.dart';
 /// A transaction in the blockchain.
 class TransactionModel {
   late final int version;
-  late final String address;
+  late final Uint8List address;
   late final DateTime timestamp;
-  late final String assetRef;
+  late final Uint8List? assetRef;
   Uint8List? signature;
   late final Uint8List contents;
 
@@ -24,7 +24,7 @@ class TransactionModel {
     this.version = 1,
     required this.address,
     required this.contents,
-    this.assetRef = '0x00',
+    this.assetRef,
     timestamp,
     this.merkelProof,
     this.block,
@@ -71,10 +71,10 @@ class TransactionModel {
       currentPos = endPos;
     }
     version = decodeBigInt(parts[0]).toInt();
-    address = String.fromCharCodes(parts[1]);
+    address = parts[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         decodeBigInt(parts[2]).toInt() * 1000);
-    assetRef = String.fromCharCodes(parts[3]);
+    assetRef = parts[3][0] == 0 ? null : parts[3];
     signature = parts[4][0] == 0 ? null : parts[4];
     contents = transaction.sublist(currentPos + 2);
   }
@@ -82,11 +82,11 @@ class TransactionModel {
   Uint8List serialize() {
     Uint8List serializedVersion = serializeInt(version);
     Uint8List serializedAddress =
-        Uint8List.fromList([address.codeUnits.length, ...address.codeUnits]);
-    int timestampInSeconds = (timestamp.millisecondsSinceEpoch ~/ 1000);
-    Uint8List serializedTimestamp = serializeInt(timestampInSeconds);
-    Uint8List serializedAssetRef =
-        Uint8List.fromList([assetRef.codeUnits.length, ...assetRef.codeUnits]);
+        Uint8List.fromList([address.length, ...address]);
+    Uint8List serializedTimestamp =
+        serializeInt(timestamp.millisecondsSinceEpoch ~/ 1000);
+    Uint8List serializedAssetRef = Uint8List.fromList(
+          assetRef != null ? [assetRef!.length, ...assetRef!] : [1,0]);
     Uint8List serializedSignature = Uint8List.fromList(
         signature != null ? [signature!.length, ...signature!] : [1, 0]);
     Uint8List serializedContents = Uint8List.fromList([1, 0, ...contents]);

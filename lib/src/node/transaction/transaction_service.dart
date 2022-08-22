@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:sqlite3/sqlite3.dart';
+
 import '../../utils/rsa/rsa.dart';
 import '../../utils/utils.dart';
 import '../keys/keys_model.dart';
@@ -12,8 +14,8 @@ class TransactionService {
   final TransactionRepository _repository;
   final KeysService _keystore = KeysService();
 
-  TransactionService({database})
-      : _repository = TransactionRepository(database);
+  TransactionService({Database? db})
+      : _repository = TransactionRepository(db:db);
 
   /// Creates a [TransactionModel] with [contents].
   ///
@@ -31,7 +33,9 @@ class TransactionService {
       throw Exception('Check the address. No private key found for: $address.');
     }
     TransactionModel txn = TransactionModel(
-        address: address, contents: contents, assetRef: assetRef);
+      address: Uint8List.fromList(address.codeUnits), 
+      contents: contents, 
+      assetRef:  Uint8List.fromList(assetRef.codeUnits));
     txn.signature = sign(key.privateKey, txn.serialize());
     txn.id = sha256(txn.serialize());
     txn = _repository.save(txn);
@@ -40,7 +44,8 @@ class TransactionService {
 
   /// Validates the transaction hash and merkel proof (if present).
   Future<bool> validateIntegrity(TransactionModel transaction) async {
-    KeysModel? txnKey = await _keystore.get(transaction.address);
+    KeysModel? txnKey = await _keystore.get(base64Url.encode(transaction.address));
+
     // check hash with public key
     // check merkel proof with private key?
     return true;
@@ -48,7 +53,7 @@ class TransactionService {
 
   /// Validates the transaction signature.
   Future<bool> validateAuthor(TransactionModel transaction) async {
-    KeysModel? txnKey = await _keystore.get(transaction.address);
+    KeysModel? txnKey = await _keystore.get(base64Url.encode(transaction.address));
     // verify signature with public key
     return true;
   }
@@ -63,13 +68,4 @@ class TransactionService {
   /// Removes the [TransactionModel] from local database.
   Future<void> discard(String id) async => _repository.remove(id);
 
-  /// Serializes the transaction to be included in the block body.
-  Uint8List serialize(TransactionModel transaction) {
-    throw UnimplementedError();
-  }
-
-  Future<String> _hash(TransactionModel txn, KeysModel key) async {
-
-    return '';
-  }
 }

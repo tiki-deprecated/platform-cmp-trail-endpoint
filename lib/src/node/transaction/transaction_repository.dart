@@ -12,7 +12,9 @@ class TransactionRepository {
 
   final Database _db;
 
-  TransactionRepository(this._db);
+  TransactionRepository({Database? db}) : _db = db ?? sqlite3.openInMemory() {
+    createTable();
+  }
 
   Future<void> createTable() async {
     _db.execute('''
@@ -20,27 +22,42 @@ class TransactionRepository {
           seq INTEGER PRIMARY KEY,
           id STRING,
           version INTEGER NOT NULL,
-          address TEXT NOT NULL,
+          address BLOB NOT NULL,
           contents BLOB NOT NULL,
           asset_ref TEXT NOT NULL,
           merkel_proof BLOB,
           block_id INTEGER, 
-          timestamp INTEGER NOT NULL;
-          signature TEXT NOT NULL;
+          timestamp INTEGER NOT NULL,
+          signature TEXT NOT NULL
       );
     ''');
   }
 
   TransactionModel save(TransactionModel transaction) {
-    _db.execute('''INSERT INTO $table VALUES 
-        ('${transaction.id}', '${transaction.version}', '${transaction.address}', 
-        '${transaction.contents}', '${transaction.assetRef}', '${transaction.merkelProof}', 
-        '${transaction.block?.id}', '${transaction.timestamp.millisecondsSinceEpoch ~/ 1000}', 
-        '${transaction.signature}');''');
+    _db.execute('''INSERT INTO $table VALUES (
+        ${transaction.seq}, 
+        ${transaction.id == null ? null : '${transaction.id}'}, 
+        ${transaction.version}, 
+        ${transaction.address}, 
+        ${transaction.contents}, 
+        ${transaction.assetRef}, 
+        ${transaction.merkelProof}, 
+        ${transaction.block?.id}, 
+        ${transaction.timestamp.millisecondsSinceEpoch ~/ 1000}, 
+        ${transaction.signature});''');
     return getById(base64Url.encode(transaction.id!))!;
   }
 
-  List<TransactionModel> getByBlock(String blockId) {
+  TransactionModel update(TransactionModel transaction) {
+    _db.execute('''UPDATE $table SET
+        id = '${transaction.id}',  
+        merkelProof = '${transaction.merkelProof}', 
+        block = '${transaction.block?.id}';
+        ''');
+    return getById(base64Url.encode(transaction.id!))!;
+  }
+
+  List<TransactionModel> getByBlock(String? blockId) {
     String whereStmt = 'WHERE block_id = $blockId';
     return _select(whereStmt: whereStmt);
   }
