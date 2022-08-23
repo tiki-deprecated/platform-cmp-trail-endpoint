@@ -44,21 +44,17 @@ class TransactionService {
 
   /// Validates the transaction hash and merkel proof (if present).
   Future<bool> validateIntegrity(TransactionModel transaction) async {
-    // hash
-
-    // merkel proof
-    
     KeysModel? txnKey =
         await _keysService.get(base64Url.encode(transaction.address));
-    return txnKey != null
-        ? _validateInternal(transaction, txnKey)
-        : _validateExternal(transaction);
+    // check hash with public key
+    // check merkel proof with private key?
+    return true;
   }
 
   /// Validates the transaction signature.
   Future<bool> validateAuthor(TransactionModel transaction) async {
     KeysModel? txnKey =
-        await _keystore.get(base64Url.encode(transaction.address));
+        await _keysService.get(base64Url.encode(transaction.address));
     // verify signature with public key
     return true;
   }
@@ -72,8 +68,4 @@ class TransactionService {
 
   /// Removes the [TransactionModel] from local database.
   Future<void> discard(String id) async => _repository.remove(id);
-  
-  _validateInternal(TransactionModel transaction, KeysModel txnKey) {
-    
-  }
 }
