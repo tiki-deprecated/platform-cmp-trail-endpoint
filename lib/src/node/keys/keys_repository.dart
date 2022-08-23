@@ -5,20 +5,18 @@
 
 import 'dart:convert';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import 'keys_model.dart';
+import 'keys_secure_storage_interface.dart';
 
 class KeysRepository {
-  static const _keyPrefix = 'com.tiki.sdk.';
-  late final FlutterSecureStorage _secureStorage;
+  static const _keyPrefix = 'com.mytiki.sdk.';
+  late final KeysSecureStorageInterface _secureStorage;
 
-  KeysRepository({secureStorage}) {
-    _secureStorage = secureStorage ?? FlutterSecureStorage();
-  }
+  KeysRepository(this._secureStorage);
 
   Future<void> save(KeysModel model) => _secureStorage.write(
-      key: _keyPrefix + model.address, value: jsonEncode(model.toMap()));
+      key: _keyPrefix + base64Url.encode(model.address), 
+      value: jsonEncode(model.toMap()));
 
   Future<KeysModel?> get(String address) async {
     String? raw = await _secureStorage.read(key: _keyPrefix + address);
