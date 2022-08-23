@@ -12,10 +12,10 @@ import 'transaction_repository.dart';
 
 class TransactionService {
   final TransactionRepository _repository;
-  final KeysService _keystore = KeysService();
+  final KeysService _keysService;
 
-  TransactionService({Database? db})
-      : _repository = TransactionRepository(db:db);
+  TransactionService(this._keysService, {Database? db})
+      : _repository = TransactionRepository(db: db);
 
   /// Creates a [TransactionModel] with [contents].
   ///
@@ -28,14 +28,14 @@ class TransactionService {
       {required String address,
       required Uint8List contents,
       String assetRef = '0x00'}) async {
-    KeysModel? key = await _keystore.get(address);
+    KeysModel? key = await _keysService.get(address);
     if (key == null) {
       throw Exception('Check the address. No private key found for: $address.');
     }
     TransactionModel txn = TransactionModel(
-      address: Uint8List.fromList(address.codeUnits), 
-      contents: contents, 
-      assetRef:  Uint8List.fromList(assetRef.codeUnits));
+        address: Uint8List.fromList(address.codeUnits),
+        contents: contents,
+        assetRef: Uint8List.fromList(assetRef.codeUnits));
     txn.signature = sign(key.privateKey, txn.serialize());
     txn.id = sha256(txn.serialize());
     txn = _repository.save(txn);
@@ -44,16 +44,21 @@ class TransactionService {
 
   /// Validates the transaction hash and merkel proof (if present).
   Future<bool> validateIntegrity(TransactionModel transaction) async {
-    KeysModel? txnKey = await _keystore.get(base64Url.encode(transaction.address));
+    // hash
 
-    // check hash with public key
-    // check merkel proof with private key?
-    return true;
+    // merkel proof
+    
+    KeysModel? txnKey =
+        await _keysService.get(base64Url.encode(transaction.address));
+    return txnKey != null
+        ? _validateInternal(transaction, txnKey)
+        : _validateExternal(transaction);
   }
 
   /// Validates the transaction signature.
   Future<bool> validateAuthor(TransactionModel transaction) async {
-    KeysModel? txnKey = await _keystore.get(base64Url.encode(transaction.address));
+    KeysModel? txnKey =
+        await _keystore.get(base64Url.encode(transaction.address));
     // verify signature with public key
     return true;
   }
@@ -67,5 +72,8 @@ class TransactionService {
 
   /// Removes the [TransactionModel] from local database.
   Future<void> discard(String id) async => _repository.remove(id);
-
+  
+  _validateInternal(TransactionModel transaction, KeysModel txnKey) {
+    
+  }
 }

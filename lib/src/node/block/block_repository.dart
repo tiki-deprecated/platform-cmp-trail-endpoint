@@ -8,7 +8,7 @@ class BlockRepository {
   static const table = 'blocks';
   final Database _db;
 
-  BlockRepository(this._db) {
+  BlockRepository({Database? db}) : _db = db ?? sqlite3.openInMemory() {
     createTable();
   }
 

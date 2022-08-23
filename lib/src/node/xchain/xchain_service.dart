@@ -10,7 +10,7 @@ class XchainService {
 
   final XchainRepository _repository;
 
-  XchainService(Database db) : _repository = XchainRepository(db);
+  XchainService(Database db) : _repository = XchainRepository(db:db);
 
   void add(XchainModel chain) {
     try {

@@ -5,23 +5,28 @@
 
 import 'dart:typed_data';
 
+import 'package:pointycastle/pointycastle.dart';
+import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
 import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/src/node/transaction/transaction_repository.dart';
-import 'package:tiki_sdk_dart/src/node/transaction/transaction_service.dart';
+import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
 
 void main() {
   group('Transaction tests', () {
-    TransactionService service = TransactionService();
-    test('TeansactionRepository: create and retrieve transactions', () {
+    Database db = sqlite3.openInMemory();
+    TransactionRepository repository = TransactionRepository(db: db);
+    BlockRepository blk_repo =  BlockRepository(db: db);
+    XchainRepository chain_repo =  XchainRepository(db: db);
+    test('TransactionRepository: create and retrieve transactions', () {
       TransactionModel txn1 = _generateTransactionModel();
       TransactionModel txn2 = _generateTransactionModel();
       TransactionModel txn3 = _generateTransactionModel();
-      TransactionRepository repository = TransactionRepository();
       repository.save(txn1);
       repository.save(txn2);
       repository.save(txn3);
-      List<TransactionModel> txns = repository.getByBlock(null);
+      List<TransactionModel> txns = repository.getBlockNull();
       expect(txns.length, 3);
     });
 
@@ -47,6 +52,15 @@ void main() {
   });
 }
 
-TransactionModel _generateTransactionModel() => 
-  TransactionModel(address:  Uint8List.fromList('abc'.codeUnits), 
-    contents: Uint8List.fromList([1,2,3]));
+TransactionModel _generateTransactionModel() {
+  TransactionModel txn = TransactionModel.fromMap({
+    'address': Uint8List.fromList('abc'.codeUnits),
+    'timestamp': DateTime.now(),
+    'signature': Uint8List.fromList(
+        DateTime.now().millisecondsSinceEpoch.toString().codeUnits),
+    'contents': Uint8List.fromList([1, 2, 3]),
+    'version': 1,
+    'asset_ref': Uint8List(1)
+  });
+  return txn;
+}

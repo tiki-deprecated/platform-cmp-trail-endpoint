@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -154,7 +155,25 @@ Uint8List hexDecode(String message) {
   return output;
 }
 
-Uint8List serializeInt(int value){
+Uint8List serializeInt(int value) {
   Uint8List uint8List = encodeBigInt(BigInt.from(value));
-  return Uint8List.fromList([uint8List.length,...uint8List]);
+  return Uint8List.fromList([uint8List.length, ...uint8List]);
+}
+
+String? uint8ListToBase64Url(Uint8List? uint8list,
+    {bool nullable = false, bool addQuotes = false}) {
+  if (uint8list == null) {
+    if (nullable) return null;
+    return '${addQuotes ? "'" : ''}${base64Url.encode(Uint8List(1))}${addQuotes ? "'" : ''}';
+  }
+  return '${addQuotes ? "'" : ''}${base64Url.encode(uint8list)}${addQuotes ? "'" : ''}';
+}
+
+Uint8List? base64UrlToUint8List(String? base64String,
+    {bool nullable = false, bool addQuotes = false}) {
+  if (base64String == null) {
+    if (nullable) return null;
+    return base64Url.decode('AA==');
+  }
+  return base64Url.decode(base64String);
 }
