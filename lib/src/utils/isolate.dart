@@ -1,6 +1,6 @@
 // Copyright 2014 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// found in TODO BSD license link
 
 import 'dart:async';
 import 'dart:developer';

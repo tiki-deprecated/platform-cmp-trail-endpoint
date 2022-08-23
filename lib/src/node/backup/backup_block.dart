@@ -1,17 +1,17 @@
 import '../block/block_model.dart';
 
 /// The model for blocks backed up in the object storage.
-class BackupModel {
+class BackupModel<T> {
   int? id;
   String signature;
   DateTime timestamp;
-  BlockModel block;
+  T payload;
 
   BackupModel({
     this.id,
     required this.signature,
     required this.timestamp,
-    required this.block,
+    required this.payload,
   });
 
   BackupModel.fromMap(Map<String, dynamic> map)
@@ -19,19 +19,15 @@ class BackupModel {
         signature = map['signature'],
         timestamp =
             DateTime.fromMillisecondsSinceEpoch(map['timestamp'] * 1000),
-        block = map['block'];
+        payload = map['payload'];
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'signature': signature,
       'timestamp': timestamp,
-      'block': block
+      'payload': payload
     };
-  }
-
-  String toSqlValues() {
-    return "$id, '$signature', ${timestamp.millisecondsSinceEpoch ~/ 1000}, ${block.id}";
   }
 
   @override
@@ -40,7 +36,7 @@ class BackupModel {
       'id' : $id,
       'signature' : $signature,
       'timestamp' : $timestamp,
-      'block' : $block
+      'payload' : $payload
     ''';
   }
 }

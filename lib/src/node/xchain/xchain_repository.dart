@@ -2,11 +2,11 @@ import 'package:sqlite3/sqlite3.dart';
 import 'xchain_model.dart';
 
 class XchainRepository {
-  static const table = 'xchain';
+  static const table = 'xchains';
 
   final Database _db;
 
-  XchainRepository(this._db) {
+  XchainRepository({Database? db}) : _db = db ?? sqlite3.openInMemory() {
     createTable();
   }
 

@@ -1,26 +1,33 @@
+import 'dart:typed_data';
+
+import '../../utils/utils.dart';
 import '../xchain/xchain_model.dart';
 
 class BlockModel {
-  int? id;
+  int? seq;
+  Uint8List? id;
   int version;
-  String previousHash;
-  XchainModel xchain;
-  String transactionRoot;
+  Uint8List previousHash;
+  XchainModel? xchain;
+  Uint8List transactionRoot;
   int transactionCount;
-  DateTime timestamp;
+  late final DateTime timestamp;
 
   BlockModel({
-    this.id,
+    this.seq,
     this.version = 1,
     required this.previousHash,
     required this.xchain,
     required this.transactionRoot,
     required this.transactionCount,
-    required this.timestamp,
-  });
+    timestamp,
+  }){
+    this.timestamp = timestamp ?? DateTime.now();
+  }
 
   BlockModel.fromMap(Map<String, dynamic> map)
-      : id = map['id'],
+      : seq = map['seq'],
+        id = map['id'],
         version = map['version'],
         previousHash = map['previous_hash'],
         xchain = map['xchain'],
@@ -34,16 +41,25 @@ class BlockModel {
       'id': id,
       'version': version,
       'previous_hash': previousHash,
-      'xchain': xchain.toMap(),
+      'xchain': xchain?.toMap(),
       'transaction_root': transactionRoot,
       'transaction_count': transactionCount,
       'timestamp': timestamp.millisecondsSinceEpoch
     };
   }
 
-  String toSqlValues() {
-    return '''$id, $version, '$previousHash', ${xchain.id},
-      '$transactionRoot', $transactionCount, ${timestamp.millisecondsSinceEpoch ~/ 1000}''';
+  Uint8List header() {
+    Uint8List serializedVersion = serializeInt(version);
+    Uint8List serializedTimestamp =
+        serializeInt(timestamp.millisecondsSinceEpoch ~/ 1000);
+    Uint8List serializedPreviousHash = previousHash;
+    Uint8List serializedTransactionRoot = transactionRoot;
+    return Uint8List.fromList([
+      ...serializedVersion,
+      ...serializedTimestamp,
+      ...serializedPreviousHash,
+      ...serializedTransactionRoot
+    ]);
   }
 
   @override

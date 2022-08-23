@@ -20,7 +20,9 @@ import '../utils.dart' as utils;
 import 'rsa_private_key.dart';
 import 'rsa_public_key.dart';
 
-AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> generate() {
+typedef RsaKeyPair = AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey>;
+
+RsaKeyPair generate() {
   final keyGen = RSAKeyGenerator()
     ..init(ParametersWithRandom(
         RSAKeyGeneratorParameters(BigInt.parse('65537'), 2048, 64),
@@ -30,13 +32,13 @@ AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> generate() {
   RSAPublicKey publicKey = keyPair.publicKey as RSAPublicKey;
   RSAPrivateKey privateKey = keyPair.privateKey as RSAPrivateKey;
 
-  return AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey>(
+  return RsaKeyPair(
       CryptoRSAPublicKey(publicKey.modulus!, publicKey.publicExponent!),
       CryptoRSAPrivateKey(privateKey.modulus!, privateKey.privateExponent!,
           privateKey.p, privateKey.q));
 }
 
-Future<AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey>>
+Future<RsaKeyPair>
     generateAsync() =>
         compute((_) => generate(), "").then((keyPair) => keyPair);
 

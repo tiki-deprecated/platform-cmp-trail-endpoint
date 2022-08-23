@@ -4,7 +4,7 @@ import '../block/block_model.dart';
 import '../block/block_repository.dart';
 import '../xchain/xchain_model.dart';
 import '../xchain/xchain_repository.dart';
-import 'backup_model.dart';
+import 'backup_block.dart';
 
 class BackupRepository {
   static const table = 'backup';
@@ -21,18 +21,18 @@ class BackupRepository {
         id INTEGER PRIMARY KEY,
         signature TEXT NOT NULL,
         timestamp INTEGER NOT NULL,
-        block_id INTEGER NOT NULL
+        payload_id TEXT
       );
     ''');
   }
 
   void save(BackupModel backup) {
-    try {
-      _db.execute("INSERT INTO $table VALUES (${backup.toSqlValues()});");
-    } catch (e) {
-      print(e);
-      rethrow;
-    }
+      _db.execute('''INSERT INTO $table VALUES (
+        ${backup.id},
+        ${backup.signature},
+        ${backup.timestamp},
+        ${backup.payload.id}
+      );''');
   }
 
   List<BackupModel> getAll() {

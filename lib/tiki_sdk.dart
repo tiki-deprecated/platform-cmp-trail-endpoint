@@ -2,7 +2,7 @@ library tiki_sdk_dart;
 
 import 'tiki_sdk_data_type_enum.dart';
 import 'tiki_sdk_destination.dart';
-
+// TODO investigate optional debug
 class TikiSdk {
   /// The origin that will be used as default origin for all ownership
   /// assignments. It should follow a reversed FQDN syntax.

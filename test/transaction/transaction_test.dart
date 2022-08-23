@@ -3,41 +3,64 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'dart:math';
+import 'dart:typed_data';
 
-import 'package:test/test.dart';
+import 'package:pointycastle/pointycastle.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
+import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
-import 'package:tiki_sdk_dart/src/node/xchain/xchain_model.dart';
+import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
+import 'package:tiki_sdk_dart/src/node/transaction/transaction_repository.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
 
 void main() {
-  final db = sqlite3.openInMemory();
-  group('block repository tests', () {
-    BlockRepository repository = BlockRepository(db);
-    XchainRepository xcRepository = XchainRepository(db);
-    XchainModel xchain = XchainModel(id: 123, uri: 'teste');
-    xcRepository.save(xchain);
-    test('save blocks, retrieve all', () {
-      BlockModel block1 = _generateBlockModel();
-      BlockModel block2 = _generateBlockModel();
-      BlockModel block3 = _generateBlockModel();
-      repository.save(block1);
-      repository.save(block2);
-      repository.save(block3);
-      expect(1, 1);
-      List<BlockModel> chains = repository.getAll(xchain);
-      expect(chains.length, 3);
+  group('Transaction tests', () {
+    Database db = sqlite3.openInMemory();
+    TransactionRepository repository = TransactionRepository(db: db);
+    BlockRepository blk_repo =  BlockRepository(db: db);
+    XchainRepository chain_repo =  XchainRepository(db: db);
+    test('TransactionRepository: create and retrieve transactions', () {
+      TransactionModel txn1 = _generateTransactionModel();
+      TransactionModel txn2 = _generateTransactionModel();
+      TransactionModel txn3 = _generateTransactionModel();
+      repository.save(txn1);
+      repository.save(txn2);
+      repository.save(txn3);
+      List<TransactionModel> txns = repository.getBlockNull();
+      expect(txns.length, 3);
+    });
+
+    test('Transaction Model: serialize, deserialize', () {
+      TransactionModel original = TransactionModel(
+          version: 1,
+          address: Uint8List.fromList('abc'.codeUnits),
+          timestamp: DateTime(2022),
+          assetRef: Uint8List.fromList('test://test_chain/'.codeUnits),
+          contents: Uint8List.fromList('hello world'.codeUnits));
+      Uint8List serialized = original.serialize();
+      TransactionModel deserialized = TransactionModel.deserialize(serialized);
+      expect(original.version, deserialized.version);
+      expect(original.address, deserialized.address);
+      expect(original.assetRef, deserialized.assetRef);
+      expect(original.signature, deserialized.signature);
+      expect(original.contents, deserialized.contents);
+    });
+
+    test('Transaction Service: create transaction', () {
+      
     });
   });
 }
 
-BlockModel _generateBlockModel() => BlockModel(
-    version: 1,
-    previousHash: String.fromCharCodes(
-        List.generate(50, (index) => Random().nextInt(33) + 89)),
-    xchain: XchainModel(id: 123, uri: 'teste'),
-    transactionRoot: '',
-    transactionCount: 0,
-    timestamp: DateTime.now());
+TransactionModel _generateTransactionModel() {
+  TransactionModel txn = TransactionModel.fromMap({
+    'address': Uint8List.fromList('abc'.codeUnits),
+    'timestamp': DateTime.now(),
+    'signature': Uint8List.fromList(
+        DateTime.now().millisecondsSinceEpoch.toString().codeUnits),
+    'contents': Uint8List.fromList([1, 2, 3]),
+    'version': 1,
+    'asset_ref': Uint8List(1)
+  });
+  return txn;
+}
