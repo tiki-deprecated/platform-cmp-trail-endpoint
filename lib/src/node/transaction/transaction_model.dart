@@ -9,14 +9,14 @@ class TransactionModel {
   late final int version;
   late final Uint8List address;
   late final DateTime timestamp;
-  late final Uint8List? assetRef;
-  Uint8List? signature;
+  late final Uint8List assetRef;
   late final Uint8List contents;
 
   int? seq;
   Uint8List? id;
   Uint8List? merkelProof;
   BlockModel? block;
+  Uint8List? signature;
 
   TransactionModel({
     this.seq,
@@ -24,12 +24,13 @@ class TransactionModel {
     this.version = 1,
     required this.address,
     required this.contents,
-    this.assetRef,
+    assetRef,
     timestamp,
     this.merkelProof,
     this.block,
   }) {
     this.timestamp = timestamp ?? DateTime.now();
+    this.assetRef = assetRef ?? Uint8List(1);
   }
 
   TransactionModel.fromMap(Map<String, dynamic> map)
@@ -38,7 +39,7 @@ class TransactionModel {
         version = map['version'],
         address = map['address'],
         contents = map['contents'],
-        assetRef = map['assetRef'],
+        assetRef = map['asset_ref'],
         merkelProof = map['merkel_proof'],
         block = map['block'],
         timestamp = map['timestamp'],
@@ -46,6 +47,7 @@ class TransactionModel {
 
   @override
   String toString() => """TransactionModel{
+      'seq': $seq
       'id': $id,
       'version': $version,
       'address': $address,
@@ -74,7 +76,7 @@ class TransactionModel {
     address = parts[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         decodeBigInt(parts[2]).toInt() * 1000);
-    assetRef = parts[3][0] == 0 ? null : parts[3];
+    assetRef = parts[3][0] == 0 ? Uint8List(1) : parts[3];
     signature = parts[4][0] == 0 ? null : parts[4];
     contents = transaction.sublist(currentPos + 2);
   }
@@ -85,8 +87,7 @@ class TransactionModel {
         Uint8List.fromList([address.length, ...address]);
     Uint8List serializedTimestamp =
         serializeInt(timestamp.millisecondsSinceEpoch ~/ 1000);
-    Uint8List serializedAssetRef = Uint8List.fromList(
-          assetRef != null ? [assetRef!.length, ...assetRef!] : [1,0]);
+    Uint8List serializedAssetRef = Uint8List.fromList([assetRef.length, ...assetRef]);
     Uint8List serializedSignature = Uint8List.fromList(
         signature != null ? [signature!.length, ...signature!] : [1, 0]);
     Uint8List serializedContents = Uint8List.fromList([1, 0, ...contents]);

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:sqlite3/sqlite3.dart';
+import '../../utils/utils.dart';
 import '../block/block_model.dart';
 import '../block/block_repository.dart';
 import '../xchain/xchain_model.dart';
@@ -36,29 +37,36 @@ class TransactionRepository {
   TransactionModel save(TransactionModel transaction) {
     _db.execute('''INSERT INTO $table VALUES (
         ${transaction.seq}, 
-        ${transaction.id == null ? null : '${transaction.id}'}, 
+        ${transaction.id}, 
         ${transaction.version}, 
-        ${transaction.address}, 
-        ${transaction.contents}, 
-        ${transaction.assetRef}, 
-        ${transaction.merkelProof}, 
+        ${uint8ListToBase64Url(transaction.address, addQuotes: true)}, 
+        ${uint8ListToBase64Url(transaction.contents, addQuotes: true)}, 
+        ${uint8ListToBase64Url(transaction.assetRef, addQuotes: true)}, 
+        ${uint8ListToBase64Url(transaction.merkelProof, addQuotes: true, nullable: true)} , 
         ${transaction.block?.id}, 
         ${transaction.timestamp.millisecondsSinceEpoch ~/ 1000}, 
-        ${transaction.signature});''');
-    return getById(base64Url.encode(transaction.id!))!;
+        ${uint8ListToBase64Url(transaction.signature, nullable: true, addQuotes: true)});''');
+    transaction.seq = _db.lastInsertRowId;
+    return transaction;
   }
 
   TransactionModel update(TransactionModel transaction) {
     _db.execute('''UPDATE $table SET
         id = '${transaction.id}',  
         merkelProof = '${transaction.merkelProof}', 
-        block = '${transaction.block?.id}';
+        block_id = '${transaction.block?.id}';
         ''');
     return getById(base64Url.encode(transaction.id!))!;
   }
 
   List<TransactionModel> getByBlock(String? blockId) {
     String whereStmt = 'WHERE block_id = $blockId';
+    return _select(whereStmt: whereStmt);
+  }
+
+
+  List<TransactionModel> getBlockNull() {
+    String whereStmt = 'WHERE block_id IS NULL';
     return _select(whereStmt: whereStmt);
   }
 
@@ -94,9 +102,9 @@ class TransactionRepository {
           ${XchainRepository.table}.id as 'xchains.id',
           ${XchainRepository.table}.last_checked as 'xchains.last_checked',
           ${XchainRepository.table}.uri as 'xchains.uri'
-        FROM $table as txns
+        FROM $table
         LEFT JOIN ${BlockRepository.table} as blocks
-        ON txn.block_id = blocks.id
+        ON transactions.block_id = blocks.id
         LEFT JOIN ${XchainRepository.table} as xchains
         ON blocks.xchain_id = xchains.id 
         ${whereStmt ?? ''}
@@ -124,12 +132,12 @@ class TransactionRepository {
       Map<String, dynamic>? transactionMap = {
         'id': row['txn.id'],
         'version': row['txn.version'],
-        'address': row['txn.address'],
-        'contents': row['txn.contents'],
-        'asset_ref': row['txn.asset_ref'],
-        'merkel_proof': row['txn.merkel_proof'],
-        'timestamp': row['txn.timestamp'],
-        'signature': row['txn.signature'],
+        'address': base64UrlToUint8List(row['txn.address']),
+        'contents': base64UrlToUint8List(row['txn.contents']),
+        'asset_ref': base64UrlToUint8List(row['txn.asset_ref']),
+        'merkel_proof': base64UrlToUint8List(row['txn.merkel_proof']),
+        'timestamp': DateTime.fromMillisecondsSinceEpoch(row['txn.timestamp']*1000),
+        'signature': base64UrlToUint8List(row['txn.signature']),
         'block': blockMap == null ? null : BlockModel.fromMap(blockMap)
       };
       TransactionModel transaction = TransactionModel.fromMap(transactionMap);
