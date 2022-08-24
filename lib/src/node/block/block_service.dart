@@ -4,8 +4,6 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
-import '../merkel/merkel_service.dart';
-import '../merkel/merkel_tree.dart';
 import '../transaction/transaction_model.dart';
 import '../xchain/xchain_model.dart';
 import 'block_model.dart';
@@ -25,9 +23,8 @@ class BlockService {
   /// Updates the [transactions] in [TransactionService] with block id.
   /// Backup the new block with [BackupService].
   Future<BlockModel> create(List<TransactionModel> transactions) async {
-    MerkelService merkelService = MerkelService();
-    MerkelTree merkelTree = merkelService.buildTree(transactions);
-    Uint8List transactionRoot = merkelTree.root!;
+    Uint8List transactionRoot = calculateMerkelRoot(
+      transactions.map<Uint8List>((txn) => txn.id!).toList());
     BlockModel? lastBlock = _repository.getLast();
     BlockModel block = BlockModel(
         previousHash: lastBlock == null ? 

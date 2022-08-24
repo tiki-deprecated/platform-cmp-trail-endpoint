@@ -43,8 +43,8 @@ class BlockRepository {
     );
   }
 
-  PageModel<BlockModel> getLocal(XchainModel xchainModel, {int? page}) {
-    String whereStmt = 'WHERE xchain_id = ${xchainModel.id}';
+  PageModel<BlockModel> getLocal({int? page}) {
+    String whereStmt = 'WHERE xchain_id IS NULL';
     List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
     return PageModel<BlockModel>(
       page ?? 0,
