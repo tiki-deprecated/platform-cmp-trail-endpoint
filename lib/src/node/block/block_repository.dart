@@ -34,7 +34,16 @@ class BlockRepository {
         ${block.timestamp.millisecondsSinceEpoch ~/ 1000});''');
   }
 
-  PageModel<BlockModel> getAll(XchainModel xchainModel, {int? page}) {
+  PageModel<BlockModel> getByXchain(XchainModel xchainModel, {int? page}) {
+    String whereStmt = 'WHERE xchain_id = ${xchainModel.id}';
+    List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
+    return PageModel<BlockModel>(
+      page ?? 0,
+      blocks
+    );
+  }
+
+  PageModel<BlockModel> getLocal(XchainModel xchainModel, {int? page}) {
     String whereStmt = 'WHERE xchain_id = ${xchainModel.id}';
     List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
     return PageModel<BlockModel>(
