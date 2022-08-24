@@ -1,5 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 import '../../utils/page_model.dart';
+import '../../utils/utils.dart';
 import '../xchain/xchain_model.dart';
 import '../xchain/xchain_repository.dart';
 import 'block_model.dart';
@@ -16,10 +17,10 @@ class BlockRepository {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
           seq INTEGER AUTO INCREMENT,
-          id String PRIMARY KEY,
+          id TEXT PRIMARY KEY,
           version INTEGER NOT NULL,
           previous_hash TEXT NOT NULL UNIQUE,
-          xchain_id INTEGER NOT NULL,
+          xchain_id INTEGER,
           transaction_root TEXT NOT NULL,
           transaction_count INTEGER NOT NULL,
           timestamp INTEGER NOT NULL
@@ -29,36 +30,39 @@ class BlockRepository {
 
   void save(BlockModel block) {
     _db.execute('''INSERT INTO $table VALUES (
-        ${block.seq}, '${block.id}', ${block.version}, '${block.previousHash}', 
-        ${block.xchain?.id}, '${block.transactionRoot}', ${block.transactionCount}, 
+        ${block.seq}, 
+        ${uint8ListToBase64Url(block.id, nullable: false, addQuotes: true )}, 
+        ${block.version}, 
+        ${uint8ListToBase64Url(block.previousHash, nullable: false, addQuotes: true )},
+        ${block.xchain == null ? null : '${block.xchain!.id}'}, 
+        ${uint8ListToBase64Url(block.transactionRoot, nullable: false, addQuotes: true )},
+        ${block.transactionCount}, 
         ${block.timestamp.millisecondsSinceEpoch ~/ 1000});''');
   }
 
   PageModel<BlockModel> getByXchain(XchainModel xchainModel, {int? page}) {
     String whereStmt = 'WHERE xchain_id = ${xchainModel.id}';
     List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
-    return PageModel<BlockModel>(
-      page ?? 0,
-      blocks
-    );
+    return PageModel<BlockModel>(page ?? 0, blocks);
   }
 
   PageModel<BlockModel> getLocal({int? page}) {
     String whereStmt = 'WHERE xchain_id IS NULL';
     List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
-    return PageModel<BlockModel>(
-      page ?? 0,
-      blocks
-    );
+    return PageModel<BlockModel>(page ?? 0, blocks);
   }
 
-  BlockModel? getById(int id) {
-    List<BlockModel> blocks = _select(whereStmt: 'WHERE block_id = $id');
+  BlockModel? getById(String id) {
+    List<BlockModel> blocks = _select(whereStmt: "WHERE blocks.id = '$id'");
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
   BlockModel? getLast({XchainModel? xchainModel}) {
-    List<BlockModel> blocks = _select(whereStmt: 'WHERE xchain_id = ${xchainModel?.id}');
+    String where = "WHERE xchain_id = '${xchainModel?.id}'";
+    if (xchainModel == null) {
+      where = "WHERE xchain_id IS NULL";
+    }
+    List<BlockModel> blocks = _select(whereStmt: where);
     return blocks.isNotEmpty ? blocks.first : null;
   }
 
@@ -67,7 +71,8 @@ class BlockRepository {
     return _select(whereStmt: 'WHERE timestamp >= $sinceInSeconds');
   }
 
-  List<BlockModel> _select({int? page, String whereStmt = 'WHERE 1=1', bool last = false}) {
+  List<BlockModel> _select(
+      {int? page, String whereStmt = 'WHERE 1=1', bool last = false}) {
     String limit = page != null ? 'LIMIT ${page * 100},100' : '';
     ResultSet results = _db.select('''
         SELECT 
@@ -91,18 +96,21 @@ class BlockRepository {
     List<BlockModel> blocks = [];
     for (final Row row in results) {
       Map<String, dynamic> blockMap = {
-        'id': row['blocks.id'],
+        'seq': row['seq'],
+        'id': base64UrlToUint8List(row['blocks.id']),
         'version': row['blocks.version'],
-        'previous_hash': row['blocks.previous_hash'],
-        'transaction_root': row['blocks.transaction_root'],
+        'previous_hash': base64UrlToUint8List(row['blocks.previous_hash']),
+        'transaction_root': base64UrlToUint8List(row['blocks.transaction_root']),
         'transaction_count': row['blocks.transaction_count'],
         'timestamp': row['blocks.timestamp']
       };
-      blockMap['xchain'] = row['xchains.id'] == null ? null : XchainModel.fromMap({
-        'id': row['xchains.id'],
-        'last_checked': row['xchains.last_checked'],
-        'uri': row['xchains.uri'],
-      });
+      blockMap['xchain'] = row['xchains.id'] == null
+          ? null
+          : XchainModel.fromMap({
+              'id': row['xchains.id'],
+              'last_checked': row['xchains.last_checked'],
+              'uri': row['xchains.uri'],
+            });
       BlockModel block = BlockModel.fromMap(blockMap);
       blocks.add(block);
     }

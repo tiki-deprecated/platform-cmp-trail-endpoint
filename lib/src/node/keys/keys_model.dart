@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../../utils/rsa/rsa_private_key.dart';
-import '../../utils/rsa/rsa_public_key.dart';
 
 class KeysModel {
   final Uint8List address;
@@ -15,7 +14,7 @@ class KeysModel {
 
   KeysModel(this.address, this.privateKey);
 
-  KeysModel.fromMap(Map<String, String> map)
+  KeysModel.fromMap(map)
       : address = base64Url.decode(map['address']!),
         privateKey = CryptoRSAPrivateKey.decode(map['private_key']!);
 

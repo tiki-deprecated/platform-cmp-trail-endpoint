@@ -1,15 +1,13 @@
 import 'dart:convert';
 
-import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_secure_storage_interface.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
 
 void main() {
-  final db = sqlite3.openInMemory();
   final TestInMemoryStorage secureStorage = TestInMemoryStorage();
-  final KeysService keysService = KeysService(secureStorage: secureStorage);
+  final KeysService keysService = KeysService(secureStorage);
   group('keys service tests', () {
     test('Create keys, save and retrieve', () async {
       KeysModel keys = await keysService.create();
@@ -20,7 +18,7 @@ void main() {
       expect(retrieveKeys == null, false);
       expect(base64Url.encode(retrieveKeys!.address),
           base64Url.encode(keys.address));
-      expect(retrieveKeys!.privateKey.encode(), keys.privateKey.encode());
+      expect(retrieveKeys.privateKey.encode(), keys.privateKey.encode());
     });
   });
 }

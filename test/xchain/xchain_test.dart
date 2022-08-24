@@ -13,7 +13,7 @@ import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
 void main() {
   final db = sqlite3.openInMemory();
   group('xchain repository tests', () {
-    XchainRepository repository = XchainRepository(db);
+    XchainRepository repository = XchainRepository(db:db);
     test('save xchains, do not save dupliate uri', () {
       XchainModel chain1 = _generateXchainModel();
       XchainModel chain2 = _generateXchainModel();
@@ -22,9 +22,9 @@ void main() {
       repository.save(chain2);
       repository.save(chain3);
       expect(1, 1);
-      XchainModel chainOriginal = XchainModel(uri: "ORIGINAL");
+      XchainModel chainOriginal = XchainModel(uri: "ORIGINAL", pubkey: 'a');
       repository.save(chainOriginal);
-      XchainModel chainDuplicate = XchainModel(uri: "ORIGINAL");
+      XchainModel chainDuplicate = XchainModel(uri: "ORIGINAL", pubkey: 'a');
       expect(() => repository.save(chainDuplicate), throwsException);
       List<XchainModel> chains = repository.getAll();
       expect(chains.length, 4);
@@ -34,6 +34,7 @@ void main() {
 
 XchainModel _generateXchainModel() {
   return XchainModel(
+      pubkey: 'a',
       uri: String.fromCharCodes(
           List.generate(50, (index) => Random().nextInt(33) + 89)));
 }
