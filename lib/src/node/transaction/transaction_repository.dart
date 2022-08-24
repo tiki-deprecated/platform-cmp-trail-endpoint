@@ -37,7 +37,7 @@ class TransactionRepository {
   TransactionModel save(TransactionModel transaction) {
     _db.execute('''INSERT INTO $table VALUES (
         ${transaction.seq}, 
-        ${transaction.id}, 
+        ${uint8ListToBase64Url(transaction.id, addQuotes: true, nullable: true)}, 
         ${transaction.version}, 
         ${uint8ListToBase64Url(transaction.address, addQuotes: true)}, 
         ${uint8ListToBase64Url(transaction.contents, addQuotes: true)}, 

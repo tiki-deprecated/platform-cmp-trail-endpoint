@@ -1,4 +1,3 @@
-import '../block/block_model.dart';
 
 /// The model for blocks backed up in the object storage.
 class BackupModel<T> {

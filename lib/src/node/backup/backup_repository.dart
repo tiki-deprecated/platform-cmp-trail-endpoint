@@ -60,7 +60,6 @@ class BackupRepository {
     return pagedBackups;
   }
 
-  // TODO verificar where sem ser raw
   List<BackupModel> _select({int page = 0, String? whereStmt}) {
     int offset = page * 100;
     ResultSet results = _db.select('''

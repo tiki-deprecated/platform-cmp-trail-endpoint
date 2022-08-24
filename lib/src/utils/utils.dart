@@ -178,3 +178,28 @@ Uint8List? base64UrlToUint8List(String? base64String,
   return base64Url.decode(base64String);
 }
 
+Uint8List calculateMerkelRoot(List<Uint8List> hashes) {
+  if (hashes.isEmpty) return Uint8List(1);
+  List<Uint8List> currentList = hashes;
+  List<Uint8List> nextList = [];
+  Uint8List? left;
+  Uint8List? right;
+  while (currentList.length > 1) {
+    for (int i = 0; i < currentList.length; i++) {
+      if (left == null) {
+        left = currentList[i];
+        continue;
+      }
+      right = currentList[1];
+      Uint8List hash = sha256(Uint8List.fromList([...left, ...right]));
+      nextList.add(hash);
+      left = null;
+    }
+    if (left != null) {
+      nextList.add(left);
+    }
+    currentList = nextList;
+    nextList = [];
+  }
+  return currentList.single;
+}

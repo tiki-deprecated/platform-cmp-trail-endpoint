@@ -16,8 +16,8 @@ class BlockModel {
   BlockModel({
     this.seq,
     this.version = 1,
+    this.xchain,
     required this.previousHash,
-    required this.xchain,
     required this.transactionRoot,
     required this.transactionCount,
     timestamp,
@@ -74,4 +74,5 @@ class BlockModel {
       'timestamp': $timestamp
     ''';
   }
+
 }
