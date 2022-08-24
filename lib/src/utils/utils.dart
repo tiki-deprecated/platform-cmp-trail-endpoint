@@ -177,3 +177,4 @@ Uint8List? base64UrlToUint8List(String? base64String,
   }
   return base64Url.decode(base64String);
 }
+

@@ -8,13 +8,8 @@ environment:
   flutter: ">=3.0.0"
   
 dependencies:
-  flutter :
-    sdk: flutter
-  collection: ^1.16.0
   pointycastle: ^3.6.1
   sqlite3: ^1.7.2
-  flutter_secure_storage: ^6.0.0
-
 
 dev_dependencies:
   test: ^1.21.4
