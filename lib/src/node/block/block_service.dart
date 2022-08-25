@@ -23,8 +23,8 @@ class BlockService {
   /// Updates the [transactions] in [TransactionService] with block id.
   /// Backup the new block with [BackupService].
   BlockModel create(List<TransactionModel> transactions) {
-    Uint8List transactionRoot = calculateMerkelRoot(
-        transactions.map<Uint8List>((txn) => txn.id!).toList());
+    Uint8List transactionRoot = calculateMerkelTree(
+        transactions.map<Uint8List>((txn) => txn.id!).toList())['merkelRoot'];
     BlockModel? lastBlock = _repository.getLast();
     BlockModel block = BlockModel(
         previousHash: lastBlock == null

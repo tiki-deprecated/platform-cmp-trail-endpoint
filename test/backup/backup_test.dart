@@ -5,6 +5,7 @@
 
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';

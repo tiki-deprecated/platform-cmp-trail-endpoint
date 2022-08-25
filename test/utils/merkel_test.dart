@@ -14,8 +14,20 @@ void main() {
     test('Build merkel tree from 1 transaction', () {
       TransactionModel txn = _generateTransactionModel();
       txn.id = sha256(txn.serialize());
-      Uint8List root = calculateMerkelRoot([txn.id!]);
-      expect(root, txn.id);
+      Map merkelTree = calculateMerkelTree([txn.id!]);
+      expect(merkelTree['merkelRoot'],
+          sha256(Uint8List.fromList([...txn.id!, ...txn.id!])));
+    });
+
+    test('Validate merkel proof for 1 transaction', () {
+      TransactionModel txn = _generateTransactionModel();
+      txn.id = sha256(txn.serialize());
+      Map merkelTree = calculateMerkelTree([txn.id!]);
+      Uint8List merkelRoot = merkelTree['merkelRoot'];
+      expect(merkelRoot,
+          sha256(Uint8List.fromList([...txn.id!, ...txn.id!])));
+      Uint8List merkelProof = merkelTree['merkelProof'];
+      expect(validateMerkelProof(txn.id!, merkelProof, merkelRoot), true);
     });
 
     test('Build merkel tree from 10 transactions', () {
@@ -26,19 +38,36 @@ void main() {
         return txn;
       });
       List<Uint8List> hashes = txns.map((e) => e.id!).toList();
-      Uint8List root = calculateMerkelRoot(hashes);
+      Map merkelTree = calculateMerkelTree(hashes);
+      Uint8List root = merkelTree['merkelRoot'];
       expect(root.isNotEmpty, true);
     });
-
-    test('Build merkel tree from 100 transactions', () {
-      List<TransactionModel> txns = List.generate(100, (index) {
+    
+    test('Validate merkel proof for 10 transactions', () {
+      List<TransactionModel> txns = List.generate(10, (index) {
         TransactionModel txn = _generateTransactionModel();
         txn.id = sha256(txn.serialize());
         txn.seq = index;
         return txn;
       });
       List<Uint8List> hashes = txns.map((e) => e.id!).toList();
-      Uint8List root = calculateMerkelRoot(hashes);
+      Map merkelTree = calculateMerkelTree(hashes);
+      Uint8List root = merkelTree['merkelRoot'];
+      expect(root.isNotEmpty, true);
+      List<Uint8List> merkelProof = merkelTree['merkelProof'];
+      expect(validateMerkelProof(txns[0].id!, merkelProof[0], root), true);
+    });
+
+    test('Validar merkel tree from 100 transactions', () {
+      List<TransactionModel> txns = List.generate(10, (index) {
+        TransactionModel txn = _generateTransactionModel();
+        txn.id = sha256(txn.serialize());
+        txn.seq = index;
+        return txn;
+      });
+      List<Uint8List> hashes = txns.map((e) => e.id!).toList();
+      Map merkelTree = calculateMerkelTree(hashes);
+      Uint8List root = merkelTree['merkelRoot'];
       expect(root.isNotEmpty, true);
     });
   });

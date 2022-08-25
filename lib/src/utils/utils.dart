@@ -178,28 +178,127 @@ Uint8List? base64UrlToUint8List(String? base64String,
   return base64Url.decode(base64String);
 }
 
-Uint8List calculateMerkelRoot(List<Uint8List> hashes) {
-  if (hashes.isEmpty) return Uint8List(1);
+Map<String, dynamic> calculateMerkelTree(List<Uint8List> hashes) {
+  if (hashes.isEmpty) {
+    return {
+      'merkelRoot': Uint8List(1),
+      'merkelProof': [Uint8List(1)]
+    };
+  }
   List<Uint8List> currentList = hashes;
   List<Uint8List> nextList = [];
   Uint8List? left;
   Uint8List? right;
+  List<Uint8List> proof = List.empty(growable: true);
+  int height = 0;
+  if (hashes.length == 1) {
+    return {
+      'merkelProof': Uint8List.fromList([1, ...hashes.single]),
+      'merkelRoot':
+          sha256(Uint8List.fromList([...hashes.single, ...hashes.single])),
+    };
+  }
   while (currentList.length > 1) {
     for (int i = 0; i < currentList.length; i++) {
       if (left == null) {
         left = currentList[i];
         continue;
       }
-      right = currentList[1];
+      right = currentList[i];
       Uint8List hash = sha256(Uint8List.fromList([...left, ...right]));
       nextList.add(hash);
+      if (height == 0) {
+        proof.add(Uint8List.fromList([1, ...right]));
+        proof.add(Uint8List.fromList([0, ...left]));
+      } else {
+        int totalLeaves = pow(2, height).toInt();
+        int end = (i + 1) * totalLeaves.toInt();
+        int start = end - (totalLeaves * 2);
+        if (end > proof.length - 1) {
+          end = proof.length - 1;
+          totalLeaves = 2;
+          start = end - totalLeaves;
+        }
+        for (int j = end; j > start; j--) {
+          if (j > end / 2) {
+            proof[j] = Uint8List.fromList([0, ...left, ...proof[j]]);
+          } else {
+            proof[j] = Uint8List.fromList([1, ...left, ...proof[j]]);
+          }
+        }
+      }
       left = null;
+      right = null;
     }
     if (left != null) {
-      nextList.add(left);
+      Uint8List hash = sha256(Uint8List.fromList([...left, ...left]));
+      nextList.add(hash);
+      if (height == 0) {
+        proof.add(Uint8List.fromList([1, ...left]));
+      } else {
+        int i = currentList.length - 1;
+        int totalLeaves = pow(2, height).toInt();
+        int end = (i + 1) * totalLeaves.toInt() - 1;
+        if (end > proof.length - 1) {
+          end = proof.length - 1;
+          totalLeaves = 2;
+        }
+        int start = end - totalLeaves;
+        for (int j = end; j > start; j--) {
+          proof[j] = Uint8List.fromList([1, ...left, ...proof[j]]);
+        }
+      }
+      left = null;
     }
     currentList = nextList;
     nextList = [];
+    height++;
   }
-  return currentList.single;
+  return {'merkelRoot': currentList.single, 'merkelProof': proof};
+}
+
+bool validateMerkelProof(
+  Uint8List verifyHash, Uint8List merkelProof, Uint8List merkelRoot) {
+  Uint8List hash = verifyHash;
+  for (int i = 0; i < merkelProof.length; i = i + 33) {
+    int path = merkelProof[i];
+    Uint8List pathHash = Uint8List.fromList(merkelProof.sublist(i + 1, i + 33));
+    if (path == 0) {
+      hash = sha256(Uint8List.fromList([...pathHash, ...hash]));
+    } else {
+      hash = sha256(Uint8List.fromList([...hash, ...pathHash]));
+    }
+  }
+  return memEquals(hash, merkelRoot);
+}
+
+/// Compares two [Uint8List]s by comparing 8 bytes at a time.
+bool memEquals(Uint8List bytes1, Uint8List bytes2) {
+  if (identical(bytes1, bytes2)) {
+    return true;
+  }
+
+  if (bytes1.lengthInBytes != bytes2.lengthInBytes) {
+    return false;
+  }
+
+  // Treat the original byte lists as lists of 8-byte words.
+  var numWords = bytes1.lengthInBytes ~/ 8;
+  var words1 = bytes1.buffer.asUint64List(0, numWords);
+  var words2 = bytes2.buffer.asUint64List(0, numWords);
+
+  for (var i = 0; i < words1.length; i += 1) {
+    if (words1[i] != words2[i]) {
+      return false;
+    }
+  }
+
+  // Compare any remaining bytes.
+  for (var i = words1.lengthInBytes; i < bytes1.lengthInBytes; i += 1) {
+    if (bytes1[i] != bytes2[i]) {
+      return false;
+    }
+  }
+
+  return true;
 }
