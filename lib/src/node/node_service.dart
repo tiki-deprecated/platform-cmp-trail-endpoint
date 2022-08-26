@@ -46,14 +46,22 @@ class NodeService {
   /// used for tests or thin clients with read-only operations. It is NOT RECOMMENDED 
   /// for writing to the chain. 
   /// 
-  /// The [keysSecureStorage] should be a SECURE STORAGE implementation, specifically
-  /// for each host OS. It should not be accessed by other applications or users
-  /// because it will store the private keys of the user, which is required for write
-  /// operations in the chain.
+  /// The [keysSecureStorage] should be a [KeysSecureStorageInterface] implementation
+  /// using encrypted key-value storage, specifically for each host OS. 
+  /// It should not be accessed by other applications or users because it will 
+  /// store the private keys of the user, which is required for write operations 
+  /// in the chain.
+  ///  
+  /// EncryptedSharedPreferences should be used for Android. AES encryption is 
+  /// another option with AES secret key encrypted with RSA and RSA key is stored 
+  /// in KeyStore. 
   /// 
-  /// In Android the recommendation is
-  /// In iOS the recommendation is
-  /// In JavaScript web environments the recommendation is
+  /// Keychain is recommended for iOS and MacOS.
+  /// 
+  /// For Linux libscret is a reliable option.
+  /// 
+  /// In JavaScript web environments the recommendation is WebCrypto with HTST enabled.
+  /// 
   /// In other enviroments, use equivalent implementations of the recommended ones.
   NodeService init( 
       {String? apiKey,
