@@ -193,7 +193,9 @@ Map<String, dynamic> calculateMerkelTree(List<Uint8List> hashes) {
   int height = 0;
   if (hashes.length == 1) {
     return {
-      'merkelProof': Uint8List.fromList([1, ...hashes.single]),
+      'merkelProof': [
+        Uint8List.fromList([1, ...hashes.single])
+      ],
       'merkelRoot':
           sha256(Uint8List.fromList([...hashes.single, ...hashes.single])),
     };
@@ -205,25 +207,20 @@ Map<String, dynamic> calculateMerkelTree(List<Uint8List> hashes) {
         continue;
       }
       right = currentList[i];
-      Uint8List hash = sha256(Uint8List.fromList([...left, ...right]));
+      Uint8List hash = (Uint8List.fromList([...left, ...right]));
       nextList.add(hash);
       if (height == 0) {
         proof.add(Uint8List.fromList([1, ...right]));
         proof.add(Uint8List.fromList([0, ...left]));
       } else {
         int totalLeaves = pow(2, height).toInt();
-        int end = (i + 1) * totalLeaves.toInt();
-        int start = end - (totalLeaves * 2);
-        if (end > proof.length - 1) {
-          end = proof.length - 1;
-          totalLeaves = 2;
-          start = end - totalLeaves;
-        }
-        for (int j = end; j > start; j--) {
-          if (j > end / 2) {
-            proof[j] = Uint8List.fromList([0, ...left, ...proof[j]]);
+        int end = totalLeaves * i;
+        int start = end - totalLeaves;
+        for (int j = end - 1 ; j >= start; j--) {
+          if (j >= start + (totalLeaves / 2)) {
+            proof[j] = Uint8List.fromList([...proof[j], 0, ...left]);
           } else {
-            proof[j] = Uint8List.fromList([1, ...left, ...proof[j]]);
+            proof[j] = Uint8List.fromList([...proof[j], 1, ...right]);
           }
         }
       }
@@ -231,21 +228,19 @@ Map<String, dynamic> calculateMerkelTree(List<Uint8List> hashes) {
       right = null;
     }
     if (left != null) {
-      Uint8List hash = sha256(Uint8List.fromList([...left, ...left]));
+      Uint8List hash = (Uint8List.fromList([...left, ...left]));
       nextList.add(hash);
       if (height == 0) {
         proof.add(Uint8List.fromList([1, ...left]));
       } else {
-        int i = currentList.length - 1;
         int totalLeaves = pow(2, height).toInt();
-        int end = (i + 1) * totalLeaves.toInt() - 1;
-        if (end > proof.length - 1) {
-          end = proof.length - 1;
-          totalLeaves = 2;
-        }
+        int end = totalLeaves * currentList.length;
         int start = end - totalLeaves;
         for (int j = end; j > start; j--) {
-          proof[j] = Uint8List.fromList([1, ...left, ...proof[j]]);
+          if (j >= start + (totalLeaves / 2)) {
+            proof[j] = Uint8List.fromList([...proof[j], 0, ...left]);
+        }
+          proof[j] = Uint8List.fromList([...proof[j], 0, ...left]);
         }
       }
       left = null;
@@ -257,16 +252,23 @@ Map<String, dynamic> calculateMerkelTree(List<Uint8List> hashes) {
   return {'merkelRoot': currentList.single, 'merkelProof': proof};
 }
 
+/// 1 2 3 4 5 6
+/// 12 34 56
+/// 1234 5656
+/// 12345656
+///
+
 bool validateMerkelProof(
-  Uint8List verifyHash, Uint8List merkelProof, Uint8List merkelRoot) {
+    Uint8List verifyHash, Uint8List merkelProof, Uint8List merkelRoot) {
   Uint8List hash = verifyHash;
-  for (int i = 0; i < merkelProof.length; i = i + 33) {
-    int path = merkelProof[i];
-    Uint8List pathHash = Uint8List.fromList(merkelProof.sublist(i + 1, i + 33));
-    if (path == 0) {
-      hash = sha256(Uint8List.fromList([...pathHash, ...hash]));
+  var proofs = [];
+  for (int i = 0; i < merkelProof.length; i + 2) {
+    proofs.add(merkelProof[i]);
+    Uint8List pathHash = Uint8List.fromList(merkelProof.sublist(i + 1, i + 2));
+    if (proofs[i] == 0) {
+      hash = (Uint8List.fromList([...pathHash, ...hash]));
     } else {
-      hash = sha256(Uint8List.fromList([...hash, ...pathHash]));
+      hash = (Uint8List.fromList([...hash, ...pathHash]));
     }
   }
   return memEquals(hash, merkelRoot);

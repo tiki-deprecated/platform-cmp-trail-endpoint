@@ -24,8 +24,7 @@ void main() {
       txn.id = sha256(txn.serialize());
       Map merkelTree = calculateMerkelTree([txn.id!]);
       Uint8List merkelRoot = merkelTree['merkelRoot'];
-      expect(merkelRoot,
-          sha256(Uint8List.fromList([...txn.id!, ...txn.id!])));
+      expect(merkelRoot, sha256(Uint8List.fromList([...txn.id!, ...txn.id!])));
       Uint8List merkelProof = merkelTree['merkelProof'];
       expect(validateMerkelProof(txn.id!, merkelProof, merkelRoot), true);
     });
@@ -42,20 +41,28 @@ void main() {
       Uint8List root = merkelTree['merkelRoot'];
       expect(root.isNotEmpty, true);
     });
-    
+
     test('Validate merkel proof for 10 transactions', () {
-      List<TransactionModel> txns = List.generate(10, (index) {
-        TransactionModel txn = _generateTransactionModel();
-        txn.id = sha256(txn.serialize());
-        txn.seq = index;
-        return txn;
-      });
-      List<Uint8List> hashes = txns.map((e) => e.id!).toList();
+      // List<TransactionModel> txns = List.generate(4, (index) {
+      //   TransactionModel txn = _generateTransactionModel();
+      //   txn.id = sha256(txn.serialize());
+      //   txn.seq = index;
+      //   return txn;
+      // });
+      List<Uint8List> hashes = [
+        Uint8List.fromList([1]), 
+        Uint8List.fromList([2]), 
+        Uint8List.fromList([3]), 
+        Uint8List.fromList([4]), 
+        Uint8List.fromList([5]), 
+        Uint8List.fromList([6])];
+      //txns.map((e) => e.id!).toList();
+
       Map merkelTree = calculateMerkelTree(hashes);
       Uint8List root = merkelTree['merkelRoot'];
       expect(root.isNotEmpty, true);
       List<Uint8List> merkelProof = merkelTree['merkelProof'];
-      expect(validateMerkelProof(txns[0].id!, merkelProof[0], root), true);
+      expect(validateMerkelProof(hashes[0], merkelProof[0], root), true);
     });
 
     test('Validar merkel tree from 100 transactions', () {
