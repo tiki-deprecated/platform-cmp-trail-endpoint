@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import '../../utils/merkel_tree.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/utils.dart';
 import '../keys/keys_model.dart';
@@ -14,7 +15,7 @@ class TransactionService {
   final TransactionRepository _repository;
   final KeysService _keysService;
 
-  TransactionService(this._keysService, {Database? db})
+  TransactionService(this._keysService, Database? db)
       : _repository = TransactionRepository(db: db);
 
   /// Creates a [TransactionModel] with [contents].
@@ -42,20 +43,31 @@ class TransactionService {
     return txn;
   }
 
-  /// Validates the transaction hash and merkel proof (if present).
-  Future<bool> validateIntegrity(TransactionModel transaction) async {
-    KeysModel? txnKey =
+  Future<void> update(TransactionModel transaction) async {
+    KeysModel? key =
         await _keysService.get(base64Url.encode(transaction.address));
-    // check hash with public key
-    // check merkel proof with private key?
+    if (key == null) {
+      throw Exception(
+          'Check the address. No private key found for: ${base64Url.encode(transaction.address)}.');
+    }
+    _repository.update(transaction);
+  }
+
+  /// Validates the transaction hash and merkel proof (if present).
+  Future<bool> validateIntegrity(TransactionModel transaction,
+      {Uint8List? merkelRoot}) async {
+    Uint8List hash = sha256(transaction.serialize());
+    if (!memEquals(hash, transaction.id!)) return false;
+    if (merkelRoot != null) {
+      return MerkelTree.validate(
+          transaction.id!, transaction.merkelProof!, merkelRoot);
+    }
     return true;
   }
 
   /// Validates the transaction signature.
   Future<bool> validateAuthor(TransactionModel transaction) async {
-    KeysModel? txnKey =
-        await _keysService.get(base64Url.encode(transaction.address));
-    // verify signature with public key
+    // verify signature
     return true;
   }
 

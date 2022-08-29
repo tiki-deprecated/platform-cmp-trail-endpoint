@@ -11,7 +11,7 @@ class BackupRepository {
 
   final Database _db;
 
-  BackupRepository(this._db) {
+  BackupRepository(db) : _db = db ?? sqlite3.openInMemory() {
     createTable();
   }
 
@@ -27,7 +27,7 @@ class BackupRepository {
   }
 
   void save(BackupModel backup) {
-      _db.execute('''INSERT INTO $table VALUES (
+    _db.execute('''INSERT INTO $table VALUES (
         ${backup.id},
         ${backup.signature},
         ${backup.timestamp},

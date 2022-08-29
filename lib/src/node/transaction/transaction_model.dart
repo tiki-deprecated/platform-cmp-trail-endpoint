@@ -86,7 +86,8 @@ class TransactionModel {
         Uint8List.fromList([address.length, ...address]);
     Uint8List serializedTimestamp =
         serializeInt(timestamp.millisecondsSinceEpoch ~/ 1000);
-    Uint8List serializedAssetRef = Uint8List.fromList([assetRef.length, ...assetRef]);
+    Uint8List serializedAssetRef =
+        Uint8List.fromList([assetRef.length, ...assetRef]);
     Uint8List serializedSignature = Uint8List.fromList(
         signature != null ? [signature!.length, ...signature!] : [1, 0]);
     Uint8List serializedContents = Uint8List.fromList([1, 0, ...contents]);

@@ -1,4 +1,3 @@
-
 /// The model for blocks backed up in the object storage.
 class BackupModel<T> {
   int? id;

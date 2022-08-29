@@ -9,7 +9,7 @@ class BlockRepository {
   static const table = 'blocks';
   final Database _db;
 
-  BlockRepository({Database? db}) : _db = db ?? sqlite3.openInMemory() {
+  BlockRepository(Database? db) : _db = db ?? sqlite3.openInMemory() {
     createTable();
   }
 
@@ -31,11 +31,11 @@ class BlockRepository {
   void save(BlockModel block) {
     _db.execute('''INSERT INTO $table VALUES (
         ${block.seq}, 
-        ${uint8ListToBase64Url(block.id, nullable: false, addQuotes: true )}, 
+        ${uint8ListToBase64Url(block.id, nullable: false, addQuotes: true)}, 
         ${block.version}, 
-        ${uint8ListToBase64Url(block.previousHash, nullable: false, addQuotes: true )},
+        ${uint8ListToBase64Url(block.previousHash, nullable: false, addQuotes: true)},
         ${block.xchain == null ? null : '${block.xchain!.id}'}, 
-        ${uint8ListToBase64Url(block.transactionRoot, nullable: false, addQuotes: true )},
+        ${uint8ListToBase64Url(block.transactionRoot, nullable: false, addQuotes: true)},
         ${block.transactionCount}, 
         ${block.timestamp.millisecondsSinceEpoch ~/ 1000});''');
   }
@@ -100,7 +100,8 @@ class BlockRepository {
         'id': base64UrlToUint8List(row['blocks.id']),
         'version': row['blocks.version'],
         'previous_hash': base64UrlToUint8List(row['blocks.previous_hash']),
-        'transaction_root': base64UrlToUint8List(row['blocks.transaction_root']),
+        'transaction_root':
+            base64UrlToUint8List(row['blocks.transaction_root']),
         'transaction_count': row['blocks.transaction_count'],
         'timestamp': row['blocks.timestamp']
       };

@@ -20,8 +20,8 @@ class KeysModel {
 
   Map<String, String> toMap() {
     return {
-      'address' : base64Url.encode(address),
-      'private_key' : privateKey.encode()
+      'address': base64Url.encode(address),
+      'private_key': privateKey.encode()
     };
   }
 }

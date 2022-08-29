@@ -3,12 +3,12 @@
  * MIT license. See LICENSE file in root directory.
  */
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
+import 'package:tiki_sdk_dart/src/node/block/block_model_reponse.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_service.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
@@ -16,14 +16,13 @@ import 'package:tiki_sdk_dart/src/node/keys/keys_secure_storage_interface.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
 import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/src/node/transaction/transaction_service.dart';
-import 'package:tiki_sdk_dart/src/node/xchain/xchain_service.dart';
-import 'package:tiki_sdk_dart/src/utils/page_model.dart';
+import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
 
 void main() {
   group('block repository tests', () {
     test('save blocks, retrieve all', () {
       Database db = sqlite3.openInMemory();
-      BlockRepository repository = BlockRepository(db: db);
+      BlockRepository repository = BlockRepository(db);
       BlockModel block1 = _generateBlockModel();
       repository.save(block1);
       expect(1, 1);
@@ -34,8 +33,9 @@ void main() {
       KeysModel keys = await keysService.create();
       Database db = sqlite3.openInMemory();
       BlockService blockService = BlockService(db);
-      TransactionService transactionService = TransactionService(keysService);
-      XchainService xchainService = XchainService(db);
+      XchainRepository xchainRepository = XchainRepository(db:db);
+      TransactionService transactionService =
+          TransactionService(keysService, db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
         TransactionModel txn = await transactionService.create(
@@ -43,17 +43,17 @@ void main() {
             contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }
-      BlockModel block = blockService.create(transactions);
-      BlockModel? block1 = blockService.get(block.id!);
+      BlockModelResponse blockResponse = blockService.create(transactions);
+      BlockModel? block1 = blockService.get(blockResponse.block.id!);
       expect(block1 != null, true);
-      expect(block1?.id, block.id);
+      expect(block1?.id, blockResponse.block.id);
     });
   });
 }
 
 BlockModel _generateBlockModel() => BlockModel(
     version: 1,
-    previousHash: Uint8List.fromList([1,2,3]),
+    previousHash: Uint8List.fromList([1, 2, 3]),
     transactionRoot: Uint8List(0),
     transactionCount: 0,
     timestamp: DateTime.now());
