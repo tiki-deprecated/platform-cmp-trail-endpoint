@@ -5,7 +5,6 @@
 
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -20,15 +19,15 @@ void main() {
   final db = sqlite3.openInMemory();
   group('backup repository tests', () {
     BackupRepository repository = BackupRepository(db);
-    BlockRepository blkRepository = BlockRepository(db:db);
-    XchainRepository xcRepository = XchainRepository(db:db);
+    BlockRepository blkRepository = BlockRepository(db);
+    XchainRepository xcRepository = XchainRepository(db: db);
     XchainModel xchain = XchainModel(id: 123, pubkey: 'a', uri: 'teste');
     xcRepository.save(xchain);
     BlockModel blk = BlockModel(
         seq: 123,
         version: 1,
         previousHash: Uint8List.fromList(
-          List.generate(50, (index) => Random().nextInt(33) + 89)),
+            List.generate(50, (index) => Random().nextInt(33) + 89)),
         xchain: xchain,
         transactionRoot: Uint8List(1),
         transactionCount: 0,

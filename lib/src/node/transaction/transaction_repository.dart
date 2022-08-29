@@ -64,7 +64,6 @@ class TransactionRepository {
     return _select(whereStmt: whereStmt);
   }
 
-
   List<TransactionModel> getBlockNull() {
     String whereStmt = 'WHERE block_id IS NULL';
     return _select(whereStmt: whereStmt);
@@ -136,7 +135,8 @@ class TransactionRepository {
         'contents': base64UrlToUint8List(row['txn.contents']),
         'asset_ref': base64UrlToUint8List(row['txn.asset_ref']),
         'merkel_proof': base64UrlToUint8List(row['txn.merkel_proof']),
-        'timestamp': DateTime.fromMillisecondsSinceEpoch(row['txn.timestamp']*1000),
+        'timestamp':
+            DateTime.fromMillisecondsSinceEpoch(row['txn.timestamp'] * 1000),
         'signature': base64UrlToUint8List(row['txn.signature']),
         'block': blockMap == null ? null : BlockModel.fromMap(blockMap)
       };

@@ -21,7 +21,7 @@ class BlockModel {
     required this.transactionRoot,
     required this.transactionCount,
     timestamp,
-  }){
+  }) {
     this.timestamp = timestamp ?? DateTime.now();
   }
 
@@ -74,5 +74,4 @@ class BlockModel {
       'timestamp': $timestamp
     ''';
   }
-
 }

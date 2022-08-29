@@ -24,8 +24,9 @@ class KeysService {
     );
     String uri = 'tiki://${base64Url.encode(address)}';
     _repository.save(keys);
-    XchainModel chain = XchainModel(uri: uri, pubkey: rsaKeyPair.publicKey.encode());
-    _backupService?.write(chain);
+    XchainModel chain =
+        XchainModel(uri: uri, pubkey: rsaKeyPair.publicKey.encode());
+    _backupService?.writeBlock(chain);
     return keys;
   }
 

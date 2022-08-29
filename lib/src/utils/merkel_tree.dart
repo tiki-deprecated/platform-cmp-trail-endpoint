@@ -80,8 +80,8 @@ class MerkelTree {
     // (hashes.length % 2 == 0 ? hashes.length : hashes.length + 1) ~/
     //     outputHashes.length;
     for (int i = 0; i < outputHashes.length; i++) {
-      Uint8List? leftHash = inputHashes[i*2];
-      Uint8List? rightHash = inputHashes[(i*2) + 1];
+      Uint8List? leftHash = inputHashes[i * 2];
+      Uint8List? rightHash = inputHashes[(i * 2) + 1];
       for (int j = 0; j < hashesPerOutput; j++) {
         int index = j + (i * hashesPerOutput);
         if (index == hashes.length) break;

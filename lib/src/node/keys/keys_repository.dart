@@ -15,7 +15,7 @@ class KeysRepository {
   KeysRepository(this._secureStorage);
 
   Future<void> save(KeysModel model) => _secureStorage.write(
-      key: _keyPrefix + base64Url.encode(model.address), 
+      key: _keyPrefix + base64Url.encode(model.address),
       value: jsonEncode(model.toMap()));
 
   Future<KeysModel?> get(String address) async {

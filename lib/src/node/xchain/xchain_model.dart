@@ -4,12 +4,8 @@ class XchainModel {
   String uri;
   String pubkey;
 
-  XchainModel({
-    this.id,
-    this.lastChecked,
-    required this.uri,
-    required this.pubkey
-  });
+  XchainModel(
+      {this.id, this.lastChecked, required this.uri, required this.pubkey});
 
   XchainModel.fromMap(Map<String, dynamic> map)
       : id = map['id'],

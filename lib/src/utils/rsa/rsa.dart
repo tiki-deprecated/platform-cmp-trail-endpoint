@@ -38,9 +38,8 @@ RsaKeyPair generate() {
           privateKey.p, privateKey.q));
 }
 
-Future<RsaKeyPair>
-    generateAsync() =>
-        compute((_) => generate(), "").then((keyPair) => keyPair);
+Future<RsaKeyPair> generateAsync() =>
+    compute((_) => generate(), "").then((keyPair) => keyPair);
 
 Uint8List encrypt(CryptoRSAPublicKey key, Uint8List plaintext) {
   final encryptor = OAEPEncoding(RSAEngine())

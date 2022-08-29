@@ -5,7 +5,6 @@
 
 import 'dart:typed_data';
 
-import 'package:pointycastle/pointycastle.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
@@ -17,8 +16,8 @@ void main() {
   group('Transaction tests', () {
     Database db = sqlite3.openInMemory();
     TransactionRepository repository = TransactionRepository(db: db);
-    BlockRepository blk_repo =  BlockRepository(db: db);
-    XchainRepository chain_repo =  XchainRepository(db: db);
+    BlockRepository blkRepo =  BlockRepository(db);
+    XchainRepository chainRepo =  XchainRepository(db: db);
     test('TransactionRepository: create and retrieve transactions', () {
       TransactionModel txn1 = _generateTransactionModel();
       TransactionModel txn2 = _generateTransactionModel();
