@@ -1,5 +1,5 @@
 /*
- * Copyright (c) TIKI Inc.
+ * CopyrightHash (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
 
@@ -176,102 +176,6 @@ Uint8List? base64UrlToUint8List(String? base64String,
     return base64Url.decode('AA==');
   }
   return base64Url.decode(base64String);
-}
-
-Map<String, dynamic> calculateMerkelTree(List<Uint8List> hashes) {
-  if (hashes.isEmpty) {
-    return {
-      'merkelRoot': Uint8List(1),
-      'merkelProof': [Uint8List(1)]
-    };
-  }
-  List<Uint8List> currentList = hashes;
-  List<Uint8List> nextList = [];
-  Uint8List? left;
-  Uint8List? right;
-  List<Uint8List> proof = List.empty(growable: true);
-  int height = 0;
-  if (hashes.length == 1) {
-    return {
-      'merkelProof': [
-        Uint8List.fromList([1, ...hashes.single])
-      ],
-      'merkelRoot':
-          sha256(Uint8List.fromList([...hashes.single, ...hashes.single])),
-    };
-  }
-  while (currentList.length > 1) {
-    for (int i = 0; i < currentList.length; i++) {
-      if (left == null) {
-        left = currentList[i];
-        continue;
-      }
-      right = currentList[i];
-      Uint8List hash = (Uint8List.fromList([...left, ...right]));
-      nextList.add(hash);
-      if (height == 0) {
-        proof.add(Uint8List.fromList([1, ...right]));
-        proof.add(Uint8List.fromList([0, ...left]));
-      } else {
-        int totalLeaves = pow(2, height).toInt();
-        int end = totalLeaves * i;
-        int start = end - totalLeaves;
-        for (int j = end - 1 ; j >= start; j--) {
-          if (j >= start + (totalLeaves / 2)) {
-            proof[j] = Uint8List.fromList([...proof[j], 0, ...left]);
-          } else {
-            proof[j] = Uint8List.fromList([...proof[j], 1, ...right]);
-          }
-        }
-      }
-      left = null;
-      right = null;
-    }
-    if (left != null) {
-      Uint8List hash = (Uint8List.fromList([...left, ...left]));
-      nextList.add(hash);
-      if (height == 0) {
-        proof.add(Uint8List.fromList([1, ...left]));
-      } else {
-        int totalLeaves = pow(2, height).toInt();
-        int end = totalLeaves * currentList.length;
-        int start = end - totalLeaves;
-        for (int j = end; j > start; j--) {
-          if (j >= start + (totalLeaves / 2)) {
-            proof[j] = Uint8List.fromList([...proof[j], 0, ...left]);
-        }
-          proof[j] = Uint8List.fromList([...proof[j], 0, ...left]);
-        }
-      }
-      left = null;
-    }
-    currentList = nextList;
-    nextList = [];
-    height++;
-  }
-  return {'merkelRoot': currentList.single, 'merkelProof': proof};
-}
-
-/// 1 2 3 4 5 6
-/// 12 34 56
-/// 1234 5656
-/// 12345656
-///
-
-bool validateMerkelProof(
-    Uint8List verifyHash, Uint8List merkelProof, Uint8List merkelRoot) {
-  Uint8List hash = verifyHash;
-  var proofs = [];
-  for (int i = 0; i < merkelProof.length; i + 2) {
-    proofs.add(merkelProof[i]);
-    Uint8List pathHash = Uint8List.fromList(merkelProof.sublist(i + 1, i + 2));
-    if (proofs[i] == 0) {
-      hash = (Uint8List.fromList([...pathHash, ...hash]));
-    } else {
-      hash = (Uint8List.fromList([...hash, ...pathHash]));
-    }
-  }
-  return memEquals(hash, merkelRoot);
 }
 
 /// Compares two [Uint8List]s by comparing 8 bytes at a time.
