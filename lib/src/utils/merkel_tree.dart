@@ -69,16 +69,9 @@ class MerkelTree {
     return outputHashes.single;
   }
 
-  ///             01234444
-  ///      0123                4444
-  ///    01       23        44    44
-  ///  0   1    2    3    4   4
-
   void _buildMerkelProof(
       List<Uint8List> outputHashes, List<Uint8List> inputHashes) {
     int hashesPerOutput = pow(2, depth).toInt();
-    // (hashes.length % 2 == 0 ? hashes.length : hashes.length + 1) ~/
-    //     outputHashes.length;
     for (int i = 0; i < outputHashes.length; i++) {
       Uint8List? leftHash = inputHashes[i * 2];
       Uint8List? rightHash = inputHashes[(i * 2) + 1];

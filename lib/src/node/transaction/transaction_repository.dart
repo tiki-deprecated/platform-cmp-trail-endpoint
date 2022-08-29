@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import '../../utils/utils.dart';
@@ -59,8 +60,9 @@ class TransactionRepository {
     return getById(base64Url.encode(transaction.id!))!;
   }
 
-  List<TransactionModel> getByBlock(String? blockId) {
-    String whereStmt = 'WHERE block_id = $blockId';
+  List<TransactionModel> getByBlock(Uint8List? blockId) {
+    String blockIdBase64 = uint8ListToBase64Url(blockId)!;
+    String whereStmt = 'WHERE block_id = "$blockIdBase64"';
     return _select(whereStmt: whereStmt);
   }
 
