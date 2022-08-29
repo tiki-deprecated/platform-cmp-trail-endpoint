@@ -17,6 +17,8 @@ import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
 import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/src/node/transaction/transaction_service.dart';
 import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
+import 'package:tiki_sdk_dart/src/utils/merkel_tree.dart';
+import 'package:tiki_sdk_dart/src/utils/utils.dart';
 
 void main() {
   group('block repository tests', () {
@@ -33,7 +35,7 @@ void main() {
       KeysModel keys = await keysService.create();
       Database db = sqlite3.openInMemory();
       BlockService blockService = BlockService(db);
-      XchainRepository xchainRepository = XchainRepository(db:db);
+      XchainRepository xchainRepository = XchainRepository(db: db);
       TransactionService transactionService =
           TransactionService(keysService, db);
       List<TransactionModel> transactions = [];
@@ -47,6 +49,41 @@ void main() {
       BlockModel? block1 = blockService.get(blockResponse.block.id!);
       expect(block1 != null, true);
       expect(block1?.id, blockResponse.block.id);
+    });
+
+    test('create block, save and validate integrity', () async {
+      Database db = sqlite3.openInMemory();
+      TestInMemoryStorage keyStorage = TestInMemoryStorage();
+      KeysService keysService = KeysService(keyStorage);
+
+      XchainRepository xchainRepository = XchainRepository(db: db);
+
+      BlockService blockService = BlockService(db);
+      TransactionService transactionService =
+          TransactionService(keysService, db);
+
+      KeysModel keys = await keysService.create();
+      List<TransactionModel> transactions = [];
+      for (int i = 0; i < 50; i++) {
+        TransactionModel txn = await transactionService.create(
+            address: base64Url.encode(keys.address),
+            contents: Uint8List.fromList([i]));
+        transactions.add(txn);
+      }
+      BlockModelResponse blockResponse = blockService.create(transactions);
+      BlockModel block = blockResponse.block;
+      MerkelTree merkelTree = blockResponse.merkelTree;
+
+      MerkelTree validationTree =
+          MerkelTree.build((transactions.map((txn) => txn.id!).toList()));
+      expect(memEquals(validationTree.root!, block.transactionRoot), true);
+      for (TransactionModel txn in transactions) {
+        Uint8List hash = txn.id!;
+        expect(
+            MerkelTree.validate(
+                hash, merkelTree.proofs[hash]!, block.transactionRoot),
+            true);
+      }
     });
   });
 }

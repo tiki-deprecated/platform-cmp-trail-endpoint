@@ -72,7 +72,7 @@ class TransactionService {
   }
 
   /// Gets all [TransactionModel] that belongs to the [BlockModel] with [blockId].
-  List<TransactionModel> getByBlock(String blockId) =>
+  List<TransactionModel> getByBlock(Uint8List blockId) =>
       _repository.getByBlock(blockId);
 
   /// Gets the [TransactionModel] by its id.
