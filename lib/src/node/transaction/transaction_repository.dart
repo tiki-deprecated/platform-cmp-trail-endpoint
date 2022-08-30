@@ -23,11 +23,11 @@ class TransactionRepository {
       CREATE TABLE IF NOT EXISTS $table (
           seq INTEGER PRIMARY KEY,
           id STRING,
+          merkel_proof BLOB,
           version INTEGER NOT NULL,
           address BLOB NOT NULL,
           contents BLOB NOT NULL,
           asset_ref TEXT NOT NULL,
-          merkel_proof BLOB,
           block_id INTEGER, 
           timestamp INTEGER NOT NULL,
           signature TEXT NOT NULL
@@ -38,12 +38,12 @@ class TransactionRepository {
   TransactionModel save(TransactionModel transaction) {
     _db.execute('''INSERT INTO $table VALUES (
         ${transaction.seq}, 
-        ${uint8ListToBase64Url(transaction.id, addQuotes: true, nullable: true)}, 
+        ${uint8ListToBase64Url(transaction.id, nullable: false, addQuotes: true)}, 
+        ${uint8ListToBase64Url(transaction.merkelProof, addQuotes: true, nullable: true)},
         ${transaction.version}, 
         ${uint8ListToBase64Url(transaction.address, addQuotes: true)}, 
         ${uint8ListToBase64Url(transaction.contents, addQuotes: true)}, 
         ${uint8ListToBase64Url(transaction.assetRef, addQuotes: true)}, 
-        ${uint8ListToBase64Url(transaction.merkelProof, addQuotes: true, nullable: true)} , 
         ${transaction.block?.id}, 
         ${transaction.timestamp.millisecondsSinceEpoch ~/ 1000}, 
         ${uint8ListToBase64Url(transaction.signature, nullable: true, addQuotes: true)});''');
@@ -53,9 +53,12 @@ class TransactionRepository {
 
   TransactionModel update(TransactionModel transaction) {
     _db.execute('''UPDATE $table SET
-        id = '${transaction.id}',  
-        merkelProof = '${transaction.merkelProof}', 
-        block_id = '${transaction.block?.id}';
+        merkel_proof = ${uint8ListToBase64Url(
+          transaction.merkelProof, addQuotes: true, nullable: true)}, 
+        block_id = ${uint8ListToBase64Url(
+          transaction.block!.id, addQuotes: true, nullable: true)}
+        WHERE id = ${uint8ListToBase64Url(
+          transaction.id!, addQuotes: true, nullable: true)};  
         ''');
     return getById(base64Url.encode(transaction.id!))!;
   }
@@ -73,18 +76,19 @@ class TransactionRepository {
 
   TransactionModel? getById(String id) {
     List<TransactionModel> transactions =
-        _select(whereStmt: 'WHERE block_id = $id');
+        _select(whereStmt: "WHERE transactions.id = '$id'");
     return transactions.isNotEmpty ? transactions[0] : null;
   }
 
   Future<void> remove(String id) async {
-    _db.execute('DELETE FROM $table WHERE id = $id;');
+    _db.execute('DELETE FROM $table WHERE id = "$id"');
   }
 
   List<TransactionModel> _select({int? page, String? whereStmt}) {
     ResultSet results = _db.select('''
         SELECT 
           $table.id as 'txn.id',
+          $table.seq as 'txn.seq',
           $table.version as 'txn.version',
           $table.address as 'txn.address',
           $table.contents as 'txn.contents',
@@ -116,10 +120,10 @@ class TransactionRepository {
       Map<String, dynamic>? blockMap = row['blocks.id'] == null
           ? null
           : {
-              'id': row['blocks.id'],
+              'id': base64UrlToUint8List((row['blocks.id'])),
               'version': row['blocks.version'],
-              'previous_hash': row['blocks.previous_hash'],
-              'transaction_root': row['blocks.transaction_root'],
+              'previous_hash': base64UrlToUint8List(row['blocks.previous_hash']),
+              'transaction_root': base64UrlToUint8List(row['blocks.transaction_root']),
               'transaction_count': row['blocks.transaction_count'],
               'timestamp': row['blocks.timestamp'],
               'xchain': row['xchains.id'] == null
@@ -131,7 +135,8 @@ class TransactionRepository {
                     })
             };
       Map<String, dynamic>? transactionMap = {
-        'id': row['txn.id'],
+        'id': base64UrlToUint8List(row['txn.id']),
+        'seq': row['txn.seq'],
         'version': row['txn.version'],
         'address': base64UrlToUint8List(row['txn.address']),
         'contents': base64UrlToUint8List(row['txn.contents']),

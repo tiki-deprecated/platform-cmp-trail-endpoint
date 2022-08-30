@@ -5,7 +5,9 @@ import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/merkel_tree.dart';
 import '../../utils/rsa/rsa.dart';
+import '../../utils/rsa/rsa_public_key.dart';
 import '../../utils/utils.dart';
+import '../block/block_model.dart';
 import '../keys/keys_model.dart';
 import '../keys/keys_service.dart';
 import 'transaction_model.dart';
@@ -25,51 +27,42 @@ class TransactionService {
   /// address/block_header_sha3_hash/transaction_sha3_hash
   /// sha3 of block header - txn base64 or hex? websafe base64?
   /// If the wallet does not have the private key for [address], throws an error.
-  Future<TransactionModel> create(
-      {required String address,
-      required Uint8List contents,
-      String assetRef = '0x00'}) async {
-    KeysModel? key = await _keysService.get(address);
-    if (key == null) {
-      throw Exception('Check the address. No private key found for: $address.');
-    }
+  Future<TransactionModel> create({
+    required Uint8List contents,
+    required KeysModel keys,
+    String assetRef = '0x00'}) async 
+  {
     TransactionModel txn = TransactionModel(
-        address: Uint8List.fromList(address.codeUnits),
+        address: keys.address,
         contents: contents,
         assetRef: Uint8List.fromList(assetRef.codeUnits));
-    txn.signature = sign(key.privateKey, txn.serialize());
+    txn.signature = sign(keys.privateKey, txn.serialize());
     txn.id = sha256(txn.serialize());
     txn = _repository.save(txn);
     return txn;
   }
 
-  Future<void> update(TransactionModel transaction) async {
-    KeysModel? key =
-        await _keysService.get(base64Url.encode(transaction.address));
-    if (key == null) {
+  Future<void> update(TransactionModel transaction, KeysModel key) async {
+    if (!memEquals(key.address, transaction.address)) {
       throw Exception(
-          'Check the address. No private key found for: ${base64Url.encode(transaction.address)}.');
+          'Check the address. Invalid key found for: ${base64Url.encode(transaction.address)}.');
     }
     _repository.update(transaction);
   }
 
   /// Validates the transaction hash and merkel proof (if present).
-  Future<bool> validateIntegrity(TransactionModel transaction,
-      {Uint8List? merkelRoot}) async {
-    Uint8List hash = sha256(transaction.serialize());
-    if (!memEquals(hash, transaction.id!)) return false;
-    if (merkelRoot != null) {
-      return MerkelTree.validate(
-          transaction.id!, transaction.merkelProof!, merkelRoot);
-    }
-    return true;
-  }
+  bool checkInclusion(TransactionModel transaction, BlockModel block) =>
+        MerkelTree.validate(
+          transaction.id!, transaction.merkelProof!, block.transactionRoot);
+
+  bool checkIntegrity(TransactionModel transaction) => memEquals( 
+    sha256(transaction.serialize()), 
+    transaction.id!);
 
   /// Validates the transaction signature.
-  Future<bool> validateAuthor(TransactionModel transaction) async {
-    // verify signature
-    return true;
-  }
+  bool checkAuthor(
+    TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
+    verify(pubKey, transaction.serialize(), transaction.signature!);
 
   /// Gets all [TransactionModel] that belongs to the [BlockModel] with [blockId].
   List<TransactionModel> getByBlock(Uint8List blockId) =>

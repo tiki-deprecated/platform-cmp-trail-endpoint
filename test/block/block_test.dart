@@ -41,7 +41,7 @@ void main() {
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
         TransactionModel txn = await transactionService.create(
-            address: base64Url.encode(keys.address),
+            keys: keys,
             contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }
@@ -66,7 +66,7 @@ void main() {
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
         TransactionModel txn = await transactionService.create(
-            address: base64Url.encode(keys.address),
+            keys: keys,
             contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }
