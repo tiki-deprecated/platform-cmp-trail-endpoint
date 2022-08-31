@@ -33,8 +33,7 @@ void main() {
 }
 
 XchainModel _generateXchainModel() {
-  return XchainModel(
-      pubkey: 'a',
-      uri: String.fromCharCodes(
-          List.generate(50, (index) => Random().nextInt(33) + 89)));
+  String key = String.fromCharCodes(
+      List.generate(50, (index) => Random().nextInt(33) + 89));
+  return XchainModel(pubkey: key, uri: 'tiki://$key');
 }

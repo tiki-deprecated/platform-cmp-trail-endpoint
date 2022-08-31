@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import '../../utils/mem_sec_storage.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/utils.dart';
 import '../backup/backup_service.dart';
@@ -13,7 +14,7 @@ class KeysService {
   final BackupService? _backupService;
 
   KeysService(secureStorage, [this._backupService])
-      : _repository = KeysRepository(secureStorage);
+      : _repository = KeysRepository(secureStorage ?? MemSecStorage());
 
   Future<KeysModel> create() async {
     RsaKeyPair rsaKeyPair = await generateAsync();

@@ -71,7 +71,7 @@ class BackupRepository {
           ${BlockRepository.table}.id as 'blocks.id',
           ${BlockRepository.table}.version as 'blocks.version',
           ${BlockRepository.table}.previous_hash as 'blocks.previous_hash',
-          ${BlockRepository.table}.xchain_id as 'blocks.xchain_id',
+          ${BlockRepository.table}.xchain_uri as 'blocks.xchain_uri',
           ${BlockRepository.table}.transaction_root as 'blocks.transaction_root',
           ${BlockRepository.table}.transaction_count as 'blocks.transaction_count',
           ${BlockRepository.table}.timestamp as 'blocks.timestamp',
@@ -82,7 +82,7 @@ class BackupRepository {
         INNER JOIN ${BlockRepository.table}
           ON backup.block_id = blocks.id
         INNER JOIN ${XchainRepository.table}
-          ON blocks.xchain_id = xchain.id 
+          ON blocks.xchain_uri = xchain.id 
         ${whereStmt ?? 'WHERE 1=1'}
         LIMIT $offset,100;
         ''');

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/merkel_tree.dart';
+import '../../utils/page_model.dart';
 import '../../utils/utils.dart';
 import '../transaction/transaction_model.dart';
 import '../transaction/transaction_service.dart';
@@ -31,9 +32,8 @@ class BlockService {
     Uint8List transactionRoot = merkelTree.root!;
     BlockModel? lastBlock = _repository.getLast();
     BlockModel block = BlockModel(
-        previousHash: lastBlock == null
-            ? Uint8List.fromList('root'.codeUnits)
-            : sha256(lastBlock.header()),
+        previousHash:
+            lastBlock == null ? Uint8List(1) : sha256(lastBlock.header()),
         transactionRoot: transactionRoot,
         transactionCount: transactions.length);
     block.id = sha256(block.header());
@@ -52,4 +52,12 @@ class BlockService {
   Uint8List serialize(BlockModel block) {
     return block.header();
   }
+
+  PageModel<BlockModel> getByChain(String? xchainUri) {
+    return xchainUri == null
+        ? _repository.getLocal()
+        : _repository.getByChain(xchainUri);
+  }
+
+  void discard(BlockModel blk) => _repository.remove(blk);
 }

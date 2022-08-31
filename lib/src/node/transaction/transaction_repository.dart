@@ -53,12 +53,9 @@ class TransactionRepository {
 
   TransactionModel update(TransactionModel transaction) {
     _db.execute('''UPDATE $table SET
-        merkel_proof = ${uint8ListToBase64Url(
-          transaction.merkelProof, addQuotes: true, nullable: true)}, 
-        block_id = ${uint8ListToBase64Url(
-          transaction.block!.id, addQuotes: true, nullable: true)}
-        WHERE id = ${uint8ListToBase64Url(
-          transaction.id!, addQuotes: true, nullable: true)};  
+        merkel_proof = ${uint8ListToBase64Url(transaction.merkelProof, addQuotes: true, nullable: true)}, 
+        block_id = ${uint8ListToBase64Url(transaction.block!.id, addQuotes: true, nullable: true)}
+        WHERE id = ${uint8ListToBase64Url(transaction.id!, addQuotes: true, nullable: true)};  
         ''');
     return getById(base64Url.encode(transaction.id!))!;
   }
@@ -80,8 +77,9 @@ class TransactionRepository {
     return transactions.isNotEmpty ? transactions[0] : null;
   }
 
-  Future<void> remove(String id) async {
-    _db.execute('DELETE FROM $table WHERE id = "$id"');
+  Future<void> remove(Uint8List id) async {
+    _db.execute(
+        'DELETE FROM $table WHERE id = "${uint8ListToBase64Url(id, nullable: false, addQuotes: true)}"');
   }
 
   List<TransactionModel> _select({int? page, String? whereStmt}) {
@@ -100,18 +98,19 @@ class TransactionRepository {
           ${BlockRepository.table}.id as 'blocks.id',
           ${BlockRepository.table}.version as 'blocks.version',
           ${BlockRepository.table}.previous_hash as 'blocks.previous_hash',
-          ${BlockRepository.table}.xchain_id as 'blocks.xchain_id',
+          ${BlockRepository.table}.xchain_uri as 'blocks.xchain_uri',
           ${BlockRepository.table}.transaction_root as 'blocks.transaction_root',
           ${BlockRepository.table}.transaction_count as 'blocks.transaction_count',
           ${BlockRepository.table}.timestamp as 'blocks.timestamp',
           ${XchainRepository.table}.id as 'xchains.id',
+          ${XchainRepository.table}.pubkey as 'xchains.pubkey',
           ${XchainRepository.table}.last_checked as 'xchains.last_checked',
           ${XchainRepository.table}.uri as 'xchains.uri'
         FROM $table
         LEFT JOIN ${BlockRepository.table} as blocks
         ON transactions.block_id = blocks.id
         LEFT JOIN ${XchainRepository.table} as xchains
-        ON blocks.xchain_id = xchains.id 
+        ON blocks.xchain_uri = xchains.id 
         ${whereStmt ?? ''}
         ${page == null ? '' : 'LIMIT ${page * 100},100'};
         ''');
@@ -122,8 +121,10 @@ class TransactionRepository {
           : {
               'id': base64UrlToUint8List((row['blocks.id'])),
               'version': row['blocks.version'],
-              'previous_hash': base64UrlToUint8List(row['blocks.previous_hash']),
-              'transaction_root': base64UrlToUint8List(row['blocks.transaction_root']),
+              'previous_hash':
+                  base64UrlToUint8List(row['blocks.previous_hash']),
+              'transaction_root':
+                  base64UrlToUint8List(row['blocks.transaction_root']),
               'transaction_count': row['blocks.transaction_count'],
               'timestamp': row['blocks.timestamp'],
               'xchain': row['xchains.id'] == null

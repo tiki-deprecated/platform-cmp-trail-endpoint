@@ -62,8 +62,7 @@ void main() {
       XchainRepository xchainRepository = XchainRepository(db: db);
 
       BlockService blockService = BlockService(db);
-      TransactionService transactionService =
-          TransactionService(keysService, db);
+      TransactionService transactionService = TransactionService(db);
 
       KeysModel keys = await keysService.create();
       List<TransactionModel> transactions = [];

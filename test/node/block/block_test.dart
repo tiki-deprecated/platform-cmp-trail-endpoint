@@ -36,13 +36,11 @@ void main() {
       Database db = sqlite3.openInMemory();
       BlockService blockService = BlockService(db);
       XchainRepository xchainRepository = XchainRepository(db: db);
-      TransactionService transactionService =
-          TransactionService(keysService, db);
+      TransactionService transactionService = TransactionService(db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
         TransactionModel txn = await transactionService.create(
-            keys: keys,
-            contents: Uint8List.fromList([i]));
+            keys: keys, contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }
       BlockModelResponse blockResponse = blockService.create(transactions);
@@ -59,15 +57,13 @@ void main() {
       XchainRepository xchainRepository = XchainRepository(db: db);
 
       BlockService blockService = BlockService(db);
-      TransactionService transactionService =
-          TransactionService(keysService, db);
+      TransactionService transactionService = TransactionService(db);
 
       KeysModel keys = await keysService.create();
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
         TransactionModel txn = await transactionService.create(
-            keys: keys,
-            contents: Uint8List.fromList([i]));
+            keys: keys, contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }
       BlockModelResponse blockResponse = blockService.create(transactions);

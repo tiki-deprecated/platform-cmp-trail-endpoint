@@ -14,13 +14,11 @@ class XchainService {
     update(chain);
   }
 
-  // retrieve the latest [BlockModel] that we have in database and ask for the
-  // most recent ones from [WasabiService].
   void update(XchainModel chain) {
     throw UnimplementedError();
   }
 
-  void updateAll() {
+  void updateAll(List<String> uris) {
     throw UnimplementedError();
   }
 }

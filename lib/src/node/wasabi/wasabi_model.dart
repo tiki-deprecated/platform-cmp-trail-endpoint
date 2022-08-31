@@ -1,4 +1,4 @@
-class WasabiModel<T>{
+class WasabiModel<T> {
   final String id;
   final String signature;
   final DateTime timestamp;
@@ -9,13 +9,13 @@ class WasabiModel<T>{
     required this.signature,
     required this.timestamp,
     required this.payload,
-});
+  });
 
-  WasabiModel.fromJson(String? dataStr){
-    id = ;
-    signature = ;
-    timestamp = ;
-    payload = ;
-  }
+  // WasabiModel.fromJson(String? dataStr){
+  //   id = ;
+  //   signature = ;
+  //   timestamp = ;
+  //   payload = ;
+  // }
 
 }

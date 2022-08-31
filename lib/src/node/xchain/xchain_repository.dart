@@ -15,19 +15,18 @@ class XchainRepository {
       CREATE TABLE IF NOT EXISTS $table (
         id INTEGER PRIMARY KEY,
         last_checked INTEGER,
+        pubkey BLOB NOT NULL,
         uri TEXT NOT NULL UNIQUE
       );
     ''');
   }
 
-  void save(XchainModel xchain) {
-    try {
-      _db.execute("INSERT INTO $table VALUES (${xchain.toSqlValues()});");
-    } catch (e) {
-      print(e);
-      rethrow;
-    }
-  }
+  void save(XchainModel xchain) => _db.execute('''INSERT INTO $table VALUES (
+        ${xchain.id},
+        ${xchain.lastChecked != null ? xchain.lastChecked!.millisecondsSinceEpoch : null},
+        '${xchain.pubkey}',
+        '${xchain.uri}'
+        );''');
 
   List<XchainModel> getAll() {
     return _paged(0);
@@ -71,14 +70,12 @@ class XchainRepository {
     return pagedXchains;
   }
 
-  // TODO verificar where sem ser raw
   List<XchainModel> _select({int page = 0, String? whereStmt}) {
     int offset = page * 100;
     ResultSet results = _db.select('''
         SELECT *
         FROM $table 
-        ${whereStmt ?? ''}
-       LIMIT $offset,100;
+        ${whereStmt ?? ''};
         ''');
     List<XchainModel> xchains = [];
     for (final Row row in results) {

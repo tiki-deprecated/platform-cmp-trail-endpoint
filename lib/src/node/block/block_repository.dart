@@ -20,7 +20,7 @@ class BlockRepository {
           id TEXT PRIMARY KEY,
           version INTEGER NOT NULL,
           previous_hash TEXT NOT NULL UNIQUE,
-          xchain_id INTEGER,
+          xchain_uri STRING,
           transaction_root TEXT NOT NULL,
           transaction_count INTEGER NOT NULL,
           timestamp INTEGER NOT NULL
@@ -34,20 +34,20 @@ class BlockRepository {
         ${uint8ListToBase64Url(block.id, nullable: false, addQuotes: true)}, 
         ${block.version}, 
         ${uint8ListToBase64Url(block.previousHash, nullable: false, addQuotes: true)},
-        ${block.xchain == null ? null : '${block.xchain!.id}'}, 
+        '${block.xchain == null ? null : block.xchain!.uri}', 
         ${uint8ListToBase64Url(block.transactionRoot, nullable: false, addQuotes: true)},
         ${block.transactionCount}, 
         ${block.timestamp.millisecondsSinceEpoch ~/ 1000});''');
   }
 
-  PageModel<BlockModel> getByXchain(XchainModel xchainModel, {int? page}) {
-    String whereStmt = 'WHERE xchain_id = ${xchainModel.id}';
+  PageModel<BlockModel> getByChain(String uri, {int? page}) {
+    String whereStmt = 'WHERE xchain_uri = $uri';
     List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
     return PageModel<BlockModel>(page ?? 0, blocks);
   }
 
   PageModel<BlockModel> getLocal({int? page}) {
-    String whereStmt = 'WHERE xchain_id IS NULL';
+    String whereStmt = 'WHERE xchain_uri IS NULL';
     List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
     return PageModel<BlockModel>(page ?? 0, blocks);
   }
@@ -58,9 +58,9 @@ class BlockRepository {
   }
 
   BlockModel? getLast({XchainModel? xchainModel}) {
-    String where = "WHERE xchain_id = '${xchainModel?.id}'";
+    String where = "WHERE xchain_uri = '${xchainModel?.uri}'";
     if (xchainModel == null) {
-      where = "WHERE xchain_id IS NULL";
+      where = "WHERE xchain_uri IS NULL";
     }
     List<BlockModel> blocks = _select(whereStmt: where);
     return blocks.isNotEmpty ? blocks.first : null;
@@ -79,16 +79,17 @@ class BlockRepository {
           blocks.id as 'blocks.id',
           blocks.version as 'blocks.version',
           blocks.previous_hash as 'blocks.previous_hash',
-          blocks.xchain_id as 'blocks.xchain_id',
+          blocks.xchain_uri as 'blocks.xchain_uri',
           blocks.transaction_root as 'blocks.transaction_root',
           blocks.transaction_count as 'blocks.transaction_count',
           blocks.timestamp as 'blocks.timestamp',
-          xchains.id as 'xchains.id',
+          xchains.uri as 'xchains.uri',
+          xchains.pubkey as 'xchains.pubkey',
           xchains.last_checked as 'xchains.last_checked',
           xchains.uri as 'xchains.uri'
         FROM $table as blocks
         LEFT JOIN ${XchainRepository.table} as xchains
-        ON blocks.xchain_id = xchains.id
+        ON blocks.xchain_uri = xchains.id
         $whereStmt
         ${last ? 'ORDER BY blocks.seq DESC' : ''};
         $limit
@@ -105,10 +106,11 @@ class BlockRepository {
         'transaction_count': row['blocks.transaction_count'],
         'timestamp': row['blocks.timestamp']
       };
-      blockMap['xchain'] = row['xchains.id'] == null
+      blockMap['xchain'] = row['xchains.uri'] == null
           ? null
           : XchainModel.fromMap({
-              'id': row['xchains.id'],
+              'id': row['xchains.uri'],
+              'pubkey': row['xchains.pubkey'],
               'last_checked': row['xchains.last_checked'],
               'uri': row['xchains.uri'],
             });
@@ -116,5 +118,10 @@ class BlockRepository {
       blocks.add(block);
     }
     return blocks;
+  }
+
+  Future<void> remove(BlockModel blk) async {
+    _db.execute(
+        'DELETE FROM $table WHERE block_id = "${uint8ListToBase64Url(blk.id, nullable: false, addQuotes: true)}"');
   }
 }
