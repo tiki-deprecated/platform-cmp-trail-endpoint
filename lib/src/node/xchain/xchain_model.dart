@@ -1,3 +1,5 @@
+import '../../utils/json_object.dart';
+
 class XchainModel {
   int? id;
   DateTime? lastChecked;

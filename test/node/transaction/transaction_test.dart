@@ -71,9 +71,9 @@ void main() {
             keys: keys, contents: Uint8List.fromList([i]));
         transactions.add(txn);
         expect(
-            transactionService.checkAuthor(txn, keys.privateKey.public), false);
+            TransactionService.checkAuthor(txn, keys.privateKey.public), false);
 
-        expect(transactionService.checkIntegrity(txn), true);
+        expect(TransactionService.checkIntegrity(txn), true);
       }
       BlockModelResponse blockResponse = blockService.create(transactions);
       BlockModel block = blockResponse.block;
@@ -83,7 +83,7 @@ void main() {
         transaction.merkelProof =
             blockResponse.merkelTree.proofs[transaction.id!];
         transactionService.update(transaction, keys);
-        expect(transactionService.checkInclusion(transaction, block), true);
+        expect(TransactionService.checkInclusion(transaction, block), true);
       }
     });
   });

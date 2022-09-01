@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import '../../utils/json_object.dart';
 import '../../utils/mem_sec_storage.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/utils.dart';
@@ -16,6 +17,7 @@ class KeysService {
   KeysService(secureStorage, [this._backupService])
       : _repository = KeysRepository(secureStorage ?? MemSecStorage());
 
+  /// Create a new [RsaKeyPair] and save its [RsaKeyPair.public] in object storage.
   Future<KeysModel> create() async {
     RsaKeyPair rsaKeyPair = await generateAsync();
     Uint8List address = sha256(base64Url.decode(rsaKeyPair.publicKey.encode()));
@@ -27,10 +29,11 @@ class KeysService {
     _repository.save(keys);
     XchainModel chain =
         XchainModel(uri: uri, pubkey: rsaKeyPair.publicKey.encode());
-    _backupService?.writeBlock(chain);
+    _backupService?.write(uri, JsonObject.fromMap(chain.toMap()));
     return keys;
   }
 
+  /// Get a [KeysModel] from [secureStorage]
   Future<KeysModel?> get(String address) async =>
       await _repository.get(address);
 }
