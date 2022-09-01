@@ -29,6 +29,7 @@ class BackupService {
     return bkpModel;
   }
 
+  //TODO why? this is in the xchain.
   /// Reads the object remotely via [WasabiService] by its [assetRef].
   Future<JsonObject?> read(String assetRef, {forceAll = false}) async {
     int lastBkpTimestamp = 0;

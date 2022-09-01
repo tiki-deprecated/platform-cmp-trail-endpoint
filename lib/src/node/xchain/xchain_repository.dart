@@ -1,8 +1,9 @@
 import 'package:sqlite3/sqlite3.dart';
+
 import 'xchain_model.dart';
 
 class XchainRepository {
-  static const table = 'xchains';
+  static const table = 'xchains'; //todo table names are singular.
 
   final Database _db;
 

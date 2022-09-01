@@ -14,6 +14,7 @@ class KeysModel {
 
   KeysModel(this.address, this.privateKey);
 
+  // TODO should this not be fromJson & toJson
   KeysModel.fromMap(map)
       : address = base64Url.decode(map['address']!),
         privateKey = CryptoRSAPrivateKey.decode(map['private_key']!);

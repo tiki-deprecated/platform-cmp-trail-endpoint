@@ -1,14 +1,15 @@
 import 'package:sqlite3/sqlite3.dart';
+
 import '../../utils/page_model.dart';
 import '../../utils/utils.dart';
 import '../xchain/xchain_model.dart';
-import '../xchain/xchain_repository.dart';
 import 'block_model.dart';
 
 class BlockRepository {
   static const table = 'blocks';
   final Database _db;
 
+  //TODO this is unsafe. the open in mem should be up at the top level.
   BlockRepository(Database? db) : _db = db ?? sqlite3.openInMemory() {
     createTable();
   }
@@ -97,6 +98,7 @@ class BlockRepository {
     return blocks;
   }
 
+  //TODO what is this for? pruning?
   Future<void> remove(BlockModel blk) async {
     _db.execute(
         'DELETE FROM $table WHERE block_id = "${uint8ListToBase64Url(blk.id, nullable: false, addQuotes: true)}"');

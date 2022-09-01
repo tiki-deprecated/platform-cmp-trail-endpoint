@@ -22,7 +22,8 @@ class MerkelTree {
           .toBytes());
       depth = 1;
     } else {
-      root = _calculateMerkelRoot([...hashes]);
+      root = _calculateMerkelRoot(
+          [...hashes]); //TODO bad naming (when 1 its still a merkel root)
     }
   }
 
@@ -69,6 +70,7 @@ class MerkelTree {
     return outputHashes.single;
   }
 
+  //todo should be calculate not build and you don't need merkel in the name, its in the class.
   void _buildMerkelProof(
       List<Uint8List> outputHashes, List<Uint8List> inputHashes) {
     int hashesPerOutput = pow(2, depth).toInt();

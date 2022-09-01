@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+//TODO delete this
+
 class JsonObject {
   dynamic data;
 

@@ -1,5 +1,3 @@
-import '../../utils/json_object.dart';
-
 class XchainModel {
   int? id;
   DateTime? lastChecked;
@@ -26,6 +24,7 @@ class XchainModel {
     };
   }
 
+  //todo don't override toString unless it has non default functionality.
   @override
   String toString() {
     return '''XchainModel

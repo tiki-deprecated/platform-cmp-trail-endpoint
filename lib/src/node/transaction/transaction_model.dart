@@ -116,5 +116,6 @@ class TransactionModel {
   @override
   int get hashCode => id.hashCode;
 
+  //TODO huh?
   toMap() {}
 }

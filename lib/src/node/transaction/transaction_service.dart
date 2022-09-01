@@ -39,6 +39,7 @@ class TransactionService {
     return txn;
   }
 
+  //TODO when/why would you ever update a txn?
   Future<void> update(TransactionModel transaction, KeysModel key) async {
     if (!memEquals(key.address, transaction.address)) {
       throw Exception(
@@ -47,6 +48,7 @@ class TransactionService {
     _repository.update(transaction);
   }
 
+  //TODO should be named validate
   /// Validates the transaction hash and merkel proof (if present).
   static bool checkInclusion(TransactionModel transaction, BlockModel block) =>
       MerkelTree.validate(
@@ -67,9 +69,11 @@ class TransactionService {
   /// Gets the [TransactionModel] by its id.
   TransactionModel? getById(String id) => _repository.getById(id);
 
+  //TODO better name —> pending
   /// Gets the [TransactionModel]s that were not added to a block yet;
   List<TransactionModel> getNoBlock() => _repository.getBlockNull();
 
+  //TODO what do we use this for? pruning?
   /// Removes the [TransactionModel] from local database.
   Future<void> discard(Uint8List id) async => _repository.remove(id);
 }

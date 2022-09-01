@@ -27,9 +27,11 @@ class KeysService {
     );
     String uri = 'tiki://${base64Url.encode(address)}';
     _repository.save(keys);
-    XchainModel chain =
-        XchainModel(uri: uri, pubkey: rsaKeyPair.publicKey.encode());
-    _backupService?.write(uri, JsonObject.fromMap(chain.toMap()));
+    XchainModel chain = XchainModel(
+        uri: uri,
+        pubkey: rsaKeyPair.publicKey.encode()); //TODO this doesn't belong here.
+    _backupService?.write(uri,
+        JsonObject.fromMap(chain.toMap())); //TODO this doesn't belong here.
     return keys;
   }
 

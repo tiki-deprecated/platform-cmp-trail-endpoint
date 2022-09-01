@@ -29,7 +29,8 @@ class BlockService {
     List<Uint8List> hashes = transactions.map((e) => e.id!).toList();
     MerkelTree merkelTree = MerkelTree.build(hashes);
     Uint8List transactionRoot = merkelTree.root!;
-    BlockModel? lastBlock = _repository.getLast('tiki://${transactions.first.address}');
+    BlockModel? lastBlock = _repository.getLast(
+        'tiki://${transactions.first.address}'); //todo there should be no xchain ref for local
     BlockModel block = BlockModel(
         previousHash:
             lastBlock == null ? Uint8List(1) : sha256(lastBlock.header()),
@@ -43,16 +44,17 @@ class BlockService {
   /// Load the [BlockModel] from local database by [BlockModel.id]
   BlockModel? get(Uint8List id) => _repository.getById(base64Url.encode(id));
 
+  //todo xchainUri should be nullable & optional
   /// Load the [BlockModel] by [XchainModel.uri]. If no xchain uri is provided
   /// it loads from local database.
   PageModel<BlockModel> getByChain(String xchainUri) {
     return _repository.getByChain(xchainUri);
   }
 
+  //todo xchainUri should be nullable & optional
   /// Get the last block in the chain. If no chain is provided, get the last from
   /// localchain.
-  BlockModel? getLast(String xchainUri) =>
-      _repository.getLast(xchainUri);
+  BlockModel? getLast(String xchainUri) => _repository.getLast(xchainUri);
 
   /// Remove the [blk] from local database.
   void discard(BlockModel blk) => _repository.remove(blk);

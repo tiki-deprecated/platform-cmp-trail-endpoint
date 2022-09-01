@@ -3,6 +3,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+//TODO rename this
+
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
@@ -155,11 +157,13 @@ Uint8List hexDecode(String message) {
   return output;
 }
 
+//TODO this is confusingly named/placed
 Uint8List serializeInt(int value) {
   Uint8List uint8List = encodeBigInt(BigInt.from(value));
   return Uint8List.fromList([uint8List.length, ...uint8List]);
 }
 
+//TODO why quotes? why nullable?
 String? uint8ListToBase64Url(Uint8List? uint8list,
     {bool nullable = false, bool addQuotes = false}) {
   if (uint8list == null) {

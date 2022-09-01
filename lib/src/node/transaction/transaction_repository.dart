@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
+
 import '../../utils/utils.dart';
 import '../block/block_model.dart';
 import '../block/block_repository.dart';
@@ -14,6 +15,7 @@ class TransactionRepository {
 
   final Database _db;
 
+  //TODO this is unsafe. the open in mem should be up at the top level.
   TransactionRepository({Database? db}) : _db = db ?? sqlite3.openInMemory() {
     createTable();
   }
@@ -35,6 +37,7 @@ class TransactionRepository {
     ''');
   }
 
+  //TODO Why is everything all base64Url? — is it just cause wasabi/s3?
   TransactionModel save(TransactionModel transaction) {
     _db.execute('''INSERT INTO $table VALUES (
         ${transaction.seq}, 
@@ -81,6 +84,8 @@ class TransactionRepository {
     _db.execute(
         'DELETE FROM $table WHERE id = "${uint8ListToBase64Url(id, nullable: false, addQuotes: true)}"');
   }
+
+  //TODO make the column names static strings
 
   List<TransactionModel> _select({int? page, String? whereStmt}) {
     ResultSet results = _db.select('''

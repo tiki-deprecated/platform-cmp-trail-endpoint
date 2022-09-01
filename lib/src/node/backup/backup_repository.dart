@@ -31,6 +31,7 @@ class BackupRepository {
       );''');
   }
 
+  //todo remove this.
   List<BackupModel> getAll() {
     return _paged(0);
   }
@@ -51,6 +52,7 @@ class BackupRepository {
     return _select(whereStmt: 'WHERE timestamp >= $sinceInSeconds');
   }
 
+  //todo this should not work like this. it'll just load everything into mem.
   List<BackupModel> _paged(page, {String? whereStmt}) {
     List<BackupModel> pagedBackups = _select(page: page, whereStmt: whereStmt);
     if (pagedBackups.length == 100) pagedBackups.addAll(_paged(page + 1));
