@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'wasabi_model.dart';
 import 'wasabi_model_rsp.dart';
 import 'wasabi_repository.dart';
@@ -9,20 +7,24 @@ class WasabiService {
 
   WasabiService(String apiKey) : _repository = WasabiRepository(apiKey);
 
-  Future<WasabiModel<T>?> read<T>(String id) async {
-    WasabiModelRsp response = await _repository.get(id);
-    //WasabiModel<T> data = WasabiModel<T>.fromJson(response.payload);
-    // if (response.code == 200 && _checkSignature(data)) {
-    //   //
-    // }
-    return null;
+  Future<WasabiModel> read(String assetRef) async {
+    WasabiModelRsp response = _repository.get(assetRef);
+    if (response.code == 200) {
+      WasabiModel data = WasabiModel.fromRsp(response);
+      return data;
+    }
+    throw Exception(
+        'Wasabi error: ${response.code} - ${response.message}. Response: $response');
   }
 
-  Future<WasabiModel<T>?> write<T>(WasabiModel data) async {
-    WasabiModelRsp response = await _repository.post(json.encode(data));
+  Future<WasabiModel> write(String jsonData) async {
+    WasabiModelRsp response = _repository.post(jsonData);
+    if (response.code == 201) {
+      WasabiModel data = WasabiModel.fromRsp(response);
+      return data;
+    }
+    throw Exception(
+        'Wasabi error: ${response.code} - ${response.message}. Response $response');
   }
 
-  bool _checkSignature(WasabiModel data) {
-    return true;
-  }
 }

@@ -1,10 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-import '../block/block_model.dart';
-import '../block/block_repository.dart';
-import '../xchain/xchain_model.dart';
-import '../xchain/xchain_repository.dart';
-import 'backup_block.dart';
+import 'backup_model.dart';
 
 class BackupRepository {
   static const table = 'backup';
@@ -18,10 +14,10 @@ class BackupRepository {
   void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-        id INTEGER PRIMARY KEY,
+        id TEXT PRIMARY KEY,
         signature TEXT NOT NULL,
         timestamp INTEGER NOT NULL,
-        payload_id TEXT
+        assef_ref TEXT
       );
     ''');
   }
@@ -29,9 +25,9 @@ class BackupRepository {
   void save(BackupModel backup) {
     _db.execute('''INSERT INTO $table VALUES (
         ${backup.id},
-        ${backup.signature},
-        ${backup.timestamp},
-        ${backup.payload.id}
+        ${backup.signature == null ? null : "'${backup.signature}'"},
+        ${backup.timestamp.millisecondsSinceEpoch ~/ 1000},
+        '${backup.assetRef}'
       );''');
   }
 
@@ -44,8 +40,9 @@ class BackupRepository {
     return backups.isNotEmpty ? backups[0] : null;
   }
 
-  BackupModel? getByBlockId(int blockId) {
-    List<BackupModel> backups = _select(whereStmt: 'WHERE block_id = $blockId');
+  BackupModel? getByAssetRef(String assetRef) {
+    List<BackupModel> backups =
+        _select(whereStmt: 'WHERE block_id = "$assetRef"');
     return backups.isNotEmpty ? backups[0] : null;
   }
 
@@ -61,51 +58,22 @@ class BackupRepository {
   }
 
   List<BackupModel> _select({int page = 0, String? whereStmt}) {
-    int offset = page * 100;
     ResultSet results = _db.select('''
         SELECT 
           $table.id as 'bkp.id',
           $table.signature as 'bkp.signature',
           $table.timestamp as 'bkp.timestamp',
-          $table.block_id as 'bkp.block_id',
-          ${BlockRepository.table}.id as 'blocks.id',
-          ${BlockRepository.table}.version as 'blocks.version',
-          ${BlockRepository.table}.previous_hash as 'blocks.previous_hash',
-          ${BlockRepository.table}.xchain_uri as 'blocks.xchain_uri',
-          ${BlockRepository.table}.transaction_root as 'blocks.transaction_root',
-          ${BlockRepository.table}.transaction_count as 'blocks.transaction_count',
-          ${BlockRepository.table}.timestamp as 'blocks.timestamp',
-          ${XchainRepository.table}.id as 'xchains.id',
-          ${XchainRepository.table}.last_checked as 'xchains.last_checked',
-          ${XchainRepository.table}.uri as 'xchains.uri'
+          $table.assef_ref as 'bkp.asset_ref'
         FROM $table as backup
-        INNER JOIN ${BlockRepository.table}
-          ON backup.block_id = blocks.id
-        INNER JOIN ${XchainRepository.table}
-          ON blocks.xchain_uri = xchain.id 
         ${whereStmt ?? 'WHERE 1=1'}
-        LIMIT $offset,100;
         ''');
     List<BackupModel> backups = [];
     for (final Row row in results) {
-      Map<String, dynamic> blockMap = {
-        'id': row['blocks.id'],
-        'version': row['blocks.version'],
-        'previous_hash': row['blocks.previous_hash'],
-        'transaction_root': row['blocks.transaction_root'],
-        'transaction_count': row['blocks.transaction_count'],
-        'timestamp': row['blocks.timestamp'],
-        'xchain': XchainModel.fromMap({
-          'id': row['xchains.id'],
-          'last_checked': row['xchains.last_checked'],
-          'uri': row['xchains.uri'],
-        })
-      };
       Map<String, dynamic> bkpMap = {
         'id': row['bkp.id'],
         'signature': row['bkp.signature'],
         'timestamp': row['bkp.timestamp'],
-        'block': BlockModel.fromMap(blockMap)
+        'asset_ref': row['asset_ref']
       };
       BackupModel bkp = BackupModel.fromMap(bkpMap);
       backups.add(bkp);

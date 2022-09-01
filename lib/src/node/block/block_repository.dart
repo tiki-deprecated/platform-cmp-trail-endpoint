@@ -34,20 +34,14 @@ class BlockRepository {
         ${uint8ListToBase64Url(block.id, nullable: false, addQuotes: true)}, 
         ${block.version}, 
         ${uint8ListToBase64Url(block.previousHash, nullable: false, addQuotes: true)},
-        '${block.xchain == null ? null : block.xchain!.uri}', 
+        '${block.xchainUri}', 
         ${uint8ListToBase64Url(block.transactionRoot, nullable: false, addQuotes: true)},
         ${block.transactionCount}, 
         ${block.timestamp.millisecondsSinceEpoch ~/ 1000});''');
   }
 
   PageModel<BlockModel> getByChain(String uri, {int? page}) {
-    String whereStmt = 'WHERE xchain_uri = $uri';
-    List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
-    return PageModel<BlockModel>(page ?? 0, blocks);
-  }
-
-  PageModel<BlockModel> getLocal({int? page}) {
-    String whereStmt = 'WHERE xchain_uri IS NULL';
+    String whereStmt = 'WHERE xchain_uri = "$uri"';
     List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
     return PageModel<BlockModel>(page ?? 0, blocks);
   }
@@ -57,11 +51,8 @@ class BlockRepository {
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
-  BlockModel? getLast({XchainModel? xchainModel}) {
-    String where = "WHERE xchain_uri = '${xchainModel?.uri}'";
-    if (xchainModel == null) {
-      where = "WHERE xchain_uri IS NULL";
-    }
+  BlockModel? getLast(String xchainUri) {
+    String where = "WHERE xchain_uri = '$xchainUri'";
     List<BlockModel> blocks = _select(whereStmt: where);
     return blocks.isNotEmpty ? blocks.first : null;
   }
@@ -82,14 +73,8 @@ class BlockRepository {
           blocks.xchain_uri as 'blocks.xchain_uri',
           blocks.transaction_root as 'blocks.transaction_root',
           blocks.transaction_count as 'blocks.transaction_count',
-          blocks.timestamp as 'blocks.timestamp',
-          xchains.uri as 'xchains.uri',
-          xchains.pubkey as 'xchains.pubkey',
-          xchains.last_checked as 'xchains.last_checked',
-          xchains.uri as 'xchains.uri'
+          blocks.timestamp as 'blocks.timestamp'
         FROM $table as blocks
-        LEFT JOIN ${XchainRepository.table} as xchains
-        ON blocks.xchain_uri = xchains.id
         $whereStmt
         ${last ? 'ORDER BY blocks.seq DESC' : ''};
         $limit
@@ -106,14 +91,6 @@ class BlockRepository {
         'transaction_count': row['blocks.transaction_count'],
         'timestamp': row['blocks.timestamp']
       };
-      blockMap['xchain'] = row['xchains.uri'] == null
-          ? null
-          : XchainModel.fromMap({
-              'id': row['xchains.uri'],
-              'pubkey': row['xchains.pubkey'],
-              'last_checked': row['xchains.last_checked'],
-              'uri': row['xchains.uri'],
-            });
       BlockModel block = BlockModel.fromMap(blockMap);
       blocks.add(block);
     }

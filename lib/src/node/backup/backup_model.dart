@@ -1,15 +1,16 @@
+
 /// The model for blocks backed up in the object storage.
-class BackupModel<T> {
-  int? id;
-  String signature;
-  DateTime timestamp;
-  T payload;
+class BackupModel {
+  String? id;
+  String? signature;
+  DateTime timestamp = DateTime(0);
+  String? assetRef;
 
   BackupModel({
     this.id,
     required this.signature,
     required this.timestamp,
-    required this.payload,
+    required this.assetRef,
   });
 
   BackupModel.fromMap(Map<String, dynamic> map)
@@ -17,14 +18,14 @@ class BackupModel<T> {
         signature = map['signature'],
         timestamp =
             DateTime.fromMillisecondsSinceEpoch(map['timestamp'] * 1000),
-        payload = map['payload'];
+        assetRef = map['asset_ref'];
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'signature': signature,
       'timestamp': timestamp,
-      'payload': payload
+      'aset_ref': assetRef,
     };
   }
 
@@ -34,7 +35,7 @@ class BackupModel<T> {
       'id' : $id,
       'signature' : $signature,
       'timestamp' : $timestamp,
-      'payload' : $payload
+      'asset_ref' : $assetRef
     ''';
   }
 }

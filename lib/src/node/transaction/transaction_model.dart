@@ -44,6 +44,11 @@ class TransactionModel {
         timestamp = map['timestamp'],
         signature = map['signature'];
 
+  String get uri {
+    String txnId = uint8ListToBase64Url(id)!;
+    return '${block!.uri}/$txnId';
+  }
+
   @override
   String toString() => """TransactionModel{
       'seq': $seq
@@ -110,4 +115,6 @@ class TransactionModel {
 
   @override
   int get hashCode => id.hashCode;
+
+  toMap() {}
 }

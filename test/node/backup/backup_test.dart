@@ -8,7 +8,7 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_sdk_dart/src/node/backup/backup_block.dart';
+import 'package:tiki_sdk_dart/src/node/backup/backup_model.dart';
 import 'package:tiki_sdk_dart/src/node/backup/backup_repository.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
@@ -28,7 +28,7 @@ void main() {
         version: 1,
         previousHash: Uint8List.fromList(
             List.generate(50, (index) => Random().nextInt(33) + 89)),
-        xchain: xchain,
+        xchainUri: xchain.uri,
         transactionRoot: Uint8List(1),
         transactionCount: 0,
         timestamp: DateTime.now());
@@ -47,5 +47,7 @@ void main() {
   });
 }
 
-BackupModel _generateBackupModel(BlockModel block) =>
-    BackupModel(signature: 'dsa', timestamp: DateTime.now(), payload: block);
+BackupModel _generateBackupModel(BlockModel block) => BackupModel(
+    signature: 'dsa',
+    timestamp: DateTime.now(),
+    assetRef: 'tiki://${block.xchainUri}/${block.id}');

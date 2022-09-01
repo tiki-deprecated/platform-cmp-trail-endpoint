@@ -1,21 +1,25 @@
-class WasabiModel<T> {
-  final String id;
-  final String signature;
-  final DateTime timestamp;
-  final T payload;
+import 'dart:convert';
+
+import 'wasabi_model_rsp.dart';
+
+class WasabiModel {
+  String? id;
+  String? signature;
+  DateTime? timestamp;
+  String? payload;
 
   WasabiModel({
     required this.id,
-    required this.signature,
-    required this.timestamp,
+    this.signature,
+    this.timestamp,
     required this.payload,
   });
 
-  // WasabiModel.fromJson(String? dataStr){
-  //   id = ;
-  //   signature = ;
-  //   timestamp = ;
-  //   payload = ;
-  // }
-
+  WasabiModel.fromRsp(WasabiModelRsp response) {
+    Map<String, dynamic> data = jsonDecode(response.payload ?? '{}');
+    id = data['id'];
+    signature = data['signature'];
+    timestamp = data['timestamp'];
+    payload = data['payload'];
+  }
 }
