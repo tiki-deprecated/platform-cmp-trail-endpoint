@@ -132,17 +132,17 @@ class NodeService {
 
   /// Removes the [TransactionModel] from local [database]
   void discardTransaction(TransactionModel txn) =>
-      _transactionService.discard(txn.id!);
+      _transactionService.prune(txn.id!);
 
   /// Removes the [BlockModel] from local [database] and its [TransactionModel]
   void discardBlock(BlockModel blk, {keepTxn = false}) {
     if (!keepTxn) {
       List<TransactionModel> txns = _transactionService.getByBlock(blk.id!);
       for (TransactionModel txn in txns) {
-        _transactionService.discard(txn.id!);
+        _transactionService.prune(txn.id!);
       }
     }
-    _blockService.discard(blk);
+    _blockService.prune(blk);
   }
 
   Future<void> _createBlock() async {

@@ -57,7 +57,7 @@ class BlockService {
   BlockModel? getLast(String xchainUri) => _repository.getLast(xchainUri);
 
   /// Remove the [blk] from local database.
-  void discard(BlockModel blk) => _repository.remove(blk);
+  void prune(BlockModel blk) => _repository.remove(blk);
 
   /// Add [blockModel] in local database.
   void add(BlockModel blockModel) => _repository.save(blockModel);

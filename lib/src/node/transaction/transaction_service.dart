@@ -75,5 +75,5 @@ class TransactionService {
 
   //TODO what do we use this for? pruning?
   /// Removes the [TransactionModel] from local database.
-  Future<void> discard(Uint8List id) async => _repository.remove(id);
+  Future<void> prune(Uint8List id) async => _repository.remove(id);
 }
