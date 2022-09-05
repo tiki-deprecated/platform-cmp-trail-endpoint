@@ -88,10 +88,9 @@ class NodeService {
   Future<NodeService> init(
       {required String apiKey,
       List<String> adresses = const [],
-      Database? database,
+      required Database database,
       KeysSecureStorageInterface? keysSecureStorage,
       Duration? blkInterval}) async {
-    database ??= sqlite3.openInMemory();
     _wasabiService = WasabiService(apiKey);
     _backupService = BackupService(database, _wasabiService);
     _blockService = BlockService(database);
@@ -129,16 +128,6 @@ class NodeService {
   /// Gets a [TransactionModel] by [TransactionModel.id]
   TransactionModel? getTxn(String id) {
     return _transactionService.getById(id);
-  }
-
-  /// Gets all [TransactionModel] from [Xchain.uri]
-  List<TransactionModel> getTxnByChain(String xchainUri) {
-    List<TransactionModel> txns = [];
-    PageModel<BlockModel> blockPage = _blockService.getByChain(xchainUri);
-    for (BlockModel blk in blockPage.items) {
-      txns.addAll(_transactionService.getByBlock(blk.id!));
-    }
-    return txns;
   }
 
   /// Removes the [TransactionModel] from local [database]

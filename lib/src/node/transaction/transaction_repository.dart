@@ -15,8 +15,7 @@ class TransactionRepository {
 
   final Database _db;
 
-  //TODO this is unsafe. the open in mem should be up at the top level.
-  TransactionRepository({Database? db}) : _db = db ?? sqlite3.openInMemory() {
+  TransactionRepository(this._db) {
     createTable();
   }
 

@@ -16,7 +16,7 @@ class BlockService {
   final BlockRepository _repository;
 
   BlockService(
-    Database? db,
+    Database db,
   ) : _repository = BlockRepository(db);
 
   /// Create a new block from a list of transactions.

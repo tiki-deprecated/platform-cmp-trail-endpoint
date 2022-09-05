@@ -7,7 +7,7 @@ class BackupRepository {
 
   final Database _db;
 
-  BackupRepository(db) : _db = db ?? sqlite3.openInMemory() {
+  BackupRepository(this._db) {
     createTable();
   }
 

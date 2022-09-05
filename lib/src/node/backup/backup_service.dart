@@ -11,7 +11,7 @@ class BackupService {
 
   final WasabiService _wasabiService;
 
-  BackupService(Database? db, this._wasabiService)
+  BackupService(Database db, this._wasabiService)
       : _repository = BackupRepository(db);
 
   /// Saves the [jsonObj] remotely via [WasabiService] by its [assetRef].

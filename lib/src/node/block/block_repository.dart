@@ -9,8 +9,7 @@ class BlockRepository {
   static const table = 'blocks';
   final Database _db;
 
-  //TODO this is unsafe. the open in mem should be up at the top level.
-  BlockRepository(Database? db) : _db = db ?? sqlite3.openInMemory() {
+  BlockRepository(this._db) {
     createTable();
   }
 

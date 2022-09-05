@@ -15,8 +15,8 @@ import 'transaction_repository.dart';
 class TransactionService {
   final TransactionRepository _repository;
 
-  TransactionService(Database? db)
-      : _repository = TransactionRepository(db: db);
+  TransactionService(Database db)
+      : _repository = TransactionRepository(db);
 
   /// Creates a [TransactionModel] with [contents].
   ///

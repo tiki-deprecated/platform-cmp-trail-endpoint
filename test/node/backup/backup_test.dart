@@ -20,7 +20,7 @@ void main() {
   group('backup repository tests', () {
     BackupRepository repository = BackupRepository(db);
     BlockRepository blkRepository = BlockRepository(db);
-    XchainRepository xcRepository = XchainRepository(db: db);
+    XchainRepository xcRepository = XchainRepository(db);
     XchainModel xchain = XchainModel(id: 123, pubkey: 'a', uri: 'teste');
     xcRepository.save(xchain);
     BlockModel blk = BlockModel(

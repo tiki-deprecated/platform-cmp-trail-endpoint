@@ -7,7 +7,7 @@ class XchainRepository {
 
   final Database _db;
 
-  XchainRepository({Database? db}) : _db = db ?? sqlite3.openInMemory() {
+  XchainRepository(this._db) {
     createTable();
   }
 
