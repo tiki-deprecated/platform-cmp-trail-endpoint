@@ -14,6 +14,8 @@ class BackupService {
   BackupService(Database? db, this._wasabiService)
       : _repository = BackupRepository(db);
 
+  //todo if it fails to write, what happens?
+
   /// Saves the [jsonObj] remotely via [WasabiService] by its [assetRef].
   Future<BackupModel> write(String assetRef, JsonObject jsonObj) async {
     String payload = jsonObj.toJson();

@@ -39,7 +39,7 @@ class TransactionService {
     return txn;
   }
 
-  //TODO when/why would you ever update a txn?
+  //TODO when/why would you ever update a txn? -> you can add merkel + block-id
   Future<void> update(TransactionModel transaction, KeysModel key) async {
     if (!memEquals(key.address, transaction.address)) {
       throw Exception(

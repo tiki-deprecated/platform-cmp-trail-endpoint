@@ -8,7 +8,7 @@ class BackupModel {
 
   BackupModel({
     this.id,
-    required this.signature,
+    //required this.signature,
     required this.timestamp,
     required this.assetRef,
   });

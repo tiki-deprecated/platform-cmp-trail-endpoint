@@ -38,7 +38,7 @@ class BlockService {
         transactionCount: transactions.length);
     block.id = sha256(block.header());
     _repository.save(block);
-    return BlockModelResponse(block, merkelTree);
+    return BlockModelResponse(block, merkelTree); //todo finalize txns in here. don't return merkel.
   }
 
   /// Load the [BlockModel] from local database by [BlockModel.id]
@@ -54,7 +54,7 @@ class BlockService {
   //todo xchainUri should be nullable & optional
   /// Get the last block in the chain. If no chain is provided, get the last from
   /// localchain.
-  BlockModel? getLast(String xchainUri) => _repository.getLast(xchainUri);
+  BlockModel? getLast({String? xchainUri}) => _repository.getLast(xchainUri);
 
   /// Remove the [blk] from local database.
   void discard(BlockModel blk) => _repository.remove(blk);

@@ -1,7 +1,6 @@
 import '../node/keys/keys_secure_storage_interface.dart';
 
 //todo is this the right place for this??
-
 class MemSecStorage extends KeysSecureStorageInterface {
   Map<String, String> storage = {};
 

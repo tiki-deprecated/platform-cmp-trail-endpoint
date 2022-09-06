@@ -17,17 +17,16 @@ class TransactionModel {
   BlockModel? block;
   Uint8List? signature;
 
-  TransactionModel({
-    this.seq,
-    this.id,
-    this.version = 1,
-    required this.address,
-    required this.contents,
-    assetRef,
-    timestamp,
-    this.merkelProof,
-    this.block,
-  }) {
+  TransactionModel(
+      {this.seq,
+      this.id,
+      this.version = 1,
+      required this.address,
+      required this.contents,
+      assetRef,
+      timestamp,
+      this.merkelProof,
+      this.block}) {
     this.timestamp = timestamp ?? DateTime.now();
     this.assetRef = assetRef ?? Uint8List(1);
   }
@@ -64,9 +63,7 @@ class TransactionModel {
     }
   }""";
 
-  TransactionModel.deserialize(
-    Uint8List transaction,
-  ) {
+  TransactionModel.deserialize(Uint8List transaction) {
     int currentPos = 0;
     List<Uint8List> parts = [];
     for (int i = 0; i < 5; i++) {
@@ -106,6 +103,7 @@ class TransactionModel {
     ]);
   }
 
+  //TODO this should be at the bottom.
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

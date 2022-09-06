@@ -24,7 +24,7 @@ class XchainModel {
     };
   }
 
-  //todo don't override toString unless it has non default functionality.
+  //todo do for all models.
   @override
   String toString() {
     return '''XchainModel
