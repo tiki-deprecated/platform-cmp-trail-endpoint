@@ -6,22 +6,21 @@
 import 'dart:convert';
 
 import 'keys_model.dart';
-import 'keys_secure_storage_interface.dart';
+import '../../utils/keys_secure_storage_interface.dart';
 
-//TODO where does this go? it should be similar to mem_sec_storage
 class KeysRepository {
   static const _keyPrefix = 'com.mytiki.sdk.';
-  late final KeysSecureStorageInterface _secureStorage;
+  late final SecureStorageStrategyInterface _secureStorage;
 
   KeysRepository(this._secureStorage);
 
   Future<void> save(KeysModel model) => _secureStorage.write(
-      key: _keyPrefix + base64Url.encode(model.address),
-      value: jsonEncode(model.toMap()));
+      key: _keyPrefix + base64.encode(model.address), 
+      value: model.toJson());
 
   Future<KeysModel?> get(String address) async {
     String? raw = await _secureStorage.read(key: _keyPrefix + address);
-    return raw != null ? KeysModel.fromMap(jsonDecode(raw)) : null;
+    return raw != null ? KeysModel.fromJson(raw) : null;
   }
 
   Future<void> delete(String address) =>

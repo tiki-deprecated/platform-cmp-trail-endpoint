@@ -20,18 +20,11 @@ class KeysService {
   /// Create a new [RsaKeyPair] and save its [RsaKeyPair.public] in object storage.
   Future<KeysModel> create() async {
     RsaKeyPair rsaKeyPair = await generateAsync();
-    Uint8List address = sha256(base64Url.decode(rsaKeyPair.publicKey.encode()));
+    Uint8List address = sha256(base64.decode(rsaKeyPair.publicKey.encode()));
     KeysModel keys = KeysModel(
       address,
       rsaKeyPair.privateKey,
     );
-    String uri = 'tiki://${base64Url.encode(address)}';
-    _repository.save(keys);
-    XchainModel chain = XchainModel(
-        uri: uri,
-        pubkey: rsaKeyPair.publicKey.encode()); //TODO this doesn't belong here.
-    _backupService?.write(uri,
-        JsonObject.fromMap(chain.toMap())); //TODO this doesn't belong here.
     return keys;
   }
 
