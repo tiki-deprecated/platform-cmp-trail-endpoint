@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class XchainModel {
   String address;
   String pubkey;
@@ -11,7 +13,20 @@ class XchainModel {
         lastChecked = map['last_checked'] != null
             ? DateTime.fromMillisecondsSinceEpoch(map['last_checked'] * 1000)
             : null;
-  
+
+  static XchainModel fromJson(String json) =>
+      XchainModel.fromMap(jsonDecode(json));
+
+  String get uri => 'tiki://${base64Url.encode(base64.decode(address))}';
+
+  String toJson() {
+    return jsonEncode({
+      'address': address,
+      'pubkey': pubkey,
+      'last_checked': lastChecked,
+    });
+  }
+
   @override
   String toString() {
     return '''XchainModel

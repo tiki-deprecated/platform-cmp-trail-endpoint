@@ -1,11 +1,12 @@
 import 'dart:typed_data';
 
+import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/merkel_tree.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/rsa/rsa_public_key.dart';
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
 import '../block/block_model.dart';
 import '../keys/keys_model.dart';
 import 'transaction_model.dart';
@@ -14,8 +15,7 @@ import 'transaction_repository.dart';
 class TransactionService {
   final TransactionRepository _repository;
 
-  TransactionService(Database db)
-      : _repository = TransactionRepository(db);
+  TransactionService(Database db) : _repository = TransactionRepository(db);
 
   /// Creates a [TransactionModel] with [contents].
   ///
@@ -33,7 +33,7 @@ class TransactionService {
         contents: contents,
         assetRef: Uint8List.fromList(assetRef.codeUnits));
     txn.signature = sign(keys.privateKey, txn.serialize());
-    txn.id = sha256(txn.serialize());
+    txn.id = Digest("SHA3-256").process(txn.serialize());
     txn = _repository.save(txn);
     return txn;
   }
@@ -45,17 +45,19 @@ class TransactionService {
   }
 
   /// Validates the transaction hash and merkel proof (if present).
-  static bool validateInclusion(TransactionModel transaction, BlockModel block) =>
+  static bool validateInclusion(
+          TransactionModel transaction, BlockModel block) =>
       MerkelTree.validate(
           transaction.id!, transaction.merkelProof!, block.transactionRoot);
 
-  static bool validateIntegrity(TransactionModel transaction) =>
-      memEquals(sha256(transaction.serialize()), transaction.id!);
+  static bool validateIntegrity(TransactionModel transaction) => memEquals(
+      Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
   /// Validates the transaction signature.
   static bool checkAuthor(
           TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
-      verify(pubKey, transaction.serialize(includeSignature: false), transaction.signature!);
+      verify(pubKey, transaction.serialize(includeSignature: false),
+          transaction.signature!);
 
   /// Gets all [TransactionModel] that belongs to the [BlockModel] with [blockId].
   List<TransactionModel> getByBlock(Uint8List blockId) =>

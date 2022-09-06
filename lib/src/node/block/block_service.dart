@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/merkel_tree.dart';
 import '../../utils/page_model.dart';
-import '../../utils/utils.dart';
 import '../transaction/transaction_model.dart';
 import '../transaction/transaction_service.dart';
 import 'block_model.dart';
@@ -31,11 +31,12 @@ class BlockService {
     Uint8List transactionRoot = merkelTree.root!;
     BlockModel? lastBlock = _repository.getLast();
     BlockModel block = BlockModel(
-        previousHash:
-            lastBlock == null ? Uint8List(1) : sha256(lastBlock.header()),
+        previousHash: lastBlock == null
+            ? Uint8List(1)
+            : Digest("SHA3-256").process(lastBlock.header()),
         transactionRoot: transactionRoot,
         transactionCount: transactions.length);
-    block.id = sha256(block.header());
+    block.id = Digest("SHA3-256").process(block.header());
     for (TransactionModel transaction in transactions) {
       transaction.block = block;
       transaction.merkelProof = merkelTree.proofs[transaction.id];
@@ -66,7 +67,6 @@ class BlockService {
 
   /// Get the last block in the chain. If no chain is provided, get the last from
   /// localchain.
-  BlockModel? getLast(String xchainAddress) => 
-  _repository.getLast(xchainIAddress: xchainAddress);
-
+  BlockModel? getLast(String xchainAddress) =>
+      _repository.getLast(xchainIAddress: xchainAddress);
 }

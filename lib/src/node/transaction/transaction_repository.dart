@@ -3,8 +3,6 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import '../../utils/utils.dart';
-import '../block/block_model.dart';
 import '../block/block_repository.dart';
 import '../xchain/xchain_model.dart';
 import '../xchain/xchain_repository.dart';
@@ -46,7 +44,6 @@ class TransactionRepository {
     ''');
   }
 
-  //TODO Why is everything all base64? — is it just cause wasabi/s3?
   TransactionModel save(TransactionModel transaction) {
     _db.execute('''INSERT INTO $table VALUES (
       ${transaction.seq},
@@ -66,9 +63,9 @@ class TransactionRepository {
 
   TransactionModel update(TransactionModel transaction) {
     _db.execute('''UPDATE $table SET
-        merkel_proof = ${uint8ListTobase64(transaction.merkelProof, addQuotes: true, nullable: true)}, 
-        block_id = ${uint8ListTobase64(transaction.block!.id, addQuotes: true, nullable: true)}
-        WHERE id = ${uint8ListTobase64(transaction.id!, addQuotes: true, nullable: true)};  
+        $collumnMerkelProof = ${transaction.merkelProof}, 
+        $collumnBlockId = ${base64.encode(transaction.block!.id!)}
+        WHERE $collumnId = '${base64.encode(transaction.id!)}';  
         ''');
     return getById(base64.encode(transaction.id!))!;
   }
@@ -90,8 +87,7 @@ class TransactionRepository {
   }
 
   Future<void> prune(Uint8List id) async {
-    _db.execute(
-        'DELETE FROM $table WHERE id = "${uint8ListTobase64(id, nullable: false, addQuotes: true)}"');
+    _db.execute('DELETE FROM $table WHERE id = "${base64.encode(id)}""');
   }
 
   List<TransactionModel> _select({int? page, String? whereStmt}) {
@@ -162,16 +158,16 @@ class TransactionRepository {
                       row['$table.$collumnTimestamp'],
                 };
       Map<String, dynamic>? transactionMap = {
-        collumnSeq : row['$table.$collumnSeq}'],
-        collumnId : row['$table.$collumnId}'],
-        collumnMerkelProof : row['$table.$collumnMerkelProof}'],
-        collumnVersion : row['$table.$collumnVersion}'],
-        collumnAddress : row['$table.$collumnAddress}'],
-        collumnContents : row['$table.$collumnContents}'],
-        collumnAssetRef : row['$table.$collumnAssetRef}'],
-        'block' : blockMap,
-        collumnTimestamp : row['$table.$collumnTimestamp}'],
-        collumnSignature : row['$table.$collumnSignature}'],
+        collumnSeq: row['$table.$collumnSeq}'],
+        collumnId: row['$table.$collumnId}'],
+        collumnMerkelProof: row['$table.$collumnMerkelProof}'],
+        collumnVersion: row['$table.$collumnVersion}'],
+        collumnAddress: row['$table.$collumnAddress}'],
+        collumnContents: row['$table.$collumnContents}'],
+        collumnAssetRef: row['$table.$collumnAssetRef}'],
+        'block': blockMap,
+        collumnTimestamp: row['$table.$collumnTimestamp}'],
+        collumnSignature: row['$table.$collumnSignature}'],
       };
       TransactionModel transaction = TransactionModel.fromMap(transactionMap);
       transactions.add(transaction);

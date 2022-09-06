@@ -16,7 +16,8 @@ class KeysModel {
 
   KeysModel.fromJson(String jsonString)
       : address = base64.decode(jsonDecode(jsonString)['address']!),
-        privateKey = CryptoRSAPrivateKey.decode(jsonDecode(jsonString)['private_key']!);
+        privateKey =
+            CryptoRSAPrivateKey.decode(jsonDecode(jsonString)['private_key']!);
 
   String toJson() {
     return jsonEncode({'address': address, 'private_key': privateKey.encode()});

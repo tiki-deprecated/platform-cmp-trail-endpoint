@@ -112,13 +112,13 @@ class BlockRepository {
         collumnXchainAddress: row['$table.$collumnXchainAddress'] == null
             ? null
             : XchainModel.fromMap({
-              '$xchainTable.${XchainRepository.collumnAddress}' : 
-                row ['$xchainTable.${XchainRepository.collumnAddress}'],
-              '$xchainTable.${XchainRepository.collumnPubkey}' : 
-                row ['$xchainTable.${XchainRepository.collumnPubkey}'],
-              '$xchainTable.${XchainRepository.collumnLastChecked}' : 
-                row ['$xchainTable.${XchainRepository.collumnLastChecked}'],
-            }),
+                '$xchainTable.${XchainRepository.collumnAddress}':
+                    row['$xchainTable.${XchainRepository.collumnAddress}'],
+                '$xchainTable.${XchainRepository.collumnPubkey}':
+                    row['$xchainTable.${XchainRepository.collumnPubkey}'],
+                '$xchainTable.${XchainRepository.collumnLastChecked}':
+                    row['$xchainTable.${XchainRepository.collumnLastChecked}'],
+              }),
         collumnTransactionRoot: row['$table.$collumnTransactionRoot'],
         collumnTransactionCount: row['$table.$collumnTransactionCount'],
         collumnTimestamp: row['$table.$collumnTimestamp'],

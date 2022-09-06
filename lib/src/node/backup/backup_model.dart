@@ -24,9 +24,10 @@ class BackupModel {
         assetRef = map[BackupRepository.collumnAssetRef],
         payload = map[BackupRepository.collumnPayload],
         signature = map[BackupRepository.collumnSignature],
-        timestamp = map[BackupRepository.collumnTimestamp] == null ? null :
-          DateTime.fromMillisecondsSinceEpoch(
-            map[BackupRepository.collumnTimestamp] * 1000);
+        timestamp = map[BackupRepository.collumnTimestamp] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(
+                map[BackupRepository.collumnTimestamp] * 1000);
 
   @override
   String toString() {

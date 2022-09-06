@@ -3,22 +3,15 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
-import '../utils/json_object.dart';
-import '../utils/merkel_tree.dart';
-import '../utils/page_model.dart';
-import '../utils/rsa/rsa_public_key.dart';
-import '../utils/utils.dart';
 import 'block/block_model.dart';
-import 'block/block_model_reponse.dart';
 import 'keys/keys_model.dart';
+import 'secure_storage_sttgy_if.dart';
 import 'transaction/transaction_model.dart';
 
 import 'backup/backup_service.dart';
 import 'block/block_service.dart';
-import 'keys/keys_secure_storage_interface.dart';
 import 'keys/keys_service.dart';
 import 'transaction/transaction_service.dart';
-import 'wasabi/wasabi_model.dart';
 import 'wasabi/wasabi_service.dart';
 import 'xchain/xchain_model.dart';
 import 'xchain/xchain_service.dart';
@@ -36,10 +29,7 @@ class NodeService {
   late final KeysModel _keys;
 
   Timer? _blkTimer;
-  Duration? _blkInterval;
-
-  CryptoRSAPublicKey get publicKey => _keys.privateKey.public;
-  String get address => base64Url.encode(sha256(base64Url.decode(publicKey.encode())));
+  late final Duration _blkInterval;
 
   /// Initialzes de servic.e
   ///
@@ -87,20 +77,19 @@ class NodeService {
   /// or if the total size of the serialized transactions is greater than 100kb.
   Future<NodeService> init(
       {required String apiKey,
-      List<String> adresses = const [],
       required Database database,
-      KeysSecureStorageInterface? keysSecureStorage,
-      Duration? blkInterval}) async {
+      required SecureStorageStrategyIf keysSecureStorage,
+      List<String> adresses = const [],
+      blkInterval = const Duration(minutes: 1)}) async {
+    _blkInterval = blkInterval;
     _wasabiService = WasabiService(apiKey);
-    _backupService = BackupService(database, _wasabiService);
-    _blockService = BlockService(database);
-    _keysService = KeysService(keysSecureStorage, _backupService);
-    _transactionService = TransactionService(database);
-
+    _keysService = KeysService(keysSecureStorage);
     _xchainService = XchainService(database);
-    _blkInterval = blkInterval ?? const Duration(minutes: 1);
+    _transactionService = TransactionService(database);
+    _blockService = BlockService(database, _transactionService);
 
     await _loadKeys(adresses);
+    _backupService = BackupService(database, _wasabiService, _keys);
 
     await _loadXchains(adresses);
 
@@ -146,25 +135,25 @@ class NodeService {
   }
 
   Future<void> _createBlock() async {
-    List<TransactionModel> txns = _transactionService.getNoBlock();
+    List<TransactionModel> txns = _transactionService.getPending();
     if (txns.isNotEmpty) {
       int totalSize = 0;
       for (TransactionModel txn in txns) {
         totalSize += txn.serialize().buffer.lengthInBytes;
       }
       DateTime lastCreated = txns.last.timestamp;
-      DateTime oneMinAgo = DateTime.now().subtract(_blkInterval!);
+      DateTime oneMinAgo = DateTime.now().subtract(_blkInterval);
       if (lastCreated.isBefore(oneMinAgo) || totalSize >= 100000) {
-        BlockModelResponse blkRsp = _blockService.create(txns);
-        MerkelTree merkelTree = blkRsp.merkelTree;
-        for (TransactionModel txn in txns) {
-          txn.merkelProof = merkelTree.proofs[txn.id!];
-          txn.block = blkRsp.block;
-          _transactionService.update(txn, _keys);
-          _backupService.write(txn.uri, JsonObject.fromMap(txn.toMap()));
+        BlockModel blk = _blockService.create(txns);
+        List<TransactionModel> commitedTxns =
+            _transactionService.getByBlock(blk.id!);
+        String blkUri =
+            'tiki://${base64Url.encode(_keys.address)}/${base64Url.encode(blk.id!)}';
+        for (TransactionModel txn in commitedTxns) {
+          String txnUri = '$blkUri/${base64Url.encode(txn.id!)}';
+          _backupService.enqueue(txnUri, txn.toJson());
         }
-        _backupService.write(
-            blkRsp.block.uri, JsonObject.fromMap(blkRsp.block.toMap()));
+        _backupService.enqueue(blkUri, blk.toJson());
       }
       if (_blkTimer == null || !_blkTimer!.isActive) _setBlkTimer();
     }
@@ -178,21 +167,29 @@ class NodeService {
         return;
       }
     }
+
     _keys = await _keysService.create();
+
+    XchainModel xchain = XchainModel(
+        address: base64.encode(_keys.address),
+        pubkey: _keys.privateKey.public.encode());
+    _xchainService.add(xchain);
+
+    _backupService.enqueue(xchain.uri, xchain.toJson());
   }
 
   Future<void> _loadXchains(List<String> addresses) async {
     for (String address in addresses) {
       String assetRef = 'tiki://$address';
-      JsonObject? xchainJson = await _backupService.read(assetRef);
+      String? xchainJson = await _wasabiService.read(assetRef);
       if (xchainJson != null) {
-        XchainModel xchain = XchainModel.fromMap(xchainJson.data);
+        XchainModel xchain = XchainModel.fromJson(xchainJson);
         _xchainService.add(xchain);
       }
     }
   }
 
   void _setBlkTimer() {
-    _blkTimer = Timer.periodic(_blkInterval!, (_) => _createBlock());
+    _blkTimer = Timer.periodic(_blkInterval, (_) => _createBlock());
   }
 }

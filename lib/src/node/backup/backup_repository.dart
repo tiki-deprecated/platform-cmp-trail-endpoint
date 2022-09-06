@@ -44,7 +44,7 @@ class BackupRepository {
     return _select(whereStmt: where);
   }
 
-  List<BackupModel> _select({int page = 0, String? whereStmt}) {
+  List<BackupModel> _select({String? whereStmt}) {
     ResultSet results = _db.select('''
         SELECT 
           $table.$collumnId
@@ -58,11 +58,11 @@ class BackupRepository {
     List<BackupModel> backups = [];
     for (final Row row in results) {
       Map<String, dynamic> bkpMap = {
-        collumnId : row[collumnId],
-        collumnAssetRef : row[collumnAssetRef] ,
-        collumnSignature : row[collumnSignature],
-        collumnPayload : row[collumnPayload],
-        collumnTimestamp : row[collumnTimestamp]
+        collumnId: row[collumnId],
+        collumnAssetRef: row[collumnAssetRef],
+        collumnSignature: row[collumnSignature],
+        collumnPayload: row[collumnPayload],
+        collumnTimestamp: row[collumnTimestamp]
       };
       BackupModel bkp = BackupModel.fromMap(bkpMap);
       backups.add(bkp);

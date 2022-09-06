@@ -3,7 +3,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'xchain_model.dart';
 
 class XchainRepository {
-  Database _db;
+  final Database _db;
 
   static const String table = 'xchain';
   static const String collumnAddress = 'address';
@@ -31,7 +31,8 @@ class XchainRepository {
     );''');
 
   XchainModel? getByAddress(String address) {
-    List<XchainModel> xchains = _select(whereStmt: 'WHERE $collumnAddress = $address');
+    List<XchainModel> xchains =
+        _select(whereStmt: 'WHERE $collumnAddress = $address');
     return xchains.isNotEmpty ? xchains.first : null;
   }
 
@@ -42,7 +43,6 @@ class XchainRepository {
       WHERE $collumnAddress = ${xchain.address};
       ''');
   }
-
 
   List<XchainModel> _select({String whereStmt = 'WHERE 1=1'}) {
     ResultSet results = _db.select('''

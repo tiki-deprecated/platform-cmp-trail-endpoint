@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
 import '../xchain/xchain_model.dart';
 
 class BlockModel {
@@ -26,9 +26,18 @@ class BlockModel {
   }
 
   Uint8List header() {
-    Uint8List serializedVersion = serializeInt(version);
-    Uint8List serializedTimestamp =
-        serializeInt(timestamp.millisecondsSinceEpoch ~/ 1000);
+    Uint8List serializedVersion = (BytesBuilder()
+          ..add([encodeBigInt(BigInt.from(version)).length])
+          ..add(encodeBigInt(BigInt.from(version))))
+        .toBytes();
+    Uint8List serializedTimestamp = (BytesBuilder()
+          ..add([
+            encodeBigInt(BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))
+                .length
+          ])
+          ..add(encodeBigInt(
+              BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))))
+        .toBytes();
     Uint8List serializedPreviousHash = previousHash;
     Uint8List serializedTransactionRoot = transactionRoot;
     return Uint8List.fromList([
@@ -50,8 +59,8 @@ class BlockModel {
         timestamp =
             DateTime.fromMillisecondsSinceEpoch(map['timestamp'] ~/ 1000);
 
-  static BlockModel fromJson(String jsonString) => 
-    BlockModel.fromMap(jsonDecode(jsonString));
+  static BlockModel fromJson(String jsonString) =>
+      BlockModel.fromMap(jsonDecode(jsonString));
 
   String toJson() {
     return jsonEncode({

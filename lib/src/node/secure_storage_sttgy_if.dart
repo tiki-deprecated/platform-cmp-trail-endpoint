@@ -1,4 +1,3 @@
-
 abstract class SecureStorageStrategyIf {
   Future<void> write({required String key, required String value});
 

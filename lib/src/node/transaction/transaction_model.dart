@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
 import '../block/block_model.dart';
 
 /// A transaction in the blockchain.
@@ -45,6 +45,9 @@ class TransactionModel {
         timestamp = map['timestamp'],
         signature = map['signature'];
 
+  static TransactionModel fromJson(String json) =>
+      TransactionModel.fromMap(jsonDecode(json));
+
   TransactionModel.fromSerialized(
     Uint8List transaction,
   ) {
@@ -67,16 +70,26 @@ class TransactionModel {
   }
 
   Uint8List serialize({includeSignature = true}) {
-    Uint8List serializedVersion = serializeInt(version);
+    Uint8List serializedVersion = (BytesBuilder()
+          ..add([encodeBigInt(BigInt.from(version)).length])
+          ..add(encodeBigInt(BigInt.from(version))))
+        .toBytes();
     Uint8List serializedAddress =
         Uint8List.fromList([address.length, ...address]);
-    Uint8List serializedTimestamp =
-        serializeInt(timestamp.millisecondsSinceEpoch ~/ 1000);
+    Uint8List serializedTimestamp = (BytesBuilder()
+          ..add([
+            encodeBigInt(BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))
+                .length
+          ])
+          ..add(encodeBigInt(
+              BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))))
+        .toBytes();
     Uint8List serializedAssetRef =
         Uint8List.fromList([assetRef.length, ...base64Url.decode(assetRef)]);
     Uint8List serializedSignature = Uint8List.fromList(
-        signature != null && includeSignature ? 
-        [signature!.length, ...signature!] : [1, 0]);
+        signature != null && includeSignature
+            ? [signature!.length, ...signature!]
+            : [1, 0]);
     Uint8List serializedContents = Uint8List.fromList([1, 0, ...contents]);
     return Uint8List.fromList([
       ...serializedVersion,
@@ -86,6 +99,21 @@ class TransactionModel {
       ...serializedSignature,
       ...serializedContents,
     ]);
+  }
+
+  String toJson() {
+    return jsonEncode({
+      'seq': seq,
+      'id': id,
+      'version': version,
+      'address': address,
+      'contents': contents,
+      'asset_ref': assetRef,
+      'merkel_proof': merkelProof,
+      'block': block,
+      'timestamp': timestamp,
+      'signature': signature,
+    });
   }
 
   @override
