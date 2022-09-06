@@ -6,7 +6,7 @@ import 'wasabi_repository.dart';
 class WasabiService {
   final WasabiRepository _repository;
 
-  WasabiService(String apiKey) : _repository = WasabiRepository(apiKey);
+  WasabiService(String apiKey) : _repository = WasabiRepository();
 
   Future<String?> read(String assetRef) async {
     WasabiModelRsp response = await _repository.get(assetRef);

@@ -22,7 +22,7 @@ class CryptoRSAPrivateKey extends RSAPrivateKey {
       : super(modulus, privateExponent, p, q);
 
   static CryptoRSAPrivateKey decode(String encodedKey) {
-    ASN1Parser topLevelParser = ASN1Parser(base64Url.decode(encodedKey));
+    ASN1Parser topLevelParser = ASN1Parser(base64.decode(encodedKey));
     ASN1Sequence topLevelSeq = topLevelParser.nextObject() as ASN1Sequence;
 
     ASN1OctetString privateKeyOctet =

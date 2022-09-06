@@ -2,8 +2,6 @@ import 'dart:typed_data';
 
 import 'wasabi_model_rsp.dart';
 
-import '../bouncer/bouncer_service.dart';
-
 class WasabiRepository {
   final BouncerService _bouncerService;
 
