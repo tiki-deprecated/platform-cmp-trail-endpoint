@@ -5,7 +5,7 @@ import 'wasabi_repository.dart';
 class WasabiService {
   final WasabiRepository _repository;
 
-  WasabiService(String apiKey) : _repository = WasabiRepository(apiKey);
+  WasabiService(String apiKey) : _repository = WasabiRepository();
 
   Future<WasabiModel> read(String assetRef) async {
     WasabiModelRsp response = _repository.get(assetRef);
@@ -26,5 +26,4 @@ class WasabiService {
     throw Exception(
         'Wasabi error: ${response.code} - ${response.message}. Response $response');
   }
-
 }

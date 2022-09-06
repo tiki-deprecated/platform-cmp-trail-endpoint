@@ -10,8 +10,10 @@ environment:
 dependencies:
   pointycastle: ^3.6.1
   sqlite3: ^1.7.2
+  http: ^0.13.5
 
 dev_dependencies:
   test: ^1.21.4
   flutter_lints: ^2.0.1
+  uuid: ^3.0.6
 
