@@ -19,7 +19,7 @@ class CryptoRSAPublicKey extends RSAPublicKey {
       : super(modulus, exponent);
 
   static CryptoRSAPublicKey decode(String encodedKey) {
-    ASN1Parser topLevelParser = ASN1Parser(base64Url.decode(encodedKey));
+    ASN1Parser topLevelParser = ASN1Parser(base64.decode(encodedKey));
     ASN1Sequence topLevelSeq = topLevelParser.nextObject() as ASN1Sequence;
 
     ASN1BitString publicKeyBitString =
@@ -53,6 +53,6 @@ class CryptoRSAPublicKey extends RSAPublicKey {
     sequence.add(algorithm);
     sequence.add(publicKeyBitString);
     sequence.encode();
-    return base64Url.encode(sequence.encodedBytes!);
+    return base64.encode(sequence.encodedBytes!);
   }
 }
