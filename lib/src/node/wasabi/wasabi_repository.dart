@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'wasabi_model_rsp.dart';
 
 import '../bouncer/bouncer_service.dart';
@@ -7,11 +9,11 @@ class WasabiRepository {
 
   WasabiRepository(String apiKey) : _bouncerService = BouncerService(apiKey);
 
-  WasabiModelRsp get(String uri) {
+  Future<WasabiModelRsp> get(String uri) {
     throw UnimplementedError();
   }
 
-  WasabiModelRsp post(String payload) {
+  Future<WasabiModelRsp> post(String payload, Uint8List signature) {
     throw UnimplementedError();
   }
 }
