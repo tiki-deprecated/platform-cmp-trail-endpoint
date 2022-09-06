@@ -24,9 +24,9 @@ void main() {
   group('Transaction tests', () {
     test('TransactionRepository: create and retrieve transactions', () {
       Database db = sqlite3.openInMemory();
-      TransactionRepository repository = TransactionRepository(db: db);
+      TransactionRepository repository = TransactionRepository(db);
       BlockRepository blkRepo = BlockRepository(db);
-      XchainRepository chainRepo = XchainRepository(db: db);
+      XchainRepository chainRepo = XchainRepository(db);
       TransactionModel txn1 = _generateTransactionModel();
       TransactionModel txn2 = _generateTransactionModel();
       TransactionModel txn3 = _generateTransactionModel();
@@ -59,7 +59,7 @@ void main() {
       TestInMemoryStorage keyStorage = TestInMemoryStorage();
       KeysService keysService = KeysService(keyStorage);
 
-      XchainRepository xchainRepository = XchainRepository(db: db);
+      XchainRepository xchainRepository = XchainRepository(db);
 
       BlockService blockService = BlockService(db);
       TransactionService transactionService = TransactionService(db);

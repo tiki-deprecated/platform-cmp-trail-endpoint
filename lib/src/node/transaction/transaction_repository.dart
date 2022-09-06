@@ -2,71 +2,80 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
-import '../../utils/utils.dart';
-import '../block/block_model.dart';
+
 import '../block/block_repository.dart';
 import '../xchain/xchain_model.dart';
 import '../xchain/xchain_repository.dart';
 import 'transaction_model.dart';
 
 class TransactionRepository {
-  static const table = 'transactions';
+  static const table = 'transaction';
+  static const collumnSeq = 'seq';
+  static const collumnId = 'id';
+  static const collumnMerkelProof = 'merkel_proof';
+  static const collumnVersion = 'version';
+  static const collumnAddress = 'address';
+  static const collumnContents = 'contents';
+  static const collumnAssetRef = 'asset_ref';
+  static const collumnBlockId = 'block_id';
+  static const collumnTimestamp = 'timestamp';
+  static const collumnSignature = 'signature';
 
   final Database _db;
 
-  TransactionRepository({Database? db}) : _db = db ?? sqlite3.openInMemory() {
+  TransactionRepository(this._db) {
     createTable();
   }
 
   Future<void> createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-          seq INTEGER PRIMARY KEY,
-          id STRING,
-          merkel_proof BLOB,
-          version INTEGER NOT NULL,
-          address BLOB NOT NULL,
-          contents BLOB NOT NULL,
-          asset_ref TEXT NOT NULL,
-          block_id INTEGER, 
-          timestamp INTEGER NOT NULL,
-          signature TEXT NOT NULL
+          $collumnSeq INTEGER PRIMARY KEY,
+          $collumnId STRING,
+          $collumnMerkelProof BLOB,
+          $collumnVersion INTEGER NOT NULL,
+          $collumnAddress BLOB NOT NULL,
+          $collumnContents BLOB NOT NULL,
+          $collumnAssetRef TEXT NOT NULL,
+          $collumnBlockId TEXT, 
+          $collumnTimestamp INTEGER NOT NULL,
+          $collumnSignature TEXT NOT NULL
       );
     ''');
   }
 
   TransactionModel save(TransactionModel transaction) {
     _db.execute('''INSERT INTO $table VALUES (
-        ${transaction.seq}, 
-        ${uint8ListToBase64Url(transaction.id, nullable: false, addQuotes: true)}, 
-        ${uint8ListToBase64Url(transaction.merkelProof, addQuotes: true, nullable: true)},
-        ${transaction.version}, 
-        ${uint8ListToBase64Url(transaction.address, addQuotes: true)}, 
-        ${uint8ListToBase64Url(transaction.contents, addQuotes: true)}, 
-        ${uint8ListToBase64Url(transaction.assetRef, addQuotes: true)}, 
-        ${transaction.block?.id}, 
-        ${transaction.timestamp.millisecondsSinceEpoch ~/ 1000}, 
-        ${uint8ListToBase64Url(transaction.signature, nullable: true, addQuotes: true)});''');
+      ${transaction.seq},
+      ${base64.encode(transaction.id!)},
+      ${transaction.merkelProof},
+      ${transaction.version},
+      ${transaction.address},
+      ${transaction.contents},
+      ${transaction.assetRef},
+      ${transaction.block == null ? null : "'${transaction.block!.id}'"},
+      ${transaction.timestamp},
+      ${transaction.signature}
+       );''');
     transaction.seq = _db.lastInsertRowId;
     return transaction;
   }
 
-  TransactionModel update(TransactionModel transaction) {
+  TransactionModel commit(TransactionModel transaction) {
     _db.execute('''UPDATE $table SET
-        merkel_proof = ${uint8ListToBase64Url(transaction.merkelProof, addQuotes: true, nullable: true)}, 
-        block_id = ${uint8ListToBase64Url(transaction.block!.id, addQuotes: true, nullable: true)}
-        WHERE id = ${uint8ListToBase64Url(transaction.id!, addQuotes: true, nullable: true)};  
+        $collumnMerkelProof = ${transaction.merkelProof}, 
+        $collumnBlockId = ${base64.encode(transaction.block!.id!)}
+        WHERE $collumnId = '${base64.encode(transaction.id!)}';  
         ''');
-    return getById(base64Url.encode(transaction.id!))!;
+    return getById(base64.encode(transaction.id!))!;
   }
 
-  List<TransactionModel> getByBlock(Uint8List? blockId) {
-    String blockIdBase64 = uint8ListToBase64Url(blockId)!;
-    String whereStmt = 'WHERE block_id = "$blockIdBase64"';
+  List<TransactionModel> getByBlockId(Uint8List blockId) {
+    String whereStmt = 'WHERE block_id = "${base64.encode(blockId)}"';
     return _select(whereStmt: whereStmt);
   }
 
-  List<TransactionModel> getBlockNull() {
+  List<TransactionModel> getPending() {
     String whereStmt = 'WHERE block_id IS NULL';
     return _select(whereStmt: whereStmt);
   }
@@ -77,76 +86,88 @@ class TransactionRepository {
     return transactions.isNotEmpty ? transactions[0] : null;
   }
 
-  Future<void> remove(Uint8List id) async {
-    _db.execute(
-        'DELETE FROM $table WHERE id = "${uint8ListToBase64Url(id, nullable: false, addQuotes: true)}"');
+  Future<void> prune(Uint8List id) async {
+    _db.execute('DELETE FROM $table WHERE id = "${base64.encode(id)}""');
   }
 
   List<TransactionModel> _select({int? page, String? whereStmt}) {
+    String blockTable = BlockRepository.table;
+    String xchainTable = XchainRepository.table;
     ResultSet results = _db.select('''
         SELECT 
-          $table.id as 'txn.id',
-          $table.seq as 'txn.seq',
-          $table.version as 'txn.version',
-          $table.address as 'txn.address',
-          $table.contents as 'txn.contents',
-          $table.asset_ref as 'txn.asset_ref',
-          $table.merkel_proof as 'txn.merkel_proof',
-          $table.block_id as 'txn.block_id',
-          $table.timestamp as 'txn.timestamp',
-          $table.signature as 'txn.signature',
-          ${BlockRepository.table}.id as 'blocks.id',
-          ${BlockRepository.table}.version as 'blocks.version',
-          ${BlockRepository.table}.previous_hash as 'blocks.previous_hash',
-          ${BlockRepository.table}.xchain_uri as 'blocks.xchain_uri',
-          ${BlockRepository.table}.transaction_root as 'blocks.transaction_root',
-          ${BlockRepository.table}.transaction_count as 'blocks.transaction_count',
-          ${BlockRepository.table}.timestamp as 'blocks.timestamp',
-          ${XchainRepository.table}.id as 'xchains.id',
-          ${XchainRepository.table}.pubkey as 'xchains.pubkey',
-          ${XchainRepository.table}.last_checked as 'xchains.last_checked',
-          ${XchainRepository.table}.uri as 'xchains.uri'
+          $table.$collumnId as '$table.$collumnId',
+          $table.$collumnSeq as '$table.$collumnSeq',
+          $table.$collumnVersion as '$table.$collumnVersion',
+          $table.$collumnAddress as '$table.$collumnAddress',
+          $table.$collumnContents as '$table.$collumnContents',
+          $table.$collumnAssetRef as '$table.$collumnAssetRef',
+          $table.$collumnMerkelProof as '$table.$collumnMerkelProof',
+          $table.$collumnBlockId as '$table.$collumnBlockId',
+          $table.$collumnTimestamp as '$table.$collumnTimestamp',
+          $table.$collumnSignature as '$table.$collumnSignature',
+          $blockTable.${BlockRepository.collumnSeq} as '$blockTable.${BlockRepository.collumnSeq}',
+          $blockTable.${BlockRepository.collumnId} as '$blockTable.${BlockRepository.collumnId}',
+          $blockTable.${BlockRepository.collumnVersion} as '$blockTable.${BlockRepository.collumnVersion}',
+          $blockTable.${BlockRepository.collumnPreviousHash} as '$blockTable.${BlockRepository.collumnPreviousHash}',
+          $blockTable.${BlockRepository.collumnXchainAddress} as '$blockTable.${BlockRepository.collumnXchainAddress}',
+          $blockTable.${BlockRepository.collumnTransactionRoot} as '$blockTable.${BlockRepository.collumnTransactionRoot}',
+          $blockTable.${BlockRepository.collumnTransactionCount} as '$blockTable.${BlockRepository.collumnTransactionCount}',
+          $blockTable.${BlockRepository.collumnTimestamp} as '$blockTable.${BlockRepository.collumnTimestamp}',
+          $xchainTable.${XchainRepository.collumnAddress} as '$xchainTable.${XchainRepository.collumnAddress}',
+          $xchainTable.${XchainRepository.collumnPubkey} as '$xchainTable.${XchainRepository.collumnPubkey}',
+          $xchainTable.${XchainRepository.collumnLastChecked} as '$xchainTable.${XchainRepository.collumnLastChecked}'
         FROM $table
-        LEFT JOIN ${BlockRepository.table} as blocks
-        ON transactions.block_id = blocks.id
-        LEFT JOIN ${XchainRepository.table} as xchains
-        ON blocks.xchain_uri = xchains.id 
+        LEFT JOIN $blockTable
+        ON $table.$collumnBlockId = $blockTable.$BlockRepository.collumnId
+        LEFT JOIN $xchainTable
+        ON $blockTable.${BlockRepository.collumnXchainAddress} = $xchainTable.${XchainRepository.collumnAddress}
         ${whereStmt ?? ''}
         ${page == null ? '' : 'LIMIT ${page * 100},100'};
         ''');
     List<TransactionModel> transactions = [];
     for (final Row row in results) {
-      Map<String, dynamic>? blockMap = row['blocks.id'] == null
-          ? null
-          : {
-              'id': base64UrlToUint8List((row['blocks.id'])),
-              'version': row['blocks.version'],
-              'previous_hash':
-                  base64UrlToUint8List(row['blocks.previous_hash']),
-              'transaction_root':
-                  base64UrlToUint8List(row['blocks.transaction_root']),
-              'transaction_count': row['blocks.transaction_count'],
-              'timestamp': row['blocks.timestamp'],
-              'xchain': row['xchains.id'] == null
-                  ? null
-                  : XchainModel.fromMap({
-                      'id': row['xchains.id'],
-                      'last_checked': row['xchains.last_checked'],
-                      'uri': row['xchains.uri'],
-                    })
-            };
+      XchainModel? xchain =
+          row['$blockTable.${BlockRepository.collumnXchainAddress}'] == null
+              ? null
+              : XchainModel.fromMap({
+                  '$xchainTable.${XchainRepository.collumnAddress}':
+                      row['$xchainTable.${XchainRepository.collumnAddress}'],
+                  '$xchainTable.${XchainRepository.collumnPubkey}':
+                      row['$xchainTable.${XchainRepository.collumnPubkey}'],
+                  '$xchainTable.${XchainRepository.collumnLastChecked}': row[
+                      '$xchainTable.${XchainRepository.collumnLastChecked}'],
+                });
+      Map<String, dynamic>? blockMap =
+          row['$blockTable.${BlockRepository.collumnId}'] == null
+              ? null
+              : {
+                  BlockRepository.collumnSeq:
+                      row['$blockTable.${BlockRepository.collumnSeq}'],
+                  BlockRepository.collumnId:
+                      row['$blockTable.${BlockRepository.collumnId}'],
+                  BlockRepository.collumnVersion:
+                      row['$blockTable.${BlockRepository.collumnVersion}'],
+                  BlockRepository.collumnPreviousHash:
+                      row['$blockTable.${BlockRepository.collumnPreviousHash}'],
+                  BlockRepository.collumnXchainAddress: xchain,
+                  BlockRepository.collumnTransactionRoot:
+                      row['$table.${BlockRepository.collumnTransactionRoot}'],
+                  BlockRepository.collumnTransactionCount:
+                      row['$table.${BlockRepository.collumnTransactionCount}'],
+                  BlockRepository.collumnTimestamp:
+                      row['$table.$collumnTimestamp'],
+                };
       Map<String, dynamic>? transactionMap = {
-        'id': base64UrlToUint8List(row['txn.id']),
-        'seq': row['txn.seq'],
-        'version': row['txn.version'],
-        'address': base64UrlToUint8List(row['txn.address']),
-        'contents': base64UrlToUint8List(row['txn.contents']),
-        'asset_ref': base64UrlToUint8List(row['txn.asset_ref']),
-        'merkel_proof': base64UrlToUint8List(row['txn.merkel_proof']),
-        'timestamp':
-            DateTime.fromMillisecondsSinceEpoch(row['txn.timestamp'] * 1000),
-        'signature': base64UrlToUint8List(row['txn.signature']),
-        'block': blockMap == null ? null : BlockModel.fromMap(blockMap)
+        collumnSeq: row['$table.$collumnSeq}'],
+        collumnId: row['$table.$collumnId}'],
+        collumnMerkelProof: row['$table.$collumnMerkelProof}'],
+        collumnVersion: row['$table.$collumnVersion}'],
+        collumnAddress: row['$table.$collumnAddress}'],
+        collumnContents: row['$table.$collumnContents}'],
+        collumnAssetRef: row['$table.$collumnAssetRef}'],
+        'block': blockMap,
+        collumnTimestamp: row['$table.$collumnTimestamp}'],
+        collumnSignature: row['$table.$collumnSignature}'],
       };
       TransactionModel transaction = TransactionModel.fromMap(transactionMap);
       transactions.add(transaction);

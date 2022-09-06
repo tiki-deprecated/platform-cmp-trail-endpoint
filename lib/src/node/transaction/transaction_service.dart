@@ -1,12 +1,12 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/merkel_tree.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/rsa/rsa_public_key.dart';
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
 import '../block/block_model.dart';
 import '../keys/keys_model.dart';
 import 'transaction_model.dart';
@@ -15,8 +15,7 @@ import 'transaction_repository.dart';
 class TransactionService {
   final TransactionRepository _repository;
 
-  TransactionService(Database? db)
-      : _repository = TransactionRepository(db: db);
+  TransactionService(Database db) : _repository = TransactionRepository(db);
 
   /// Creates a [TransactionModel] with [contents].
   ///
@@ -34,42 +33,38 @@ class TransactionService {
         contents: contents,
         assetRef: Uint8List.fromList(assetRef.codeUnits));
     txn.signature = sign(keys.privateKey, txn.serialize());
-    txn.id = sha256(txn.serialize());
+    txn.id = Digest("SHA3-256").process(txn.serialize());
     txn = _repository.save(txn);
     return txn;
   }
 
-  Future<void> update(TransactionModel transaction, KeysModel key) async {
-    if (!memEquals(key.address, transaction.address)) {
-      throw Exception(
-          'Check the address. Invalid key found for: ${base64Url.encode(transaction.address)}.');
-    }
-    _repository.update(transaction);
-  }
+  void commit(TransactionModel transaction) => _repository.commit(transaction);
 
   /// Validates the transaction hash and merkel proof (if present).
-  static bool checkInclusion(TransactionModel transaction, BlockModel block) =>
+  static bool validateInclusion(
+          TransactionModel transaction, BlockModel block) =>
       MerkelTree.validate(
           transaction.id!, transaction.merkelProof!, block.transactionRoot);
 
-  static bool checkIntegrity(TransactionModel transaction) =>
-      memEquals(sha256(transaction.serialize()), transaction.id!);
+  static bool validateIntegrity(TransactionModel transaction) => memEquals(
+      Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
   /// Validates the transaction signature.
-  static bool checkAuthor(
+  static bool validateAuthor(
           TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
-      verify(pubKey, transaction.serialize(), transaction.signature!);
+      verify(pubKey, transaction.serialize(includeSignature: false),
+          transaction.signature!);
 
   /// Gets all [TransactionModel] that belongs to the [BlockModel] with [blockId].
   List<TransactionModel> getByBlock(Uint8List blockId) =>
-      _repository.getByBlock(blockId);
+      _repository.getByBlockId(blockId);
 
   /// Gets the [TransactionModel] by its id.
   TransactionModel? getById(String id) => _repository.getById(id);
 
   /// Gets the [TransactionModel]s that were not added to a block yet;
-  List<TransactionModel> getNoBlock() => _repository.getBlockNull();
+  List<TransactionModel> getPending() => _repository.getPending();
 
   /// Removes the [TransactionModel] from local database.
-  Future<void> discard(Uint8List id) async => _repository.remove(id);
+  Future<void> prune(Uint8List id) async => _repository.prune(id);
 }

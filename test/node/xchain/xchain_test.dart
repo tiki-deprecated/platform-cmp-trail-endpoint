@@ -13,7 +13,7 @@ import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
 void main() {
   final db = sqlite3.openInMemory();
   group('xchain repository tests', () {
-    XchainRepository repository = XchainRepository(db: db);
+    XchainRepository repository = XchainRepository(db);
     test('save xchains, do not save dupliate uri', () {
       XchainModel chain1 = _generateXchainModel();
       XchainModel chain2 = _generateXchainModel();

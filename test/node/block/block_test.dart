@@ -35,7 +35,7 @@ void main() {
       KeysModel keys = await keysService.create();
       Database db = sqlite3.openInMemory();
       BlockService blockService = BlockService(db);
-      XchainRepository xchainRepository = XchainRepository(db: db);
+      XchainRepository xchainRepository = XchainRepository(db);
       TransactionService transactionService = TransactionService(db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
@@ -54,7 +54,7 @@ void main() {
       TestInMemoryStorage keyStorage = TestInMemoryStorage();
       KeysService keysService = KeysService(keyStorage);
 
-      XchainRepository xchainRepository = XchainRepository(db: db);
+      XchainRepository xchainRepository = XchainRepository(db);
 
       BlockService blockService = BlockService(db);
       TransactionService transactionService = TransactionService(db);

@@ -14,14 +14,12 @@ class KeysModel {
 
   KeysModel(this.address, this.privateKey);
 
-  KeysModel.fromMap(map)
-      : address = base64Url.decode(map['address']!),
-        privateKey = CryptoRSAPrivateKey.decode(map['private_key']!);
+  KeysModel.fromJson(String jsonString)
+      : address = base64.decode(jsonDecode(jsonString)['address']!),
+        privateKey =
+            CryptoRSAPrivateKey.decode(jsonDecode(jsonString)['private_key']!);
 
-  Map<String, String> toMap() {
-    return {
-      'address': base64Url.encode(address),
-      'private_key': privateKey.encode()
-    };
+  String toJson() {
+    return jsonEncode({'address': address, 'private_key': privateKey.encode()});
   }
 }

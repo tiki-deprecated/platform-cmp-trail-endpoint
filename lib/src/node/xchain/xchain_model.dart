@@ -1,38 +1,38 @@
-import '../../utils/json_object.dart';
+import 'dart:convert';
 
 class XchainModel {
-  int? id;
-  DateTime? lastChecked;
-  String uri;
+  String address;
   String pubkey;
+  DateTime? lastChecked;
 
-  XchainModel(
-      {this.id, this.lastChecked, required this.uri, required this.pubkey});
+  XchainModel({required this.address, required this.pubkey, this.lastChecked});
 
   XchainModel.fromMap(Map<String, dynamic> map)
-      : id = map['id'],
+      : address = map['address'],
         pubkey = map['pubkey'],
         lastChecked = map['last_checked'] != null
             ? DateTime.fromMillisecondsSinceEpoch(map['last_checked'] * 1000)
-            : null,
-        uri = map['uri'];
+            : null;
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
+  static XchainModel fromJson(String json) =>
+      XchainModel.fromMap(jsonDecode(json));
+
+  String get uri => 'tiki://${base64Url.encode(base64.decode(address))}';
+
+  String toJson() {
+    return jsonEncode({
+      'address': address,
       'pubkey': pubkey,
       'last_checked': lastChecked,
-      'uri': uri,
-    };
+    });
   }
 
   @override
   String toString() {
     return '''XchainModel
-      id: $id,
+      address: $address,
       'pubkey': $pubkey,
       last_checked: $lastChecked,
-      uri: $uri,
     ''';
   }
 }

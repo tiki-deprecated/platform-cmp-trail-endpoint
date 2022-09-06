@@ -13,4 +13,11 @@ class WasabiModelRsp {
     message = jsonMap['message'];
     payload = jsonMap['payload'];
   }
+
+  @override
+  String toString() => '''
+    code : $code
+    status : $status
+    message : $message
+    payload : $payload''';
 }

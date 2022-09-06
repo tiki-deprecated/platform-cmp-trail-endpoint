@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'utils.dart';
+import 'package:pointycastle/export.dart';
+
+import 'bytes.dart';
 
 class MerkelTree {
   Map<Uint8List, Uint8List> proofs = {};
@@ -16,13 +18,13 @@ class MerkelTree {
             ..addByte(1)
             ..add(hash))
           .toBytes();
-      root = sha256((BytesBuilder()
+      root = Digest("SHA3-256").process((BytesBuilder()
             ..add(hash)
             ..add(hash))
           .toBytes());
       depth = 1;
     } else {
-      root = _calculateMerkelRoot([...hashes]);
+      root = _calculate([...hashes]);
     }
   }
 
@@ -30,12 +32,12 @@ class MerkelTree {
     int pos = proof[0];
     Uint8List hashPair = proof.sublist(1, 33);
     if (pos == 0) {
-      hash = sha256((BytesBuilder()
+      hash = Digest("SHA3-256").process((BytesBuilder()
             ..add(hashPair)
             ..add(hash))
           .toBytes());
     } else {
-      hash = sha256((BytesBuilder()
+      hash = Digest("SHA3-256").process((BytesBuilder()
             ..add(hash)
             ..add(hashPair))
           .toBytes());
@@ -44,7 +46,7 @@ class MerkelTree {
     return memEquals(hash, root);
   }
 
-  Uint8List _calculateMerkelRoot(List<Uint8List> inputHashes) {
+  Uint8List _calculate(List<Uint8List> inputHashes) {
     List<Uint8List> outputHashes = [];
     if (inputHashes.length % 2 == 1) {
       inputHashes.add(inputHashes.last);
@@ -52,24 +54,24 @@ class MerkelTree {
     for (int i = 0; i < inputHashes.length; i = i + 2) {
       Uint8List? leftHash = inputHashes[i];
       Uint8List? rightHash = inputHashes[i + 1];
-      Uint8List hash = sha256((BytesBuilder()
+      Uint8List hash = Digest("SHA3-256").process((BytesBuilder()
             ..add(leftHash)
             ..add(rightHash))
           .toBytes());
       outputHashes.add(hash);
     }
 
-    _buildMerkelProof(outputHashes, inputHashes);
+    _calculateProof(outputHashes, inputHashes);
 
     if (outputHashes.length > 1) {
       depth++;
-      return _calculateMerkelRoot(outputHashes);
+      return _calculate(outputHashes);
     }
 
     return outputHashes.single;
   }
 
-  void _buildMerkelProof(
+  void _calculateProof(
       List<Uint8List> outputHashes, List<Uint8List> inputHashes) {
     int hashesPerOutput = pow(2, depth).toInt();
     for (int i = 0; i < outputHashes.length; i++) {
