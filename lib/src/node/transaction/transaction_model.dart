@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import '../../utils/utils.dart';
@@ -8,7 +9,7 @@ class TransactionModel {
   late final int version;
   late final Uint8List address;
   late final DateTime timestamp;
-  late final Uint8List assetRef;
+  late final String assetRef;
   late final Uint8List contents;
 
   int? seq;
@@ -44,27 +45,7 @@ class TransactionModel {
         timestamp = map['timestamp'],
         signature = map['signature'];
 
-  String get uri {
-    String txnId = uint8ListToBase64Url(id)!;
-    return '${block!.uri}/$txnId';
-  }
-
-  @override
-  String toString() => """TransactionModel{
-      'seq': $seq
-      'id': $id,
-      'version': $version,
-      'address': $address,
-      'contents': $address,
-      'asset_ref': assetRef,
-      'merkel_proof': $merkelProof,
-      'block': $block,
-      'timestamp': $timestamp,
-      'signature': $signature
-    }
-  }""";
-
-  TransactionModel.deserialize(
+  TransactionModel.fromSerialized(
     Uint8List transaction,
   ) {
     int currentPos = 0;
@@ -80,21 +61,22 @@ class TransactionModel {
     address = parts[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         decodeBigInt(parts[2]).toInt() * 1000);
-    assetRef = parts[3][0] == 0 ? Uint8List(1) : parts[3];
+    assetRef = parts[3][0] == 0 ? 'AA==' : base64Url.encode(parts[3]);
     signature = parts[4][0] == 0 ? null : parts[4];
     contents = transaction.sublist(currentPos + 2);
   }
 
-  Uint8List serialize() {
+  Uint8List serialize({includeSignature = true}) {
     Uint8List serializedVersion = serializeInt(version);
     Uint8List serializedAddress =
         Uint8List.fromList([address.length, ...address]);
     Uint8List serializedTimestamp =
         serializeInt(timestamp.millisecondsSinceEpoch ~/ 1000);
     Uint8List serializedAssetRef =
-        Uint8List.fromList([assetRef.length, ...assetRef]);
+        Uint8List.fromList([assetRef.length, ...base64Url.decode(assetRef)]);
     Uint8List serializedSignature = Uint8List.fromList(
-        signature != null ? [signature!.length, ...signature!] : [1, 0]);
+        signature != null && includeSignature ? 
+        [signature!.length, ...signature!] : [1, 0]);
     Uint8List serializedContents = Uint8List.fromList([1, 0, ...contents]);
     return Uint8List.fromList([
       ...serializedVersion,
@@ -115,7 +97,4 @@ class TransactionModel {
 
   @override
   int get hashCode => id.hashCode;
-
-  //TODO huh?
-  toMap() {}
 }
