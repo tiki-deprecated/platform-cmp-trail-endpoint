@@ -1,8 +1,6 @@
-import '../node/keys/keys_secure_storage_interface.dart';
+import '../node/secure_storage_sttgy_if.dart';
 
-//todo is this the right place for this??
-
-class MemSecStorage extends KeysSecureStorageInterface {
+class MemSecureStorageStrategy extends SecureStorageStrategyIf {
   Map<String, String> storage = {};
 
   @override

@@ -81,6 +81,6 @@ class CryptoRSAPrivateKey extends RSAPrivateKey {
     sequence.add(algorithm);
     sequence.add(privateKeyOctet);
     sequence.encode();
-    return base64Url.encode(sequence.encodedBytes!);
+    return base64.encode(sequence.encodedBytes!);
   }
 }

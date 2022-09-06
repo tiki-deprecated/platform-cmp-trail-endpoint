@@ -4,19 +4,12 @@
  */
 
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:pointycastle/api.dart';
-import 'package:pointycastle/asymmetric/api.dart';
-import 'package:pointycastle/asymmetric/oaep.dart';
-import 'package:pointycastle/asymmetric/rsa.dart';
-import 'package:pointycastle/digests/sha256.dart';
-import 'package:pointycastle/key_generators/api.dart';
-import 'package:pointycastle/key_generators/rsa_key_generator.dart';
-import 'package:pointycastle/signers/rsa_signer.dart';
+import 'package:pointycastle/export.dart';
 
 import '../isolate.dart';
-import '../utils.dart' as utils;
 import 'rsa_private_key.dart';
 import 'rsa_public_key.dart';
 
@@ -26,7 +19,7 @@ RsaKeyPair generate() {
   final keyGen = RSAKeyGenerator()
     ..init(ParametersWithRandom(
         RSAKeyGeneratorParameters(BigInt.parse('65537'), 2048, 64),
-        utils.secureRandom()));
+        secureRandom()));
 
   AsymmetricKeyPair<PublicKey, PrivateKey> keyPair = keyGen.generateKeyPair();
   RSAPublicKey publicKey = keyPair.publicKey as RSAPublicKey;
@@ -44,7 +37,7 @@ Future<RsaKeyPair> generateAsync() =>
 Uint8List encrypt(CryptoRSAPublicKey key, Uint8List plaintext) {
   final encryptor = OAEPEncoding(RSAEngine())
     ..init(true, PublicKeyParameter<RSAPublicKey>(key));
-  return utils.processInBlocks(encryptor, plaintext);
+  return processInBlocks(encryptor, plaintext);
 }
 
 Future<Map<String, Uint8List>> encryptBulk(
@@ -76,7 +69,7 @@ Future<Uint8List> encryptAsync(CryptoRSAPublicKey key, Uint8List plaintext) {
 Uint8List decrypt(CryptoRSAPrivateKey key, Uint8List ciphertext) {
   final decryptor = OAEPEncoding(RSAEngine())
     ..init(false, PrivateKeyParameter<RSAPrivateKey>(key));
-  return utils.processInBlocks(decryptor, ciphertext);
+  return processInBlocks(decryptor, ciphertext);
 }
 
 Future<Uint8List> decryptAsync(CryptoRSAPrivateKey key, Uint8List ciphertext) {
@@ -164,4 +157,39 @@ Future<bool> verifyAll(CryptoRSAPublicKey key, Map<Uint8List, Uint8List> req) {
     return true;
   }, q)
       .then((isVerified) => isVerified);
+}
+
+FortunaRandom secureRandom() {
+  var secureRandom = FortunaRandom();
+  var random = Random.secure();
+  final seeds = <int>[];
+  for (int i = 0; i < 32; i++) {
+    seeds.add(random.nextInt(255));
+  }
+  secureRandom.seed(KeyParameter(Uint8List.fromList(seeds)));
+  return secureRandom;
+}
+
+Uint8List processInBlocks(AsymmetricBlockCipher engine, Uint8List input) {
+  final numBlocks = input.length ~/ engine.inputBlockSize +
+      ((input.length % engine.inputBlockSize != 0) ? 1 : 0);
+
+  final output = Uint8List(numBlocks * engine.outputBlockSize);
+
+  var inputOffset = 0;
+  var outputOffset = 0;
+  while (inputOffset < input.length) {
+    final chunkSize = (inputOffset + engine.inputBlockSize <= input.length)
+        ? engine.inputBlockSize
+        : input.length - inputOffset;
+
+    outputOffset += engine.processBlock(
+        input, inputOffset, chunkSize, output, outputOffset);
+
+    inputOffset += chunkSize;
+  }
+
+  return (output.length == outputOffset)
+      ? output
+      : output.sublist(0, outputOffset);
 }

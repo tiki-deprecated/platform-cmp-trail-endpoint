@@ -61,7 +61,7 @@ class TransactionRepository {
     return transaction;
   }
 
-  TransactionModel update(TransactionModel transaction) {
+  TransactionModel commit(TransactionModel transaction) {
     _db.execute('''UPDATE $table SET
         $collumnMerkelProof = ${transaction.merkelProof}, 
         $collumnBlockId = ${base64.encode(transaction.block!.id!)}

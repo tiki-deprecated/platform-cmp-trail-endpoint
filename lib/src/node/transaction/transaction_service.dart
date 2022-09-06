@@ -38,11 +38,7 @@ class TransactionService {
     return txn;
   }
 
-  Future<void> commit(TransactionModel transaction) async {
-    // get transaction from repo and check if it is pending
-    // save transaction
-    _repository.update(transaction);
-  }
+  void commit(TransactionModel transaction) => _repository.commit(transaction);
 
   /// Validates the transaction hash and merkel proof (if present).
   static bool validateInclusion(
@@ -54,7 +50,7 @@ class TransactionService {
       Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
   /// Validates the transaction signature.
-  static bool checkAuthor(
+  static bool validateAuthor(
           TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
       verify(pubKey, transaction.serialize(includeSignature: false),
           transaction.signature!);

@@ -18,17 +18,16 @@ class TransactionModel {
   BlockModel? block;
   Uint8List? signature;
 
-  TransactionModel({
-    this.seq,
-    this.id,
-    this.version = 1,
-    required this.address,
-    required this.contents,
-    assetRef,
-    timestamp,
-    this.merkelProof,
-    this.block,
-  }) {
+  TransactionModel(
+      {this.seq,
+      this.id,
+      this.version = 1,
+      required this.address,
+      required this.contents,
+      assetRef,
+      timestamp,
+      this.merkelProof,
+      this.block}) {
     this.timestamp = timestamp ?? DateTime.now();
     this.assetRef = assetRef ?? Uint8List(1);
   }

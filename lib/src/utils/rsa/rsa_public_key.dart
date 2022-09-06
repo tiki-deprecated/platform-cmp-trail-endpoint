@@ -53,6 +53,6 @@ class CryptoRSAPublicKey extends RSAPublicKey {
     sequence.add(algorithm);
     sequence.add(publicKeyBitString);
     sequence.encode();
-    return base64Url.encode(sequence.encodedBytes!);
+    return base64.encode(sequence.encodedBytes!);
   }
 }
