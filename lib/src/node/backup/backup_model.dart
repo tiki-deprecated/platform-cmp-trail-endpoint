@@ -1,41 +1,41 @@
+import 'dart:typed_data';
 
-/// The model for blocks backed up in the object storage.
+import '../../utils/rsa/rsa.dart';
+import '../../utils/rsa/rsa_private_key.dart';
+import 'backup_repository.dart';
+
 class BackupModel {
-  String? id;
-  String? signature;
-  DateTime timestamp = DateTime(0);
-  String? assetRef;
+  int? id;
+  final String assetRef;
+  String? payload;
+  late final Uint8List signature;
+  DateTime? timestamp;
 
-  BackupModel({
-    this.id,
-    required this.signature,
-    required this.timestamp,
-    required this.assetRef,
-  });
+  BackupModel(
+      {required this.assetRef,
+      required this.payload,
+      required CryptoRSAPrivateKey signKey}) {
+    signature = sign(signKey,
+        Uint8List.fromList([...assetRef.codeUnits, ...payload!.codeUnits]));
+  }
 
   BackupModel.fromMap(Map<String, dynamic> map)
-      : id = map['id'],
-        signature = map['signature'],
-        timestamp =
-            DateTime.fromMillisecondsSinceEpoch(map['timestamp'] * 1000),
-        assetRef = map['asset_ref'];
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'signature': signature,
-      'timestamp': timestamp,
-      'aset_ref': assetRef,
-    };
-  }
+      : id = map[BackupRepository.collumnId],
+        assetRef = map[BackupRepository.collumnAssetRef],
+        payload = map[BackupRepository.collumnPayload],
+        signature = map[BackupRepository.collumnSignature],
+        timestamp = map[BackupRepository.collumnTimestamp] == null ? null :
+          DateTime.fromMillisecondsSinceEpoch(
+            map[BackupRepository.collumnTimestamp] * 1000);
 
   @override
   String toString() {
     return '''BackupModel
-      'id' : $id,
-      'signature' : $signature,
-      'timestamp' : $timestamp,
-      'asset_ref' : $assetRef
+      id : $id
+      assetRef : $assetRef
+      payload : $payload
+      signature : $signature
+      timestamp : $timestamp
     ''';
   }
 }

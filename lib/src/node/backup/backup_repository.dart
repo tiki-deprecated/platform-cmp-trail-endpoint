@@ -5,6 +5,12 @@ import 'backup_model.dart';
 class BackupRepository {
   static const table = 'backup';
 
+  static const collumnId = 'id';
+  static const collumnAssetRef = 'asset_ref';
+  static const collumnSignature = 'signature';
+  static const collumnPayload = 'payload';
+  static const collumnTimestamp = 'timestamp';
+
   final Database _db;
 
   BackupRepository(this._db) {
@@ -14,10 +20,11 @@ class BackupRepository {
   void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-        id TEXT PRIMARY KEY,
-        signature TEXT NOT NULL,
-        timestamp INTEGER NOT NULL,
-        assef_ref TEXT
+        $collumnId INTEGER PRIMARY KEY AUTO INCREMENT,
+        $collumnAssetRef TEXT NOT NULL,
+        $collumnSignature BLOB NOT NULL,
+        $collumnPayload TEXT,
+        $collumnTimestamp INTEGER,
       );
     ''');
   }
@@ -25,61 +32,43 @@ class BackupRepository {
   void save(BackupModel backup) {
     _db.execute('''INSERT INTO $table VALUES (
         ${backup.id},
-        ${backup.signature == null ? null : "'${backup.signature}'"},
-        ${backup.timestamp.millisecondsSinceEpoch ~/ 1000},
-        '${backup.assetRef}'
+        '${backup.assetRef}',
+        ${backup.signature},
+        ${backup.payload == null ? null : "'${backup.payload}'"},
+        ${backup.timestamp == null ? null : backup.timestamp!.millisecondsSinceEpoch ~/ 1000},
       );''');
   }
 
-  //todo remove this.
-  List<BackupModel> getAll() {
-    return _paged(0);
-  }
-
-  BackupModel? getById(int id) {
-    List<BackupModel> backups = _select(whereStmt: 'WHERE id = $id');
-    return backups.isNotEmpty ? backups[0] : null;
-  }
-
-  BackupModel? getByAssetRef(String assetRef) {
-    List<BackupModel> backups =
-        _select(whereStmt: 'WHERE block_id = "$assetRef"');
-    return backups.isNotEmpty ? backups[0] : null;
-  }
-
-  List<BackupModel> getAfter(DateTime since) {
-    int sinceInSeconds = since.millisecondsSinceEpoch ~/ 1000;
-    return _select(whereStmt: 'WHERE timestamp >= $sinceInSeconds');
-  }
-
-  //todo this should not work like this. it'll just load everything into mem.
-  List<BackupModel> _paged(page, {String? whereStmt}) {
-    List<BackupModel> pagedBackups = _select(page: page, whereStmt: whereStmt);
-    if (pagedBackups.length == 100) pagedBackups.addAll(_paged(page + 1));
-    return pagedBackups;
+  List<BackupModel> getPending() {
+    String where = 'WHERE timestamp IS NULL';
+    return _select(whereStmt: where);
   }
 
   List<BackupModel> _select({int page = 0, String? whereStmt}) {
     ResultSet results = _db.select('''
         SELECT 
-          $table.id as 'bkp.id',
-          $table.signature as 'bkp.signature',
-          $table.timestamp as 'bkp.timestamp',
-          $table.assef_ref as 'bkp.asset_ref'
+          $table.$collumnId
+          $table.$collumnAssetRef
+          $table.$collumnSignature
+          $table.$collumnPayload
+          $table.$collumnTimestamp
         FROM $table as backup
         ${whereStmt ?? 'WHERE 1=1'}
         ''');
     List<BackupModel> backups = [];
     for (final Row row in results) {
       Map<String, dynamic> bkpMap = {
-        'id': row['bkp.id'],
-        'signature': row['bkp.signature'],
-        'timestamp': row['bkp.timestamp'],
-        'asset_ref': row['asset_ref']
+        collumnId : row[collumnId],
+        collumnAssetRef : row[collumnAssetRef] ,
+        collumnSignature : row[collumnSignature],
+        collumnPayload : row[collumnPayload],
+        collumnTimestamp : row[collumnTimestamp]
       };
       BackupModel bkp = BackupModel.fromMap(bkpMap);
       backups.add(bkp);
     }
     return backups;
   }
+
+  void update(BackupModel bkp) {}
 }
