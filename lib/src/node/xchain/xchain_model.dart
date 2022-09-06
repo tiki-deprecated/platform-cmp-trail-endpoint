@@ -1,37 +1,23 @@
 class XchainModel {
-  int? id;
-  DateTime? lastChecked;
-  String uri;
+  String address;
   String pubkey;
+  DateTime? lastChecked;
 
-  XchainModel(
-      {this.id, this.lastChecked, required this.uri, required this.pubkey});
+  XchainModel({required this.address, required this.pubkey, this.lastChecked});
 
   XchainModel.fromMap(Map<String, dynamic> map)
-      : id = map['id'],
+      : address = map['address'],
         pubkey = map['pubkey'],
         lastChecked = map['last_checked'] != null
             ? DateTime.fromMillisecondsSinceEpoch(map['last_checked'] * 1000)
-            : null,
-        uri = map['uri'];
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'pubkey': pubkey,
-      'last_checked': lastChecked,
-      'uri': uri,
-    };
-  }
-
-  //todo don't override toString unless it has non default functionality.
+            : null;
+  
   @override
   String toString() {
     return '''XchainModel
-      id: $id,
+      address: $address,
       'pubkey': $pubkey,
       last_checked: $lastChecked,
-      uri: $uri,
     ''';
   }
 }
