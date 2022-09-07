@@ -10,7 +10,7 @@ class MetadataService {
 
   void save(MetadataKey key, String value) => _repository.save(key, value);
 
-  String get(MetadataKey key, String value) => _repository.get(key);
+  String get(MetadataKey key) => _repository.get(key);
 
   void update(MetadataKey key, String value) => _repository.update(key, value);
 }

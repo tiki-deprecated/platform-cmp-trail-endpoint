@@ -18,7 +18,7 @@ class MetadataRepository {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
         $columnKey TEXT PRIMARY KEY,
-        $columnValue TEXT,
+        $columnValue TEXT
       );
     ''');
   }
@@ -34,7 +34,7 @@ class MetadataRepository {
     _db.execute('''UPDATE $table SET
         $columnValue = '$value'
         WHERE 
-        $columnKey = ${key.value}
+        $columnKey = '${key.value}'
       ;''');
   }
 
