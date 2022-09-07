@@ -4,14 +4,14 @@ import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 
 import '../../utils/rsa/rsa.dart';
-import '../secure_storage_sttgy_if.dart';
+import 'keys_interface.dart';
 import 'keys_model.dart';
 import 'keys_repository.dart';
 
 class KeysService {
   final KeysRepository _repository;
 
-  KeysService(SecureStorageStrategyIf secureStorageStrategy)
+  KeysService(KeysInterface secureStorageStrategy)
       : _repository = KeysRepository(secureStorageStrategy);
 
   /// Create a new [RsaKeyPair] and save its [RsaKeyPair.public] in object storage.

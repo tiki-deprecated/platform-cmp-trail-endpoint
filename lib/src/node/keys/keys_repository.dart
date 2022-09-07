@@ -5,12 +5,12 @@
 
 import 'dart:convert';
 
-import '../secure_storage_sttgy_if.dart';
+import 'keys_interface.dart';
 import 'keys_model.dart';
 
 class KeysRepository {
   static const _keyPrefix = 'com.mytiki.sdk.';
-  late final SecureStorageStrategyIf _secureStorage;
+  late final KeysInterface _secureStorage;
 
   KeysRepository(this._secureStorage);
 
