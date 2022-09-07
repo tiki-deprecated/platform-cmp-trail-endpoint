@@ -18,8 +18,7 @@ class TransactionModel {
   BlockModel? block;
   Uint8List? signature;
 
-  TransactionModel(
-      {this.seq,
+  TransactionModel({this.seq,
       this.id,
       this.version = 1,
       required this.address,

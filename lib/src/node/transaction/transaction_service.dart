@@ -40,7 +40,6 @@ class TransactionService {
 
   void commit(TransactionModel transaction) => _repository.commit(transaction);
 
-  /// Validates the transaction hash and merkel proof (if present).
   static bool validateInclusion(
           TransactionModel transaction, BlockModel block) =>
       MerkelTree.validate(
@@ -49,22 +48,17 @@ class TransactionService {
   static bool validateIntegrity(TransactionModel transaction) => memEquals(
       Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
-  /// Validates the transaction signature.
   static bool validateAuthor(
           TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
       verify(pubKey, transaction.serialize(includeSignature: false),
           transaction.signature!);
 
-  /// Gets all [TransactionModel] that belongs to the [BlockModel] with [blockId].
   List<TransactionModel> getByBlock(Uint8List blockId) =>
       _repository.getByBlockId(blockId);
 
-  /// Gets the [TransactionModel] by its id.
   TransactionModel? getById(String id) => _repository.getById(id);
 
-  /// Gets the [TransactionModel]s that were not added to a block yet;
   List<TransactionModel> getPending() => _repository.getPending();
 
-  /// Removes the [TransactionModel] from local database.
   Future<void> prune(Uint8List id) async => _repository.prune(id);
 }

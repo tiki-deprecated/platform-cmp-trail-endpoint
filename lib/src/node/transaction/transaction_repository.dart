@@ -4,8 +4,6 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../block/block_repository.dart';
-import '../xchain/xchain_model.dart';
-import '../xchain/xchain_repository.dart';
 import 'transaction_model.dart';
 
 class TransactionRepository {
@@ -30,8 +28,8 @@ class TransactionRepository {
   Future<void> createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-          $collumnSeq INTEGER PRIMARY KEY,
-          $collumnId STRING,
+          $collumnSeq INTEGER AUTO INCREMENT,
+          $collumnId STRING PRIMARY KEY,
           $collumnMerkelProof BLOB,
           $collumnVersion INTEGER NOT NULL,
           $collumnAddress BLOB NOT NULL,
@@ -92,7 +90,7 @@ class TransactionRepository {
 
   List<TransactionModel> _select({int? page, String? whereStmt}) {
     String blockTable = BlockRepository.table;
-    String xchainTable = XchainRepository.table;
+    // String xchainTable = XchainRepository.table;
     ResultSet results = _db.select('''
         SELECT 
           $table.$collumnId as '$table.$collumnId',
@@ -109,34 +107,17 @@ class TransactionRepository {
           $blockTable.${BlockRepository.collumnId} as '$blockTable.${BlockRepository.collumnId}',
           $blockTable.${BlockRepository.collumnVersion} as '$blockTable.${BlockRepository.collumnVersion}',
           $blockTable.${BlockRepository.collumnPreviousHash} as '$blockTable.${BlockRepository.collumnPreviousHash}',
-          $blockTable.${BlockRepository.collumnXchainAddress} as '$blockTable.${BlockRepository.collumnXchainAddress}',
           $blockTable.${BlockRepository.collumnTransactionRoot} as '$blockTable.${BlockRepository.collumnTransactionRoot}',
           $blockTable.${BlockRepository.collumnTransactionCount} as '$blockTable.${BlockRepository.collumnTransactionCount}',
           $blockTable.${BlockRepository.collumnTimestamp} as '$blockTable.${BlockRepository.collumnTimestamp}',
-          $xchainTable.${XchainRepository.collumnAddress} as '$xchainTable.${XchainRepository.collumnAddress}',
-          $xchainTable.${XchainRepository.collumnPubkey} as '$xchainTable.${XchainRepository.collumnPubkey}',
-          $xchainTable.${XchainRepository.collumnLastChecked} as '$xchainTable.${XchainRepository.collumnLastChecked}'
         FROM $table
         LEFT JOIN $blockTable
         ON $table.$collumnBlockId = $blockTable.$BlockRepository.collumnId
-        LEFT JOIN $xchainTable
-        ON $blockTable.${BlockRepository.collumnXchainAddress} = $xchainTable.${XchainRepository.collumnAddress}
         ${whereStmt ?? ''}
         ${page == null ? '' : 'LIMIT ${page * 100},100'};
         ''');
     List<TransactionModel> transactions = [];
     for (final Row row in results) {
-      XchainModel? xchain =
-          row['$blockTable.${BlockRepository.collumnXchainAddress}'] == null
-              ? null
-              : XchainModel.fromMap({
-                  '$xchainTable.${XchainRepository.collumnAddress}':
-                      row['$xchainTable.${XchainRepository.collumnAddress}'],
-                  '$xchainTable.${XchainRepository.collumnPubkey}':
-                      row['$xchainTable.${XchainRepository.collumnPubkey}'],
-                  '$xchainTable.${XchainRepository.collumnLastChecked}': row[
-                      '$xchainTable.${XchainRepository.collumnLastChecked}'],
-                });
       Map<String, dynamic>? blockMap =
           row['$blockTable.${BlockRepository.collumnId}'] == null
               ? null
@@ -149,7 +130,6 @@ class TransactionRepository {
                       row['$blockTable.${BlockRepository.collumnVersion}'],
                   BlockRepository.collumnPreviousHash:
                       row['$blockTable.${BlockRepository.collumnPreviousHash}'],
-                  BlockRepository.collumnXchainAddress: xchain,
                   BlockRepository.collumnTransactionRoot:
                       row['$table.${BlockRepository.collumnTransactionRoot}'],
                   BlockRepository.collumnTransactionCount:
