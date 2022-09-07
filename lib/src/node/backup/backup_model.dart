@@ -1,28 +1,24 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
-import '../../utils/rsa/rsa.dart';
-import '../../utils/rsa/rsa_private_key.dart';
 import 'backup_repository.dart';
+import 'backup_model_asset_enum.dart';
 
 class BackupModel {
-  int? id;
-  final String assetRef;
-  String? payload;
-  late final Uint8List signature;
+  final BackupModelAssetEnum assetType;
+  final String assetId;
+  Uint8List? signature;
+  Uint8List? payload;
   DateTime? timestamp;
 
-  BackupModel(
-      {required this.assetRef,
-      required this.payload,
-      required CryptoRSAPrivateKey signKey}) {
-    signature = sign(signKey,
-        Uint8List.fromList([...assetRef.codeUnits, ...payload!.codeUnits]));
-  }
+  BackupModel({
+    required this.assetType,
+    required this.assetId,
+  });
 
   BackupModel.fromMap(Map<String, dynamic> map)
-      : id = map[BackupRepository.collumnId],
-        assetRef = map[BackupRepository.collumnAssetRef],
-        payload = map[BackupRepository.collumnPayload],
+      : assetType = map[BackupRepository.collumnAssetType],
+        assetId = map[BackupRepository.collumnAssetId],
         signature = map[BackupRepository.collumnSignature],
         timestamp = map[BackupRepository.collumnTimestamp] == null
             ? null
@@ -32,10 +28,8 @@ class BackupModel {
   @override
   String toString() {
     return '''BackupModel
-      id : $id
-      assetRef : $assetRef
-      payload : $payload
-      signature : $signature
+      assetType : ${assetType.value}
+      assetId : $assetId
       timestamp : $timestamp
     ''';
   }
