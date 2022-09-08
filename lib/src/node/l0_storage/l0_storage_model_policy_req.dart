@@ -26,17 +26,4 @@ class L0StorageModelPolicyReq {
   String toString() {
     return 'L0StorageModelPolicyReq{pubKey: $pubKey, signature: $signature, stringToSign: $stringToSign}';
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is L0StorageModelPolicyReq &&
-          runtimeType == other.runtimeType &&
-          pubKey == other.pubKey &&
-          signature == other.signature &&
-          stringToSign == other.stringToSign;
-
-  @override
-  int get hashCode =>
-      pubKey.hashCode ^ signature.hashCode ^ stringToSign.hashCode;
 }

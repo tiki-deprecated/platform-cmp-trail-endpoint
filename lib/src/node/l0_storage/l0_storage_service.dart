@@ -37,14 +37,9 @@ class L0StorageService {
     String stringToSign = const Uuid().v4();
     Uint8List signature =
         rsa.sign(_privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
-    L0StorageModelPolicyRsp? rsp = await _repository.policy(
-        L0StorageModelPolicyReq(
-            pubKey: _privateKey.public.encode(),
-            signature: base64Encode(signature),
-            stringToSign: stringToSign), onFailure: (rsp) {
-      throw HttpException(
-          'HTTP Error ${rsp.statusCode}: ${jsonDecode(rsp.body)}');
-    });
-    return rsp!;
+    return await _repository.policy(L0StorageModelPolicyReq(
+        pubKey: _privateKey.public.encode(),
+        signature: base64Encode(signature),
+        stringToSign: stringToSign));
   }
 }

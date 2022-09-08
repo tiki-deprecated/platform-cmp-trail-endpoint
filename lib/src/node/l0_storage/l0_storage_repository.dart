@@ -4,6 +4,7 @@
  */
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -24,14 +25,14 @@ class L0StorageRepository {
           "x-api-id": apiId
         };
 
-  Future<L0StorageModelPolicyRsp?> policy(L0StorageModelPolicyReq body,
-      {Function(http.Response)? onFailure}) async {
+  Future<L0StorageModelPolicyRsp> policy(L0StorageModelPolicyReq body) async {
     http.Response rsp = await http.post(_uri,
         headers: _headers, body: jsonEncode(body.toMap()));
     if (rsp.statusCode == 200) {
       return L0StorageModelPolicyRsp.fromMap(jsonDecode(rsp.body));
-    } else if (onFailure != null) {
-      return onFailure(rsp);
+    } else {
+      throw HttpException(
+          'HTTP Error ${rsp.statusCode}: ${jsonDecode(rsp.body)}');
     }
   }
 }
