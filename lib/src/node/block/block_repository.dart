@@ -26,7 +26,7 @@ class BlockRepository {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
         $columnSeq INTEGER AUTO INCREMENT,
-        $columnId TEXT PRIMARY KEY,
+        $columnId TEXT PRIMARY KEY NOT NULL,
         $columnVersion INTEGER NOT NULL,
         $columnPreviousHash TEXT,
         $columnTransactionRoot BLOB,
@@ -37,15 +37,15 @@ class BlockRepository {
   }
 
   void save(BlockModel block) {
-    _db.execute('''INSERT INTO $table VALUES (
-      ${block.seq},
-      '${base64.encode([...block.id!])}',
-      ${block.version},
-      '${base64.encode([...block.previousHash])}',
-      ${block.transactionRoot},
-      ${block.transactionCount},
-      ${block.timestamp.millisecondsSinceEpoch ~/ 1000}
-    );''');
+    _db.execute('INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?, ?);', [
+      block.seq,
+      base64.encode([...block.id!]),
+      block.version,
+      base64.encode([...block.previousHash]),
+      block.transactionRoot,
+      block.transactionCount,
+      block.timestamp.millisecondsSinceEpoch ~/ 1000
+    ]);
   }
 
   PageModel<BlockModel> getLocal({int page = 0}) {
@@ -78,7 +78,7 @@ class BlockRepository {
           $table.$columnPreviousHash as '$table.$columnPreviousHash',
           $table.$columnTransactionRoot as '$table.$columnTransactionRoot',
           $table.$columnTransactionCount as '$table.$columnTransactionCount',
-          $table.$columnTimestamp as '$table.$columnTimestamp',
+          $table.$columnTimestamp as '$table.$columnTimestamp'
         FROM $table
         $whereStmt
         ${last ? 'ORDER BY $table.$columnSeq DESC' : ''};
@@ -102,7 +102,8 @@ class BlockRepository {
   }
 
   Future<void> prune(BlockModel blk) async {
-    _db.execute(
-        "DELETE FROM $table WHERE block_id = '${base64.encode([...blk.id!])}'");
+    _db.execute("DELETE FROM $table WHERE block_id = ?;", [
+      base64.encode([...blk.id!])
+    ]);
   }
 }

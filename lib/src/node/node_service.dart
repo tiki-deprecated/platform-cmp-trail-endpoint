@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 import 'block/block_model.dart';
 import 'keys/keys_model.dart';
-import 'secure_storage_sttgy_if.dart';
+import 'keys/keys_interface.dart';
 import 'transaction/transaction_model.dart';
 
 import 'backup/backup_service.dart';
@@ -147,13 +147,7 @@ class NodeService {
         BlockModel blk = _blockService.create(txns);
         List<TransactionModel> commitedTxns =
             _transactionService.getByBlock(blk.id!);
-        String blkUri =
-            'tiki://${base64Url.encode(_keys.address)}/${base64Url.encode(blk.id!)}';
-        for (TransactionModel txn in commitedTxns) {
-          String txnUri = '$blkUri/${base64Url.encode(txn.id!)}';
-          _backupService.enqueue(txnUri, txn.toJson());
-        }
-        _backupService.enqueue(blkUri, blk.toJson());
+        _backupService.write(_blockService.serialize(blk));
       }
       if (_blkTimer == null || !_blkTimer!.isActive) _setBlkTimer();
     }
@@ -169,13 +163,14 @@ class NodeService {
     }
 
     _keys = await _keysService.create();
+    ///  TODO write just public key
+    /// 
+    // XchainModel xchain = XchainModel(
+    //     address: base64.encode(_keys.address),
+    //     pubkey: _keys.privateKey.public.encode());
+    // _xchainService.add(xchain);
 
-    XchainModel xchain = XchainModel(
-        address: base64.encode(_keys.address),
-        pubkey: _keys.privateKey.public.encode());
-    _xchainService.add(xchain);
-
-    _backupService.enqueue(xchain.uri, xchain.toJson());
+    // _backupService.write(xchain.uri, xchain.toJson());
   }
 
   Future<void> _loadXchains(List<String> addresses) async {

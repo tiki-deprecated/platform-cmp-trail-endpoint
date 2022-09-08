@@ -33,14 +33,14 @@ class TransactionModel {
 
   TransactionModel.fromMap(Map<String, dynamic> map)
       : seq = map['seq'],
-        id = base64.decode(map['id']),
+        id = map['id'],
         version = map['version'],
         address = map['address'],
         contents = map['contents'],
         assetRef = map['asset_ref'],
         merkelProof = map['merkel_proof'],
         block = map['block'],
-        timestamp = map['timestamp'],
+        timestamp = DateTime.fromMillisecondsSinceEpoch(map['timestamp']),
         signature = map['signature'];
 
   static TransactionModel fromJson(String json) =>

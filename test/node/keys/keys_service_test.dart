@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_secure_storage_interface.dart';
+import 'package:tiki_sdk_dart/src/utils/keys_secure_storage_interface.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
 
 void main() {
@@ -13,11 +13,9 @@ void main() {
       KeysModel keys = await keysService.create();
       expect(keys.address.isEmpty, false);
       expect(keys.privateKey.encode().isEmpty, false);
-      KeysModel? retrieveKeys =
-          await keysService.get(base64Url.encode(keys.address));
+      KeysModel? retrieveKeys = await keysService.get(keys.address);
       expect(retrieveKeys == null, false);
-      expect(base64Url.encode(retrieveKeys!.address),
-          base64Url.encode(keys.address));
+      expect(retrieveKeys!.address, keys.address);
       expect(retrieveKeys.privateKey.encode(), keys.privateKey.encode());
     });
   });

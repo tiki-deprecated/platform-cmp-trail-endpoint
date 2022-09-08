@@ -22,12 +22,12 @@ void main() {
       repository.save(chain2);
       repository.save(chain3);
       expect(1, 1);
-      XchainModel chainOriginal = XchainModel(uri: "ORIGINAL", pubkey: 'a');
+      XchainModel chainOriginal = XchainModel(address: "ORIGINAL", pubkey: 'a');
       repository.save(chainOriginal);
-      XchainModel chainDuplicate = XchainModel(uri: "ORIGINAL", pubkey: 'a');
+      XchainModel chainDuplicate = XchainModel(address: "ORIGINAL", pubkey: 'a');
       expect(() => repository.save(chainDuplicate), throwsException);
-      List<XchainModel> chains = repository.getAll();
-      expect(chains.length, 4);
+      XchainModel? chain = repository.getByAddress("ORIGINAL");
+      expect(chain!.address, "ORIGINAL");
     });
   });
 }
@@ -35,5 +35,5 @@ void main() {
 XchainModel _generateXchainModel() {
   String key = String.fromCharCodes(
       List.generate(50, (index) => Random().nextInt(33) + 89));
-  return XchainModel(pubkey: key, uri: 'tiki://$key');
+  return XchainModel(pubkey: key, address: key);
 }

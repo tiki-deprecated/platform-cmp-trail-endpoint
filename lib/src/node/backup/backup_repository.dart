@@ -30,13 +30,12 @@ class BackupRepository {
   }
 
   void save(BackupModel backup) {
-    _db.execute('''INSERT INTO $table VALUES (
-        null,
-        '${backup.assetId}',
-        '${backup.assetType}',
-        ${backup.signature},
-        ${backup.timestamp == null ? null : backup.timestamp!.millisecondsSinceEpoch ~/ 1000}
-      );''');
+    _db.execute('INSERT INTO $table VALUES ( null, ?, ?, ? );', [
+        backup.assetId,
+        backup.assetType,
+        backup.signature,
+        backup.timestamp == null ? null : backup.timestamp!.millisecondsSinceEpoch ~/ 1000
+      ]);
   }
 
   void update(BackupModel backup) {
