@@ -28,12 +28,12 @@ class TransactionModel {
       this.merkelProof,
       this.block}) {
     this.timestamp = timestamp ?? DateTime.now();
-    this.assetRef = assetRef ?? Uint8List(1);
+    this.assetRef = assetRef ?? "AA==";
   }
 
   TransactionModel.fromMap(Map<String, dynamic> map)
       : seq = map['seq'],
-        id = map['id'],
+        id = base64.decode(map['id']),
         version = map['version'],
         address = map['address'],
         contents = map['contents'],

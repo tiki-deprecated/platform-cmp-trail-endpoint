@@ -29,9 +29,7 @@ class TransactionService {
       required KeysModel keys,
       String assetRef = '0x00'}) {
     TransactionModel txn = TransactionModel(
-        address: keys.address,
-        contents: contents,
-        assetRef: Uint8List.fromList(assetRef.codeUnits));
+        address: keys.address, contents: contents, assetRef: assetRef);
     txn.signature = sign(keys.privateKey, txn.serialize());
     txn.id = Digest("SHA3-256").process(txn.serialize());
     txn = _repository.save(txn);
