@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import '../../utils/rsa/rsa_private_key.dart';
@@ -26,7 +27,7 @@ class WasabiService {
     return _repository.get(path, versionId: versionId);
   }
 
-  Future<String?> write(String path, Uint8List obj) async {
+  Future<String?> write(String path, Uint8List obj, {int retries = 3}) async {
     policy ??= await _l0storageService.policy();
     try {
       String? rsp = await _repository.upload(
@@ -36,6 +37,12 @@ class WasabiService {
       policy = await _l0storageService.policy();
       return _repository.upload(
           '${policy!.keyPrefix}$path', policy!.fields!, obj);
+    } on SocketException catch (_) {
+      if (retries > 0) {
+        return write(path, obj, retries: retries - 1);
+      } else {
+        rethrow;
+      }
     }
   }
 
