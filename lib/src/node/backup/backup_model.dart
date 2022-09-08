@@ -17,13 +17,13 @@ class BackupModel {
   });
 
   BackupModel.fromMap(Map<String, dynamic> map)
-      : assetType = map[BackupRepository.collumnAssetType],
-        assetId = map[BackupRepository.collumnAssetId],
-        signature = map[BackupRepository.collumnSignature],
-        timestamp = map[BackupRepository.collumnTimestamp] == null
+      : assetType = map[BackupRepository.columnAssetType],
+        assetId = map[BackupRepository.columnAssetId],
+        signature = map[BackupRepository.columnSignature],
+        timestamp = map[BackupRepository.columnTimestamp] == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(
-                map[BackupRepository.collumnTimestamp] * 1000);
+                map[BackupRepository.columnTimestamp] * 1000);
 
   @override
   String toString() {

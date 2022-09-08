@@ -25,8 +25,8 @@ class BackupService {
     _writePending();
   }
 
-  void write(String assetId, BackupModelAssetEnum assetType, Uint8List payload,
-      Uint8List signature) async {
+  void write(
+    String assetId, BackupModelAssetEnum assetType, Uint8List signature) async {
     BackupModel bkpModel = BackupModel(assetId: assetId, assetType: assetType);
     _repository.save(bkpModel);
     _writePending();

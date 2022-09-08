@@ -3,14 +3,13 @@ import 'package:sqlite3/sqlite3.dart';
 import 'backup_model.dart';
 
 class BackupRepository {
-
   static const table = 'backup';
 
   static const columnId = 'id';
-  static const collumnAssetId = 'asset_id';
-  static const collumnAssetType = 'asset_type';
-  static const collumnSignature = 'signature';
-  static const collumnTimestamp = 'timestamp';
+  static const columnAssetId = 'asset_id';
+  static const columnAssetType = 'asset_type';
+  static const columnSignature = 'signature';
+  static const columnTimestamp = 'timestamp';
 
   final Database _db;
 
@@ -22,10 +21,10 @@ class BackupRepository {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
         $columnId INTEGER PRIMARY KEY,
-        $collumnAssetId TEXT,
-        $collumnAssetType TEXT NOT NULL,
-        $collumnSignature BLOB NOT NULL,
-        $collumnTimestamp INTEGER
+        $columnAssetId TEXT,
+        $columnAssetType TEXT NOT NULL,
+        $columnSignature BLOB NOT NULL,
+        $columnTimestamp INTEGER
       );
     ''');
   }
@@ -42,10 +41,10 @@ class BackupRepository {
 
   void update(BackupModel backup) {
     _db.execute('''UPDATE $table SET
-        $collumnTimestamp = ${backup.timestamp!.millisecondsSinceEpoch ~/ 1000}
+        $columnTimestamp = ${backup.timestamp!.millisecondsSinceEpoch ~/ 1000}
         WHERE 
-        $collumnAssetId = ${backup.assetId} AND
-        $collumnAssetType = ${backup.assetType.value};
+        $columnAssetId = ${backup.assetId} AND
+        $columnAssetType = ${backup.assetType.value};
       ;''');
   }
 
@@ -62,10 +61,10 @@ class BackupRepository {
     List<BackupModel> backups = [];
     for (final Row row in results) {
       Map<String, dynamic> bkpMap = {
-        collumnAssetId: row[collumnAssetId],
-        collumnAssetType: row[collumnAssetType],
-        collumnSignature: row[collumnSignature],
-        collumnTimestamp: row[collumnTimestamp],
+        columnAssetId: row[columnAssetId],
+        columnAssetType: row[columnAssetType],
+        columnSignature: row[columnSignature],
+        columnTimestamp: row[columnTimestamp],
       };
       BackupModel bkp = BackupModel.fromMap(bkpMap);
       backups.add(bkp);

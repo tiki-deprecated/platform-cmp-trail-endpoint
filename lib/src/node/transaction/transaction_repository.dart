@@ -8,16 +8,16 @@ import 'transaction_model.dart';
 
 class TransactionRepository {
   static const table = 'transaction';
-  static const collumnSeq = 'seq';
-  static const collumnId = 'id';
-  static const collumnMerkelProof = 'merkel_proof';
-  static const collumnVersion = 'version';
-  static const collumnAddress = 'address';
-  static const collumnContents = 'contents';
-  static const collumnAssetRef = 'asset_ref';
-  static const collumnBlockId = 'block_id';
-  static const collumnTimestamp = 'timestamp';
-  static const collumnSignature = 'signature';
+  static const columnSeq = 'seq';
+  static const columnId = 'id';
+  static const columnMerkelProof = 'merkel_proof';
+  static const columnVersion = 'version';
+  static const columnAddress = 'address';
+  static const columnContents = 'contents';
+  static const columnAssetRef = 'asset_ref';
+  static const columnBlockId = 'block_id';
+  static const columnTimestamp = 'timestamp';
+  static const columnSignature = 'signature';
 
   final Database _db;
 
@@ -28,16 +28,16 @@ class TransactionRepository {
   Future<void> createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-          $collumnSeq INTEGER AUTO INCREMENT,
-          $collumnId STRING PRIMARY KEY,
-          $collumnMerkelProof BLOB,
-          $collumnVersion INTEGER NOT NULL,
-          $collumnAddress BLOB NOT NULL,
-          $collumnContents BLOB NOT NULL,
-          $collumnAssetRef TEXT NOT NULL,
-          $collumnBlockId TEXT, 
-          $collumnTimestamp INTEGER NOT NULL,
-          $collumnSignature TEXT NOT NULL
+          $columnSeq INTEGER AUTO INCREMENT,
+          $columnId STRING PRIMARY KEY,
+          $columnMerkelProof BLOB,
+          $columnVersion INTEGER NOT NULL,
+          $columnAddress BLOB NOT NULL,
+          $columnContents BLOB NOT NULL,
+          $columnAssetRef TEXT NOT NULL,
+          $columnBlockId TEXT, 
+          $columnTimestamp INTEGER NOT NULL,
+          $columnSignature TEXT NOT NULL
       );
     ''');
   }
@@ -61,9 +61,9 @@ class TransactionRepository {
 
   TransactionModel commit(TransactionModel transaction) {
     _db.execute('''UPDATE $table SET
-        $collumnMerkelProof = ${transaction.merkelProof}, 
-        $collumnBlockId = ${base64.encode(transaction.block!.id!)}
-        WHERE $collumnId = '${base64.encode(transaction.id!)}';  
+        $columnMerkelProof = ${transaction.merkelProof}, 
+        $columnBlockId = ${base64.encode(transaction.block!.id!)}
+        WHERE $columnId = '${base64.encode(transaction.id!)}';  
         ''');
     return getById(base64.encode(transaction.id!))!;
   }
@@ -93,61 +93,61 @@ class TransactionRepository {
     // String xchainTable = XchainRepository.table;
     ResultSet results = _db.select('''
         SELECT 
-          $table.$collumnId as '$table.$collumnId',
-          $table.$collumnSeq as '$table.$collumnSeq',
-          $table.$collumnVersion as '$table.$collumnVersion',
-          $table.$collumnAddress as '$table.$collumnAddress',
-          $table.$collumnContents as '$table.$collumnContents',
-          $table.$collumnAssetRef as '$table.$collumnAssetRef',
-          $table.$collumnMerkelProof as '$table.$collumnMerkelProof',
-          $table.$collumnBlockId as '$table.$collumnBlockId',
-          $table.$collumnTimestamp as '$table.$collumnTimestamp',
-          $table.$collumnSignature as '$table.$collumnSignature',
-          $blockTable.${BlockRepository.collumnSeq} as '$blockTable.${BlockRepository.collumnSeq}',
-          $blockTable.${BlockRepository.collumnId} as '$blockTable.${BlockRepository.collumnId}',
-          $blockTable.${BlockRepository.collumnVersion} as '$blockTable.${BlockRepository.collumnVersion}',
-          $blockTable.${BlockRepository.collumnPreviousHash} as '$blockTable.${BlockRepository.collumnPreviousHash}',
-          $blockTable.${BlockRepository.collumnTransactionRoot} as '$blockTable.${BlockRepository.collumnTransactionRoot}',
-          $blockTable.${BlockRepository.collumnTransactionCount} as '$blockTable.${BlockRepository.collumnTransactionCount}',
-          $blockTable.${BlockRepository.collumnTimestamp} as '$blockTable.${BlockRepository.collumnTimestamp}',
+          $table.$columnId as '$table.$columnId',
+          $table.$columnSeq as '$table.$columnSeq',
+          $table.$columnVersion as '$table.$columnVersion',
+          $table.$columnAddress as '$table.$columnAddress',
+          $table.$columnContents as '$table.$columnContents',
+          $table.$columnAssetRef as '$table.$columnAssetRef',
+          $table.$columnMerkelProof as '$table.$columnMerkelProof',
+          $table.$columnBlockId as '$table.$columnBlockId',
+          $table.$columnTimestamp as '$table.$columnTimestamp',
+          $table.$columnSignature as '$table.$columnSignature',
+          $blockTable.${BlockRepository.columnSeq} as '$blockTable.${BlockRepository.columnSeq}',
+          $blockTable.${BlockRepository.columnId} as '$blockTable.${BlockRepository.columnId}',
+          $blockTable.${BlockRepository.columnVersion} as '$blockTable.${BlockRepository.columnVersion}',
+          $blockTable.${BlockRepository.columnPreviousHash} as '$blockTable.${BlockRepository.columnPreviousHash}',
+          $blockTable.${BlockRepository.columnTransactionRoot} as '$blockTable.${BlockRepository.columnTransactionRoot}',
+          $blockTable.${BlockRepository.columnTransactionCount} as '$blockTable.${BlockRepository.columnTransactionCount}',
+          $blockTable.${BlockRepository.columnTimestamp} as '$blockTable.${BlockRepository.columnTimestamp}',
         FROM $table
         LEFT JOIN $blockTable
-        ON $table.$collumnBlockId = $blockTable.$BlockRepository.collumnId
+        ON $table.$columnBlockId = $blockTable.$BlockRepository.columnId
         ${whereStmt ?? ''}
         ${page == null ? '' : 'LIMIT ${page * 100},100'};
         ''');
     List<TransactionModel> transactions = [];
     for (final Row row in results) {
       Map<String, dynamic>? blockMap =
-          row['$blockTable.${BlockRepository.collumnId}'] == null
+          row['$blockTable.${BlockRepository.columnId}'] == null
               ? null
               : {
-                  BlockRepository.collumnSeq:
-                      row['$blockTable.${BlockRepository.collumnSeq}'],
-                  BlockRepository.collumnId:
-                      row['$blockTable.${BlockRepository.collumnId}'],
-                  BlockRepository.collumnVersion:
-                      row['$blockTable.${BlockRepository.collumnVersion}'],
-                  BlockRepository.collumnPreviousHash:
-                      row['$blockTable.${BlockRepository.collumnPreviousHash}'],
-                  BlockRepository.collumnTransactionRoot:
-                      row['$table.${BlockRepository.collumnTransactionRoot}'],
-                  BlockRepository.collumnTransactionCount:
-                      row['$table.${BlockRepository.collumnTransactionCount}'],
-                  BlockRepository.collumnTimestamp:
-                      row['$table.$collumnTimestamp'],
+                  BlockRepository.columnSeq:
+                      row['$blockTable.${BlockRepository.columnSeq}'],
+                  BlockRepository.columnId:
+                      row['$blockTable.${BlockRepository.columnId}'],
+                  BlockRepository.columnVersion:
+                      row['$blockTable.${BlockRepository.columnVersion}'],
+                  BlockRepository.columnPreviousHash:
+                      row['$blockTable.${BlockRepository.columnPreviousHash}'],
+                  BlockRepository.columnTransactionRoot:
+                      row['$table.${BlockRepository.columnTransactionRoot}'],
+                  BlockRepository.columnTransactionCount:
+                      row['$table.${BlockRepository.columnTransactionCount}'],
+                  BlockRepository.columnTimestamp:
+                      row['$table.$columnTimestamp'],
                 };
       Map<String, dynamic>? transactionMap = {
-        collumnSeq: row['$table.$collumnSeq}'],
-        collumnId: row['$table.$collumnId}'],
-        collumnMerkelProof: row['$table.$collumnMerkelProof}'],
-        collumnVersion: row['$table.$collumnVersion}'],
-        collumnAddress: row['$table.$collumnAddress}'],
-        collumnContents: row['$table.$collumnContents}'],
-        collumnAssetRef: row['$table.$collumnAssetRef}'],
+        columnSeq: row['$table.$columnSeq}'],
+        columnId: row['$table.$columnId}'],
+        columnMerkelProof: row['$table.$columnMerkelProof}'],
+        columnVersion: row['$table.$columnVersion}'],
+        columnAddress: row['$table.$columnAddress}'],
+        columnContents: row['$table.$columnContents}'],
+        columnAssetRef: row['$table.$columnAssetRef}'],
         'block': blockMap,
-        collumnTimestamp: row['$table.$collumnTimestamp}'],
-        collumnSignature: row['$table.$collumnSignature}'],
+        columnTimestamp: row['$table.$columnTimestamp}'],
+        columnSignature: row['$table.$columnSignature}'],
       };
       TransactionModel transaction = TransactionModel.fromMap(transactionMap);
       transactions.add(transaction);
