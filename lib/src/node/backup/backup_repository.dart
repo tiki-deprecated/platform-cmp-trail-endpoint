@@ -30,21 +30,26 @@ class BackupRepository {
   }
 
   void save(BackupModel backup) {
-    _db.execute('INSERT INTO $table VALUES ( null, ?, ?, ? );', [
-        backup.assetId,
-        backup.assetType,
-        backup.signature,
-        backup.timestamp == null ? null : backup.timestamp!.millisecondsSinceEpoch ~/ 1000
-      ]);
+    _db.execute('INSERT INTO $table VALUES ( ?, ?, ?, ?, ? );', [
+      null,
+      backup.assetId,
+      backup.assetType.value,
+      backup.signature,
+      backup.timestamp == null
+          ? null
+          : backup.timestamp!.millisecondsSinceEpoch ~/ 1000
+    ]);
   }
 
   void update(BackupModel backup) {
-    _db.execute('''UPDATE $table SET
-        $columnTimestamp = ${backup.timestamp!.millisecondsSinceEpoch ~/ 1000}
+    _db.execute('''UPDATE $table SET $columnTimestamp = ? 
         WHERE 
-        $columnAssetId = ${backup.assetId} AND
-        $columnAssetType = ${backup.assetType.value};
-      ;''');
+        $columnAssetId = ? AND $columnAssetType = ?;
+      ;''', [
+      backup.timestamp!.millisecondsSinceEpoch ~/ 1000,
+      backup.assetId,
+      backup.assetType.value
+    ]);
   }
 
   List<BackupModel> getPending() {
@@ -60,6 +65,7 @@ class BackupRepository {
     List<BackupModel> backups = [];
     for (final Row row in results) {
       Map<String, dynamic> bkpMap = {
+        columnId: row[columnId],
         columnAssetId: row[columnAssetId],
         columnAssetType: row[columnAssetType],
         columnSignature: row[columnSignature],

@@ -98,7 +98,7 @@ bool memEquals(Uint8List bytes1, Uint8List bytes2) {
 /// unsigned integers. For other numbers up to 0xffffffffffffffff, a byte is
 /// prefixed to the number to indicate its length—but otherwise the numbers look
 /// like regular unsigned integers in little-endian order.
-/// 
+///
 /// Value                                 Bytes Used                    Format
 /// >= 0 && <= 252                            1                         uint8_t
 /// >= 253 && <= 0xffff                       3             0xfd followed by the number as uint16_t

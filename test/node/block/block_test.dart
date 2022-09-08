@@ -53,11 +53,11 @@ void main() {
       TestInMemoryStorage keyStorage = TestInMemoryStorage();
       KeysService keysService = KeysService(keyStorage);
       TransactionService transactionService = TransactionService(db);
-      BlockService blockService = BlockService(db, transactionService);     
+      BlockService blockService = BlockService(db, transactionService);
       KeysModel keys = await keysService.create();
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = await transactionService.create(
+        TransactionModel txn = transactionService.create(
             keys: keys, contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }

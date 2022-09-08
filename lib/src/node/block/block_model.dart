@@ -20,7 +20,6 @@ class BlockModel {
     this.timestamp = timestamp ?? DateTime.now();
   }
 
-
   BlockModel.fromMap(Map<String, dynamic> map)
       : seq = map['seq'],
         id = map['id'],

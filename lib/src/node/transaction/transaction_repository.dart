@@ -122,28 +122,29 @@ class TransactionRepository {
         ''');
     List<TransactionModel> transactions = [];
     for (final Row row in results) {
-      Map<String, dynamic>? blockMap =
-          row['$blockTable.${BlockRepository.columnId}'] == null
-              ? null
-              : {
-                  BlockRepository.columnSeq:
-                      row['$blockTable.${BlockRepository.columnSeq}'],
-                  BlockRepository.columnId:
-                      row['$blockTable.${BlockRepository.columnId}'],
-                  BlockRepository.columnVersion:
-                      row['$blockTable.${BlockRepository.columnVersion}'],
-                  BlockRepository.columnPreviousHash:
-                      row['$blockTable.${BlockRepository.columnPreviousHash}'],
-                  BlockRepository.columnTransactionRoot:
-                      row['$table.${BlockRepository.columnTransactionRoot}'],
-                  BlockRepository.columnTransactionCount:
-                      row['$table.${BlockRepository.columnTransactionCount}'],
-                  BlockRepository.columnTimestamp:
-                      row['$table.$columnTimestamp'],
-                };
+      Map<String, dynamic>? blockMap = row[
+                  '$blockTable.${BlockRepository.columnId}'] ==
+              null
+          ? null
+          : {
+              BlockRepository.columnSeq:
+                  row['$blockTable.${BlockRepository.columnSeq}'],
+              BlockRepository.columnId:
+                  base64.decode(row['$blockTable.${BlockRepository.columnId}']),
+              BlockRepository.columnVersion:
+                  row['$blockTable.${BlockRepository.columnVersion}'],
+              BlockRepository.columnPreviousHash: base64.decode(
+                  row['$blockTable.${BlockRepository.columnPreviousHash}']),
+              BlockRepository.columnTransactionRoot:
+                  row['$blockTable.${BlockRepository.columnTransactionRoot}'],
+              BlockRepository.columnTransactionCount:
+                  row['$blockTable.${BlockRepository.columnTransactionCount}'],
+              BlockRepository.columnTimestamp:
+                  row['$blockTable.$columnTimestamp'],
+            };
       Map<String, dynamic>? transactionMap = {
         columnSeq: row['$table.$columnSeq'],
-        columnId: row['$table.$columnId'],
+        columnId: base64.decode(row['$table.$columnId']),
         columnMerkelProof: row['$table.$columnMerkelProof'],
         columnVersion: row['$table.$columnVersion'],
         columnAddress: row['$table.$columnAddress'],

@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 class WasabiRepository {
-
   get(String uri) {
     throw UnimplementedError();
   }

@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
@@ -44,7 +43,7 @@ void main() {
           version: 1,
           address: Uint8List.fromList('abc'.codeUnits),
           timestamp: DateTime(2022),
-          assetRef: Uint8List.fromList('test://test_chain/'.codeUnits),
+          assetRef: 'AA==',
           contents: Uint8List.fromList('hello world'.codeUnits));
       Uint8List serialized = original.serialize();
       TransactionModel deserialized =

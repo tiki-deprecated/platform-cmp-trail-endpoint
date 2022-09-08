@@ -25,9 +25,10 @@ class BackupService {
     _writePending();
   }
 
-  void write(
-    String assetId, BackupModelAssetEnum assetType, Uint8List signature) async {
-    BackupModel bkpModel = BackupModel(assetId: assetId, assetType: assetType);
+  void write(String assetId, BackupModelAssetEnum assetType,
+      Uint8List signature) async {
+    BackupModel bkpModel = BackupModel(
+        assetId: assetId, assetType: assetType, signature: signature);
     _repository.save(bkpModel);
     _writePending();
   }
@@ -47,13 +48,15 @@ class BackupService {
             if (block == null) {
               throw ArgumentError.value(bkp.assetId, 'Block not found');
             }
+            bkp.payload = _blockService.serialize(block);
             break;
         }
-        Uint8List signature = sign(
-          key.privateKey, bkp.payload!);
+        Uint8List signature =
+            sign(key.privateKey, Uint8List.fromList(bkp.payload!));
         DateTime? savedDateTime =
             await _wasabiService.write(bkp.payload!, _address, signature);
         if (savedDateTime != null) {
+          bkp.timestamp = savedDateTime;
           _repository.update(bkp);
         }
       }

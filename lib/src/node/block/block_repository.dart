@@ -55,7 +55,8 @@ class BlockRepository {
   }
 
   BlockModel? getById(String id) {
-    List<BlockModel> blocks = _select(whereStmt: "WHERE blocks.id = '$id'");
+    List<BlockModel> blocks =
+        _select(whereStmt: "WHERE $table.$columnId = '$id'");
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
@@ -88,9 +89,9 @@ class BlockRepository {
     for (final Row row in results) {
       Map<String, dynamic> blockMap = {
         columnSeq: row['$table.$columnSeq'],
-        columnId: row['$table.$columnId'],
+        columnId: base64.decode(row['$table.$columnId']),
         columnVersion: row['$table.$columnVersion'],
-        columnPreviousHash: row['$table.$columnPreviousHash'],
+        columnPreviousHash: base64.decode(row['$table.$columnPreviousHash']),
         columnTransactionRoot: row['$table.$columnTransactionRoot'],
         columnTransactionCount: row['$table.$columnTransactionCount'],
         columnTimestamp: row['$table.$columnTimestamp'],

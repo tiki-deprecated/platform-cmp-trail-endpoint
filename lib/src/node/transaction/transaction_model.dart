@@ -18,7 +18,8 @@ class TransactionModel {
   BlockModel? block;
   Uint8List? signature;
 
-  TransactionModel({this.seq,
+  TransactionModel(
+      {this.seq,
       this.id,
       this.version = 1,
       required this.address,
@@ -63,7 +64,7 @@ class TransactionModel {
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         decodeBigInt(parts[2]).toInt() * 1000);
     assetRef = parts[3][0] == 0 ? 'AA==' : base64Url.encode(parts[3]);
-    signature = parts[4][0] == 0 ? null : parts[4];
+    signature = parts[4].isEmpty || parts[4][0] == 0 ? null : parts[4];
     contents = transaction.sublist(currentPos + 2);
   }
 
@@ -82,8 +83,9 @@ class TransactionModel {
           ..add(encodeBigInt(
               BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))))
         .toBytes();
+    Uint8List uint8AssetRef = base64Url.decode(assetRef);
     Uint8List serializedAssetRef =
-        Uint8List.fromList([assetRef.length, ...base64Url.decode(assetRef)]);
+        Uint8List.fromList([uint8AssetRef.length, ...uint8AssetRef]);
     Uint8List serializedSignature = Uint8List.fromList(
         signature != null && includeSignature
             ? [signature!.length, ...signature!]

@@ -106,7 +106,8 @@ class BlockService {
     return body;
   }
 
-  BlockModel fromSerialized(List<int> serialized, CryptoRSAPublicKey publicKey) {
+  BlockModel fromSerialized(
+      List<int> serialized, CryptoRSAPublicKey publicKey) {
     int pos = 0;
     int versionSize = serialized[0];
     pos++;

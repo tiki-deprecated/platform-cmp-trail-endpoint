@@ -12,7 +12,7 @@ class WasabiService {
   }
 
   Future<DateTime?> write(
-      Uint8List payload, String destination, Uint8List signature) async {
+      List<int> payload, String destination, Uint8List signature) async {
     return DateTime.now();
   }
 }

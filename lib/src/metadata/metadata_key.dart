@@ -3,5 +3,5 @@ enum MetadataKey {
 
   const MetadataKey(this.value);
 
-  final value;
+  final String value;
 }
