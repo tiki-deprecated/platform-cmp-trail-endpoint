@@ -53,29 +53,4 @@ class L0StorageModelPolicyRspFields {
   String toString() {
     return 'L0StorageModelPolicyRspFields{policy: $policy, contentType: $contentType, xAmzCredential: $xAmzCredential, xAmzAlgorithm: $xAmzAlgorithm, xAmzDate: $xAmzDate, xAmzSignature: $xAmzSignature, xAmzObjectLockMode: $xAmzObjectLockMode, xAmzObjectLockRetainUntilDate: $xAmzObjectLockRetainUntilDate}';
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is L0StorageModelPolicyRspFields &&
-          runtimeType == other.runtimeType &&
-          policy == other.policy &&
-          contentType == other.contentType &&
-          xAmzCredential == other.xAmzCredential &&
-          xAmzAlgorithm == other.xAmzAlgorithm &&
-          xAmzDate == other.xAmzDate &&
-          xAmzSignature == other.xAmzSignature &&
-          xAmzObjectLockMode == other.xAmzObjectLockMode &&
-          xAmzObjectLockRetainUntilDate == other.xAmzObjectLockRetainUntilDate;
-
-  @override
-  int get hashCode =>
-      policy.hashCode ^
-      contentType.hashCode ^
-      xAmzCredential.hashCode ^
-      xAmzAlgorithm.hashCode ^
-      xAmzDate.hashCode ^
-      xAmzSignature.hashCode ^
-      xAmzObjectLockMode.hashCode ^
-      xAmzObjectLockRetainUntilDate.hashCode;
 }
