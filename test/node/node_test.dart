@@ -29,34 +29,6 @@ void main() {
           TransactionService.validateAuthor(txn, nodeService.publicKey), true);
       expect(TransactionService.validateIntegrity(txn), true);
     });
-    test('create block by transactions size', () async {
-      NodeService nodeService = await NodeService().init(
-          blkInterval: const Duration(seconds: 20),
-          database: db,
-          apiKey: 'test',
-          keysSecureStorage: MemSecureStorageStrategy());
-      int size = 0;
-      while (size < 100000) {
-        TransactionModel txn = nodeService
-            .write(Uint8List.fromList('test contents $size'.codeUnits));
-        size += txn.serialize().buffer.lengthInBytes;
-      }
-      await Future.delayed(const Duration(seconds: 5));
-    });
     test('create block by last transaction creation time', () async {});
-    test('retrieve and validate transactions', () async {
-      NodeService nodeService = await NodeService().init(
-          blkInterval: const Duration(seconds: 20),
-          database: db,
-          apiKey: 'test',
-          keysSecureStorage: MemSecureStorageStrategy());
-      int size = 0;
-      while (size < 300000) {
-        TransactionModel txn = nodeService
-            .write(Uint8List.fromList('test contents $size'.codeUnits));
-        size += txn.serialize().buffer.lengthInBytes;
-      }
-      await Future.delayed(const Duration(seconds: 5));
-    });
-  });
+   });
 }
