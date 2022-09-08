@@ -91,3 +91,43 @@ bool memEquals(Uint8List bytes1, Uint8List bytes2) {
 
   return true;
 }
+
+/// Gives the compact size for unsigned integers.
+///
+/// For numbers from 0 to 252, compactSize unsigned integers look like regular
+/// unsigned integers. For other numbers up to 0xffffffffffffffff, a byte is
+/// prefixed to the number to indicate its length—but otherwise the numbers look
+/// like regular unsigned integers in little-endian order.
+/// Value                                 Bytes Used                    Format
+/// >= 0 && <= 252                            1                         uint8_t
+/// >= 253 && <= 0xffff                       3             0xfd followed by the number as uint16_t
+/// >= 0x10000 && <= 0xffffffff               5             0xfe followed by the number as uint32_t
+/// >= 0x100000000 && <= 0xffffffffffffffff   9             0xff followed by the number as uint64_t
+/// For example, the number 515 is encoded as 0xfd0302.
+/// From https://developer.bitcoin.org/reference/transactions.html#compactsize-unsigned-integers
+List<int> compactSize(Uint8List bytes) {
+  int size = bytes.length;
+  List<int> byteList = [];
+  if (size <= 252) {
+    byteList.add(size);
+  } else if (size <= 0xffff) {
+    byteList.add(253);
+    byteList.add(size);
+  } else if (size <= 0xffffffff) {
+    byteList.add(254);
+    byteList.add(size);
+  } else {
+    byteList.add(255);
+    byteList.add(size);
+  }
+  return byteList;
+}
+
+int compactSizeToInt(List<int> compactSize) {
+  int size = compactSize[0];
+  if (size <= 252) {
+    return compactSize[0];
+  } else {
+    return compactSize[1];
+  }
+}
