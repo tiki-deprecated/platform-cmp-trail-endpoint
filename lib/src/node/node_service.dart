@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
+import '../utils/rsa/rsa.dart';
+import '../utils/rsa/rsa_public_key.dart';
+import 'backup/backup_model_asset_enum.dart';
 import 'block/block_model.dart';
+import 'keys/keys_interface.dart';
 import 'keys/keys_model.dart';
-import 'secure_storage_sttgy_if.dart';
 import 'transaction/transaction_model.dart';
 
 import 'backup/backup_service.dart';
@@ -13,8 +16,6 @@ import 'block/block_service.dart';
 import 'keys/keys_service.dart';
 import 'transaction/transaction_service.dart';
 import 'wasabi/wasabi_service.dart';
-import 'xchain/xchain_model.dart';
-import 'xchain/xchain_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
@@ -25,11 +26,13 @@ class NodeService {
   late final KeysService _keysService;
   late final TransactionService _transactionService;
   late final WasabiService _wasabiService;
-  late final XchainService _xchainService;
+  // late final XchainService _xchainService;
   late final KeysModel _keys;
 
   Timer? _blkTimer;
   late final Duration _blkInterval;
+
+  CryptoRSAPublicKey get publicKey => _keys.privateKey.public;
 
   /// Initialzes de servic.e
   ///
@@ -78,18 +81,22 @@ class NodeService {
   Future<NodeService> init(
       {required String apiKey,
       required Database database,
-      required SecureStorageStrategyIf keysSecureStorage,
+      required KeysInterface keysSecureStorage,
       List<String> adresses = const [],
       blkInterval = const Duration(minutes: 1)}) async {
     _blkInterval = blkInterval;
     _wasabiService = WasabiService(apiKey);
     _keysService = KeysService(keysSecureStorage);
-    _xchainService = XchainService(database);
+    // _xchainService = XchainService(database);
     _transactionService = TransactionService(database);
     _blockService = BlockService(database, _transactionService);
 
     await _loadKeys(adresses);
-    _backupService = BackupService(database, _wasabiService, _keys);
+
+    _backupService = BackupService(base64.encode(_keys.address), _keysService,
+        _blockService, _wasabiService, database);
+
+    _backupKeys();
 
     await _loadXchains(adresses);
 
@@ -145,15 +152,11 @@ class NodeService {
       DateTime oneMinAgo = DateTime.now().subtract(_blkInterval);
       if (lastCreated.isBefore(oneMinAgo) || totalSize >= 100000) {
         BlockModel blk = _blockService.create(txns);
-        List<TransactionModel> commitedTxns =
-            _transactionService.getByBlock(blk.id!);
-        String blkUri =
-            'tiki://${base64Url.encode(_keys.address)}/${base64Url.encode(blk.id!)}';
-        for (TransactionModel txn in commitedTxns) {
-          String txnUri = '$blkUri/${base64Url.encode(txn.id!)}';
-          _backupService.enqueue(txnUri, txn.toJson());
-        }
-        _backupService.enqueue(blkUri, blk.toJson());
+        List<int> serializedBlock = _blockService.serialize(blk);
+        Uint8List signature =
+            sign(_keys.privateKey, Uint8List.fromList(serializedBlock));
+        _backupService.write(
+            base64.encode(blk.id!), BackupModelAssetEnum.block, signature);
       }
       if (_blkTimer == null || !_blkTimer!.isActive) _setBlkTimer();
     }
@@ -169,27 +172,23 @@ class NodeService {
     }
 
     _keys = await _keysService.create();
-
-    XchainModel xchain = XchainModel(
-        address: base64.encode(_keys.address),
-        pubkey: _keys.privateKey.public.encode());
-    _xchainService.add(xchain);
-
-    _backupService.enqueue(xchain.uri, xchain.toJson());
   }
 
   Future<void> _loadXchains(List<String> addresses) async {
-    for (String address in addresses) {
-      String assetRef = 'tiki://$address';
-      String? xchainJson = await _wasabiService.read(assetRef);
-      if (xchainJson != null) {
-        XchainModel xchain = XchainModel.fromJson(xchainJson);
-        _xchainService.add(xchain);
-      }
-    }
+    // for (String address in addresses) {
+    //   String assetRef = 'tiki://$address';
+    //   String? xchainJson = await _wasabiService.read(assetRef);
+    // }
   }
 
   void _setBlkTimer() {
     _blkTimer = Timer.periodic(_blkInterval, (_) => _createBlock());
+  }
+
+  void _backupKeys() {
+    Uint8List signature =
+        sign(_keys.privateKey, base64.decode(_keys.privateKey.public.encode()));
+    _backupService.write(
+        base64.encode(_keys.address), BackupModelAssetEnum.pubkey, signature);
   }
 }

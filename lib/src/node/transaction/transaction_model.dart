@@ -29,7 +29,7 @@ class TransactionModel {
       this.merkelProof,
       this.block}) {
     this.timestamp = timestamp ?? DateTime.now();
-    this.assetRef = assetRef ?? Uint8List(1);
+    this.assetRef = assetRef ?? "AA==";
   }
 
   TransactionModel.fromMap(Map<String, dynamic> map)
@@ -41,7 +41,7 @@ class TransactionModel {
         assetRef = map['asset_ref'],
         merkelProof = map['merkel_proof'],
         block = map['block'],
-        timestamp = map['timestamp'],
+        timestamp = DateTime.fromMillisecondsSinceEpoch(map['timestamp']),
         signature = map['signature'];
 
   static TransactionModel fromJson(String json) =>
@@ -64,7 +64,7 @@ class TransactionModel {
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         decodeBigInt(parts[2]).toInt() * 1000);
     assetRef = parts[3][0] == 0 ? 'AA==' : base64Url.encode(parts[3]);
-    signature = parts[4][0] == 0 ? null : parts[4];
+    signature = parts[4].isEmpty || parts[4][0] == 0 ? null : parts[4];
     contents = transaction.sublist(currentPos + 2);
   }
 
@@ -83,8 +83,9 @@ class TransactionModel {
           ..add(encodeBigInt(
               BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))))
         .toBytes();
+    Uint8List uint8AssetRef = base64Url.decode(assetRef);
     Uint8List serializedAssetRef =
-        Uint8List.fromList([assetRef.length, ...base64Url.decode(assetRef)]);
+        Uint8List.fromList([uint8AssetRef.length, ...uint8AssetRef]);
     Uint8List serializedSignature = Uint8List.fromList(
         signature != null && includeSignature
             ? [signature!.length, ...signature!]

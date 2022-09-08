@@ -1,41 +1,45 @@
 import 'dart:typed_data';
 
-import '../../utils/rsa/rsa.dart';
-import '../../utils/rsa/rsa_private_key.dart';
 import 'backup_repository.dart';
+import 'backup_model_asset_enum.dart';
 
 class BackupModel {
-  int? id;
-  final String assetRef;
-  String? payload;
-  late final Uint8List signature;
+  final BackupModelAssetEnum assetType;
+  final String assetId;
+  Uint8List? signature;
+  List<int>? payload;
   DateTime? timestamp;
 
-  BackupModel(
-      {required this.assetRef,
-      required this.payload,
-      required CryptoRSAPrivateKey signKey}) {
-    signature = sign(signKey,
-        Uint8List.fromList([...assetRef.codeUnits, ...payload!.codeUnits]));
-  }
+  BackupModel({
+    required this.assetType,
+    required this.assetId,
+    required this.signature,
+  });
 
   BackupModel.fromMap(Map<String, dynamic> map)
-      : id = map[BackupRepository.collumnId],
-        assetRef = map[BackupRepository.collumnAssetRef],
-        payload = map[BackupRepository.collumnPayload],
-        signature = map[BackupRepository.collumnSignature],
-        timestamp = map[BackupRepository.collumnTimestamp] == null
+      : assetType = _assetTypeFromValue(map[BackupRepository.columnAssetType]),
+        assetId = map[BackupRepository.columnAssetId],
+        signature = map[BackupRepository.columnSignature],
+        timestamp = map[BackupRepository.columnTimestamp] == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(
-                map[BackupRepository.collumnTimestamp] * 1000);
+                map[BackupRepository.columnTimestamp] * 1000);
+
+  static BackupModelAssetEnum _assetTypeFromValue(String value) {
+    switch (value) {
+      case 'block':
+        return BackupModelAssetEnum.block;
+      case 'pubkey':
+        return BackupModelAssetEnum.pubkey;
+    }
+    throw ArgumentError.value(value, 'Invalid asset type value.');
+  }
 
   @override
   String toString() {
     return '''BackupModel
-      id : $id
-      assetRef : $assetRef
-      payload : $payload
-      signature : $signature
+      assetType : ${assetType.value}
+      assetId : $assetId
       timestamp : $timestamp
     ''';
   }

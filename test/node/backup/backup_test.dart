@@ -3,51 +3,57 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:pointycastle/pointycastle.dart';
 import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/src/node/backup/backup_model.dart';
+import 'package:tiki_sdk_dart/src/node/backup/backup_model_asset_enum.dart';
 import 'package:tiki_sdk_dart/src/node/backup/backup_repository.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
-import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
-import 'package:tiki_sdk_dart/src/node/xchain/xchain_model.dart';
-import 'package:tiki_sdk_dart/src/node/xchain/xchain_repository.dart';
+import 'package:tiki_sdk_dart/src/node/block/block_service.dart';
+import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
+import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
+import 'package:tiki_sdk_dart/src/node/transaction/transaction_service.dart';
+import 'package:tiki_sdk_dart/src/utils/mem_keys_store.dart';
 
-void main() {
+void main() async {
   final db = sqlite3.openInMemory();
-  group('backup repository tests', () {
-    BackupRepository repository = BackupRepository(db);
-    BlockRepository blkRepository = BlockRepository(db);
-    XchainRepository xcRepository = XchainRepository(db);
-    XchainModel xchain = XchainModel(id: 123, pubkey: 'a', uri: 'teste');
-    xcRepository.save(xchain);
-    BlockModel blk = BlockModel(
-        seq: 123,
-        version: 1,
-        previousHash: Uint8List.fromList(
-            List.generate(50, (index) => Random().nextInt(33) + 89)),
-        xchainUri: xchain.uri,
-        transactionRoot: Uint8List(1),
-        transactionCount: 0,
-        timestamp: DateTime.now());
-    blkRepository.save(blk);
-    test('save bkps, retrieve all', () {
-      BackupModel bkp1 = _generateBackupModel(blk);
-      BackupModel bkp2 = _generateBackupModel(blk);
-      BackupModel bkp3 = _generateBackupModel(blk);
+  KeysService keysService = KeysService(MemSecureStorageStrategy());
+  KeysModel keys = await keysService.create();
+  group('backup tests', () {
+    test('backup repository test, retrieve all', () {
+      BackupRepository repository = BackupRepository(db);
+      TransactionService transactionService = TransactionService(db);
+      BlockService blockService = BlockService(db, transactionService);
+      BlockModel blk = BlockModel(
+          version: 1,
+          previousHash: Uint8List.fromList(
+              List.generate(50, (index) => Random().nextInt(33) + 89)),
+          transactionRoot: Uint8List(1),
+          transactionCount: 0,
+          timestamp: DateTime.now());
+      blk.id = Digest("SHA3-256").process(blockService.header(blk));
+      BackupModel bkp1 = _generateBackupModel(blk, keys);
+      BackupModel bkp2 = _generateBackupModel(blk, keys);
+      BackupModel bkp3 = _generateBackupModel(blk, keys);
       repository.save(bkp1);
       repository.save(bkp2);
       repository.save(bkp3);
       expect(1, 1);
-      List<BackupModel> bkps = repository.getAll();
-      expect(bkps.length, 3);
+      ResultSet bkps = db.select('SELECT * FROM ${BackupRepository.table};');
+      expect(bkps.rows.length, 3);
     });
   });
 }
 
-BackupModel _generateBackupModel(BlockModel block) => BackupModel(
-    signature: 'dsa',
-    timestamp: DateTime.now(),
-    assetRef: 'tiki://${block.xchainUri}/${block.id}');
+BackupModel _generateBackupModel(BlockModel block, KeysModel signKey) =>
+    BackupModel(
+      signature: Uint8List(32),
+      assetId:
+          'tiki://${base64Url.encode(signKey.address)}/${base64Url.encode(block.id!)}',
+      assetType: BackupModelAssetEnum.block,
+    );
