@@ -28,18 +28,19 @@ void main() {
       expect(rsp.keyPrefix != null, true);
       expect(rsp.maxBytes, 1048576);
       expect(rsp.fields != null, true);
-      expect(rsp.fields?.policy != null, true);
-      expect(rsp.fields?.contentType, 'application/json');
-      expect(rsp.fields?.xAmzCredential != null, true);
-      expect(rsp.fields?.xAmzAlgorithm, 'AWS4-HMAC-SHA256');
-      expect(rsp.fields?.xAmzDate != null, true);
-      expect(rsp.fields?.xAmzSignature != null, true);
-      expect(rsp.fields?.xAmzObjectLockMode, 'GOVERNANCE');
-      expect(rsp.fields?.xAmzObjectLockRetainUntilDate != null, true);
+      expect(rsp.fields?['policy'] != null, true);
+      expect(rsp.fields?['content-type'], 'application/json');
+      expect(rsp.fields?['x-amz-credential'] != null, true);
+      expect(rsp.fields?['x-amz-algorithm'], 'AWS4-HMAC-SHA256');
+      expect(rsp.fields?['x-amz-date'] != null, true);
+      expect(rsp.fields?['x-amz-signature'] != null, true);
+      expect(rsp.fields?['x-amz-object-lock-mode'], 'GOVERNANCE');
+      expect(rsp.fields?['x-amz-object-lock-retain-until-date'] != null, true);
       expect(
-          DateTime.parse(rsp.fields!.xAmzDate!).isBefore(DateTime.now()), true);
+          DateTime.parse(rsp.fields!['x-amz-date']!).isBefore(DateTime.now()),
+          true);
       expect(
-          DateTime.parse(rsp.fields!.xAmzObjectLockRetainUntilDate!)
+          DateTime.parse(rsp.fields!['x-amz-object-lock-retain-until-date']!)
               .isAfter(DateTime.now()),
           true);
     });
