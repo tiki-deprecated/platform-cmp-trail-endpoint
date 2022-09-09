@@ -7,6 +7,7 @@ import '../block/block_model.dart';
 import '../block/block_service.dart';
 import '../keys/keys_model.dart';
 import '../keys/keys_service.dart';
+import '../node_service.dart';
 import '../wasabi/wasabi_service.dart';
 import 'backup_model.dart';
 import 'backup_model_asset_enum.dart';
@@ -51,12 +52,14 @@ class BackupService {
             bkp.payload = _blockService.serialize(block);
             break;
         }
-        Uint8List signature =
-            sign(key.privateKey, Uint8List.fromList(bkp.payload!));
-        DateTime? savedDateTime =
-            await _wasabiService.write(bkp.payload!, _address, signature);
-        if (savedDateTime != null) {
-          bkp.timestamp = savedDateTime;
+        String path = '${NodeService.scheme}/$_address/${bkp.assetId}';
+        if (bkp.assetType == BackupModelAssetEnum.pubkey) {
+          path = '${NodeService.scheme}/public_key';
+        }
+        bkp.signature = sign(key.privateKey, bkp.payload!);
+        String? bkpResult = await _wasabiService.write(path, bkp.serialize());
+        if (bkpResult != null) {
+          bkp.timestamp = DateTime.now();
           _repository.update(bkp);
         }
       }

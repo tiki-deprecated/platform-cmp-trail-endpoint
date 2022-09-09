@@ -60,6 +60,28 @@ class TransactionRepository {
     return transaction;
   }
 
+  addAll(List<TransactionModel> txns) {
+    List params = [];
+    String insert = 'INSERT INTO $table VALUES ';
+    for (int i = 0; i < txns.length; i++) {
+      TransactionModel transaction = txns[i];
+      insert = '$insert (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      params.addAll([
+        transaction.seq,
+        base64.encode(transaction.id!),
+        transaction.merkelProof,
+        transaction.version,
+        transaction.address,
+        transaction.contents,
+        transaction.assetRef,
+        transaction.block == null ? null : "'${transaction.block!.id}'",
+        transaction.timestamp.millisecondsSinceEpoch ~/ 1000,
+        transaction.signature
+      ]);
+      if (i < txns.length - 1) insert = '$insert, ';
+    }
+  }
+
   TransactionModel commit(TransactionModel transaction) {
     _db.execute(
         '''UPDATE $table SET $columnMerkelProof = ?,  $columnBlockId = ? 

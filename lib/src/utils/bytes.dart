@@ -106,29 +106,63 @@ bool memEquals(Uint8List bytes1, Uint8List bytes2) {
 /// >= 0x100000000 && <= 0xffffffffffffffff   9             0xff followed by the number as uint64_t
 /// For example, the number 515 is encoded as 0xfd0302.
 /// From https://developer.bitcoin.org/reference/transactions.html#compactsize-unsigned-integers
-List<int> compactSize(Uint8List bytes) {
+Uint8List compactSize(Uint8List bytes) {
   int size = bytes.length;
-  List<int> byteList = [];
+  BytesBuilder byteList = BytesBuilder();
   if (size <= 252) {
-    byteList.add(size);
+    byteList.addByte(size);
   } else if (size <= 0xffff) {
-    byteList.add(253);
-    byteList.add(size);
+    byteList.addByte(253);
+    Uint16List uint16list = Uint16List.fromList([size]);
+    byteList.add(uint16list.buffer.asUint8List());
   } else if (size <= 0xffffffff) {
-    byteList.add(254);
-    byteList.add(size);
+    byteList.addByte(254);
+    Uint32List uint32list = Uint32List.fromList([size]);
+    byteList.add(uint32list.buffer.asUint8List());
   } else {
-    byteList.add(255);
-    byteList.add(size);
+    byteList.addByte(255);
+    Uint64List uint64list = Uint64List.fromList([size]);
+    byteList.add(uint64list.buffer.asUint8List());
   }
-  return byteList;
+  return byteList.toBytes();
 }
 
-int compactSizeToInt(List<int> compactSize) {
+int compactSizeToInt(Uint8List compactSize) {
   int size = compactSize[0];
+  Uint8List bytes;
   if (size <= 252) {
-    return compactSize[0];
+    return size;
+  } else if (size == 253) {
+    bytes = compactSize.sublist(1, 3);
+  } else if (size == 254) {
+    bytes = compactSize.sublist(1, 5);
   } else {
-    return compactSize[1];
+    bytes = compactSize.sublist(1, 9);
   }
+  int value = 0;
+  for (int i = bytes.length - 1; i >= 0; i--) {
+    value = value << 8;
+    value = value | bytes[i];
+  }
+  return value;
+}
+
+List<Uint8List> extractSerializeBytes(Uint8List bytes) {
+  List<Uint8List> extractedBytes = [];
+  int currentSize = 0;
+  for (int i = 0; i < bytes.length; i += currentSize) {
+    currentSize = compactSizeToInt(bytes.sublist(i));
+    if (bytes[i] <= 252) {
+      i++;
+    } else if (bytes[i] == 253) {
+      i += 3;
+    } else if (bytes[i] == 254) {
+      i += 5;
+    } else {
+      i += 9;
+    }
+    Uint8List currentBytes = bytes.sublist(i, i + currentSize);
+    extractedBytes.add(currentBytes);
+  }
+  return extractedBytes;
 }

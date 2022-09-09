@@ -30,5 +30,5 @@ void main() {
       expect(TransactionService.validateIntegrity(txn), true);
     });
     test('create block by last transaction creation time', () async {});
-   });
+  });
 }
