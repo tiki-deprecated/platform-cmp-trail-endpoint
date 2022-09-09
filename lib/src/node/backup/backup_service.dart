@@ -54,7 +54,7 @@ class BackupService {
         }
         String path = '${NodeService.scheme}/$_address/${bkp.assetId}';
         if (bkp.assetType == BackupModelAssetEnum.pubkey) {
-          String path = '${NodeService.scheme}/public_key';
+          path = '${NodeService.scheme}/public_key';
         }
         bkp.signature = sign(key.privateKey, bkp.payload!);
         String? bkpResult = await _wasabiService.write(path, bkp.serialize());

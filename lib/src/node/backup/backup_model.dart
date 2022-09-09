@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import '../../utils/bytes.dart';
@@ -35,9 +34,9 @@ class BackupModel {
     signature = extractedBytes[2];
     payload = extractedBytes[3];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
-      decodeBigInt(extractedBytes[4]).toInt() * 1000);
+        decodeBigInt(extractedBytes[4]).toInt() * 1000);
   }
-  
+
   Uint8List serialize() {
     BytesBuilder bytes = BytesBuilder();
     bytes.add(compactSize(Uint8List.fromList([assetType.byte])));
@@ -48,10 +47,6 @@ class BackupModel {
     bytes.add(signature!);
     bytes.add(compactSize(payload!));
     bytes.add(payload!);
-    Uint8List timestampInSecs =
-        encodeBigInt(BigInt.from(timestamp!.millisecondsSinceEpoch ~/ 1000));
-    bytes.add(compactSize(timestampInSecs));
-    bytes.add(timestampInSecs);
     return bytes.toBytes();
   }
 

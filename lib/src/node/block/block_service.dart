@@ -69,32 +69,29 @@ class BlockService {
     Uint8List head = header(block);
     Uint8List txns = body(block);
     return (BytesBuilder()
-      ..add(head) 
-      ..add(txns)).toBytes();
+          ..add(head)
+          ..add(txns))
+        .toBytes();
   }
 
   Uint8List header(BlockModel block) {
-    Uint8List serializedVersion = (BytesBuilder()
-          ..add([encodeBigInt(BigInt.from(block.version)).length])
-          ..add(encodeBigInt(BigInt.from(block.version))))
-        .toBytes();
+    Uint8List serializedVersion = encodeBigInt(BigInt.from(block.version));
     Uint8List serializedTimestamp = (BytesBuilder()
-          ..add([
-            encodeBigInt(
-                    BigInt.from(block.timestamp.millisecondsSinceEpoch ~/ 1000))
-                .length
-          ])
           ..add(encodeBigInt(
               BigInt.from(block.timestamp.millisecondsSinceEpoch ~/ 1000))))
         .toBytes();
     Uint8List serializedPreviousHash = block.previousHash;
     Uint8List serializedTransactionRoot = block.transactionRoot;
-    return Uint8List.fromList([
-      ...serializedVersion,
-      ...serializedTimestamp,
-      ...serializedPreviousHash,
-      ...serializedTransactionRoot
-    ]);
+    return (BytesBuilder()
+          ..add(compactSize(serializedVersion))
+          ..add(serializedVersion)
+          ..add(compactSize(serializedTimestamp))
+          ..add(serializedTimestamp)
+          ..add(compactSize(serializedPreviousHash))
+          ..add(serializedPreviousHash)
+          ..add(compactSize(serializedTransactionRoot))
+          ..add(serializedTransactionRoot))
+        .toBytes();
   }
 
   Uint8List body(BlockModel block) {
@@ -103,43 +100,24 @@ class BlockService {
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
       Uint8List cSize = compactSize(serialized);
-      body.add(cSize); 
+      body.add(cSize);
       body.add(serialized);
     }
     return body.toBytes();
   }
 
-  BlockModel fromSerialized(
-      List<int> serialized, CryptoRSAPublicKey publicKey) {
-    int pos = 0;
-    int versionSize = serialized[0];
-    pos++;
-    int version = decodeBigInt(serialized.sublist(pos, versionSize)).toInt();
-    pos += versionSize;
-    int timestampSize = serialized[pos];
-    pos++;
-    int timestampInt =
-        decodeBigInt(serialized.sublist(pos, pos + timestampSize)).toInt();
-    pos += timestampSize;
-    Uint8List previousHash =
-        Uint8List.fromList(serialized.sublist(pos, pos + 32));
-    pos += 32;
-    Uint8List transactionRoot =
-        Uint8List.fromList(serialized.sublist(pos, pos + 32));
-    pos += 32;
-    int length = 0;
+  BlockModel fromSerialized(Uint8List serialized, CryptoRSAPublicKey publicKey,
+      {persistBlock = false, persistTransactions = false}) {
+    List<Uint8List> extractedBlockBytes = extractSerializeBytes(serialized);
+    int version = decodeBigInt(extractedBlockBytes[0]).toInt();
+    DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(
+        decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
+    Uint8List previousHash = extractedBlockBytes[2];
+    Uint8List transactionRoot = extractedBlockBytes[3];
     List<TransactionModel> txns = [];
-    for (int i = pos; i < serialized.length; i += length) {
-      int cSize0 = serialized[i];
-      i++;
-      if (cSize0 <= 252) {
-        length = cSize0;
-      } else {
-        length = serialized[i];
-        i++;
-      }
-      TransactionModel txn = TransactionModel.fromSerialized(
-          Uint8List.fromList(serialized.sublist(i, i + length)));
+    for (int i = 4; i < extractedBlockBytes.length; i++) {
+      TransactionModel txn =
+          TransactionModel.fromSerialized(extractedBlockBytes[i]);
       txn.id = Digest("SHA3-256").process(txn.serialize());
       if (!TransactionService.validateAuthor(txn, publicKey)) {
         throw Exception('Invalid signature for $txn');
@@ -160,11 +138,17 @@ class BlockService {
     }
     BlockModel block = BlockModel(
         version: version,
-        timestamp: DateTime.fromMillisecondsSinceEpoch(timestampInt * 1000),
+        timestamp: timestamp,
         transactionRoot: transactionRoot,
         previousHash: previousHash,
         transactionCount: txns.length);
     block.id = Digest("SHA3-256").process(header(block));
+    if (persistBlock) {
+      add(block);
+    }
+    if (persistTransactions) {
+      _transactionService.addAll(txns);
+    }
     return block;
   }
 }

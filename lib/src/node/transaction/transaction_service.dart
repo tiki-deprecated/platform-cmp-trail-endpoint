@@ -58,5 +58,7 @@ class TransactionService {
 
   List<TransactionModel> getPending() => _repository.getPending();
 
-  Future<void> prune(Uint8List id) async => _repository.prune(id);
+  void prune(Uint8List id) async => _repository.prune(id);
+
+  void addAll(List<TransactionModel> txns) => _repository.addAll(txns);
 }

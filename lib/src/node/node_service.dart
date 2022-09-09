@@ -87,7 +87,6 @@ class NodeService {
       List<String> adresses = const [],
       blkInterval = const Duration(minutes: 1)}) async {
     _blkInterval = blkInterval;
-    _wasabiService = WasabiService(apiKey, _keys.privateKey);
     _keysService = KeysService(keysSecureStorage);
     // _xchainService = XchainService(database);
     _transactionService = TransactionService(database);
@@ -95,6 +94,7 @@ class NodeService {
 
     await _loadKeys(adresses);
 
+    _wasabiService = WasabiService(apiKey, _keys.privateKey);
     _backupService = BackupService(base64.encode(_keys.address), _keysService,
         _blockService, _wasabiService, database);
 
@@ -146,13 +146,9 @@ class NodeService {
   Future<void> _createBlock() async {
     List<TransactionModel> txns = _transactionService.getPending();
     if (txns.isNotEmpty) {
-      int totalSize = 0;
-      for (TransactionModel txn in txns) {
-        totalSize += txn.serialize().buffer.lengthInBytes;
-      }
       DateTime lastCreated = txns.last.timestamp;
       DateTime oneMinAgo = DateTime.now().subtract(_blkInterval);
-      if (lastCreated.isBefore(oneMinAgo) || totalSize >= 100000) {
+      if (lastCreated.isBefore(oneMinAgo) || txns.length > 50) {
         BlockModel blk = _blockService.create(txns);
         List<int> serializedBlock = _blockService.serialize(blk);
         Uint8List signature =
