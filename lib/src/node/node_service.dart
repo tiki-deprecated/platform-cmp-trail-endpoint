@@ -21,6 +21,8 @@ import 'wasabi/wasabi_service.dart';
 /// blockchain locally, persist blocks and syncing with remote backup and other
 /// blockchains in the network.
 class NodeService {
+  static const scheme = "tiki://";
+
   late final BackupService _backupService;
   late final BlockService _blockService;
   late final KeysService _keysService;
@@ -85,7 +87,7 @@ class NodeService {
       List<String> adresses = const [],
       blkInterval = const Duration(minutes: 1)}) async {
     _blkInterval = blkInterval;
-    _wasabiService = WasabiService(apiKey);
+    _wasabiService = WasabiService(apiKey, _keys.privateKey);
     _keysService = KeysService(keysSecureStorage);
     // _xchainService = XchainService(database);
     _transactionService = TransactionService(database);

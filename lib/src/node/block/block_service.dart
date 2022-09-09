@@ -65,10 +65,12 @@ class BlockService {
   BlockModel? getLast(String xchainAddress) =>
       _repository.getLast(xchainIAddress: xchainAddress);
 
-  List<int> serialize(BlockModel block) {
-    List<int> head = header(block);
-    List<int> txns = body(block);
-    return [...head, ...txns];
+  Uint8List serialize(BlockModel block) {
+    Uint8List head = header(block);
+    Uint8List txns = body(block);
+    return (BytesBuilder()
+      ..add(head) 
+      ..add(txns)).toBytes();
   }
 
   Uint8List header(BlockModel block) {
@@ -95,15 +97,16 @@ class BlockService {
     ]);
   }
 
-  List<int> body(BlockModel block) {
-    List<int> body = [];
+  Uint8List body(BlockModel block) {
+    BytesBuilder body = BytesBuilder();
     List<TransactionModel> txns = _transactionService.getByBlock(block.id!);
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
-      List<int> cSize = compactSize(serialized);
-      body.addAll([...cSize, ...serialized]);
+      Uint8List cSize = compactSize(serialized);
+      body.add(cSize); 
+      body.add(serialized);
     }
-    return body;
+    return body.toBytes();
   }
 
   BlockModel fromSerialized(
