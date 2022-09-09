@@ -1,13 +1,17 @@
 import 'dart:convert';
+import 'package:pointycastle/api.dart';
+
+import '../../utils/bytes.dart';
+import '../../utils/compact_size.dart' as compactSize;
 import 'dart:typed_data';
 
 class BlockModel {
   int? seq;
   Uint8List? id;
-  int version;
-  Uint8List previousHash;
-  Uint8List transactionRoot;
-  int transactionCount;
+  late int version;
+  late Uint8List previousHash;
+  late Uint8List transactionRoot;
+  late int transactionCount;
   late final DateTime timestamp;
 
   BlockModel({
@@ -29,24 +33,46 @@ class BlockModel {
         transactionCount = map['transaction_count'],
         timestamp =
             DateTime.fromMillisecondsSinceEpoch(map['timestamp'] ~/ 1000);
+  BlockModel.deserialize(Uint8List serialized, this.transactionRoot, this.transactionCount) {
+      List<Uint8List> extractedBlockBytes = compactSize.decode(serialized);
+      version = decodeBigInt(extractedBlockBytes[0]).toInt();
+      timestamp = DateTime.fromMillisecondsSinceEpoch(
+          decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
+      previousHash = extractedBlockBytes[2];
+      transactionRoot = extractedBlockBytes[3];
+      id = Digest("SHA3-256").process(header());
+  }
+  
+  Uint8List serialize(Uint8List body) {
+    Uint8List head = header();
+    return (BytesBuilder()
+          ..add(head)
+          ..add(body))
+        .toBytes();
+  }
 
-  static BlockModel fromJson(String jsonString) =>
-      BlockModel.fromMap(jsonDecode(jsonString));
-
-  String toJson() {
-    return jsonEncode({
-      'id': id,
-      'version': version,
-      'previous_hash': previousHash,
-      'transaction_root': transactionRoot,
-      'transaction_count': transactionCount,
-      'timestamp': timestamp.millisecondsSinceEpoch
-    });
+  Uint8List header() {
+    Uint8List serializedVersion = encodeBigInt(BigInt.from(version));
+    Uint8List serializedTimestamp = (BytesBuilder()
+          ..add(encodeBigInt(
+              BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))))
+        .toBytes();
+    Uint8List serializedPreviousHash = previousHash;
+    Uint8List serializedTransactionRoot = transactionRoot;
+    return (BytesBuilder()
+          ..add(compactSize.toSize(serializedVersion))
+          ..add(serializedVersion)
+          ..add(compactSize.toSize(serializedTimestamp))
+          ..add(serializedTimestamp)
+          ..add(compactSize.toSize(serializedPreviousHash))
+          ..add(serializedPreviousHash)
+          ..add(compactSize.toSize(serializedTransactionRoot))
+          ..add(serializedTransactionRoot))
+        .toBytes();
   }
 
   @override
-  String toString() {
-    return '''BlockModel
+  String toString() => '''BlockModel
       'id': $id,
       'version': $version,
       'previousHash': $previousHash,
@@ -54,5 +80,4 @@ class BlockModel {
       'transactionCount': $transactionCount,
       'timestamp': $timestamp
     ''';
-  }
 }

@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+.api_id
 migrate_working_dir/
 
 # IntelliJ related

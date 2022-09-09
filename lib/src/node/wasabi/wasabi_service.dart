@@ -27,15 +27,14 @@ class WasabiService {
     return _repository.get(path, versionId: versionId);
   }
 
-  Future<String?> write(String path, Uint8List obj, {int retries = 3}) async {
+  Future<void> write(String path, Uint8List obj, {int retries = 3}) async {
     policy ??= await _l0storageService.policy();
     try {
-      String? rsp = await _repository.upload(
+      await _repository.upload(
           '${policy!.keyPrefix}$path', policy!.fields!, obj);
-      return rsp;
     } on WasabiExceptionExpired catch (_) {
       policy = await _l0storageService.policy();
-      return _repository.upload(
+      await _repository.upload(
           '${policy!.keyPrefix}$path', policy!.fields!, obj);
     } on SocketException catch (_) {
       if (retries > 0) {

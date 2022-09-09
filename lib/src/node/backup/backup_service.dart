@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
@@ -8,6 +9,8 @@ import '../block/block_service.dart';
 import '../keys/keys_model.dart';
 import '../keys/keys_service.dart';
 import '../node_service.dart';
+import '../transaction/transaction_model.dart';
+import '../transaction/transaction_service.dart';
 import '../wasabi/wasabi_service.dart';
 import 'backup_model.dart';
 import 'backup_model_asset_enum.dart';
@@ -19,17 +22,16 @@ class BackupService {
   final WasabiService _wasabiService;
   final KeysService _keysService;
   final BlockService _blockService;
+  final TransactionService _transactionService;
 
   BackupService(this._address, this._keysService, this._blockService,
-      this._wasabiService, Database db)
+      this._transactionService, this._wasabiService, Database db)
       : _repository = BackupRepository(db) {
     _writePending();
   }
 
-  void write(String assetId, BackupModelAssetEnum assetType,
-      Uint8List signature) async {
-    BackupModel bkpModel = BackupModel(
-        assetId: assetId, assetType: assetType, signature: signature);
+  void write(String path) async {
+    BackupModel bkpModel = BackupModel(path: path);
     _repository.save(bkpModel);
     _writePending();
   }
@@ -37,31 +39,25 @@ class BackupService {
   void _writePending() async {
     List<BackupModel> pending = _repository.getPending();
     if (pending.isNotEmpty) {
-      KeysModel key = (await _keysService.get(_address))!;
+      KeysModel keys = (await _keysService.get(_address))!;
       for (BackupModel bkp in pending) {
-        switch (bkp.assetType) {
-          case BackupModelAssetEnum.pubkey:
-            bkp.payload =
-                Uint8List.fromList(key.privateKey.public.encode().codeUnits);
-            break;
-          case BackupModelAssetEnum.block:
-            BlockModel? block = _blockService.get(bkp.assetId);
-            if (block == null) {
-              throw ArgumentError.value(bkp.assetId, 'Block not found');
-            }
-            bkp.payload = _blockService.serialize(block);
-            break;
+        Uint8List obj;
+        if (bkp.path == 'pubkey') {
+          obj = base64.decode(keys.privateKey.public.encode());
+        } else {
+          BlockModel block = _blockService.get(bkp.path)!;
+          Uint8List body = _transactionService
+              .serializeTransactions(base64.encode(block.id!));
+          Uint8List serializedBlock = block.serialize(body);
+          bkp.signature = sign(keys.privateKey, serializedBlock);
+          obj = (BytesBuilder()
+                ..add(bkp.signature!)
+                ..add(serializedBlock))
+              .toBytes();
         }
-        String path = '${NodeService.scheme}/$_address/${bkp.assetId}';
-        if (bkp.assetType == BackupModelAssetEnum.pubkey) {
-          path = '${NodeService.scheme}/public_key';
-        }
-        bkp.signature = sign(key.privateKey, bkp.payload!);
-        String? bkpResult = await _wasabiService.write(path, bkp.serialize());
-        if (bkpResult != null) {
-          bkp.timestamp = DateTime.now();
-          _repository.update(bkp);
-        }
+        await _wasabiService.write(bkp.path, obj);
+        bkp.timestamp = DateTime.now();
+        _repository.update(bkp);
       }
     }
   }

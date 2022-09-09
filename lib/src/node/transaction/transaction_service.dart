@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
@@ -7,6 +8,7 @@ import '../../utils/merkel_tree.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/rsa/rsa_public_key.dart';
 import '../../utils/bytes.dart';
+import '../../utils/compact_size.dart' as compactSize;
 import '../block/block_model.dart';
 import '../keys/keys_model.dart';
 import 'transaction_model.dart';
@@ -50,6 +52,18 @@ class TransactionService {
           TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
       verify(pubKey, transaction.serialize(includeSignature: false),
           transaction.signature!);
+
+  Uint8List serializeTransactions(String blockId) {
+    BytesBuilder body = BytesBuilder();
+    List<TransactionModel> txns = getByBlock(base64.decode(blockId));
+    for (TransactionModel txn in txns) {
+      Uint8List serialized = txn.serialize();
+      Uint8List cSize = compactSize.toSize(serialized);
+      body.add(cSize);
+      body.add(serialized);
+    }
+    return body.toBytes();
+  }
 
   List<TransactionModel> getByBlock(Uint8List blockId) =>
       _repository.getByBlockId(blockId);
