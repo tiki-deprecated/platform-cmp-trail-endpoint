@@ -56,7 +56,7 @@ class WasabiRepository {
     if (path.startsWith('/')) path = path.replaceFirst('/', '');
     http.MultipartRequest request = http.MultipartRequest('POST', _uri);
     request.fields.addAll(fields);
-    request.fields["content-mD5"] = base64.encode(MD5Digest().process(obj));
+    request.fields["content-md5"] = base64.encode(MD5Digest().process(obj));
     request.fields['key'] = path;
     request.files.add(http.MultipartFile.fromBytes('file', obj));
     http.StreamedResponse rsp = await request.send();
