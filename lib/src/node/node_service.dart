@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:http/retry.dart';
 import 'package:sqlite3/sqlite3.dart';
-import '../utils/rsa/rsa.dart';
+import '../utils/merkel_tree.dart';
+
 import '../utils/rsa/rsa_public_key.dart';
-import 'backup/backup_model_asset_enum.dart';
 import 'block/block_model.dart';
 import 'keys/keys_interface.dart';
 import 'keys/keys_model.dart';
@@ -88,19 +89,16 @@ class NodeService {
       blkInterval = const Duration(minutes: 1)}) async {
     _blkInterval = blkInterval;
     _keysService = KeysService(keysSecureStorage);
-    // _xchainService = XchainService(database);
     _transactionService = TransactionService(database);
-    _blockService = BlockService(database, _transactionService);
+    _blockService = BlockService(database);
 
     await _loadKeys(adresses);
 
     _wasabiService = WasabiService(apiKey, _keys.privateKey);
     _backupService = BackupService(base64.encode(_keys.address), _keysService,
-        _blockService, _wasabiService, database);
+        _blockService, _transactionService, _wasabiService, database);
 
-    _backupKeys();
-
-    await _loadXchains(adresses);
+    _backupService.write('pubKey');
 
     await _createBlock();
 
@@ -123,38 +121,31 @@ class NodeService {
     return txn;
   }
 
-  /// Gets a [TransactionModel] by [TransactionModel.id]
-  TransactionModel? getTxn(String id) {
-    return _transactionService.getById(id);
-  }
+  TransactionModel? getTransactionById(String id) =>
+      _transactionService.getById(id);
 
-  /// Removes the [TransactionModel] from local [database]
-  void discardTransaction(TransactionModel txn) =>
-      _transactionService.prune(txn.id!);
+  List<TransactionModel> getTransactionsByBlockId(String blockId) =>
+      _transactionService.getByBlock(base64.decode(blockId));
 
-  /// Removes the [BlockModel] from local [database] and its [TransactionModel]
-  void discardBlock(BlockModel blk, {keepTxn = false}) {
-    if (!keepTxn) {
-      List<TransactionModel> txns = _transactionService.getByBlock(blk.id!);
-      for (TransactionModel txn in txns) {
-        _transactionService.prune(txn.id!);
-      }
-    }
-    _blockService.prune(blk);
-  }
+  BlockModel? getLastBlock() => _blockService.getLast();
 
   Future<void> _createBlock() async {
     List<TransactionModel> txns = _transactionService.getPending();
     if (txns.isNotEmpty) {
       DateTime lastCreated = txns.last.timestamp;
       DateTime oneMinAgo = DateTime.now().subtract(_blkInterval);
-      if (lastCreated.isBefore(oneMinAgo) || txns.length > 50) {
-        BlockModel blk = _blockService.create(txns);
-        List<int> serializedBlock = _blockService.serialize(blk);
-        Uint8List signature =
-            sign(_keys.privateKey, Uint8List.fromList(serializedBlock));
-        _backupService.write(
-            base64.encode(blk.id!), BackupModelAssetEnum.block, signature);
+      if (lastCreated.isBefore(oneMinAgo) || txns.length >= 200) {
+        List<Uint8List> hashes = txns.map((e) => e.id!).toList();
+        MerkelTree merkelTree = MerkelTree.build(hashes);
+        Uint8List transactionRoot = merkelTree.root!;
+        BlockModel blk = _blockService.create(txns, transactionRoot);
+        for (TransactionModel transaction in txns) {
+          transaction.block = blk;
+          transaction.merkelProof = merkelTree.proofs[transaction.id];
+          _transactionService.commit(transaction);
+        }
+        _blockService.commit(blk);
+        _backupService.write(base64.encode(blk.id!));
       }
       if (_blkTimer == null || !_blkTimer!.isActive) _setBlkTimer();
     }
@@ -172,21 +163,7 @@ class NodeService {
     _keys = await _keysService.create();
   }
 
-  Future<void> _loadXchains(List<String> addresses) async {
-    // for (String address in addresses) {
-    //   String assetRef = 'tiki://$address';
-    //   String? xchainJson = await _wasabiService.read(assetRef);
-    // }
-  }
-
   void _setBlkTimer() {
     _blkTimer = Timer.periodic(_blkInterval, (_) => _createBlock());
-  }
-
-  void _backupKeys() {
-    Uint8List signature =
-        sign(_keys.privateKey, base64.decode(_keys.privateKey.public.encode()));
-    _backupService.write(
-        base64.encode(_keys.address), BackupModelAssetEnum.pubkey, signature);
   }
 }
