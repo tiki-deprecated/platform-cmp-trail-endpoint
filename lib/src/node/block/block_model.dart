@@ -32,16 +32,22 @@ class BlockModel {
         transactionCount = map['transaction_count'],
         timestamp =
             DateTime.fromMillisecondsSinceEpoch(map['timestamp'] ~/ 1000);
-  BlockModel.deserialize(Uint8List serialized, this.transactionRoot, this.transactionCount) {
-      List<Uint8List> extractedBlockBytes = compactSize.decode(serialized);
-      version = decodeBigInt(extractedBlockBytes[0]).toInt();
-      timestamp = DateTime.fromMillisecondsSinceEpoch(
-          decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
-      previousHash = extractedBlockBytes[2];
-      transactionRoot = extractedBlockBytes[3];
-      id = Digest("SHA3-256").process(header());
+
+  BlockModel.deserialize(Uint8List serialized) {
+    List<Uint8List> extractedBlockBytes = compactSize.decode(serialized);
+    version = decodeBigInt(extractedBlockBytes[0]).toInt();
+    timestamp = DateTime.fromMillisecondsSinceEpoch(
+        decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
+    previousHash = extractedBlockBytes[2];
+    transactionRoot = extractedBlockBytes[3];
+    transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
+    if (extractedBlockBytes.sublist(5).length == transactionCount) {
+      throw Exception(
+          'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
+    }
+    id = Digest("SHA3-256").process(header());
   }
-  
+
   Uint8List serialize(Uint8List body) {
     Uint8List head = header();
     return (BytesBuilder()
@@ -58,6 +64,8 @@ class BlockModel {
         .toBytes();
     Uint8List serializedPreviousHash = previousHash;
     Uint8List serializedTransactionRoot = transactionRoot;
+    Uint8List serializedTransactionCount =
+        encodeBigInt(BigInt.from(transactionCount));
     return (BytesBuilder()
           ..add(compactSize.toSize(serializedVersion))
           ..add(serializedVersion)
@@ -66,7 +74,9 @@ class BlockModel {
           ..add(compactSize.toSize(serializedPreviousHash))
           ..add(serializedPreviousHash)
           ..add(compactSize.toSize(serializedTransactionRoot))
-          ..add(serializedTransactionRoot))
+          ..add(serializedTransactionRoot)
+          ..add(compactSize.toSize(serializedTransactionCount))
+          ..add(serializedTransactionCount))
         .toBytes();
   }
 

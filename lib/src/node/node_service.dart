@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:http/retry.dart';
 import 'package:sqlite3/sqlite3.dart';
 import '../utils/merkel_tree.dart';
 
@@ -120,17 +121,20 @@ class NodeService {
     return txn;
   }
 
-  /// Gets a [TransactionModel] by [TransactionModel.id]
-  TransactionModel? getTxn(String id) {
-    return _transactionService.getById(id);
-  }
+  TransactionModel? getTransactionById(String id) =>
+      _transactionService.getById(id);
+
+  List<TransactionModel> getTransactionsByBlockId(String blockId) =>
+      _transactionService.getByBlock(base64.decode(blockId));
+
+  BlockModel? getLastBlock() => _blockService.getLast();
 
   Future<void> _createBlock() async {
     List<TransactionModel> txns = _transactionService.getPending();
     if (txns.isNotEmpty) {
       DateTime lastCreated = txns.last.timestamp;
       DateTime oneMinAgo = DateTime.now().subtract(_blkInterval);
-      if (lastCreated.isBefore(oneMinAgo) || txns.length > 50) {
+      if (lastCreated.isBefore(oneMinAgo) || txns.length >= 200) {
         List<Uint8List> hashes = txns.map((e) => e.id!).toList();
         MerkelTree merkelTree = MerkelTree.build(hashes);
         Uint8List transactionRoot = merkelTree.root!;
@@ -162,5 +166,4 @@ class NodeService {
   void _setBlkTimer() {
     _blkTimer = Timer.periodic(_blkInterval, (_) => _createBlock());
   }
-
 }

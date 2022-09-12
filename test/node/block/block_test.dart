@@ -115,7 +115,7 @@ void main() {
 
       Uint8List serialized = blk.serialize(transactionService.serializeTransactions(base64.encode(blk.id!)));
       BlockModel newBlock =
-          BlockModel.deserialize(serialized, merkelTree.root!,transactions.length);
+          BlockModel.deserialize(serialized);
       expect(newBlock.id, blk.id);
     });
   });

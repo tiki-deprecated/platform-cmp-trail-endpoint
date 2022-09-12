@@ -65,6 +65,24 @@ class TransactionService {
     return body.toBytes();
   }
 
+  static List<TransactionModel> transactionsFromSerializedBlock(
+      Uint8List serializedBlock) {
+    List<TransactionModel> txns = [];
+    List<Uint8List> extractedBlockBytes = compactSize.decode(serializedBlock);
+    int transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
+    if (extractedBlockBytes.sublist(5).length == transactionCount) {
+      throw Exception(
+          'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
+    }
+    for (int i = 5; i < extractedBlockBytes.length; i++) {
+      TransactionModel txn =
+          TransactionModel.deserialize(extractedBlockBytes[i]);
+      if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
+      txns.add(txn);
+    }
+    return txns;
+  }
+
   List<TransactionModel> getByBlock(Uint8List blockId) =>
       _repository.getByBlockId(blockId);
 

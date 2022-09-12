@@ -42,7 +42,8 @@ class BackupService {
         if (bkp.path == 'pubkey') {
           obj = base64.decode(keys.privateKey.public.encode());
         } else {
-          BlockModel block = _blockService.get(bkp.path)!;
+          BlockModel? block = _blockService.get(bkp.path);
+          if (block == null) continue;
           Uint8List body = _transactionService
               .serializeTransactions(base64.encode(block.id!));
           Uint8List serializedBlock = block.serialize(body);

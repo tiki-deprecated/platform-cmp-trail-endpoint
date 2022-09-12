@@ -13,8 +13,7 @@ class BlockService {
   static const int version = 1;
   final BlockRepository _repository;
 
-  BlockService(Database db)
-      : _repository = BlockRepository(db);
+  BlockService(Database db) : _repository = BlockRepository(db);
 
   /// Create a new block from a list of transactions.
   ///
@@ -23,8 +22,9 @@ class BlockService {
   /// Update the [transactions] with block id and merkel proof;
   /// Backup the new block with [BackupService].
   /// Return the [BlockModelResponse] with [BlockModel] and [MerkelTree].
-  BlockModel create(List<TransactionModel> transactions, Uint8List transactionRoot) {
-   BlockModel? lastBlock = _repository.getLast();
+  BlockModel create(
+      List<TransactionModel> transactions, Uint8List transactionRoot) {
+    BlockModel? lastBlock = _repository.getLast();
     BlockModel block = BlockModel(
         previousHash: lastBlock == null
             ? Uint8List(1)
@@ -43,7 +43,6 @@ class BlockService {
     return _repository.getLocal();
   }
 
-  BlockModel? getLast(String xchainAddress) =>
-      _repository.getLast(xchainIAddress: xchainAddress);
-
+  BlockModel? getLast() =>
+      _repository.getLast();
 }
