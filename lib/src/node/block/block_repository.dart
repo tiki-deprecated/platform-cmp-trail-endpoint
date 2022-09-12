@@ -3,21 +3,18 @@ import 'dart:convert';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/page_model.dart';
-import '../xchain/xchain_model.dart';
-import '../xchain/xchain_repository.dart';
 import 'block_model.dart';
 
 class BlockRepository {
   static const table = 'block';
-  static const xchainTable = XchainRepository.table;
-  static const collumnSeq = 'seq';
-  static const collumnId = 'id';
-  static const collumnVersion = 'version';
-  static const collumnPreviousHash = 'previous_hash';
-  static const collumnXchainAddress = 'xchain_id';
-  static const collumnTransactionRoot = 'transaction_root';
-  static const collumnTransactionCount = 'transaction_count';
-  static const collumnTimestamp = 'timestamp';
+
+  static const columnSeq = 'seq';
+  static const columnId = 'id';
+  static const columnVersion = 'version';
+  static const columnPreviousHash = 'previous_hash';
+  static const columnTransactionRoot = 'transaction_root';
+  static const columnTransactionCount = 'transaction_count';
+  static const columnTimestamp = 'timestamp';
 
   final Database _db;
 
@@ -28,54 +25,46 @@ class BlockRepository {
   void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-        $collumnSeq INTEGER AUTO INCREMENT,
-        $collumnId TEXT PRIMARY KEY,
-        $collumnVersion INTEGER NOT NULL,
-        $collumnPreviousHash TEXT,
-        $collumnXchainAddress TEXT,
-        $collumnTransactionRoot BLOB,
-        $collumnTransactionCount INTEGER,
-        $collumnTimestamp INTEGER,
-
+        $columnSeq INTEGER AUTO INCREMENT,
+        $columnId TEXT PRIMARY KEY NOT NULL,
+        $columnVersion INTEGER NOT NULL,
+        $columnPreviousHash TEXT,
+        $columnTransactionRoot BLOB,
+        $columnTransactionCount INTEGER,
+        $columnTimestamp INTEGER
       );
     ''');
   }
 
   void save(BlockModel block) {
-    _db.execute('''INSERT INTO $table VALUES (
-      ${block.seq},
-      '${base64.encode([...block.id!])}',
-      ${block.version},
-      '${base64.encode([...block.previousHash])}',
-      ${block.xchain == null ? null : "'${block.xchain!.address}'"},
-      ${block.transactionRoot},
-      ${block.transactionCount},
-      ${block.timestamp}
-    );''');
-  }
-
-  PageModel<BlockModel> getByChain(String address, {int page = 0}) {
-    String whereStmt = 'WHERE ${XchainRepository.collumnAddress} = "$address"';
-    List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
-    return PageModel<BlockModel>(page, blocks);
+    _db.execute('INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?, ?);', [
+      block.seq,
+      base64.encode([...block.id!]),
+      block.version,
+      base64.encode([...block.previousHash]),
+      block.transactionRoot,
+      block.transactionCount,
+      block.timestamp.millisecondsSinceEpoch ~/ 1000
+    ]);
   }
 
   PageModel<BlockModel> getLocal({int page = 0}) {
-    String whereStmt = 'WHERE ${XchainRepository.collumnAddress} IS NULL';
-    List<BlockModel> blocks = _select(page: page, whereStmt: whereStmt);
+    // String whereStmt = 'WHERE ${XchainRepository.columnAddress} IS NULL';
+    List<BlockModel> blocks = _select(page: page);
     return PageModel<BlockModel>(page, blocks);
   }
 
   BlockModel? getById(String id) {
-    List<BlockModel> blocks = _select(whereStmt: "WHERE blocks.id = '$id'");
+    List<BlockModel> blocks =
+        _select(whereStmt: "WHERE $table.$columnId = '$id'");
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
   BlockModel? getLast({String? xchainIAddress}) {
-    String where = xchainIAddress == null
-        ? "WHERE $collumnXchainAddress IS NULL"
-        : "WHERE $collumnXchainAddress = '$xchainIAddress'";
-    List<BlockModel> blocks = _select(whereStmt: where, last: true);
+    // String where = xchainIAddress == null
+    //     ? "WHERE $columnXchainAddress IS NULL"
+    //     : "WHERE $columnXchainAddress = '$xchainIAddress'";
+    List<BlockModel> blocks = _select(last: true);
     return blocks.isNotEmpty ? blocks.first : null;
   }
 
@@ -84,44 +73,28 @@ class BlockRepository {
     String limit = page != null ? 'LIMIT ${page * 100},100' : '';
     ResultSet results = _db.select('''
         SELECT 
-          $table.$collumnSeq as '$table.$collumnSeq',
-          $table.$collumnId as '$table.$collumnId',
-          $table.$collumnVersion as '$table.$collumnVersion',
-          $table.$collumnPreviousHash as '$table.$collumnPreviousHash',
-          $table.$collumnXchainAddress as '$table.$collumnXchainAddress',
-          $table.$collumnTransactionRoot as '$table.$collumnTransactionRoot',
-          $table.$collumnTransactionCount as '$table.$collumnTransactionCount',
-          $table.$collumnTimestamp as '$table.$collumnTimestamp',
-          $xchainTable.${XchainRepository.collumnAddress} as '$xchainTable.${XchainRepository.collumnAddress}',
-          $xchainTable.${XchainRepository.collumnPubkey} as '$xchainTable.${XchainRepository.collumnPubkey}',
-          $xchainTable.${XchainRepository.collumnLastChecked} as '$xchainTable.${XchainRepository.collumnLastChecked}'
+          $table.$columnSeq as '$table.$columnSeq',
+          $table.$columnId as '$table.$columnId',
+          $table.$columnVersion as '$table.$columnVersion',
+          $table.$columnPreviousHash as '$table.$columnPreviousHash',
+          $table.$columnTransactionRoot as '$table.$columnTransactionRoot',
+          $table.$columnTransactionCount as '$table.$columnTransactionCount',
+          $table.$columnTimestamp as '$table.$columnTimestamp'
         FROM $table
-        LEFT JOIN ${XchainRepository.table} ON 
-        $table.$collumnXchainAddress = $xchainTable.${XchainRepository.collumnAddress}
         $whereStmt
-        ${last ? 'ORDER BY $table.$collumnSeq DESC' : ''};
+        ${last ? 'ORDER BY $table.$columnSeq DESC' : ''};
         $limit
         ''');
     List<BlockModel> blocks = [];
     for (final Row row in results) {
       Map<String, dynamic> blockMap = {
-        collumnSeq: row['$table.$collumnSeq'],
-        collumnId: row['$table.$collumnId'],
-        collumnVersion: row['$table.$collumnVersion'],
-        collumnPreviousHash: row['$table.$collumnPreviousHash'],
-        collumnXchainAddress: row['$table.$collumnXchainAddress'] == null
-            ? null
-            : XchainModel.fromMap({
-                '$xchainTable.${XchainRepository.collumnAddress}':
-                    row['$xchainTable.${XchainRepository.collumnAddress}'],
-                '$xchainTable.${XchainRepository.collumnPubkey}':
-                    row['$xchainTable.${XchainRepository.collumnPubkey}'],
-                '$xchainTable.${XchainRepository.collumnLastChecked}':
-                    row['$xchainTable.${XchainRepository.collumnLastChecked}'],
-              }),
-        collumnTransactionRoot: row['$table.$collumnTransactionRoot'],
-        collumnTransactionCount: row['$table.$collumnTransactionCount'],
-        collumnTimestamp: row['$table.$collumnTimestamp'],
+        columnSeq: row['$table.$columnSeq'],
+        columnId: base64.decode(row['$table.$columnId']),
+        columnVersion: row['$table.$columnVersion'],
+        columnPreviousHash: base64.decode(row['$table.$columnPreviousHash']),
+        columnTransactionRoot: row['$table.$columnTransactionRoot'],
+        columnTransactionCount: row['$table.$columnTransactionCount'],
+        columnTimestamp: row['$table.$columnTimestamp'],
       };
       BlockModel block = BlockModel.fromMap(blockMap);
       blocks.add(block);
@@ -130,7 +103,8 @@ class BlockRepository {
   }
 
   Future<void> prune(BlockModel blk) async {
-    _db.execute(
-        "DELETE FROM $table WHERE block_id = '${base64.encode([...blk.id!])}'");
+    _db.execute("DELETE FROM $table WHERE block_id = ?;", [
+      base64.encode([...blk.id!])
+    ]);
   }
 }

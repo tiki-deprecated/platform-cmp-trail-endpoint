@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:pointycastle/api.dart';
+
 import '../../utils/bytes.dart';
 import '../block/block_model.dart';
+import '../../utils/compact_size.dart' as compactSize;
 
 /// A transaction in the blockchain.
 class TransactionModel {
@@ -29,7 +32,7 @@ class TransactionModel {
       this.merkelProof,
       this.block}) {
     this.timestamp = timestamp ?? DateTime.now();
-    this.assetRef = assetRef ?? Uint8List(1);
+    this.assetRef = assetRef ?? "AA==";
   }
 
   TransactionModel.fromMap(Map<String, dynamic> map)
@@ -41,63 +44,66 @@ class TransactionModel {
         assetRef = map['asset_ref'],
         merkelProof = map['merkel_proof'],
         block = map['block'],
-        timestamp = map['timestamp'],
+        timestamp =
+            DateTime.fromMillisecondsSinceEpoch(map['timestamp'] * 1000),
         signature = map['signature'];
 
   static TransactionModel fromJson(String json) =>
       TransactionModel.fromMap(jsonDecode(json));
 
-  TransactionModel.fromSerialized(
-    Uint8List transaction,
-  ) {
-    int currentPos = 0;
-    List<Uint8List> parts = [];
-    for (int i = 0; i < 5; i++) {
-      int size = transaction[currentPos];
-      currentPos++;
-      int endPos = currentPos + size;
-      parts.add(transaction.sublist(currentPos, endPos));
-      currentPos = endPos;
-    }
-    version = decodeBigInt(parts[0]).toInt();
-    address = parts[1];
+  TransactionModel.deserialize(Uint8List transaction) {
+    List<Uint8List> extractedBytes = compactSize.decode(transaction);
+    version = decodeBigInt(extractedBytes[0]).toInt();
+    address = extractedBytes[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
-        decodeBigInt(parts[2]).toInt() * 1000);
-    assetRef = parts[3][0] == 0 ? 'AA==' : base64Url.encode(parts[3]);
-    signature = parts[4][0] == 0 ? null : parts[4];
-    contents = transaction.sublist(currentPos + 2);
+        decodeBigInt(extractedBytes[2]).toInt() * 1000);
+    assetRef = base64.encode(extractedBytes[3]);
+    signature = extractedBytes[4];
+    contents = extractedBytes[5];
+    id = Digest("SHA3-256").process(serialize());
   }
 
   Uint8List serialize({includeSignature = true}) {
+    Uint8List versionBytes = encodeBigInt(BigInt.from(version));
     Uint8List serializedVersion = (BytesBuilder()
-          ..add([encodeBigInt(BigInt.from(version)).length])
-          ..add(encodeBigInt(BigInt.from(version))))
+          ..add(compactSize.toSize(versionBytes))
+          ..add(versionBytes))
         .toBytes();
-    Uint8List serializedAddress =
-        Uint8List.fromList([address.length, ...address]);
+    Uint8List serializedAddress = (BytesBuilder()
+          ..add(compactSize.toSize(address))
+          ..add(address))
+        .toBytes();
+    Uint8List timestampBytes =
+        encodeBigInt(BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000));
     Uint8List serializedTimestamp = (BytesBuilder()
-          ..add([
-            encodeBigInt(BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))
-                .length
-          ])
-          ..add(encodeBigInt(
-              BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))))
+          ..add(compactSize.toSize(timestampBytes))
+          ..add(timestampBytes))
         .toBytes();
-    Uint8List serializedAssetRef =
-        Uint8List.fromList([assetRef.length, ...base64Url.decode(assetRef)]);
-    Uint8List serializedSignature = Uint8List.fromList(
-        signature != null && includeSignature
-            ? [signature!.length, ...signature!]
-            : [1, 0]);
-    Uint8List serializedContents = Uint8List.fromList([1, 0, ...contents]);
-    return Uint8List.fromList([
-      ...serializedVersion,
-      ...serializedAddress,
-      ...serializedTimestamp,
-      ...serializedAssetRef,
-      ...serializedSignature,
-      ...serializedContents,
-    ]);
+    Uint8List assetRefBytes = base64.decode(assetRef);
+    Uint8List serializedAssetRef = (BytesBuilder()
+          ..add(compactSize.toSize(assetRefBytes))
+          ..add(assetRefBytes))
+        .toBytes();
+    Uint8List serializedSignature = (BytesBuilder()
+          ..add(compactSize.toSize(includeSignature && signature != null
+              ? signature!
+              : Uint8List(0)))
+          ..add(includeSignature && signature != null
+              ? signature!
+              : Uint8List(0)))
+        .toBytes();
+    Uint8List serializedContents = (BytesBuilder()
+          ..add(compactSize.toSize(contents))
+          ..add(contents))
+        .toBytes();
+    return (BytesBuilder()
+          ..add(serializedVersion)
+          ..add(serializedAddress)
+          ..add(serializedTimestamp)
+          ..add(serializedAssetRef)
+          ..add(serializedSignature)
+          ..add(serializedContents))
+        .toBytes();
   }
 
   String toJson() {
@@ -124,4 +130,7 @@ class TransactionModel {
 
   @override
   int get hashCode => id.hashCode;
+
+  @override
+  String toString() => toJson();
 }

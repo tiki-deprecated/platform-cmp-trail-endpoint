@@ -5,11 +5,9 @@ import 'backup_model.dart';
 class BackupRepository {
   static const table = 'backup';
 
-  static const collumnId = 'id';
-  static const collumnAssetRef = 'asset_ref';
-  static const collumnSignature = 'signature';
-  static const collumnPayload = 'payload';
-  static const collumnTimestamp = 'timestamp';
+  static const columnPath = 'path';
+  static const columnSignature = 'signature';
+  static const columnTimestamp = 'timestamp';
 
   final Database _db;
 
@@ -20,55 +18,56 @@ class BackupRepository {
   void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-        $collumnId INTEGER PRIMARY KEY AUTO INCREMENT,
-        $collumnAssetRef TEXT NOT NULL,
-        $collumnSignature BLOB NOT NULL,
-        $collumnPayload TEXT,
-        $collumnTimestamp INTEGER,
+        $columnPath TEXT NOT NULL,
+        $columnSignature BLOB,
+        $columnTimestamp INTEGER
       );
     ''');
   }
 
   void save(BackupModel backup) {
-    _db.execute('''INSERT INTO $table VALUES (
-        ${backup.id},
-        '${backup.assetRef}',
-        ${backup.signature},
-        ${backup.payload == null ? null : "'${backup.payload}'"},
-        ${backup.timestamp == null ? null : backup.timestamp!.millisecondsSinceEpoch ~/ 1000},
-      );''');
+    _db.execute('INSERT INTO $table VALUES ( ?, ?, ? );', [
+      backup.path,
+      backup.signature,
+      backup.timestamp == null
+          ? null
+          : backup.timestamp!.millisecondsSinceEpoch ~/ 1000
+    ]);
+  }
+
+  void update(BackupModel backup) {
+    _db.execute('''UPDATE $table 
+        SET $columnTimestamp = ?, 
+        SET $columnSignature = ?
+        WHERE 
+        $columnPath = ?;
+      ;''', [
+        backup.timestamp!.millisecondsSinceEpoch ~/ 1000,
+        backup.signature,
+        backup.path
+      ]);
   }
 
   List<BackupModel> getPending() {
-    String where = 'WHERE timestamp IS NULL';
+    String where = 'WHERE $columnTimestamp IS NULL';
     return _select(whereStmt: where);
   }
 
   List<BackupModel> _select({String? whereStmt}) {
     ResultSet results = _db.select('''
-        SELECT 
-          $table.$collumnId
-          $table.$collumnAssetRef
-          $table.$collumnSignature
-          $table.$collumnPayload
-          $table.$collumnTimestamp
-        FROM $table as backup
+        SELECT * FROM $table
         ${whereStmt ?? 'WHERE 1=1'}
         ''');
     List<BackupModel> backups = [];
     for (final Row row in results) {
       Map<String, dynamic> bkpMap = {
-        collumnId: row[collumnId],
-        collumnAssetRef: row[collumnAssetRef],
-        collumnSignature: row[collumnSignature],
-        collumnPayload: row[collumnPayload],
-        collumnTimestamp: row[collumnTimestamp]
+        columnPath: row[columnPath],
+        columnSignature: row[columnSignature],
+        columnTimestamp: row[columnTimestamp],
       };
       BackupModel bkp = BackupModel.fromMap(bkpMap);
       backups.add(bkp);
     }
     return backups;
   }
-
-  void update(BackupModel bkp) {}
 }

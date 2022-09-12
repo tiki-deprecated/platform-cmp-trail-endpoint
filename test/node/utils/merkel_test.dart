@@ -5,26 +5,33 @@
 
 import 'dart:typed_data';
 
+import 'package:pointycastle/export.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
+import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
 import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
+import 'package:tiki_sdk_dart/src/utils/mem_keys_store.dart';
 import 'package:tiki_sdk_dart/src/utils/merkel_tree.dart';
-import 'package:tiki_sdk_dart/src/utils/utils.dart';
+
+import '../node_test_helpers.dart';
 
 void main() {
   group('Merkel tests', () {
-    test('Build and validate merkel proof for 1 transaction', () {
-      TransactionModel txn = generateTransactionModel(1);
-      txn.id = sha256(txn.serialize());
+    test('Build and validate merkel proof for 1 transaction', () async {
+      KeysModel keys = await KeysService(MemSecureStorageStrategy()).create();
+      TransactionModel txn = generateTransactionModel(1, keys);
+      txn.id = Digest("SHA3-256").process(txn.serialize());
       MerkelTree merkelTree = MerkelTree.build([txn.id!]);
       Uint8List merkelRoot = merkelTree.root!;
       Uint8List merkelProof = merkelTree.proofs[txn.id]!;
       expect(MerkelTree.validate(txn.id!, merkelProof, merkelRoot), true);
     });
 
-    test('Build and validate merkel proof for 10 transactions', () {
+    test('Build and validate merkel proof for 10 transactions', () async {
+      KeysModel keys = await KeysService(MemSecureStorageStrategy()).create();
       List<TransactionModel> txns = List.generate(10, (index) {
-        TransactionModel txn = generateTransactionModel(1);
-        txn.id = sha256(txn.serialize());
+        TransactionModel txn = generateTransactionModel(1, keys);
+        txn.id = Digest("SHA3-256").process(txn.serialize());
         return txn;
       });
       MerkelTree merkelTree =
@@ -37,10 +44,11 @@ void main() {
       }
     });
 
-    test('Build and validate merkel proof for 100 transactions', () {
+    test('Build and validate merkel proof for 100 transactions', () async {
+      KeysModel keys = await KeysService(MemSecureStorageStrategy()).create();
       List<TransactionModel> txns = List.generate(100, (index) {
-        TransactionModel txn = generateTransactionModel(1);
-        txn.id = sha256(txn.serialize());
+        TransactionModel txn = generateTransactionModel(1, keys);
+        txn.id = Digest("SHA3-256").process(txn.serialize());
         return txn;
       });
       MerkelTree merkelTree =
@@ -53,10 +61,11 @@ void main() {
       }
     });
 
-    test('Build and validate merkel proof for 1000 transactions', () {
+    test('Build and validate merkel proof for 1000 transactions', () async {
+      KeysModel keys = await KeysService(MemSecureStorageStrategy()).create();
       List<TransactionModel> txns = List.generate(100, (index) {
-        TransactionModel txn = generateTransactionModel(1);
-        txn.id = sha256(txn.serialize());
+        TransactionModel txn = generateTransactionModel(1, keys);
+        txn.id = Digest("SHA3-256").process(txn.serialize());
         return txn;
       });
       MerkelTree merkelTree =
@@ -69,17 +78,4 @@ void main() {
       }
     });
   });
-}
-
-TransactionModel generateTransactionModel(int index) {
-  TransactionModel txn = TransactionModel.fromMap({
-    'address': Uint8List.fromList('abc'.codeUnits),
-    'timestamp': DateTime.now(),
-    'signature': Uint8List.fromList(
-        (DateTime.now().millisecondsSinceEpoch + index).toString().codeUnits),
-    'contents': Uint8List.fromList([1, 2, 3]),
-    'version': 1,
-    'asset_ref': Uint8List(1)
-  });
-  return txn;
 }

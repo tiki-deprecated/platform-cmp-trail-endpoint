@@ -15,11 +15,14 @@ class KeysModel {
   KeysModel(this.address, this.privateKey);
 
   KeysModel.fromJson(String jsonString)
-      : address = base64.decode(jsonDecode(jsonString)['address']!),
+      : address = base64.decode(json.decode(jsonString)['address']!),
         privateKey =
             CryptoRSAPrivateKey.decode(jsonDecode(jsonString)['private_key']!);
 
   String toJson() {
-    return jsonEncode({'address': address, 'private_key': privateKey.encode()});
+    return jsonEncode({
+      'address': base64.encode(address),
+      'private_key': privateKey.encode()
+    });
   }
 }

@@ -2,10 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:http/retry.dart';
 import 'package:sqlite3/sqlite3.dart';
+import '../utils/merkel_tree.dart';
+
+import '../utils/rsa/rsa_public_key.dart';
 import 'block/block_model.dart';
+import 'keys/keys_interface.dart';
 import 'keys/keys_model.dart';
-import 'secure_storage_sttgy_if.dart';
 import 'transaction/transaction_model.dart';
 
 import 'backup/backup_service.dart';
@@ -13,23 +17,25 @@ import 'block/block_service.dart';
 import 'keys/keys_service.dart';
 import 'transaction/transaction_service.dart';
 import 'wasabi/wasabi_service.dart';
-import 'xchain/xchain_model.dart';
-import 'xchain/xchain_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
 /// blockchains in the network.
 class NodeService {
+  static const scheme = "tiki://";
+
   late final BackupService _backupService;
   late final BlockService _blockService;
   late final KeysService _keysService;
   late final TransactionService _transactionService;
   late final WasabiService _wasabiService;
-  late final XchainService _xchainService;
+  // late final XchainService _xchainService;
   late final KeysModel _keys;
 
   Timer? _blkTimer;
   late final Duration _blkInterval;
+
+  CryptoRSAPublicKey get publicKey => _keys.privateKey.public;
 
   /// Initialzes de servic.e
   ///
@@ -78,20 +84,21 @@ class NodeService {
   Future<NodeService> init(
       {required String apiKey,
       required Database database,
-      required SecureStorageStrategyIf keysSecureStorage,
+      required KeysInterface keysSecureStorage,
       List<String> adresses = const [],
       blkInterval = const Duration(minutes: 1)}) async {
     _blkInterval = blkInterval;
-    _wasabiService = WasabiService(apiKey);
     _keysService = KeysService(keysSecureStorage);
-    _xchainService = XchainService(database);
     _transactionService = TransactionService(database);
-    _blockService = BlockService(database, _transactionService);
+    _blockService = BlockService(database);
 
     await _loadKeys(adresses);
-    _backupService = BackupService(database, _wasabiService, _keys);
 
-    await _loadXchains(adresses);
+    _wasabiService = WasabiService(apiKey, _keys.privateKey);
+    _backupService = BackupService(base64.encode(_keys.address), _keysService,
+        _blockService, _transactionService, _wasabiService, database);
+
+    _backupService.write('pubKey');
 
     await _createBlock();
 
@@ -114,46 +121,31 @@ class NodeService {
     return txn;
   }
 
-  /// Gets a [TransactionModel] by [TransactionModel.id]
-  TransactionModel? getTxn(String id) {
-    return _transactionService.getById(id);
-  }
+  TransactionModel? getTransactionById(String id) =>
+      _transactionService.getById(id);
 
-  /// Removes the [TransactionModel] from local [database]
-  void discardTransaction(TransactionModel txn) =>
-      _transactionService.prune(txn.id!);
+  List<TransactionModel> getTransactionsByBlockId(String blockId) =>
+      _transactionService.getByBlock(base64.decode(blockId));
 
-  /// Removes the [BlockModel] from local [database] and its [TransactionModel]
-  void discardBlock(BlockModel blk, {keepTxn = false}) {
-    if (!keepTxn) {
-      List<TransactionModel> txns = _transactionService.getByBlock(blk.id!);
-      for (TransactionModel txn in txns) {
-        _transactionService.prune(txn.id!);
-      }
-    }
-    _blockService.prune(blk);
-  }
+  BlockModel? getLastBlock() => _blockService.getLast();
 
   Future<void> _createBlock() async {
     List<TransactionModel> txns = _transactionService.getPending();
     if (txns.isNotEmpty) {
-      int totalSize = 0;
-      for (TransactionModel txn in txns) {
-        totalSize += txn.serialize().buffer.lengthInBytes;
-      }
       DateTime lastCreated = txns.last.timestamp;
       DateTime oneMinAgo = DateTime.now().subtract(_blkInterval);
-      if (lastCreated.isBefore(oneMinAgo) || totalSize >= 100000) {
-        BlockModel blk = _blockService.create(txns);
-        List<TransactionModel> commitedTxns =
-            _transactionService.getByBlock(blk.id!);
-        String blkUri =
-            'tiki://${base64Url.encode(_keys.address)}/${base64Url.encode(blk.id!)}';
-        for (TransactionModel txn in commitedTxns) {
-          String txnUri = '$blkUri/${base64Url.encode(txn.id!)}';
-          _backupService.enqueue(txnUri, txn.toJson());
+      if (lastCreated.isBefore(oneMinAgo) || txns.length >= 200) {
+        List<Uint8List> hashes = txns.map((e) => e.id!).toList();
+        MerkelTree merkelTree = MerkelTree.build(hashes);
+        Uint8List transactionRoot = merkelTree.root!;
+        BlockModel blk = _blockService.create(txns, transactionRoot);
+        for (TransactionModel transaction in txns) {
+          transaction.block = blk;
+          transaction.merkelProof = merkelTree.proofs[transaction.id];
+          _transactionService.commit(transaction);
         }
-        _backupService.enqueue(blkUri, blk.toJson());
+        _blockService.commit(blk);
+        _backupService.write(base64.encode(blk.id!));
       }
       if (_blkTimer == null || !_blkTimer!.isActive) _setBlkTimer();
     }
@@ -169,24 +161,6 @@ class NodeService {
     }
 
     _keys = await _keysService.create();
-
-    XchainModel xchain = XchainModel(
-        address: base64.encode(_keys.address),
-        pubkey: _keys.privateKey.public.encode());
-    _xchainService.add(xchain);
-
-    _backupService.enqueue(xchain.uri, xchain.toJson());
-  }
-
-  Future<void> _loadXchains(List<String> addresses) async {
-    for (String address in addresses) {
-      String assetRef = 'tiki://$address';
-      String? xchainJson = await _wasabiService.read(assetRef);
-      if (xchainJson != null) {
-        XchainModel xchain = XchainModel.fromJson(xchainJson);
-        _xchainService.add(xchain);
-      }
-    }
   }
 
   void _setBlkTimer() {

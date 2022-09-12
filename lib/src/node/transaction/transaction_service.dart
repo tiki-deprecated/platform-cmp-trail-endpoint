@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
@@ -7,6 +8,7 @@ import '../../utils/merkel_tree.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/rsa/rsa_public_key.dart';
 import '../../utils/bytes.dart';
+import '../../utils/compact_size.dart' as compactSize;
 import '../block/block_model.dart';
 import '../keys/keys_model.dart';
 import 'transaction_model.dart';
@@ -29,9 +31,7 @@ class TransactionService {
       required KeysModel keys,
       String assetRef = '0x00'}) {
     TransactionModel txn = TransactionModel(
-        address: keys.address,
-        contents: contents,
-        assetRef: Uint8List.fromList(assetRef.codeUnits));
+        address: keys.address, contents: contents, assetRef: assetRef);
     txn.signature = sign(keys.privateKey, txn.serialize());
     txn.id = Digest("SHA3-256").process(txn.serialize());
     txn = _repository.save(txn);
@@ -40,7 +40,6 @@ class TransactionService {
 
   void commit(TransactionModel transaction) => _repository.commit(transaction);
 
-  /// Validates the transaction hash and merkel proof (if present).
   static bool validateInclusion(
           TransactionModel transaction, BlockModel block) =>
       MerkelTree.validate(
@@ -49,22 +48,49 @@ class TransactionService {
   static bool validateIntegrity(TransactionModel transaction) => memEquals(
       Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
-  /// Validates the transaction signature.
   static bool validateAuthor(
           TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
       verify(pubKey, transaction.serialize(includeSignature: false),
           transaction.signature!);
 
-  /// Gets all [TransactionModel] that belongs to the [BlockModel] with [blockId].
+  Uint8List serializeTransactions(String blockId) {
+    BytesBuilder body = BytesBuilder();
+    List<TransactionModel> txns = getByBlock(base64.decode(blockId));
+    for (TransactionModel txn in txns) {
+      Uint8List serialized = txn.serialize();
+      Uint8List cSize = compactSize.toSize(serialized);
+      body.add(cSize);
+      body.add(serialized);
+    }
+    return body.toBytes();
+  }
+
+  static List<TransactionModel> transactionsFromSerializedBlock(
+      Uint8List serializedBlock) {
+    List<TransactionModel> txns = [];
+    List<Uint8List> extractedBlockBytes = compactSize.decode(serializedBlock);
+    int transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
+    if (extractedBlockBytes.sublist(5).length == transactionCount) {
+      throw Exception(
+          'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
+    }
+    for (int i = 5; i < extractedBlockBytes.length; i++) {
+      TransactionModel txn =
+          TransactionModel.deserialize(extractedBlockBytes[i]);
+      if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
+      txns.add(txn);
+    }
+    return txns;
+  }
+
   List<TransactionModel> getByBlock(Uint8List blockId) =>
       _repository.getByBlockId(blockId);
 
-  /// Gets the [TransactionModel] by its id.
   TransactionModel? getById(String id) => _repository.getById(id);
 
-  /// Gets the [TransactionModel]s that were not added to a block yet;
   List<TransactionModel> getPending() => _repository.getPending();
 
-  /// Removes the [TransactionModel] from local database.
-  Future<void> prune(Uint8List id) async => _repository.prune(id);
+  void prune(Uint8List id) async => _repository.prune(id);
+
+  void addAll(List<TransactionModel> txns) => _repository.addAll(txns);
 }

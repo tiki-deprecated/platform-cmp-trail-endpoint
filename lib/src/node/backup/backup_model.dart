@@ -1,41 +1,30 @@
 import 'dart:typed_data';
-
-import '../../utils/rsa/rsa.dart';
-import '../../utils/rsa/rsa_private_key.dart';
 import 'backup_repository.dart';
 
 class BackupModel {
-  int? id;
-  final String assetRef;
-  String? payload;
-  late final Uint8List signature;
+  late final String path;
+  Uint8List? signature;
   DateTime? timestamp;
 
-  BackupModel(
-      {required this.assetRef,
-      required this.payload,
-      required CryptoRSAPrivateKey signKey}) {
-    signature = sign(signKey,
-        Uint8List.fromList([...assetRef.codeUnits, ...payload!.codeUnits]));
-  }
+  BackupModel({
+    required this.path,
+    this.signature,
+    this.timestamp
+  });
 
   BackupModel.fromMap(Map<String, dynamic> map)
-      : id = map[BackupRepository.collumnId],
-        assetRef = map[BackupRepository.collumnAssetRef],
-        payload = map[BackupRepository.collumnPayload],
-        signature = map[BackupRepository.collumnSignature],
-        timestamp = map[BackupRepository.collumnTimestamp] == null
+      : path = map[BackupRepository.columnPath],
+        signature = map[BackupRepository.columnSignature],
+        timestamp = map[BackupRepository.columnTimestamp] == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(
-                map[BackupRepository.collumnTimestamp] * 1000);
+                map[BackupRepository.columnTimestamp] * 1000);
 
   @override
   String toString() {
     return '''BackupModel
-      id : $id
-      assetRef : $assetRef
-      payload : $payload
-      signature : $signature
+      path : $path,
+      signature : $signature,
       timestamp : $timestamp
     ''';
   }
