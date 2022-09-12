@@ -7,9 +7,9 @@ class BackupModel {
   DateTime? timestamp;
 
   BackupModel({
-    required path,
-    signature,
-    timestamp
+    required this.path,
+    this.signature,
+    this.timestamp
   });
 
   BackupModel.fromMap(Map<String, dynamic> map)

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:pointycastle/api.dart';
 
 import '../../utils/bytes.dart';

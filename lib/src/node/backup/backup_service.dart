@@ -8,12 +8,9 @@ import '../block/block_model.dart';
 import '../block/block_service.dart';
 import '../keys/keys_model.dart';
 import '../keys/keys_service.dart';
-import '../node_service.dart';
-import '../transaction/transaction_model.dart';
 import '../transaction/transaction_service.dart';
 import '../wasabi/wasabi_service.dart';
 import 'backup_model.dart';
-import 'backup_model_asset_enum.dart';
 import 'backup_repository.dart';
 
 class BackupService {

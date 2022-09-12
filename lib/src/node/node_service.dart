@@ -4,11 +4,8 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import '../utils/merkel_tree.dart';
-import '../utils/rsa/rsa.dart';
 
-import '../utils/compact_size.dart' as compactSize;
 import '../utils/rsa/rsa_public_key.dart';
-import 'backup/backup_model_asset_enum.dart';
 import 'block/block_model.dart';
 import 'keys/keys_interface.dart';
 import 'keys/keys_model.dart';
@@ -92,7 +89,7 @@ class NodeService {
     _blkInterval = blkInterval;
     _keysService = KeysService(keysSecureStorage);
     _transactionService = TransactionService(database);
-    _blockService = BlockService(database, _transactionService);
+    _blockService = BlockService(database);
 
     await _loadKeys(adresses);
 

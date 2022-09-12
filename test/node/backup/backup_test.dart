@@ -11,13 +11,11 @@ import 'package:pointycastle/pointycastle.dart';
 import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/src/node/backup/backup_model.dart';
-import 'package:tiki_sdk_dart/src/node/backup/backup_model_asset_enum.dart';
 import 'package:tiki_sdk_dart/src/node/backup/backup_repository.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_service.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/src/node/transaction/transaction_service.dart';
 import 'package:tiki_sdk_dart/src/utils/mem_keys_store.dart';
 
 void main() async {
@@ -27,8 +25,7 @@ void main() async {
   group('backup tests', () {
     test('backup repository test, retrieve all', () {
       BackupRepository repository = BackupRepository(db);
-      TransactionService transactionService = TransactionService(db);
-      BlockService blockService = BlockService(db, transactionService);
+      BlockService blockService = BlockService(db);
       BlockModel blk = BlockModel(
           version: 1,
           previousHash: Uint8List.fromList(
@@ -36,7 +33,7 @@ void main() async {
           transactionRoot: Uint8List(1),
           transactionCount: 0,
           timestamp: DateTime.now());
-      blk.id = Digest("SHA3-256").process(blockService.header(blk));
+      blk.id = Digest("SHA3-256").process(blk.header());
       BackupModel bkp1 = _generateBackupModel(blk, keys);
       BackupModel bkp2 = _generateBackupModel(blk, keys);
       BackupModel bkp3 = _generateBackupModel(blk, keys);
@@ -47,13 +44,14 @@ void main() async {
       ResultSet bkps = db.select('SELECT * FROM ${BackupRepository.table};');
       expect(bkps.rows.length, 3);
     });
+
+    test('write block to remote storage and retrieve', () {
+      
+    });
   });
 }
 
 BackupModel _generateBackupModel(BlockModel block, KeysModel signKey) =>
     BackupModel(
-      signature: Uint8List(32),
-      assetId:
-          'tiki://${base64Url.encode(signKey.address)}/${base64Url.encode(block.id!)}',
-      assetType: BackupModelAssetEnum.block,
+      path: base64Url.encode(block.id!),
     );

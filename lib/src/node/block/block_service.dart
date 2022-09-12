@@ -3,21 +3,17 @@ import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 
-import '../../utils/bytes.dart';
 import '../../utils/merkel_tree.dart';
 import '../../utils/page_model.dart';
-import '../../utils/rsa/rsa_public_key.dart';
 import '../transaction/transaction_model.dart';
-import '../transaction/transaction_service.dart';
 import 'block_model.dart';
 import 'block_repository.dart';
 
 class BlockService {
   static const int version = 1;
   final BlockRepository _repository;
-  final TransactionService _transactionService;
 
-  BlockService(Database db, this._transactionService)
+  BlockService(Database db)
       : _repository = BlockRepository(db);
 
   /// Create a new block from a list of transactions.
