@@ -12,7 +12,7 @@ import 'package:tiki_sdk_dart/src/utils/rsa/rsa.dart' as rsa;
 import 'package:uuid/uuid.dart';
 
 void main() {
-  const String apiId = '';
+  const String apiId = 'a49fe762-124e-4ced-9b88-9814d64c131b';
 
   group('l0_storage tests', skip: apiId.isEmpty, () {
     test('Get policy', () async {
@@ -29,7 +29,7 @@ void main() {
       expect(rsp.maxBytes, 1048576);
       expect(rsp.fields != null, true);
       expect(rsp.fields?['policy'] != null, true);
-      expect(rsp.fields?['content-type'], 'application/json');
+      expect(rsp.fields?['content-type'], 'application/octet-stream');
       expect(rsp.fields?['x-amz-credential'] != null, true);
       expect(rsp.fields?['x-amz-algorithm'], 'AWS4-HMAC-SHA256');
       expect(rsp.fields?['x-amz-date'] != null, true);

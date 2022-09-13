@@ -16,15 +16,16 @@ import 'wasabi_exception_expired.dart';
 import 'wasabi_model_list.dart';
 
 class WasabiRepository {
-  static const String _bucket = 'l0-storage-test';
-  static const String _region = 'us-central-1';
-
-  final Uri _uri =
-      Uri(scheme: 'https', host: '$_bucket.s3.$_region.wasabisys.com');
+  final Uri _bucketUri =
+      Uri(scheme: 'https', host: 'test.bucket.storage.l0.mytiki.com');
+  final Uri _uploadUri = Uri(
+      scheme: 'https',
+      host: 'storage.l0.mytiki.com',
+      path: 'api/latest/upload');
 
   Future<Uint8List> get(String path, {String? versionId}) async {
     if (path.startsWith('/')) path = path.replaceFirst('/', '');
-    http.Response rsp = await http.get(_uri.replace(
+    http.Response rsp = await http.get(_bucketUri.replace(
       path: path,
       query: versionId != null ? 'versionId=$versionId' : null,
     ));
@@ -38,7 +39,7 @@ class WasabiRepository {
   Future<WasabiModelList> versions(String path) async {
     if (path.startsWith('/')) path = path.replaceFirst('/', '');
     http.Response rsp =
-        await http.get(_uri.replace(query: 'versions&prefix=$path'));
+        await http.get(_bucketUri.replace(query: 'versions&prefix=$path'));
     if (rsp.statusCode == 200) {
       WasabiModelList list = WasabiModelList.fromElement(xml
           .first(parse(rsp.body).getElementsByTagName('ListVersionsResult')));
@@ -54,7 +55,7 @@ class WasabiRepository {
   Future<String?> upload(
       String path, Map<String, String> fields, Uint8List obj) async {
     if (path.startsWith('/')) path = path.replaceFirst('/', '');
-    http.MultipartRequest request = http.MultipartRequest('POST', _uri);
+    http.MultipartRequest request = http.MultipartRequest('POST', _uploadUri);
     request.fields.addAll(fields);
     request.fields["content-md5"] = base64.encode(MD5Digest().process(obj));
     request.fields['key'] = path;
