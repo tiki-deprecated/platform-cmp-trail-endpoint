@@ -86,5 +86,87 @@ void main() {
         expect(txns[i].id!, transactions[i].id!);
       }
     });
- });
+    test('create keys, backup and retrieve', () async {
+      MemSecureStorageStrategy memSecureStorageStrategy =
+          MemSecureStorageStrategy();
+      NodeService nodeService = await NodeService().init(
+          database: db,
+          apiKey: apiId,
+          keysSecureStorage: memSecureStorageStrategy);
+      KeysService keysService = KeysService(memSecureStorageStrategy);
+      KeysModel? keys = await keysService.get(base64.encode(Digest("SHA3-256")
+          .process(base64.decode(nodeService.publicKey.encode()))));
+      WasabiService wasabiService = WasabiService(apiId, keys!.privateKey);
+      Uint8List publicKey = await wasabiService.read('public.key');
+      expect(base64.encode(publicKey), keys.privateKey.public.encode());
+    });
+    test('create block, backup and retrieve', () async {
+      MemSecureStorageStrategy memSecureStorageStrategy =
+          MemSecureStorageStrategy();
+      NodeService nodeService = await NodeService().init(
+          blkInterval: const Duration(seconds: 5),
+          database: db,
+          apiKey: apiId,
+          keysSecureStorage: memSecureStorageStrategy);
+      int size = 0;
+      List<TransactionModel> transactions = [];
+      while (transactions.length < 10) {
+        TransactionModel txn = nodeService
+            .write(Uint8List.fromList('test contents $size'.codeUnits));
+        size += txn.serialize().buffer.lengthInBytes;
+        transactions.add(txn);
+      }
+      await Future.delayed(const Duration(seconds: 10));
+      BlockModel? block = nodeService.getLastBlock();
+      KeysService keysService = KeysService(memSecureStorageStrategy);
+      KeysModel? keys = await keysService.get(base64.encode(Digest("SHA3-256")
+          .process(base64.decode(nodeService.publicKey.encode()))));
+      WasabiService wasabiService = WasabiService(apiId, keys!.privateKey);
+      Uint8List serializedBlk =
+          await wasabiService.read(base64Url.encode(block!.id!));
+      BlockModel deserializedBlock = BlockModel.deserialize(serializedBlk);
+      expect(block.version, deserializedBlock.version);
+      expect(memEquals(block.id!, deserializedBlock.id!), true);
+      expect(
+          memEquals(block.previousHash, deserializedBlock.previousHash), true);
+      expect(
+          memEquals(block.transactionRoot, deserializedBlock.transactionRoot),
+          true);
+      expect(block.transactionCount, deserializedBlock.transactionCount);
+      expect(block.timestamp, deserializedBlock.timestamp);
+      List<TransactionModel> txns =
+          TransactionService.transactionsFromSerializedBlock(serializedBlk);
+      expect(txns.length, block.transactionCount);
+    });
+
+    test('create chain', () async {
+      MemSecureStorageStrategy memSecureStorageStrategy =
+          MemSecureStorageStrategy();
+      NodeService nodeService = await NodeService().init(
+          blkInterval: const Duration(seconds: 1),
+          database: db,
+          apiKey: apiId,
+          keysSecureStorage: memSecureStorageStrategy);
+      for (int i = 0; i < 10; i++) {
+        int total = Random().nextInt(200);
+        List<TransactionModel> transactions = [];
+        for (int j = 0; j < total; j++) {
+          TransactionModel txn = nodeService
+              .write(Uint8List.fromList('test contents $j$i'.codeUnits));
+          transactions.add(txn);
+        }
+        await Future.delayed(Duration(seconds: 1));
+      }
+      BlockModel block = nodeService.getLastBlock()!;
+      int count = 0;
+      while (!memEquals(block.previousHash, Uint8List(1))) {
+        List<TransactionModel> txns =
+            nodeService.getTransactionsByBlockId(base64.encode(block.id!));
+        expect(txns.isNotEmpty, true);
+        block = nodeService.getBlockById(base64.encode(block.previousHash))!;
+        count++;
+      }
+      expect(count > 1, true);
+    });
+  });
 }

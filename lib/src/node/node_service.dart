@@ -98,7 +98,7 @@ class NodeService {
     _backupService = BackupService(base64.encode(_keys.address), _keysService,
         _blockService, _transactionService, _wasabiService, database);
 
-    _backupService.write('pubKey');
+    await _backupService.write('public.key');
 
     await _createBlock();
 
@@ -128,6 +128,9 @@ class NodeService {
       _transactionService.getByBlock(base64.decode(blockId));
 
   BlockModel? getLastBlock() => _blockService.getLast();
+
+  BlockModel? getBlockById(String blockId) =>
+      _blockService.get(blockId);
 
   Future<void> _createBlock() async {
     List<TransactionModel> txns = _transactionService.getPending();

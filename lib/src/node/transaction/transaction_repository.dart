@@ -129,7 +129,6 @@ class TransactionRepository {
           $table.$columnBlockId as '$table.$columnBlockId',
           $table.$columnTimestamp as '$table.$columnTimestamp',
           $table.$columnSignature as '$table.$columnSignature',
-          $blockTable.${BlockRepository.columnSeq} as '$blockTable.${BlockRepository.columnSeq}',
           $blockTable.${BlockRepository.columnId} as '$blockTable.${BlockRepository.columnId}',
           $blockTable.${BlockRepository.columnVersion} as '$blockTable.${BlockRepository.columnVersion}',
           $blockTable.${BlockRepository.columnPreviousHash} as '$blockTable.${BlockRepository.columnPreviousHash}',
@@ -149,8 +148,6 @@ class TransactionRepository {
               null
           ? null
           : {
-              BlockRepository.columnSeq:
-                  row['$blockTable.${BlockRepository.columnSeq}'],
               BlockRepository.columnId:
                   base64.decode(row['$blockTable.${BlockRepository.columnId}']),
               BlockRepository.columnVersion:

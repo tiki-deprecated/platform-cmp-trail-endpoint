@@ -2,10 +2,23 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/src/utils/bytes.dart';
 import 'package:tiki_sdk_dart/src/utils/compact_size.dart' as compactSize;
 
 void main() {
   group('bytes utils tests', () {
+    test('encode and decode 100 BigInt', () {
+      for (int i = 0; i < 99; i++) {
+        int big = Random().nextInt(4294901760);
+        Uint8List encoded = encodeBigInt(BigInt.from(big));
+        int decoded = decodeBigInt(encoded).toInt();
+        expect(decoded, big);
+      }
+        int big = Random().nextInt(65035);
+        Uint8List encoded = encodeBigInt(BigInt.from(-big));
+        int decoded = decodeBigInt(encoded).toInt();
+        expect(decoded, -big);
+    });
     test('compact uint size for all ranges', () async {
       Uint8List smallUint = Uint8List(250);
       Uint8List smallCompactSize = compactSize.toSize(smallUint);

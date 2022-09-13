@@ -8,7 +8,6 @@ import 'block_model.dart';
 class BlockRepository {
   static const table = 'block';
 
-  static const columnSeq = 'seq';
   static const columnId = 'id';
   static const columnVersion = 'version';
   static const columnPreviousHash = 'previous_hash';
@@ -25,7 +24,6 @@ class BlockRepository {
   void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-        $columnSeq INTEGER AUTO INCREMENT,
         $columnId TEXT PRIMARY KEY NOT NULL,
         $columnVersion INTEGER NOT NULL,
         $columnPreviousHash TEXT,
@@ -37,15 +35,15 @@ class BlockRepository {
   }
 
   void save(BlockModel block) {
-    _db.execute('INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?, ?);', [
-      block.seq,
+    List<dynamic> params = [
       base64.encode([...block.id!]),
       block.version,
       base64.encode([...block.previousHash]),
       block.transactionRoot,
       block.transactionCount,
       block.timestamp.millisecondsSinceEpoch ~/ 1000
-    ]);
+    ];
+    _db.execute('INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?);', params);
   }
 
   PageModel<BlockModel> getLocal({int page = 0}) {
@@ -73,7 +71,6 @@ class BlockRepository {
     String limit = page != null ? 'LIMIT ${page * 100},100' : '';
     ResultSet results = _db.select('''
         SELECT 
-          $table.$columnSeq as '$table.$columnSeq',
           $table.$columnId as '$table.$columnId',
           $table.$columnVersion as '$table.$columnVersion',
           $table.$columnPreviousHash as '$table.$columnPreviousHash',
@@ -82,13 +79,12 @@ class BlockRepository {
           $table.$columnTimestamp as '$table.$columnTimestamp'
         FROM $table
         $whereStmt
-        ${last ? 'ORDER BY $table.$columnSeq DESC' : ''};
+        ${last ? 'ORDER BY $table.$columnTimestamp DESC' : ''};
         $limit
         ''');
     List<BlockModel> blocks = [];
     for (final Row row in results) {
       Map<String, dynamic> blockMap = {
-        columnSeq: row['$table.$columnSeq'],
         columnId: base64.decode(row['$table.$columnId']),
         columnVersion: row['$table.$columnVersion'],
         columnPreviousHash: base64.decode(row['$table.$columnPreviousHash']),

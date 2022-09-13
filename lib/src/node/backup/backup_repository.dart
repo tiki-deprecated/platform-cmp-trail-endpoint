@@ -36,9 +36,9 @@ class BackupRepository {
   }
 
   void update(BackupModel backup) {
-    _db.execute('''UPDATE $table 
-        SET $columnTimestamp = ?, 
-        SET $columnSignature = ?
+    _db.execute('''UPDATE $table SET 
+        $columnTimestamp = ?, 
+        $columnSignature = ?
         WHERE 
         $columnPath = ?;
       ;''', [

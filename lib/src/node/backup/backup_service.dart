@@ -27,19 +27,19 @@ class BackupService {
     _writePending();
   }
 
-  void write(String path) async {
+  Future<void> write(String path) async {
     BackupModel bkpModel = BackupModel(path: path);
     _repository.save(bkpModel);
-    _writePending();
+    await _writePending();
   }
 
-  void _writePending() async {
+  Future<void> _writePending() async {
     List<BackupModel> pending = _repository.getPending();
     if (pending.isNotEmpty) {
       KeysModel keys = (await _keysService.get(_address))!;
       for (BackupModel bkp in pending) {
         Uint8List obj;
-        if (bkp.path == 'pubkey') {
+        if (bkp.path == 'public.key') {
           obj = base64.decode(keys.privateKey.public.encode());
         } else {
           BlockModel? block = _blockService.get(bkp.path);
@@ -48,12 +48,13 @@ class BackupService {
               .serializeTransactions(base64.encode(block.id!));
           Uint8List serializedBlock = block.serialize(body);
           bkp.signature = sign(keys.privateKey, serializedBlock);
+          bkp.path = '${bkp.path}.block';
           obj = (BytesBuilder()
                 ..add(bkp.signature!)
                 ..add(serializedBlock))
               .toBytes();
         }
-        await _wasabiService.write(bkp.path, obj);
+        //await _wasabiService.write(bkp.path, obj);
         bkp.timestamp = DateTime.now();
         _repository.update(bkp);
       }

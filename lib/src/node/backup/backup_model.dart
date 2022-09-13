@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'backup_repository.dart';
 
 class BackupModel {
-  late final String path;
+  late String path;
   Uint8List? signature;
   DateTime? timestamp;
 
@@ -24,8 +24,8 @@ class BackupModel {
   String toString() {
     return '''BackupModel
       path : $path,
-      signature : $signature,
       timestamp : $timestamp
+      signature : $signature,
     ''';
   }
 }

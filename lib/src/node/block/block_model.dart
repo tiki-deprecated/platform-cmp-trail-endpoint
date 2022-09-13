@@ -5,7 +5,6 @@ import '../../utils/compact_size.dart' as compactSize;
 import 'dart:typed_data';
 
 class BlockModel {
-  int? seq;
   Uint8List? id;
   late int version;
   late Uint8List previousHash;
@@ -24,14 +23,13 @@ class BlockModel {
   }
 
   BlockModel.fromMap(Map<String, dynamic> map)
-      : seq = map['seq'],
-        id = map['id'],
+      : id = map['id'],
         version = map['version'],
         previousHash = map['previous_hash'],
         transactionRoot = map['transaction_root'],
         transactionCount = map['transaction_count'],
         timestamp =
-            DateTime.fromMillisecondsSinceEpoch(map['timestamp'] ~/ 1000);
+            DateTime.fromMillisecondsSinceEpoch(map['timestamp'] * 1000);
 
   BlockModel.deserialize(Uint8List serialized) {
     List<Uint8List> extractedBlockBytes = compactSize.decode(serialized);

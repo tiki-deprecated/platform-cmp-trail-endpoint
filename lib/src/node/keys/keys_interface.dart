@@ -3,5 +3,4 @@ abstract class KeysInterface {
 
   Future<String?> read({required String key});
 
-  Future<void> delete({required String key});
 }
