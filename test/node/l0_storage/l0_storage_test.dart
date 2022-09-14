@@ -12,7 +12,7 @@ import 'package:tiki_sdk_dart/src/utils/rsa/rsa.dart' as rsa;
 import 'package:uuid/uuid.dart';
 
 void main() {
-  const String apiId = 'a49fe762-124e-4ced-9b88-9814d64c131b';
+  const String apiId = '';
 
   group('l0_storage tests', skip: apiId.isEmpty, () {
     test('Get policy', () async {

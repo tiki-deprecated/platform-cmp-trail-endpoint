@@ -15,26 +15,20 @@ void main() async {
   const bool runTests = false;
 
   group('l0_storage tests', skip: apiId.isNotEmpty && !runTests, () {
-    test('Read first', () async {
-      rsa.RsaKeyPair kp = rsa.generate();
-
-      WasabiService service = WasabiService(apiId, kp.privateKey);
-      Uint8List rsp = await service.read('hello/dGVzdDE.json');
-      Map<String, dynamic> json = jsonDecode(utf8.decode(rsp));
-
-      expect(json['Hello'], 'World');
-    });
-
-    test('Upload first', () async {
+    test('Upload - Read', () async {
       rsa.RsaKeyPair kp = rsa.generate();
 
       String testFile =
           '{"Test":["OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK"]}';
 
       WasabiService service = WasabiService(apiId, kp.privateKey);
-      service.write(
-          'test.json', Uint8List.fromList(utf8.encode(testFile)));
-      expect(1,1);
+      await service.write(
+          'test.block', Uint8List.fromList(utf8.encode(testFile)));
+
+      Uint8List rsp =
+          await service.read('${service.policy!.keyPrefix}test.block');
+
+      expect(testFile, utf8.decode(rsp));
     });
   });
 }
