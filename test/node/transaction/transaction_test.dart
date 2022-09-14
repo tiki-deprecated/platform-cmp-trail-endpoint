@@ -4,6 +4,7 @@
  */
 
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
@@ -47,6 +48,7 @@ void main() {
           timestamp: DateTime(2022),
           assetRef: 'AA==',
           contents: Uint8List.fromList('hello world'.codeUnits));
+      original.signature = Uint8List(1);
       Uint8List serialized = original.serialize();
       TransactionModel deserialized = TransactionModel.deserialize(serialized);
       expect(original.version, deserialized.version);

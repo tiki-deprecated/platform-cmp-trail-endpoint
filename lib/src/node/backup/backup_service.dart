@@ -54,7 +54,8 @@ class BackupService {
                 ..add(serializedBlock))
               .toBytes();
         }
-        //await _wasabiService.write(bkp.path, obj);
+        await _wasabiService.write(bkp.path, obj);
+
         bkp.timestamp = DateTime.now();
         _repository.update(bkp);
       }

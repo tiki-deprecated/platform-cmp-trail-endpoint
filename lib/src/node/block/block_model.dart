@@ -39,7 +39,7 @@ class BlockModel {
     previousHash = extractedBlockBytes[2];
     transactionRoot = extractedBlockBytes[3];
     transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
-    if (extractedBlockBytes.sublist(5).length == transactionCount) {
+    if (extractedBlockBytes.sublist(5).length != transactionCount) {
       throw Exception(
           'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
     }

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:http/retry.dart';
 import 'package:sqlite3/sqlite3.dart';
 import '../utils/merkel_tree.dart';
 
@@ -148,7 +147,7 @@ class NodeService {
           _transactionService.commit(transaction);
         }
         _blockService.commit(blk);
-        _backupService.write(base64.encode(blk.id!));
+        await _backupService.write(base64Url.encode(blk.id!));
       }
       if (_blkTimer == null || !_blkTimer!.isActive) _setBlkTimer();
     }
