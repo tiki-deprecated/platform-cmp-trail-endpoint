@@ -19,17 +19,17 @@ class TransactionService {
 
   TransactionService(Database db) : _repository = TransactionRepository(db);
 
-  /// Creates a [TransactionModel] with [contents].
+  /// Builds a [TransactionModel] with [contents].
   ///
-  /// Uses the wallet [address] to sign the transaction.
-  /// If the [assetRef] defaults to 0x00 unless this txn refers to anohtes txn
-  /// address/block_header_sha3_hash/transaction_sha3_hash
-  /// sha3 of block header - txn base64 or hex? websafe base64?
-  /// If the wallet does not have the private key for [address], throws an error.
-  TransactionModel create(
+  /// Uses the wallet [keys.address] to sign the transaction.
+  /// If the [assetRef] is not set, it defaults to AA==.
+  /// The return is a uncommited [TransactionModel]. The [TransactionModel]
+  /// should be added to a [BlockModel] by providing its [TransactionModel.block]
+  /// and [TransactionModel.merkelProof] values and calling the [commit] method.
+  TransactionModel build(
       {required Uint8List contents,
       required KeysModel keys,
-      String assetRef = '0x00'}) {
+      String assetRef = 'AA=='}) {
     TransactionModel txn = TransactionModel(
         address: keys.address, contents: contents, assetRef: assetRef);
     txn.signature = sign(keys.privateKey, txn.serialize());
@@ -38,21 +38,33 @@ class TransactionService {
     return txn;
   }
 
+  /// Commits a [TransactionModel] by persisting its its [TransactionModel.block]
+  /// and [TransactionModel.merkelProof] values.
   void commit(TransactionModel transaction) => _repository.commit(transaction);
 
+  /// Validates the [TransactionModel] inclusion in [TransactionModel.block] by
+  /// checking validating its [TransactionModel.merkelProof] with [MerkelRoot.validate].
   static bool validateInclusion(
           TransactionModel transaction, BlockModel block) =>
       MerkelTree.validate(
           transaction.id!, transaction.merkelProof!, block.transactionRoot);
 
+  /// Validates the [TransactionModel] integrity by rebuilds it hash [TransactionModel.id].
   static bool validateIntegrity(TransactionModel transaction) => memEquals(
       Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
+  /// Validates the author of the [TransactionModel] by calling [verify] with its
+  /// [TransactionModel.signature].
   static bool validateAuthor(
           TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
       verify(pubKey, transaction.serialize(includeSignature: false),
           transaction.signature!);
 
+  /// Creates a [Uint8List] of the transactions included in a [BlockModel].
+  ///
+  /// This [Uint8List] is built as the body of the [BlockModel]. It creates a list
+  /// of each [TransactionModel.serialize] bytes prepended by its size obtained
+  /// by [compactSize.toSize].
   Uint8List serializeTransactions(String blockId) {
     BytesBuilder body = BytesBuilder();
     List<TransactionModel> txns = getByBlock(base64.decode(blockId));
@@ -65,7 +77,12 @@ class TransactionService {
     return body.toBytes();
   }
 
-  static List<TransactionModel> transactionsFromSerializedBlock(
+  /// Creates a List of [TransactionModel]] from a [Uint8List] of the serialized
+  /// transactions.
+  ///
+  /// This is the revers function for [serializeTransactions]. It should be used
+  /// when recovering a [BlockModel] body.
+  static List<TransactionModel> deserializeTransactions(
       Uint8List serializedBlock) {
     List<TransactionModel> txns = [];
     List<Uint8List> extractedBlockBytes = compactSize.decode(serializedBlock);
@@ -83,14 +100,10 @@ class TransactionService {
     return txns;
   }
 
+  /// Gets all the transactions from a [BlockModel] by its [BlockModel.id].
   List<TransactionModel> getByBlock(Uint8List blockId) =>
       _repository.getByBlockId(blockId);
 
-  TransactionModel? getById(String id) => _repository.getById(id);
-
+  /// Gets all the transactions that were not commited by [commit].
   List<TransactionModel> getPending() => _repository.getPending();
-
-  void prune(Uint8List id) async => _repository.prune(id);
-
-  void addAll(List<TransactionModel> txns) => _repository.addAll(txns);
 }

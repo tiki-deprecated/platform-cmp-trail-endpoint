@@ -61,7 +61,7 @@ void main() {
     test('''Transaction Service: create transaction and check inclusion, 
     integrity and authorship''', () async {
       Database db = sqlite3.openInMemory();
-      TestInMemoryStorage keyStorage = TestInMemoryStorage();
+      MemSecureStorageStrategy keyStorage = MemSecureStorageStrategy();
       KeysService keysService = KeysService(keyStorage);
 
       TransactionService transactionService = TransactionService(db);
@@ -70,7 +70,7 @@ void main() {
       KeysModel keys = await keysService.create();
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.create(
+        TransactionModel txn = transactionService.build(
             keys: keys, contents: Uint8List.fromList([i]));
         transactions.add(txn);
         expect(TransactionService.validateAuthor(txn, keys.privateKey.public),
@@ -80,7 +80,7 @@ void main() {
       }
       MerkelTree merkelTree =
           MerkelTree.build(transactions.map((txn) => txn.id!).toList());
-      BlockModel block = blockService.create(transactions, merkelTree.root!);
+      BlockModel block = blockService.build(transactions, merkelTree.root!);
       for (int i = 0; i < transactions.length; i++) {
         TransactionModel transaction = transactions[i];
         transaction.block = block;
@@ -97,12 +97,12 @@ void main() {
     test('Transaction serialize and deserialize', () async {
       KeysModel keys = await KeysService(MemSecureStorageStrategy()).create();
       Database db = sqlite3.openInMemory();
-      TestInMemoryStorage keyStorage = TestInMemoryStorage();
+      MemSecureStorageStrategy keyStorage = MemSecureStorageStrategy();
       KeysService keysService = KeysService(keyStorage);
 
       TransactionService transactionService = TransactionService(db);
       BlockService blockService = BlockService(db);
-      TransactionModel txn = transactionService.create(
+      TransactionModel txn = transactionService.build(
           keys: keys, contents: Uint8List.fromList([0]));
       expect(
           TransactionService.validateAuthor(txn, keys.privateKey.public), true);

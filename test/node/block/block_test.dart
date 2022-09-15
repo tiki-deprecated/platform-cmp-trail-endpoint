@@ -10,7 +10,6 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
 import 'package:tiki_sdk_dart/src/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_interface.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
 import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
 import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
@@ -38,14 +37,14 @@ void main() {
       BlockService blockService = BlockService(db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.create(
+        TransactionModel txn = transactionService.build(
             keys: keys, contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }
       MerkelTree merkelTree =
           MerkelTree.build(transactions.map((txn) => txn.id!).toList());
       Uint8List transactionRoot = merkelTree.root!;
-      BlockModel blk = blockService.create(transactions, transactionRoot);
+      BlockModel blk = blockService.build(transactions, transactionRoot);
       for (TransactionModel transaction in transactions) {
         transaction.block = blk;
         transaction.merkelProof = merkelTree.proofs[transaction.id];
@@ -59,21 +58,20 @@ void main() {
 
     test('create block, save and validate integrity', () async {
       Database db = sqlite3.openInMemory();
-      TestInMemoryStorage keyStorage = TestInMemoryStorage();
+      MemSecureStorageStrategy keyStorage = MemSecureStorageStrategy();
       KeysService keysService = KeysService(keyStorage);
       TransactionService transactionService = TransactionService(db);
       BlockService blockService = BlockService(db);
       KeysModel keys = await keysService.create();
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.create(
+        TransactionModel txn = transactionService.build(
             keys: keys, contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }
       MerkelTree validationTree =
           MerkelTree.build((transactions.map((txn) => txn.id!).toList()));
-      BlockModel block =
-          blockService.create(transactions, validationTree.root!);
+      BlockModel block = blockService.build(transactions, validationTree.root!);
       for (int i = 0; i < transactions.length; i++) {
         transactions[i].block = block;
         transactions[i].merkelProof = validationTree.proofs[i];
@@ -91,21 +89,21 @@ void main() {
     });
     test('create block, serialize and deserilaize', () async {
       Database db = sqlite3.openInMemory();
-      TestInMemoryStorage keyStorage = TestInMemoryStorage();
+      MemSecureStorageStrategy keyStorage = MemSecureStorageStrategy();
       KeysService keysService = KeysService(keyStorage);
       KeysModel keys = await keysService.create();
       TransactionService transactionService = TransactionService(db);
       BlockService blockService = BlockService(db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.create(
+        TransactionModel txn = transactionService.build(
             keys: keys, contents: Uint8List.fromList([i]));
         transactions.add(txn);
       }
       MerkelTree merkelTree =
           MerkelTree.build(transactions.map((txn) => txn.id!).toList());
       Uint8List transactionRoot = merkelTree.root!;
-      BlockModel blk = blockService.create(transactions, transactionRoot);
+      BlockModel blk = blockService.build(transactions, transactionRoot);
       for (TransactionModel transaction in transactions) {
         transaction.block = blk;
         transaction.merkelProof = merkelTree.proofs[transaction.id];
@@ -113,9 +111,9 @@ void main() {
       }
       blockService.commit(blk);
 
-      Uint8List serialized = blk.serialize(transactionService.serializeTransactions(base64.encode(blk.id!)));
-      BlockModel newBlock =
-          BlockModel.deserialize(serialized);
+      Uint8List serialized = blk.serialize(
+          transactionService.serializeTransactions(base64.encode(blk.id!)));
+      BlockModel newBlock = BlockModel.deserialize(serialized);
       expect(newBlock.id, blk.id);
     });
   });
@@ -127,17 +125,3 @@ BlockModel _generateBlockModel() => BlockModel(
     transactionRoot: Uint8List(0),
     transactionCount: 0,
     timestamp: DateTime.now());
-
-class TestInMemoryStorage extends KeysInterface {
-  Map<String, String> storage = {};
-
-  @override
-  Future<void> delete({required String key}) async => storage.remove(key);
-
-  @override
-  Future<String?> read({required String key}) async => storage[key];
-
-  @override
-  Future<void> write({required String key, required String value}) async =>
-      storage[key] = value;
-}

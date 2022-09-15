@@ -115,21 +115,17 @@ class NodeService {
   /// reached 100Kb in size.
   TransactionModel write(Uint8List contents) {
     TransactionModel txn =
-        _transactionService.create(keys: _keys, contents: contents);
+        _transactionService.build(keys: _keys, contents: contents);
     _createBlock();
     return txn;
   }
-
-  TransactionModel? getTransactionById(String id) =>
-      _transactionService.getById(id);
 
   List<TransactionModel> getTransactionsByBlockId(String blockId) =>
       _transactionService.getByBlock(base64.decode(blockId));
 
   BlockModel? getLastBlock() => _blockService.getLast();
 
-  BlockModel? getBlockById(String blockId) =>
-      _blockService.get(blockId);
+  BlockModel? getBlockById(String blockId) => _blockService.get(blockId);
 
   Future<void> _createBlock() async {
     List<TransactionModel> txns = _transactionService.getPending();
@@ -140,7 +136,7 @@ class NodeService {
         List<Uint8List> hashes = txns.map((e) => e.id!).toList();
         MerkelTree merkelTree = MerkelTree.build(hashes);
         Uint8List transactionRoot = merkelTree.root!;
-        BlockModel blk = _blockService.create(txns, transactionRoot);
+        BlockModel blk = _blockService.build(txns, transactionRoot);
         for (TransactionModel transaction in txns) {
           transaction.block = blk;
           transaction.merkelProof = merkelTree.proofs[transaction.id];

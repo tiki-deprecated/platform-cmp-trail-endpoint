@@ -14,10 +14,10 @@ void main() {
         int decoded = decodeBigInt(encoded).toInt();
         expect(decoded, big);
       }
-        int big = Random().nextInt(65035);
-        Uint8List encoded = encodeBigInt(BigInt.from(-big));
-        int decoded = decodeBigInt(encoded).toInt();
-        expect(decoded, -big);
+      int big = Random().nextInt(65035);
+      Uint8List encoded = encodeBigInt(BigInt.from(-big));
+      int decoded = decodeBigInt(encoded).toInt();
+      expect(decoded, -big);
     });
     test('compact uint size for all ranges', () async {
       Uint8List smallUint = Uint8List(250);

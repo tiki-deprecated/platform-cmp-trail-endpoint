@@ -22,6 +22,7 @@ class L0StorageModelPolicyReq {
   Map<String, dynamic> toMap() =>
       {'pubKey': pubKey, 'signature': signature, 'stringToSign': stringToSign};
 
+  /// Overrides toString() method for useful error messages
   @override
   String toString() {
     return 'L0StorageModelPolicyReq{pubKey: $pubKey, signature: $signature, stringToSign: $stringToSign}';

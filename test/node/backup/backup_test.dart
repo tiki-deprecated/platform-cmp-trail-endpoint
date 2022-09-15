@@ -45,9 +45,7 @@ void main() async {
       expect(bkps.rows.length, 3);
     });
 
-    test('write block to remote storage and retrieve', () {
-      
-    });
+    test('write block to remote storage and retrieve', () {});
   });
 }
 

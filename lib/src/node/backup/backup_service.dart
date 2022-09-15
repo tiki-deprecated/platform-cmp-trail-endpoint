@@ -13,6 +13,7 @@ import '../wasabi/wasabi_service.dart';
 import 'backup_model.dart';
 import 'backup_repository.dart';
 
+/// A service to handle the backup requests to [WasabiService].
 class BackupService {
   final String _address;
   final BackupRepository _repository;
@@ -21,12 +22,22 @@ class BackupService {
   final BlockService _blockService;
   final TransactionService _transactionService;
 
+  /// Creates a [BackupService] to handle backup requests to [_wasabiService] at
+  /// the chain identified by [_address].
+  ///
+  /// It uses [_blockService] and [_transactionService] to build the serialized
+  /// [BlockModel] that will be uploaded, and [_keysService] for the the public key.
   BackupService(this._address, this._keysService, this._blockService,
       this._transactionService, this._wasabiService, Database db)
       : _repository = BackupRepository(db) {
     _writePending();
   }
 
+  /// Records a request to write the asset defined by the [path] to [_wasabiService].
+  ///
+  /// The request is received by [BackupService] and is added to the database.
+  /// Afterwards it calls [_writePendig] that will query the database for any
+  /// [BackupModel] that was not processed yet and process it in FIFO order.
   Future<void> write(String path) async {
     BackupModel bkpModel = BackupModel(path: path);
     _repository.save(bkpModel);

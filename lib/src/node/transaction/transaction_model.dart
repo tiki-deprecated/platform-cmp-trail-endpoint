@@ -6,24 +6,49 @@ import 'package:pointycastle/api.dart';
 import '../../utils/bytes.dart';
 import '../block/block_model.dart';
 import '../../utils/compact_size.dart' as compactSize;
+import 'transaction_repository.dart';
 
 /// A transaction in the blockchain.
 class TransactionModel {
+  /// The version number indicating the set of validation rules to follow.
   late final int version;
+
+  /// The SHA-3 hash of the public key used for signature.
   late final Uint8List address;
+
+  /// The timestamp of the creation of this.
   late final DateTime timestamp;
+
+  /// The path of the asset to which this refers to. AA== if null.
   late final String assetRef;
+
+  /// The binary encoded transaction payload.
+  ///
+  /// There is no max contents size, but contents are encouraged to stay under
+  /// 100kB for performance.
   late final Uint8List contents;
 
-  int? seq;
+  /// The SHA-3 256 hash of the [serialize] Uint8List.
+  ///
+  /// Should include signature.
   Uint8List? id;
+
+  /// The list of hashes that is used in [MerkelRoot.validate] to verify that
+  /// this [TransactionModel] is included in [block].
   Uint8List? merkelProof;
+
+  /// The [BlockModel] in which this [TransactionModel] is included.
   BlockModel? block;
+
+  /// The asymmetric digital signature (RSA) for the [serialize] transaction.
   Uint8List? signature;
 
+  /// Builds a new [TransactionModel]
+  ///
+  /// If no [timestamp] is provided, the object creation time is used.
+  /// If no [assetRef] is provided, it uses AA== as [assetRef] value.
   TransactionModel(
-      {this.seq,
-      this.id,
+      {this.id,
       this.version = 1,
       required this.address,
       required this.contents,
@@ -35,22 +60,40 @@ class TransactionModel {
     this.assetRef = assetRef ?? "AA==";
   }
 
+  /// Builds a [BlockModel] from a [map].
+  ///
+  /// It is used mainly for retrieving data from [BlockRepository].
+  /// The map strucure is
+  /// ```
+  ///   Map<String, dynamic> map = {
+  ///     TransactionRepository.columnId : String,
+  ///     TransactionRepository.columnVersion : int,
+  ///     TransactionRepository.columnAddress : Uint8List,
+  ///     TransactionRepository.columnContents : Uint8List,
+  ///     TransactionRepository.columnAssetRef : String,
+  ///     TransactionRepository.columnMerkelProof : Uint8List,
+  ///     TransactionRepository.columnTimestamp : int, // seconds since epoch
+  ///     TransactionRepository.columnSignature : Uint8List,
+  ///    }
+  /// ```
   TransactionModel.fromMap(Map<String, dynamic> map)
-      : seq = map['seq'],
-        id = map['id'],
-        version = map['version'],
-        address = map['address'],
-        contents = map['contents'],
-        assetRef = map['asset_ref'],
-        merkelProof = map['merkel_proof'],
+      : id = map[TransactionRepository.columnId],
+        version = map[TransactionRepository.columnVersion],
+        address = map[TransactionRepository.columnAddress],
+        contents = map[TransactionRepository.columnContents],
+        assetRef = map[TransactionRepository.columnAssetRef],
+        merkelProof = map[TransactionRepository.columnMerkelProof],
         block = map['block'],
-        timestamp =
-            DateTime.fromMillisecondsSinceEpoch(map['timestamp'] * 1000),
-        signature = map['signature'];
+        timestamp = DateTime.fromMillisecondsSinceEpoch(
+            map[TransactionRepository.columnTimestamp] * 1000),
+        signature = map[TransactionRepository.columnSignature];
 
   static TransactionModel fromJson(String json) =>
       TransactionModel.fromMap(jsonDecode(json));
 
+  /// Builds a [TransactionModel] from a [transaction] list of bytes.
+  ///
+  /// Check [serialize] for more information on how the [transaction] is built.
   TransactionModel.deserialize(Uint8List transaction) {
     List<Uint8List> extractedBytes = compactSize.decode(transaction);
     version = decodeBigInt(extractedBytes[0]).toInt();
@@ -63,6 +106,28 @@ class TransactionModel {
     id = Digest("SHA3-256").process(serialize());
   }
 
+  /// Creates a [Uint8List] representation of this.
+  ///
+  /// The Uint8List is built by a list of the transaction properties, prepended
+  /// by its size obtained from [compactSize.toSize].
+  /// Use with [includeSignature] to false, to sign and verify the signature.
+  ///
+  /// ```
+  /// Uint8List serialized = Uint8List.fromList([
+  ///   ...compactSize.toSize(version),
+  ///   ...version,
+  ///   ...compactSize.toSize(address),
+  ///   ...address,
+  ///   ...compactSize.toSize(timestamp),
+  ///   ...timestamp,
+  ///   ...compactSize.toSize(assetRef),
+  ///   ...assetRef,
+  ///   ...compactSize.toSize(signature),
+  ///   ...signature,
+  ///   ...compactSize.toSize(contents),
+  ///   ...contents,
+  /// ]);
+  /// ```
   Uint8List serialize({includeSignature = true}) {
     Uint8List versionBytes = encodeBigInt(BigInt.from(version));
     Uint8List serializedVersion = (BytesBuilder()
@@ -106,21 +171,7 @@ class TransactionModel {
         .toBytes();
   }
 
-  String toJson() {
-    return jsonEncode({
-      'seq': seq,
-      'id': id,
-      'version': version,
-      'address': address,
-      'contents': contents,
-      'asset_ref': assetRef,
-      'merkel_proof': merkelProof,
-      'block': block,
-      'timestamp': timestamp,
-      'signature': signature,
-    });
-  }
-
+  /// Overrides [==] operator to use [id] as the diferentiation parameter.
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -131,6 +182,16 @@ class TransactionModel {
   @override
   int get hashCode => id.hashCode;
 
+  /// Overrides toString() method for useful error messages
   @override
-  String toString() => toJson();
+  String toString() => ''''
+      TransactionModel - 
+      id : $id,
+      version : $version,
+      address : $address,
+      asset_ref : $assetRef,
+      block : ${block?.id ?? 'null'},
+      timestamp : $timestamp,
+      signature : $signature
+    ''';
 }

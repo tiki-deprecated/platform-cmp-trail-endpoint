@@ -114,7 +114,7 @@ void main() {
         transactions.add(txn);
       }
       BlockModel? block;
-      while(block == null){
+      while (block == null) {
         block = nodeService.getLastBlock();
       }
     });
