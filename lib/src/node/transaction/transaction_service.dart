@@ -8,7 +8,7 @@ import '../../utils/merkel_tree.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/rsa/rsa_public_key.dart';
 import '../../utils/bytes.dart';
-import '../../utils/compact_size.dart' as compactSize;
+import '../../utils/compact_size.dart' as compact_size;
 import '../block/block_model.dart';
 import '../keys/keys_model.dart';
 import 'transaction_model.dart';
@@ -64,13 +64,13 @@ class TransactionService {
   ///
   /// This [Uint8List] is built as the body of the [BlockModel]. It creates a list
   /// of each [TransactionModel.serialize] bytes prepended by its size obtained
-  /// by [compactSize.toSize].
+  /// by [compact_size.toSize].
   Uint8List serializeTransactions(String blockId) {
     BytesBuilder body = BytesBuilder();
     List<TransactionModel> txns = getByBlock(base64.decode(blockId));
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
-      Uint8List cSize = compactSize.toSize(serialized);
+      Uint8List cSize = compact_size.toSize(serialized);
       body.add(cSize);
       body.add(serialized);
     }
@@ -85,7 +85,7 @@ class TransactionService {
   static List<TransactionModel> deserializeTransactions(
       Uint8List serializedBlock) {
     List<TransactionModel> txns = [];
-    List<Uint8List> extractedBlockBytes = compactSize.decode(serializedBlock);
+    List<Uint8List> extractedBlockBytes = compact_size.decode(serializedBlock);
     int transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
     if (extractedBlockBytes.sublist(5).length == transactionCount) {
       throw Exception(

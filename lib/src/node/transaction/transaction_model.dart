@@ -5,7 +5,7 @@ import 'package:pointycastle/api.dart';
 
 import '../../utils/bytes.dart';
 import '../block/block_model.dart';
-import '../../utils/compact_size.dart' as compactSize;
+import '../../utils/compact_size.dart' as compact_size;
 import 'transaction_repository.dart';
 
 /// A transaction in the blockchain.
@@ -95,7 +95,7 @@ class TransactionModel {
   ///
   /// Check [serialize] for more information on how the [transaction] is built.
   TransactionModel.deserialize(Uint8List transaction) {
-    List<Uint8List> extractedBytes = compactSize.decode(transaction);
+    List<Uint8List> extractedBytes = compact_size.decode(transaction);
     version = decodeBigInt(extractedBytes[0]).toInt();
     address = extractedBytes[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
@@ -109,48 +109,48 @@ class TransactionModel {
   /// Creates a [Uint8List] representation of this.
   ///
   /// The Uint8List is built by a list of the transaction properties, prepended
-  /// by its size obtained from [compactSize.toSize].
+  /// by its size obtained from [compact_size.toSize].
   /// Use with [includeSignature] to false, to sign and verify the signature.
   ///
   /// ```
   /// Uint8List serialized = Uint8List.fromList([
-  ///   ...compactSize.toSize(version),
+  ///   ...compact_size.toSize(version),
   ///   ...version,
-  ///   ...compactSize.toSize(address),
+  ///   ...compact_size.toSize(address),
   ///   ...address,
-  ///   ...compactSize.toSize(timestamp),
+  ///   ...compact_size.toSize(timestamp),
   ///   ...timestamp,
-  ///   ...compactSize.toSize(assetRef),
+  ///   ...compact_size.toSize(assetRef),
   ///   ...assetRef,
-  ///   ...compactSize.toSize(signature),
+  ///   ...compact_size.toSize(signature),
   ///   ...signature,
-  ///   ...compactSize.toSize(contents),
+  ///   ...compact_size.toSize(contents),
   ///   ...contents,
   /// ]);
   /// ```
   Uint8List serialize({includeSignature = true}) {
     Uint8List versionBytes = encodeBigInt(BigInt.from(version));
     Uint8List serializedVersion = (BytesBuilder()
-          ..add(compactSize.toSize(versionBytes))
+          ..add(compact_size.toSize(versionBytes))
           ..add(versionBytes))
         .toBytes();
     Uint8List serializedAddress = (BytesBuilder()
-          ..add(compactSize.toSize(address))
+          ..add(compact_size.toSize(address))
           ..add(address))
         .toBytes();
     Uint8List timestampBytes =
         encodeBigInt(BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000));
     Uint8List serializedTimestamp = (BytesBuilder()
-          ..add(compactSize.toSize(timestampBytes))
+          ..add(compact_size.toSize(timestampBytes))
           ..add(timestampBytes))
         .toBytes();
     Uint8List assetRefBytes = base64.decode(assetRef);
     Uint8List serializedAssetRef = (BytesBuilder()
-          ..add(compactSize.toSize(assetRefBytes))
+          ..add(compact_size.toSize(assetRefBytes))
           ..add(assetRefBytes))
         .toBytes();
     Uint8List serializedSignature = (BytesBuilder()
-          ..add(compactSize.toSize(includeSignature && signature != null
+          ..add(compact_size.toSize(includeSignature && signature != null
               ? signature!
               : Uint8List(0)))
           ..add(includeSignature && signature != null
@@ -158,7 +158,7 @@ class TransactionModel {
               : Uint8List(0)))
         .toBytes();
     Uint8List serializedContents = (BytesBuilder()
-          ..add(compactSize.toSize(contents))
+          ..add(compact_size.toSize(contents))
           ..add(contents))
         .toBytes();
     return (BytesBuilder()

@@ -70,7 +70,7 @@ class TransactionRepository {
   /// Persists a [transaction] in [_db].
   TransactionModel save(TransactionModel transaction) {
     int timestamp = transaction.timestamp.millisecondsSinceEpoch ~/ 1000;
-    _db.execute('INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
+    _db.execute('INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);', [
       base64.encode(transaction.id!),
       transaction.merkelProof,
       transaction.version,
