@@ -21,12 +21,4 @@ class KeysRepository {
     String? raw = await _secureStorage.read(key: _keyPrefix + address);
     return raw != null ? KeysModel.fromJson(raw) : null;
   }
-
-  Future<void> delete(String address) =>
-      _secureStorage.delete(key: _keyPrefix + address);
-
-  Future<bool> exists(String address) async {
-    String? raw = await _secureStorage.read(key: _keyPrefix + address);
-    return raw == null ? false : true;
-  }
 }

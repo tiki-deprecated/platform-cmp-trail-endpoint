@@ -49,6 +49,7 @@ class L0StorageModelPolicyRspFields {
         'x-amz-object-lock-retain-until-date': xAmzObjectLockRetainUntilDate
       };
 
+  /// Overrides toString() method for useful error messages
   @override
   String toString() {
     return 'L0StorageModelPolicyRspFields{policy: $policy, contentType: $contentType, xAmzCredential: $xAmzCredential, xAmzAlgorithm: $xAmzAlgorithm, xAmzDate: $xAmzDate, xAmzSignature: $xAmzSignature, xAmzObjectLockMode: $xAmzObjectLockMode, xAmzObjectLockRetainUntilDate: $xAmzObjectLockRetainUntilDate}';

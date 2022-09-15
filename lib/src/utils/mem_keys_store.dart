@@ -4,9 +4,6 @@ class MemSecureStorageStrategy extends KeysInterface {
   Map<String, String> storage = {};
 
   @override
-  Future<void> delete({required String key}) async => storage.remove(key);
-
-  @override
   Future<String?> read({required String key}) async => storage[key];
 
   @override

@@ -20,6 +20,7 @@ class WasabiModelListVerOwner {
     }
   }
 
+  /// Overrides toString() method for useful error messages
   @override
   String toString() {
     return 'WasabiModelListVerOwner{id: $id, displayName: $displayName}';

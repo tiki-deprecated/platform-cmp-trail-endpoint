@@ -11,7 +11,7 @@ import 'package:tiki_sdk_dart/src/node/wasabi/wasabi_service.dart';
 import 'package:tiki_sdk_dart/src/utils/rsa/rsa.dart' as rsa;
 
 void main() async {
-  const String apiId = '';
+  const String apiId = 'd25d2e69-89de-47aa-b5e9-5e8987cf5318';
   const bool runTests = false;
 
   group('l0_storage tests', skip: apiId.isNotEmpty && !runTests, () {

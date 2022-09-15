@@ -7,28 +7,53 @@ import '../block/block_model.dart';
 import '../block/block_repository.dart';
 import 'transaction_model.dart';
 
+/// The repository for [TransactionModel] persistance in [Database].
 class TransactionRepository {
+  /// The [TrasactionModel] table name in [_db].
+  ///
+  /// It could not be 'transaction' to avoid protected terms usage in sqlite.
   static const table = 'txn';
-  static const columnSeq = 'seq';
+
+  /// The [TransactionModel.id] column.
   static const columnId = 'id';
+
+  /// The [TransactionModel.merkelProof] column.
   static const columnMerkelProof = 'merkel_proof';
+
+  /// The [TransactionModel.version] column.
   static const columnVersion = 'version';
+
+  /// The [TransactionModel.address] column.
   static const columnAddress = 'address';
+
+  /// The [TransactionModel.contents] column.
   static const columnContents = 'contents';
+
+  /// The [TransactionModel.assetPef] column.
   static const columnAssetRef = 'asset_ref';
+
+  /// The [TransactionModel.block.id] column.
   static const columnBlockId = 'block_id';
+
+  /// The [TransactionModel.timestamp] column.
   static const columnTimestamp = 'timestamp';
+
+  /// The [TransactionModel.signature] column.
   static const columnSignature = 'signature';
 
+  /// The [Database] used to persist [TransactionModel].
   final Database _db;
 
+  /// Builds a [TransactionRepository] that will use [_db] for persistence.
+  ///
+  /// It calls [createTable] to make sure the table exists.
   TransactionRepository(this._db) {
     createTable();
   }
 
+  /// Creates the [TransactionRepository.table] if it does not exist.
   Future<void> createTable() async {
     _db.execute('''CREATE TABLE IF NOT EXISTS $table (
-          $columnSeq INTEGER AUTO INCREMENT,
           $columnId STRING PRIMARY KEY NOT NULL,
           $columnMerkelProof BLOB,
           $columnVersion INTEGER NOT NULL,
@@ -42,10 +67,10 @@ class TransactionRepository {
     ''');
   }
 
+  /// Persists a [transaction] in [_db].
   TransactionModel save(TransactionModel transaction) {
     int timestamp = transaction.timestamp.millisecondsSinceEpoch ~/ 1000;
-    _db.execute('INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
-      transaction.seq,
+    _db.execute('INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);', [
       base64.encode(transaction.id!),
       transaction.merkelProof,
       transaction.version,
@@ -56,32 +81,11 @@ class TransactionRepository {
       timestamp,
       transaction.signature,
     ]);
-    transaction.seq = _db.lastInsertRowId;
     return transaction;
   }
 
-  addAll(List<TransactionModel> txns) {
-    List params = [];
-    String insert = 'INSERT INTO $table VALUES ';
-    for (int i = 0; i < txns.length; i++) {
-      TransactionModel transaction = txns[i];
-      insert = '$insert (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-      params.addAll([
-        transaction.seq,
-        base64.encode(transaction.id!),
-        transaction.merkelProof,
-        transaction.version,
-        transaction.address,
-        transaction.contents,
-        transaction.assetRef,
-        transaction.block == null ? null : "'${transaction.block!.id}'",
-        transaction.timestamp.millisecondsSinceEpoch ~/ 1000,
-        transaction.signature
-      ]);
-      if (i < txns.length - 1) insert = '$insert, ';
-    }
-  }
-
+  /// Commits the [transaction] by saving its [TransactionModel.merkelProof] and
+  /// [TransactionModel.block]
   TransactionModel commit(TransactionModel transaction) {
     _db.execute(
         '''UPDATE $table SET $columnMerkelProof = ?,  $columnBlockId = ? 
@@ -94,24 +98,23 @@ class TransactionRepository {
     return getById(base64.encode(transaction.id!))!;
   }
 
+  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
   List<TransactionModel> getByBlockId(Uint8List blockId) {
     String whereStmt = 'WHERE $columnBlockId = "${base64.encode(blockId)}"';
     return _select(whereStmt: whereStmt);
   }
 
+  /// Gets all the transactions that were not commited yet. See [commit].
   List<TransactionModel> getPending() {
     String whereStmt = 'WHERE $columnBlockId IS NULL';
     return _select(whereStmt: whereStmt);
   }
 
+  /// Gets a transaction by its [id].
   TransactionModel? getById(String id) {
     List<TransactionModel> transactions =
         _select(whereStmt: "WHERE $table.$columnId = '$id'");
     return transactions.isNotEmpty ? transactions[0] : null;
-  }
-
-  Future<void> prune(Uint8List id) async {
-    _db.execute('DELETE FROM $table WHERE id = "${base64.encode(id)}""');
   }
 
   List<TransactionModel> _select({int? page, String? whereStmt}) {
@@ -120,7 +123,6 @@ class TransactionRepository {
     ResultSet results = _db.select('''
         SELECT 
           $table.$columnId as '$table.$columnId',
-          $table.$columnSeq as '$table.$columnSeq',
           $table.$columnVersion as '$table.$columnVersion',
           $table.$columnAddress as '$table.$columnAddress',
           $table.$columnContents as '$table.$columnContents',
@@ -129,7 +131,6 @@ class TransactionRepository {
           $table.$columnBlockId as '$table.$columnBlockId',
           $table.$columnTimestamp as '$table.$columnTimestamp',
           $table.$columnSignature as '$table.$columnSignature',
-          $blockTable.${BlockRepository.columnSeq} as '$blockTable.${BlockRepository.columnSeq}',
           $blockTable.${BlockRepository.columnId} as '$blockTable.${BlockRepository.columnId}',
           $blockTable.${BlockRepository.columnVersion} as '$blockTable.${BlockRepository.columnVersion}',
           $blockTable.${BlockRepository.columnPreviousHash} as '$blockTable.${BlockRepository.columnPreviousHash}',
@@ -149,8 +150,6 @@ class TransactionRepository {
               null
           ? null
           : {
-              BlockRepository.columnSeq:
-                  row['$blockTable.${BlockRepository.columnSeq}'],
               BlockRepository.columnId:
                   base64.decode(row['$blockTable.${BlockRepository.columnId}']),
               BlockRepository.columnVersion:
@@ -165,7 +164,6 @@ class TransactionRepository {
                   row['$blockTable.$columnTimestamp'],
             };
       Map<String, dynamic>? transactionMap = {
-        columnSeq: row['$table.$columnSeq'],
         columnId: base64.decode(row['$table.$columnId']),
         columnMerkelProof: row['$table.$columnMerkelProof'],
         columnVersion: row['$table.$columnVersion'],

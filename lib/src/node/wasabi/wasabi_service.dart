@@ -19,12 +19,13 @@ class WasabiService {
         _l0storageService = L0StorageService(apiId, privateKey);
 
   Future<Uint8List> read(String path) async {
+    policy ??= await _l0storageService.policy();
     WasabiModelList versions = await _repository.versions(path);
     String? versionId;
     if (versions.versions != null && versions.versions!.isNotEmpty) {
       versionId = _first(versions.versions!).versionId;
     }
-    return _repository.get(path, versionId: versionId);
+    return _repository.get('${policy!.keyPrefix}$path', versionId: versionId);
   }
 
   Future<void> write(String path, Uint8List obj, {int retries = 3}) async {

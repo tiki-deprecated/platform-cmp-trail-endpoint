@@ -47,6 +47,7 @@ class WasabiModelList {
     }
   }
 
+  /// Overrides toString() method for useful error messages
   @override
   String toString() {
     return 'WasabiModelList{name: $name, prefix: $prefix, keyMarker: $keyMarker, versionIdMarker: $versionIdMarker, maxKeys: $maxKeys, isTruncated: $isTruncated, nextKeyMarker: $nextKeyMarker, nextVersionIdMarker: $nextVersionIdMarker, versions: $versions}';

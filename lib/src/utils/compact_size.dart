@@ -1,11 +1,11 @@
-
 import 'dart:typed_data';
 
 Uint8List encode(Uint8List uint8list) {
   Uint8List cSize = toSize(uint8list);
   return (BytesBuilder()
-    ..add(cSize)
-    ..add(uint8list)).toBytes();
+        ..add(cSize)
+        ..add(uint8list))
+      .toBytes();
 }
 
 List<Uint8List> decode(Uint8List bytes) {
@@ -35,12 +35,6 @@ List<Uint8List> decode(Uint8List bytes) {
 /// prefixed to the number to indicate its length—but otherwise the numbers look
 /// like regular unsigned integers in little-endian order.
 ///
-/// Value                                 Bytes Used                    Format
-/// >= 0 && <= 252                            1                         uint8_t
-/// >= 253 && <= 0xffff                       3             0xfd followed by the number as uint16_t
-/// >= 0x10000 && <= 0xffffffff               5             0xfe followed by the number as uint32_t
-/// >= 0x100000000 && <= 0xffffffffffffffff   9             0xff followed by the number as uint64_t
-/// For example, the number 515 is encoded as 0xfd0302.
 /// From https://developer.bitcoin.org/reference/transactions.html#compactsize-unsigned-integers
 Uint8List toSize(Uint8List bytes) {
   int size = bytes.length;
@@ -82,4 +76,3 @@ int toInt(Uint8List compactSize) {
   }
   return value;
 }
-
