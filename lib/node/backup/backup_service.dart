@@ -43,6 +43,7 @@ class BackupService {
   /// The request is received by [BackupService] and is added to the database.
   /// Afterwards it calls [_writePending] that will query the database for any
   /// [BackupModel] that was not processed yet and process it in FIFO order.
+  /// TODO check if the path is already in the repository to avoid duplicates
   Future<void> write(String path) async {
     BackupModel bkpModel = BackupModel(path: path);
     _repository.save(bkpModel);

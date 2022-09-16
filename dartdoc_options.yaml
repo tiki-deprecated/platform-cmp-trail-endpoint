@@ -13,4 +13,5 @@ dartdoc:
     compact_size, 
     merkel_tree,
     rsa,
+    xchain
   ]

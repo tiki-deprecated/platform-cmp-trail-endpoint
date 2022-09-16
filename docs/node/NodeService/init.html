@@ -65,8 +65,10 @@
     </section>
     
 <section class="desc markdown">
-  <p>Initialzes de servic.e</p>
-<p>The first address in the list for which <code>keysInterface</code> has a private
+  <p>Initialzes de service</p>
+<p>All the related chains addresses should be addded to <code>addresses</code> list as
+<code>base64Url</code> representation of the adress.</p>
+<p>The first address in the <code>addresses</code> list for which <code>keysInterface</code> has a private
 key is the one that will be used for read and write operations.
 All the other ones are used in read-only mode, even if <code>keysInterface</code>
 has its private key stored.</p>
@@ -113,7 +115,7 @@ or if the total size of the serialized transactions is greater than 100kb.</p>
   _transactionService = TransactionService(database);
   _blockService = BlockService(database);
 
-  await _loadKeys(addresses);
+  await _loadKeysAndChains(addresses);
 
   _wasabiService = WasabiService(apiKey, _keys.privateKey);
   _backupService = BackupService(base64.encode(_keys.address), _keysService,

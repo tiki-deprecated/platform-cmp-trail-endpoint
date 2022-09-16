@@ -64,7 +64,8 @@
   <p>Records a request to write the asset defined by the <code>path</code> to <code>_wasabiService</code>.</p>
 <p>The request is received by <a href="../../backup/BackupService-class.html">BackupService</a> and is added to the database.
 Afterwards it calls <code>_writePending</code> that will query the database for any
-<a href="../../backup/BackupModel-class.html">BackupModel</a> that was not processed yet and process it in FIFO order.</p>
+<a href="../../backup/BackupModel-class.html">BackupModel</a> that was not processed yet and process it in FIFO order.
+TODO check if the path is already in the repository to avoid duplicates</p>
 </section>
 
 
