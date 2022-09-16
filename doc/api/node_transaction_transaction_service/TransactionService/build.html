@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the build method from the TransactionService class, for the Dart programming language.">
+  <title>build method - TransactionService class - transaction_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">tiki_sdk_dart</a></li>
+    <li><a href="../../node_transaction_transaction_service/node_transaction_transaction_service-library.html">transaction_service</a></li>
+    <li><a href="../../node_transaction_transaction_service/TransactionService-class.html">TransactionService</a></li>
+    <li class="self-crumb">build method</li>
+  </ol>
+  <div class="self-name">build</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">build</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="../../node_transaction_transaction_model/TransactionModel-class.html">TransactionModel</a></span>
+<span class="name ">build</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="build-param-contents">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">contents</span>, </span></li>
+<li><span class="parameter" id="build-param-keys"><span>required</span> <span class="type-annotation"><a href="../../node_keys_keys_model/KeysModel-class.html">KeysModel</a></span> <span class="parameter-name">keys</span>, </span></li>
+<li><span class="parameter" id="build-param-assetRef"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">assetRef</span> = <span class="default-value">&#39;AA==&#39;</span>}</span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Builds a <a href="../../node_transaction_transaction_model/TransactionModel-class.html">TransactionModel</a> with <code>contents</code>.</p>
+<p>Uses the wallet <code>keys.address</code> to sign the transaction.
+If the <code>assetRef</code> is not set, it defaults to AA==.
+The return is a uncommited <a href="../../node_transaction_transaction_model/TransactionModel-class.html">TransactionModel</a>. The <a href="../../node_transaction_transaction_model/TransactionModel-class.html">TransactionModel</a>
+should be added to a <a href="../../node_block_block_model/BlockModel-class.html">BlockModel</a> by providing its <a href="../../node_transaction_transaction_model/TransactionModel/block.html">TransactionModel.block</a>
+and <a href="../../node_transaction_transaction_model/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> values and calling the <a href="../../node_transaction_transaction_service/TransactionService/commit.html">commit</a> method.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">TransactionModel build(
+    {required Uint8List contents,
+    required KeysModel keys,
+    String assetRef = &#39;AA==&#39;}) {
+  TransactionModel txn = TransactionModel(
+      address: keys.address, contents: contents, assetRef: assetRef);
+  txn.signature = sign(keys.privateKey, txn.serialize());
+  txn.id = Digest(&quot;SHA3-256&quot;).process(txn.serialize());
+  txn = _repository.save(txn);
+  return txn;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">tiki_sdk_dart</a></li>
+  <li><a href="../../node_transaction_transaction_service/node_transaction_transaction_service-library.html">transaction_service</a></li>
+  <li><a href="../../node_transaction_transaction_service/TransactionService-class.html">TransactionService</a></li>
+  <li class="self-crumb">build method</li>
+</ol>
+
+
+    <h5>TransactionService class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../node_transaction_transaction_service/TransactionService-class.html#constructors">Constructors</a></li>
+          <li><a href="../../node_transaction_transaction_service/TransactionService/TransactionService.html">TransactionService</a></li>
+
+
+    <li class="section-title inherited">
+      <a href="../../node_transaction_transaction_service/TransactionService-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../../node_transaction_transaction_service/TransactionService-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../node_transaction_transaction_service/TransactionService/build.html">build</a></li>
+    <li><a href="../../node_transaction_transaction_service/TransactionService/commit.html">commit</a></li>
+    <li><a href="../../node_transaction_transaction_service/TransactionService/getByBlock.html">getByBlock</a></li>
+    <li><a href="../../node_transaction_transaction_service/TransactionService/getPending.html">getPending</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../node_transaction_transaction_service/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../node_transaction_transaction_service/TransactionService-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+        <li class="section-title"><a href="../../node_transaction_transaction_service/TransactionService-class.html#static-methods">Static methods</a></li>
+          <li><a href="../../node_transaction_transaction_service/TransactionService/deserializeTransactions.html">deserializeTransactions</a></li>
+          <li><a href="../../node_transaction_transaction_service/TransactionService/validateAuthor.html">validateAuthor</a></li>
+          <li><a href="../../node_transaction_transaction_service/TransactionService/validateInclusion.html">validateInclusion</a></li>
+          <li><a href="../../node_transaction_transaction_service/TransactionService/validateIntegrity.html">validateIntegrity</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

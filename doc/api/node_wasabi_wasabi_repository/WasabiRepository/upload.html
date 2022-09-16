@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the upload method from the WasabiRepository class, for the Dart programming language.">
+  <title>upload method - WasabiRepository class - wasabi_repository library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">tiki_sdk_dart</a></li>
+    <li><a href="../../node_wasabi_wasabi_repository/node_wasabi_wasabi_repository-library.html">wasabi_repository</a></li>
+    <li><a href="../../node_wasabi_wasabi_repository/WasabiRepository-class.html">WasabiRepository</a></li>
+    <li class="self-crumb">upload method</li>
+  </ol>
+  <div class="self-name">upload</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">upload</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span>&gt;</span></span>
+<span class="name ">upload</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="upload-param-path"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">path</span>, </span></li>
+<li><span class="parameter" id="upload-param-fields"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">fields</span>, </span></li>
+<li><span class="parameter" id="upload-param-obj"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">obj</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;String?&gt; upload(
+    String path, Map&lt;String, String&gt; fields, Uint8List obj) async {
+  if (path.startsWith(&#39;&#47;&#39;)) path = path.replaceFirst(&#39;&#47;&#39;, &#39;&#39;);
+  http.MultipartRequest request = http.MultipartRequest(&#39;POST&#39;, _uploadUri);
+  request.fields.addAll(fields);
+  request.fields[&quot;content-md5&quot;] = base64.encode(MD5Digest().process(obj));
+  request.fields[&#39;key&#39;] = path;
+  request.files.add(http.MultipartFile.fromBytes(&#39;file&#39;, obj));
+  http.StreamedResponse rsp = await request.send();
+  if (rsp.statusCode == 204) {
+    return rsp.headers[&#39;x-amz-version-id&#39;];
+  } else {
+    String body = await rsp.stream.bytesToString();
+    if (body.contains(&#39;Policy expired&#39;)) {
+      throw WasabiExceptionExpired(body);
+    } else {
+      throw HttpException(&#39;HTTP Error ${rsp.statusCode}: $body&#39;);
+    }
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">tiki_sdk_dart</a></li>
+  <li><a href="../../node_wasabi_wasabi_repository/node_wasabi_wasabi_repository-library.html">wasabi_repository</a></li>
+  <li><a href="../../node_wasabi_wasabi_repository/WasabiRepository-class.html">WasabiRepository</a></li>
+  <li class="self-crumb">upload method</li>
+</ol>
+
+
+    <h5>WasabiRepository class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../node_wasabi_wasabi_repository/WasabiRepository-class.html#constructors">Constructors</a></li>
+          <li><a href="../../node_wasabi_wasabi_repository/WasabiRepository/WasabiRepository.html">WasabiRepository</a></li>
+
+
+    <li class="section-title inherited">
+      <a href="../../node_wasabi_wasabi_repository/WasabiRepository-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../../node_wasabi_wasabi_repository/WasabiRepository-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../node_wasabi_wasabi_repository/WasabiRepository/get.html">get</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+    <li><a href="../../node_wasabi_wasabi_repository/WasabiRepository/upload.html">upload</a></li>
+    <li><a href="../../node_wasabi_wasabi_repository/WasabiRepository/versions.html">versions</a></li>
+
+    <li class="section-title inherited"><a href="../../node_wasabi_wasabi_repository/WasabiRepository-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the commit method from the TransactionRepository class, for the Dart programming language.">
+  <title>commit method - TransactionRepository class - transaction_repository library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">tiki_sdk_dart</a></li>
+    <li><a href="../../node_transaction_transaction_repository/node_transaction_transaction_repository-library.html">transaction_repository</a></li>
+    <li><a href="../../node_transaction_transaction_repository/TransactionRepository-class.html">TransactionRepository</a></li>
+    <li class="self-crumb">commit method</li>
+  </ol>
+  <div class="self-name">commit</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">commit</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="../../node_transaction_transaction_model/TransactionModel-class.html">TransactionModel</a></span>
+<span class="name ">commit</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="commit-param-transaction"><span class="type-annotation"><a href="../../node_transaction_transaction_model/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Commits the <code>transaction</code> by saving its <a href="../../node_transaction_transaction_model/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> and
+<a href="../../node_transaction_transaction_model/TransactionModel/block.html">TransactionModel.block</a></p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">TransactionModel commit(TransactionModel transaction) {
+  _db.execute(
+      &#39;&#39;&#39;UPDATE $table SET $columnMerkelProof = ?,  $columnBlockId = ?
+    WHERE $columnId = ? &#39;&#39;&#39;,
+      [
+        transaction.merkelProof,
+        base64.encode(transaction.block!.id!),
+        base64.encode(transaction.id!)
+      ]);
+  return getById(base64.encode(transaction.id!))!;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">tiki_sdk_dart</a></li>
+  <li><a href="../../node_transaction_transaction_repository/node_transaction_transaction_repository-library.html">transaction_repository</a></li>
+  <li><a href="../../node_transaction_transaction_repository/TransactionRepository-class.html">TransactionRepository</a></li>
+  <li class="self-crumb">commit method</li>
+</ol>
+
+
+    <h5>TransactionRepository class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../node_transaction_transaction_repository/TransactionRepository-class.html#constructors">Constructors</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/TransactionRepository.html">TransactionRepository</a></li>
+
+
+    <li class="section-title inherited">
+      <a href="../../node_transaction_transaction_repository/TransactionRepository-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../../node_transaction_transaction_repository/TransactionRepository-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../node_transaction_transaction_repository/TransactionRepository/commit.html">commit</a></li>
+    <li><a href="../../node_transaction_transaction_repository/TransactionRepository/createTable.html">createTable</a></li>
+    <li><a href="../../node_transaction_transaction_repository/TransactionRepository/getByBlockId.html">getByBlockId</a></li>
+    <li><a href="../../node_transaction_transaction_repository/TransactionRepository/getById.html">getById</a></li>
+    <li><a href="../../node_transaction_transaction_repository/TransactionRepository/getPending.html">getPending</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../node_transaction_transaction_repository/TransactionRepository/save.html">save</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../node_transaction_transaction_repository/TransactionRepository-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+        <li class="section-title"><a href="../../node_transaction_transaction_repository/TransactionRepository-class.html#constants">Constants</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnAddress-constant.html">columnAddress</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnAssetRef-constant.html">columnAssetRef</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnBlockId-constant.html">columnBlockId</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnContents-constant.html">columnContents</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnId-constant.html">columnId</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnMerkelProof-constant.html">columnMerkelProof</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnSignature-constant.html">columnSignature</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnTimestamp-constant.html">columnTimestamp</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/columnVersion-constant.html">columnVersion</a></li>
+          <li><a href="../../node_transaction_transaction_repository/TransactionRepository/table-constant.html">table</a></li>
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

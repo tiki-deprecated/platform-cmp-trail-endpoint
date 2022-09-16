@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/src/utils/mem_keys_store.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
+import 'package:tiki_sdk_dart/utils/in_mem_keys.dart';
 
 void main() {
-  final MemSecureStorageStrategy secureStorage = MemSecureStorageStrategy();
+  final InMemoryKeys secureStorage = InMemoryKeys();
   final KeysService keysService = KeysService(secureStorage);
   group('keys service tests', () {
     test('Create keys, save and retrieve', () async {

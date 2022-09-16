@@ -6,9 +6,9 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/src/node/l0_storage/l0_storage_model_policy_rsp.dart';
-import 'package:tiki_sdk_dart/src/node/l0_storage/l0_storage_service.dart';
-import 'package:tiki_sdk_dart/src/utils/rsa/rsa.dart' as rsa;
+import 'package:tiki_sdk_dart/node/l0_storage/l0_storage_model_policy_rsp.dart';
+import 'package:tiki_sdk_dart/node/l0_storage/l0_storage_service.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa.dart' as rsa;
 import 'package:uuid/uuid.dart';
 
 void main() {

@@ -10,17 +10,17 @@ import 'dart:typed_data';
 import 'package:pointycastle/pointycastle.dart';
 import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_sdk_dart/src/node/backup/backup_model.dart';
-import 'package:tiki_sdk_dart/src/node/backup/backup_repository.dart';
-import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
-import 'package:tiki_sdk_dart/src/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/src/utils/mem_keys_store.dart';
+import 'package:tiki_sdk_dart/node/backup/backup_model.dart';
+import 'package:tiki_sdk_dart/node/backup/backup_repository.dart';
+import 'package:tiki_sdk_dart/node/block/block_model.dart';
+import 'package:tiki_sdk_dart/node/block/block_service.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
+import 'package:tiki_sdk_dart/utils/in_mem_keys.dart';
 
 void main() async {
   final db = sqlite3.openInMemory();
-  KeysService keysService = KeysService(MemSecureStorageStrategy());
+  KeysService keysService = KeysService(InMemoryKeys());
   KeysModel keys = await keysService.create();
   group('backup tests', () {
     test('backup repository test, retrieve all', () {

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the TransactionService class from the transaction library, for the Dart programming language.">
+  <title>TransactionService class - transaction library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">tiki_sdk_dart</a></li>
+    <li><a href="../transaction/transaction-library.html">transaction</a></li>
+    <li class="self-crumb">TransactionService class</li>
+  </ol>
+  <div class="self-name">TransactionService</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">TransactionService</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+
+    <dl class="constructor-summary-list">
+        <dt id="TransactionService" class="callable">
+          <span class="name"><a href="../transaction/TransactionService/TransactionService.html">TransactionService</a></span><span class="signature">(<span class="parameter" id="-param-db"><span class="type-annotation">Database</span> <span class="parameter-name">db</span></span>)</span>
+        </dt>
+        <dd>
+          
+        </dd>
+    </dl>
+  </section>
+
+    <section class="summary offset-anchor inherited" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="../transaction/TransactionService/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; int</span> 
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="../transaction/TransactionService/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; Type</span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="build" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/build.html">build</a></span><span class="signature">(<wbr><span class="parameter" id="build-param-contents">{<span>required</span> <span class="type-annotation">Uint8List</span> <span class="parameter-name">contents</span>, </span><span class="parameter" id="build-param-keys"><span>required</span> <span class="type-annotation"><a href="../keys/KeysModel-class.html">KeysModel</a></span> <span class="parameter-name">keys</span>, </span><span class="parameter" id="build-param-assetRef"><span class="type-annotation">String</span> <span class="parameter-name">assetRef</span> = <span class="default-value">&#39;AA==&#39;</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Builds a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> with <code>contents</code>.
+  
+
+</dd>
+
+        <dt id="commit" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/commit.html">commit</a></span><span class="signature">(<wbr><span class="parameter" id="commit-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Commits a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by persisting its its <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a>
+and <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> values.
+  
+
+</dd>
+
+        <dt id="getByBlock" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/getByBlock.html">getByBlock</a></span><span class="signature">(<wbr><span class="parameter" id="getByBlock-param-blockId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">blockId</span></span>)
+    <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Gets all the transactions from a <a href="../block/BlockModel-class.html">BlockModel</a> by its <a href="../block/BlockModel/id.html">BlockModel.id</a>.
+  
+
+</dd>
+
+        <dt id="getPending" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/getPending.html">getPending</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Gets all the transactions that were not commited by <a href="../transaction/TransactionService/commit.html">commit</a>.
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="../transaction/TransactionService/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation">Invocation</span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed.
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="serializeTransactions" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></span><span class="signature">(<wbr><span class="parameter" id="serializeTransactions-param-blockId"><span class="type-annotation">String</span> <span class="parameter-name">blockId</span></span>)
+    <span class="returntype parameter">&#8594; Uint8List</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a <code>Uint8List</code> of the transactions included in a <a href="../block/BlockModel-class.html">BlockModel</a>.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="../transaction/TransactionService/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; String</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features">inherited</div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="../transaction/TransactionService/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation">Object</span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; bool</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features">inherited</div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+  <section class="summary offset-anchor" id="static-methods">
+    <h2>Static Methods</h2>
+    <dl class="callables">
+        <dt id="deserializeTransactions" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/deserializeTransactions.html">deserializeTransactions</a></span><span class="signature">(<wbr><span class="parameter" id="deserializeTransactions-param-serializedBlock"><span class="type-annotation">Uint8List</span> <span class="parameter-name">serializedBlock</span></span>)
+    <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a List of <code>TransactionModel</code>] from a <code>Uint8List</code> of the serialized
+transactions.
+  
+
+</dd>
+
+        <dt id="validateAuthor" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/validateAuthor.html">validateAuthor</a></span><span class="signature">(<wbr><span class="parameter" id="validateAuthor-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateAuthor-param-pubKey"><span class="type-annotation">CryptoRSAPublicKey</span> <span class="parameter-name">pubKey</span></span>)
+    <span class="returntype parameter">&#8594; bool</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Validates the author of the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by calling <a href="../rsa/verify.html">verify</a> with its
+<a href="../transaction/TransactionModel/signature.html">TransactionModel.signature</a>.
+  
+
+</dd>
+
+        <dt id="validateInclusion" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/validateInclusion.html">validateInclusion</a></span><span class="signature">(<wbr><span class="parameter" id="validateInclusion-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateInclusion-param-block"><span class="type-annotation"><a href="../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span></span>)
+    <span class="returntype parameter">&#8594; bool</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Validates the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> inclusion in <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a> by
+checking validating its <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> with <a href="../merkel_tree/MerkelTree/validate.html">MerkelTree.validate</a>.
+  
+
+</dd>
+
+        <dt id="validateIntegrity" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/validateIntegrity.html">validateIntegrity</a></span><span class="signature">(<wbr><span class="parameter" id="validateIntegrity-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span>)
+    <span class="returntype parameter">&#8594; bool</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Validates the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> integrity by rebuilds it hash <a href="../transaction/TransactionModel/id.html">TransactionModel.id</a>.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">tiki_sdk_dart</a></li>
+  <li><a href="../transaction/transaction-library.html">transaction</a></li>
+  <li class="self-crumb">TransactionService class</li>
+</ol>
+
+
+    <h5>transaction library</h5>
+    <ol>
+  <li class="section-title"><a href="../transaction/transaction-library.html#classes">Classes</a></li>
+  <li><a href="../transaction/TransactionModel-class.html">TransactionModel</a></li>
+  <li><a href="../transaction/TransactionRepository-class.html">TransactionRepository</a></li>
+  <li><a href="../transaction/TransactionService-class.html">TransactionService</a></li>
+
+
+
+
+
+
+
+
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <ol>
+
+        <li class="section-title"><a href="../transaction/TransactionService-class.html#constructors">Constructors</a></li>
+          <li><a href="../transaction/TransactionService/TransactionService.html">TransactionService</a></li>
+
+
+    <li class="section-title inherited">
+      <a href="../transaction/TransactionService-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="../transaction/TransactionService/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="../transaction/TransactionService/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../transaction/TransactionService-class.html#instance-methods">Methods</a></li>
+    <li><a href="../transaction/TransactionService/build.html">build</a></li>
+    <li><a href="../transaction/TransactionService/commit.html">commit</a></li>
+    <li><a href="../transaction/TransactionService/getByBlock.html">getByBlock</a></li>
+    <li><a href="../transaction/TransactionService/getPending.html">getPending</a></li>
+    <li class="inherited"><a href="../transaction/TransactionService/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
+    <li class="inherited"><a href="../transaction/TransactionService/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../transaction/TransactionService-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="../transaction/TransactionService/operator_equals.html">operator ==</a></li>
+
+
+
+        <li class="section-title"><a href="../transaction/TransactionService-class.html#static-methods">Static methods</a></li>
+          <li><a href="../transaction/TransactionService/deserializeTransactions.html">deserializeTransactions</a></li>
+          <li><a href="../transaction/TransactionService/validateAuthor.html">validateAuthor</a></li>
+          <li><a href="../transaction/TransactionService/validateInclusion.html">validateInclusion</a></li>
+          <li><a href="../transaction/TransactionService/validateIntegrity.html">validateIntegrity</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

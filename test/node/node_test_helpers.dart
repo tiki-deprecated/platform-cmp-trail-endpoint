@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:pointycastle/pointycastle.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
-import 'package:tiki_sdk_dart/src/utils/rsa/rsa.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
 
 TransactionModel generateTransactionModel(int index, KeysModel keys) {
   TransactionModel txn = TransactionModel(
