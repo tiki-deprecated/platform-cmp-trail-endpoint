@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// The storage for SDK's metadata.
-/// {@category Metadata}
+/// {@category SDK}
 library metadata;
 
 export 'metadata_key.dart';

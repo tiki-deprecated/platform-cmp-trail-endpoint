@@ -22,7 +22,7 @@ class XchainModel {
   Uint8List? lastBlock;
 
   /// Builds a [XchainModel] from its [publicKey].
-  /// 
+  ///
   /// The [address] is derived from the [publicKey] using the SHA3-256 hash.
   /// If the chain was not synced yet, [lastBlock] should be null.
   XchainModel(this.publicKey, {this.lastBlock})
