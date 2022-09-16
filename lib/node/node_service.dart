@@ -39,10 +39,9 @@ class NodeService {
   late final KeysModel _keys;
   late final XchainService _xchainService;
 
-
   Timer? _blkTimer;
   late final Duration _blkInterval;
-  
+
   CryptoRSAPublicKey get publicKey => _keys.privateKey.public;
 
   /// Initialzes de service

@@ -4,9 +4,9 @@
  */
 /// {@category Node}
 /// The interface for [KeysModel] persistance class.
-/// 
-/// The implementation should use OS level encrypted storage. It should not be 
-/// accessible to other applications or users because it will store the private 
+///
+/// The implementation should use OS level encrypted storage. It should not be
+/// accessible to other applications or users because it will store the private
 /// keys of the user, which is required for write operations in the chain.
 ///
 /// EncryptedSharedPreferences should be used for Android. AES encryption is

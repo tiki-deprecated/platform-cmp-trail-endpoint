@@ -7,6 +7,7 @@
 import 'package:html/dom.dart';
 
 import '../../utils/xml.dart' as xml;
+
 /// The Wasabi object data model version owner.
 class WasabiModelListVerOwner {
   String? id;

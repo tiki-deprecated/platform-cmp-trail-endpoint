@@ -10,11 +10,10 @@ import 'package:sqlite3/sqlite3.dart';
 import 'xchain_model.dart';
 
 /// The cross chain repository for [XchainModel] database persistance.
-class XchainRepository{
-
+class XchainRepository {
   /// The [XchainModel] table name in [_db].
   static const table = 'xchain';
-  
+
   /// The base64Url representation of the chain address.
   static const columnAddress = 'address';
 
@@ -23,9 +22,9 @@ class XchainRepository{
 
   /// The bae64Url representation of the [BlockModel.id] for the last validated block.
   static const columnLastBlock = 'last_block';
-  
+
   final Database _db;
-  
+
   /// Builds a [XchainRepository] that will use [_db] for persistence.
   ///
   /// It calls [createTable] to make sure the table exists.
@@ -35,12 +34,12 @@ class XchainRepository{
 
   /// Creates the [XchainRepository.table] if it does not exist.
   void createTable() async {
-   throw UnimplementedError();
+    throw UnimplementedError();
   }
 
   /// Persists [xchain] in [_db].
   void save(XchainModel xchain) {
-   throw UnimplementedError();
+    throw UnimplementedError();
   }
 
   /// Updates the persisted [XchainModel.lastBlock].

@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// The blockchain node.
-/// {@category Node}
+/// {@category SDK}
 library node;
 
 export 'node_service.dart';
