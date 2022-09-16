@@ -22,6 +22,8 @@ import 'block/block_service.dart';
 import 'keys/keys_service.dart';
 import 'transaction/transaction_service.dart';
 import 'wasabi/wasabi_service.dart';
+import 'xchain/xchain_model.dart';
+import 'xchain/xchain_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
@@ -35,15 +37,20 @@ class NodeService {
   late final TransactionService _transactionService;
   late final WasabiService _wasabiService;
   late final KeysModel _keys;
+  late final XchainService _xchainService;
+
 
   Timer? _blkTimer;
   late final Duration _blkInterval;
-
+  
   CryptoRSAPublicKey get publicKey => _keys.privateKey.public;
 
-  /// Initialzes de servic.e
+  /// Initialzes de service
   ///
-  /// The first address in the list for which [keysInterface] has a private
+  /// All the related chains addresses should be addded to [addresses] list as
+  /// [base64Url] representation of the adress.
+  ///
+  /// The first address in the [addresses] list for which [keysInterface] has a private
   /// key is the one that will be used for read and write operations.
   /// All the other ones are used in read-only mode, even if [keysInterface]
   /// has its private key stored.
@@ -93,7 +100,7 @@ class NodeService {
     _transactionService = TransactionService(database);
     _blockService = BlockService(database);
 
-    await _loadKeys(addresses);
+    await _loadKeysAndChains(addresses);
 
     _wasabiService = WasabiService(apiKey, _keys.privateKey);
     _backupService = BackupService(base64.encode(_keys.address), _keysService,
@@ -113,7 +120,7 @@ class NodeService {
   /// When a [TransactionModel] is created it is not added to the next block
   /// immediately. It needs to wait until the [_blkTimer] runs again to check if
   /// the oldest transaction was created more than [_blkInterval] duration or
-  /// if there are more than 200 [TransactionModel] waiting to be added to a 
+  /// if there are more than 200 [TransactionModel] waiting to be added to a
   /// [BlockModel].
   TransactionModel write(Uint8List contents) {
     TransactionModel txn =
@@ -151,16 +158,25 @@ class NodeService {
     }
   }
 
-  Future<void> _loadKeys(List<String> addresses) async {
+  Future<void> _loadKeysAndChains(List<String> addresses) async {
     for (String address in addresses) {
       KeysModel? keys = await _keysService.get(address);
       if (keys != null) {
         _keys = keys;
-        return;
+      } else {
+        _loadChain(address);
       }
     }
-
     _keys = await _keysService.create();
+  }
+
+  Future<void> _loadChain(String address) async {
+    /// TODO
+    /// 1. load the chain public key from wasabi
+    /// 2. call xchainservice.add
+    /// what should be the action if the keys fetch fail?
+    /// - skip chain and try to load again when it is referred
+    /// - throw an error
   }
 
   void _setBlkTimer() {
