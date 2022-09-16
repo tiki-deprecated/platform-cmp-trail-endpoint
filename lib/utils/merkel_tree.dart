@@ -12,9 +12,9 @@ import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 
 import 'bytes.dart';
+
 /// The Merkel Tree representation.
 class MerkelTree {
-
   /// The list of Merkel Proofs for each hash in [hashes].
   Map<Uint8List, Uint8List> proofs = {};
 

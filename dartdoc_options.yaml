@@ -1,5 +1,5 @@
 dartdoc:
-  categoryOrder: ["Node", "Utils", "Metadata"]
+  categoryOrder: ["SDK", "Node", "Utils", "Metadata"]
   include: [
     node, 
     metadata, 
@@ -13,5 +13,6 @@ dartdoc:
     compact_size, 
     merkel_tree,
     rsa,
-    xchain
+    xchain,
+    ownership
   ]

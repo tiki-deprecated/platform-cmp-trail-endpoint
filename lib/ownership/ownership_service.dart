@@ -14,8 +14,8 @@ class OwnershipService {
 
   final OwnershipRepository ownershipRepository;
 
-  OwnershipService(this._origin, db) : 
-    ownershipRepository = OwnershipRepository(db);
+  OwnershipService(this._origin, db)
+      : ownershipRepository = OwnershipRepository(db);
 
   /// Creates a ownership register in the blockchain.
   ///
@@ -50,7 +50,8 @@ class OwnershipService {
   }
 
   /// Checks if an [address] has [OwnershipModel] over a [source] and [origin].
-  OwnershipModel? checkOwnership(String address, String source, {String? origin}) {
+  OwnershipModel? checkOwnership(String address, String source,
+      {String? origin}) {
     throw UnimplementedError();
   }
 }

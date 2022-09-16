@@ -41,7 +41,8 @@ class TikiSdk {
   /// [types] describe the various types of data represented by
   /// the referenced data. Optionally, the [origin] can be overridden
   /// for the specific ownership grant.
-  Future<String> grantOwnership(String data, List<type_enum.TikiSdkDataTypeEnum> types,
+  Future<String> grantOwnership(
+      String data, List<type_enum.TikiSdkDataTypeEnum> types,
       {String? origin}) {
     throw UnimplementedError();
   }
