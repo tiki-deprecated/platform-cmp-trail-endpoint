@@ -1,0 +1,19 @@
+dartdoc:
+  categoryOrder: ["SDK", "Node", "Utils", "Metadata"]
+  include: [
+    backup,
+    block,
+    bytes,
+    compact_size,
+    consent,
+    keys,
+    l0_storage,
+    merkel_tree,
+    metadata,
+    node,
+    ownership,
+    rsa,
+    transaction,
+    wasabi,
+    xchain
+    ]

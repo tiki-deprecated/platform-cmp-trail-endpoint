@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="generator" content="made with love by dartdoc 5.1.0-dev">
+  <meta name="description" content="tiki_sdk_dart API docs, for the Dart programming language.">
+  <title>tiki_sdk_dart - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href=""
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="https://github.com/tiki/tiki-sdk-dart">tiki_sdk_dart package</a></li>
+  </ol>
+  <div class="self-name">tiki_sdk_dart</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <img width="76" alt="image" src="https://user-images.githubusercontent.com/3769672/184012083-4c3598d2-f81c-43f4-85cb-54fd731aeb1b.png">
+<h2 id="market-requirements">Market Requirements</h2>
+<p><strong>Pain</strong><br>
+The user data (data created by people, about people, and their actions) landscape has changed —we’ll spare the history on how we got here. The fact of the matter is people are upset and demanding more transparency, control, and compensation for their <a href="https://www.cisco.com/c/dam/en_us/about/doing_business/trust-center/docs/cisco-consumer-privacy-infographic-2020.pdf">data</a> . In addition to government <a href="https://oag.ca.gov/privacy/ccpa">regulation</a>, it’s led to sweeping changes in privacy policies from consumer platforms like <a href="https://markets.businessinsider.com/news/stocks/facebook-meta-stock-apple-idfa-ios-privacy-change-social-media-2022-2">Apple</a> and <a href="https://www.cnbc.com/2022/02/16/google-plans-android-privacy-change-similar-to-apples.html">Google</a>.</p>
+<p>The result is two macro business trends. First, companies deeply reliant on user data are reeling, struggling to keep up with a shifting landscape. Risk, brand equity, and compliance costs now outweigh the value with more and more businesses opting to collect and use less <a href="https://www.adexchanger.com/ad-exchange-news/why-liveramp-quietly-sold-its-location-data-business-last-year/">data</a>. Leading to widening gap, less competition, and ultimately worse products and services for consumers. Second, a new data economy is emerging on the back on user data ownership. A wave of new product and services powered by user opt-in is leading to new <a href="https://techcrunch.com/2022/06/08/multicoin-capital-leads-60m-investment-in-delphia-to-give-retail-investors-edge-against-hedge-funds/">circular economies</a> , <a href="https://datacy.com">data licensing</a> , <a href="https://www.fetchrewards.com">data rewards</a> , subscription discounts, walled gardens and more.</p>
+<p>Yet, there remains a sizeable gap in the technology/infrastructure required to keep-up or better yet participate in the user data revolution. Only tech companies with deep talent in data and fintech have been able to pull it off. Companies need tools and services to build the new data economy. In return users get what they’ve been clamoring for, more control, compensation, and transparency with little-no-friction</p>
+<p><strong>Solution</strong><br>
+Software (SaaS), infrastructure (IaaS), and platform (PaaS) services to enable businesses to participate in new data economy. With TIKI companies can quickly add user-centric data features to their existing applications and services —at at fraction of the cost of building in-house.</p>
+<p>There are 4 core elements to the new data economy: ownership, consent, exchange, and enrichment. Ownership is the assignment and tracking which users own which data whether it be at the point, stream, pool or other level. Consent defines the rules of engagement for owned data. Exchange is the act of providing data (or access to data) for value, most commonly money or in-kind services. 
+It starts with user data ownership followed by consent. With data ownership and consent, users gain transparency and control —optionally, companies can reward users for giving consent, aka compensation.</p>
+<p>Companies will interact with TIKI’s data ownership infrastructure and consent platform using SDKs to give users, directly in their own applications, ownership, and consent. Records are immutable creating a definitive record for compliance and risk management. Laying the groundwork for the new data economy. In under an hour, any company regardless of its size should be able to add user data ownership &amp; consent to existing systems.</p>
+<p><strong>Customer(s)</strong></p>
+<ul>
+<li>Companies that rely heavily on user data and concerned about blow-back and legal ramifications. They likely already have a data privacy officers or compliance team with expensive consent mechanisms in-place</li>
+<li>Consumer brands that emphasize user-focus and ethics. Likely with an ESG initiative. User data ownership becomes a competitive differentiator.</li>
+<li>Tech companies that provide martech, adtech, data, and compliance software to businesses. New features create competitive differentiation and open new revenue streams.</li>
+<li>New data economy companies. Often tech startups but not necessarily as existing businesses seize the opportunity.</li>
+</ul>
+<p><strong>Deliverable(s)</strong></p>
+<ul>
+<li>Version 1.0 of the user data ownership infrastructure and consent platform with a mobile SDK ready for deployment —includes documentation, demo application(s), and whitepaper(s).</li>
+</ul>
+<p><strong>Opportunity</strong><br>
+Tens of millions of users and trillions of user owned data points.</p>
+<ul>
+<li><a href="https://www.statista.com/statistics/1172965/firms-collecting-personal-data/">79%</a> of US companies collect user data</li>
+<li>Over 1 million apps use <a href="https://admob.google.com/home/">AdMob’s</a> mobile advertising SDK</li>
+<li>Over <a href="https://www.markinblog.com/how-many-ecommerce-sites/">26 million</a> ecommerce sites</li>
+<li><a href="https://enlyft.com/tech/products/liveramp">LiveRamp</a> has ~50,000 customers, <a href="https://www.hubspot.com/customer-spotlight">HubSpot</a> and <a href="https://isdicrm.com/why-is-salesforce-the-worlds-number-one-crm/">Salesforce</a> both have ~150,000</li>
+</ul>
+<h2 id="product-requirements">Product Requirements</h2>
+<p><strong>Objective</strong><br>
+The core objective of the SDK is to make it extremely easy for application creators to handle consent from users for the use of their data. Developers simply attach the SDK at either end of their data stream or pool to ensure collected user data is safely and ethically sourced. Users receive transparency and control over their data.</p>
+<p>Immediate use cases include companies that want to de-risk existing data sourcing by implementing user consent and companies that want to add new revenue models based on data (i.e., giving their users rewards for sharing their data).</p>
+<p>While the core objective detailed above could be implemented in a non-decentralized manner, with private records of data ownership and user consent, a public, decentralized, and immutable ledger creates true user ownership and verifiable trust. Data access is safest for application creators with a public record of ownership and consent. Implementing a public record works towards the ultimate vision of widespread adoption of user data ownership.</p>
+<p><strong>Features</strong><br>
+The SDK must provide three fundamental features. Application creators can implement many exciting systems based on the core features.</p>
+<ol>
+<li>Application creators must be able to assign data ownership to users.</li>
+</ol>
+<p>For most use cases, the ownership should be over an entire data stream or pool (i.e., all behavioral data or purchase history) instead of ownership over individual data points. Once the user has been given ownership over their data, they can manage consent (i.e., whether that data can be sent over that stream and to which destinations).</p>
+<p><em>Example: An app can use the SDK to attach user ownership to the product analytics data stream</em></p>
+<ol start="2">
+<li>Application creators must be able to give users the ability to manage their data consent.</li>
+</ol>
+<p>Application creators should be able to do this when ownership is assigned. The SDK must make it possible for users to manage consent based on data type, destination, and use case.</p>
+<p><em>Example: An app user can revoke consent for location data used for in-app advertising</em></p>
+<ol start="3">
+<li>Application creators must be able to check for user consent when sending or receiving data.</li>
+</ol>
+<p>The SDK must be runnable both client-side and server-side. Clients (sources) must be able to check consent to determine whether they should send data in the first place. Server-side applications (sinks) may want to check consent to ensure they can use the data they are accessing for their specific use case.</p>
+<p><em>Example: An app trying to send data over a stream without consent is blocked</em></p>
+<p>Using these three features in tandem, application creators can easily and securely receive user consent and attach it to their data streams —users can robustly manage consent. These core features allow for additional functionality like compensation for data, granular consent management, and transferring data consent settings across applications.</p>
+<p><strong>User flow and design</strong><br>
+The most basic usage scenario between an application and a backend server both implementing the SDK would look like this:</p><img width="468" alt="image" src="https://user-images.githubusercontent.com/3769672/184014306-db745d66-c313-42df-a2ef-4fdd573dad50.png">
+<p>Application creators can add the SDK to their application and route any data write/read requests thru it. Requests are validated in real-time against locally cached consent, allowing approved requests to continue. Optionally, if the user has not yet consented, they may be redirected to a consent flow.</p>
+<p>Because a public record of data ownership and consent exists, the system is easily expandable to many nodes, without the need for fancy security measures/each node having API keys of any sort —enabling systems with many data stores and third parties to be easily implemented. Any node can use the SDK for incoming or outgoing data streams to ensure consent.</p>
+<p>A more in-depth outline is shown below. Here, we show an example application using the SDK to check for data ownership and consent. Based on the consent settings specified by the user and checked through the SDK, the application sends user data to the allowed destinations.</p><img width="468" alt="image" src="https://user-images.githubusercontent.com/3769672/184014322-4e6c2386-4cf6-41dc-8c8f-95a625e58559.png">
+<p><strong>Timeline</strong></p>
+<ul>
+<li>The first SDK release is planned for the end of August ’22. Initial functionality will include on-chain ownership and consent management.</li>
+</ul>
+<h2 id="technical-specifications">Technical Specifications</h2>
+<p><strong>Overview</strong><br>
+The SDK will be available for mobile (iOS/Android) and web client applications using <a href="https://docs.flutter.dev/development/add-to-app/">Flutter</a> and <a href="https://docs.flutter.dev/get-started/web">Flutter Web</a>. Ownership and consent will be recorded on-chain using an L1 implementation as described in <a href="https://github.com/tiki/.github/blob/main/profile/WHITEPAPER-2CHAINZ.md">2 Chainz: All the blockchains</a> . Blockchain operations will be abstracted by the SDK to provide a simplified API interface. The SDK will offer 3 distinct features.</p>
+<ol>
+<li>User ownership grant over a customer managed data source (stream, pool, point, etc.).</li>
+<li>User consent management corresponding to an owned data source (approve/deny).</li>
+<li>A consent guard to allow/disallow requests based on user consent against owned data sources.</li>
+</ol>
+<p><strong>Implementation</strong><br>
+The SDK will be implemented as single library (tiki-sdk-dart) in Dart using Flutter (or Flutter Web) for platform dependent functionality. Local persistence will use SQLite, with platform specific encrypted key storage (iOS: Keychain, Android: AES + RSA Keystore, Web: WebCrypto + IndexedDB). Immutable backups will be hosted by Wasabi using <a href="https://wasabi.com/s3-object-lock-faq/">Object Lock</a>.</p>
+<p>Ownership requires data sources be represented by customer specific identifiers with metadata describing the source type and data. Ownership is granted thru NFT minting on-chain.</p>
+<p>Consent is applied to a data source by referencing the customer specific identifier —ownership must exist before consent can be recorded. Consent destination is a wildcard path (URI) with optional use cases and recorded rewards. All consent is deny-by-default, minted on-chain, with the latest record corresponding to the data source ownership defining the current rules-of-engagement.</p>
+<p>The SDK will utilize a <a href="https://jimmybogard.com/vertical-slice-architecture/">vertical slice</a> pattern based on the original codebases of <a href="https://github.com/tiki/wallet">wallet</a>, <a href="https://github.com/tiki/localchain">localchain</a> , <a href="https://github.com/tiki/syncchain">syncchain</a>.</p>
+<p><strong>Out of scope</strong></p>
+<ul>
+<li>Custom backup destination</li>
+<li>Direct compensation (on-chain payment)</li>
+<li>Secondary-market listing</li>
+<li>Managed scopes (approved application wallets)</li>
+<li>Platform specific SDKs (swift, kotlin, js, etc.)</li>
+<li>Server-side SDK</li>
+<li>Delegated consent management (SMS, email, etc.)</li>
+</ul>
+<p><strong>API</strong><br>
+Pseudo code language: Dart<br>
+<em>note: Getters &amp; setters are implicit in Dart</em></p>
+<pre class="language-dart"><code>class TikiSdk{
+ 
+  /// The origin that will be used as default origin for all ownership
+  /// assignments. It should follow a reversed FQDN syntax.
+  /// _i.e. com.mycompany.myproduct_
+  String origin;
+
+  /// The API Key for the TIKI public backup. If null, blocks will not
+  /// be backed up. Register your application at mytiki.com to get your
+  /// application’s API key.
+  String? _apiKey;
+ 
+  /// List of ids (wallet addresses) for the current user. The first
+  /// id in the list with a known private key will become the primary
+  /// chain, with all others operating in a read-only capacity.
+  List&lt;String&gt;? _ids;
+ 
+  TikiSdk(this.origin, {String? apiKey}) : this._apiKey = apiKey;
+  
+  Future&lt;TikiSdk&gt; init({List&lt;String&gt;? ids});
+ 
+  List&lt;String&gt; get ids =&gt; _ids;
+ 
+  void addId(String id);
+ 
+  void removeId(String id);
+ 
+  /// Assign ownership to a given [source] point, pool, or stream.
+  /// [types] describe the various types of data represented by
+  /// the referenced data. Optionally, the [origin] can be overridden
+  /// for the specific ownership grant.
+  Future&lt;String&gt; grantOwnership( 
+    String source,
+    SourceType type,
+    List&lt;DataType&gt; contains,
+    {String? origin, String? about}
+  );
+ 
+  /// Modify consent for [source]. Ownership must be granted before
+  /// modifying consent. Consent is applied on an explicit only basis.
+  /// Meaning all requests will be denied by default unless the
+  /// destination is explicitly defined in [destinations].
+  Future&lt;String&gt; modifyConsent(
+    String source,
+    List&lt;Destination&gt; destinations
+  );
+ 
+  /// Apply consent for [source] given a specific [destination].
+  /// If consent exists for the destination, [request] will be
+  /// executed. Else [onBlocked] is called.
+  Future&lt;void&gt; applyConsent(
+    String source, 
+    Destination destination, 
+    Function request,
+    {void Function(String)? onBlocked}
+  );
+}
+ 
+class Destination {
+  
+  /// An optional list of application specific uses cases 
+  /// applicable to the given destination. Prefix with NOT
+  /// to invert. _i.e. NOT ads
+  List&lt;String&gt;? uses;
+ 
+  /// A list of paths, preferably URL without the scheme or 
+  /// reverse FQDN. Keep list short and use wildcard (*) 
+  /// matching. Prefix with NOT to invert. 
+  /// _i.e. NOT mytiki.com/*
+  List&lt;String&gt; paths;
+  String? about;
+  String? reward;
+ 
+  Destination(this.paths, {this.uses, this.about, this.reward});
+}
+ 
+enum DataType {
+  emailAddress('email_address');
+ 
+  const DataType(this.val);
+ 
+  final String val;
+}
+ 
+enum SourceType {
+  stream('stream');
+ 
+  const SourceType(this.val);
+ 
+  final String val;
+}
+</code></pre>
+<p><strong>Initialization</strong><br>
+When initializing the SDK, the wallet checks to see if there are private keys stored for each id (address). The first address with private keys located is configured as the primary chain (write), all other ids are configured as read only chains with their latest block loaded from the hosted backup and cached. If no private keys are located or a null id was provided during initialization, a new keypair is generated with an id (address) derived from the public key.</p>
+<p><strong>Block construction</strong><br>
+A new block is built:</p>
+<ol>
+<li>when the total size of the pending transactions block crosses 100KB.</li>
+<li>when a transaction is added, and the last block was constructed more than 1 min ago.</li>
+<li>on request.</li>
+</ol>
+<p>To build a new block the SDK computes the <a href="https://en.wikipedia.org/wiki/Merkle_tree">Merkel</a> root of the transaction hashes (SHA3-256). The block header and body are serialized and appended to the primary chain. Then the serialized block is backed up.</p>
+<p><strong>Cross chain reference</strong>.<br>
+For all non-primary ids, on first registration, the SDK will download and validate all blocks and transactions. All ownership transactions and the latest corresponding consent transaction will be added to the cache. Using the Merkle root in the block header, unnecessary transactions are discarded. After first launch, on open (or manually triggered), the SDK will download the latest blocks (if any) from any non-primary ids, updating the local cache. In the event of simultaneous consent-conflict, the latest and largest transaction prevails.</p>
+<p><strong>Cache tables</strong>.</p>
+<ul>
+<li>decrypted transactions (if applicable)</li>
+<li>cross-chain block headers</li>
+<li>cross-chain transactions (with Merkle proof)</li>
+<li>source – consent – ownership mapping</li>
+</ul>
+<p><strong>Ownership grant</strong><br>
+Customers are responsible for identifying their respective data source(s). Data sources should be unique per user —always preferring to reference an existing ownership grant and modifying the latest consent opposed to a new ownership grant.</p>
+<p><strong>Consent modification</strong><br>
+Consent modification requires a reference to an existing ownership grant. The ownership grant transaction should be verified before the modification is minted. References may point to ownership on other chains (cross-chain). If so, the id corresponding to the chain must first be registered and the ownership cached locally.</p>
+<p><strong>Consent application</strong><br>
+Consent application is a real-time check against the local consent cache using the data source as the unique identifier. If consent for the destination is permissible, the function is executed.</p>
+<p><strong>Transaction encryption</strong><br>
+Customers implementing the SDK can elect to encrypt an ownership grant or consent modification transaction using symmetrical (AES256) or asymmetrical (RSA2048) encryption. Private keys are stored alongside signature private keys in the on-device wallet. Default transactions are public (not encrypted).</p>
+<p><strong>Block backup</strong><br>
+Upon a block being successfully built and appended locally to the primary chain, the SDK immediately attempts to write the block to the shared backup repository in Wasabi using Object Lock. If the backup fails, the SDK will automatically try again up to 3 attempts. After which, on each sequential application launch and new block append, the failed block backup will be re-attempted. Backups use a public (read-only) URN structure of <code>/address_hex/block_hash/…</code> with write security handled by short-lived policies. To receive a short-lived policy, the SDK simply exchanges it’s API Key with the backup’s authorization service. A modifiable metadata file is added to the root of the backup chain under address_hex providing helpful information on latest block hashes and append timestamps.</p>
+<p><strong>Schema(s)</strong><br>
+Pseudo code language: Dart<br>
+<em>note: Actual transactions are serialized</em></p>
+<pre class="language-dart"><code>class OwnershipNFT{
+  String origin;
+  String source;
+  /// String value from SourceType
+  String type;  
+  /// Comma separated list of string values from DataType
+  String contains;
+  String? about;
+  final String assetRef = '0x00';
+ 
+  OwnershipNFT(this.origin, this.source, SourceType type, List&lt;DataType&gt; contains, {this.about});
+}
+ 
+class ConsentNFT{
+  /// JSON formatted string from Destination object
+  String destination;  
+  String? about;
+  String? reward;
+  /// Transaction ID corresponding to the ownership mint
+  /// for the data source 
+  String assetRef;
+ 
+  ConsentNFT(this.assetRef, Destination destination, {this.about, this.reward});
+}
+</code></pre>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <h3>SDK</h3>
+            <dt id="consent">
+  <span class="name"><a href="consent/consent-library.html">consent</a></span> 
+
+</dt>
+<dd>Manages the Consent NFTs.
+</dd>
+
+            <dt id="metadata">
+  <span class="name"><a href="metadata/metadata-library.html">metadata</a></span> 
+
+</dt>
+<dd>The storage for SDK's metadata.
+</dd>
+
+            <dt id="node">
+  <span class="name"><a href="node/node-library.html">node</a></span> 
+
+</dt>
+<dd>The blockchain node.
+</dd>
+
+            <dt id="ownership">
+  <span class="name"><a href="ownership/ownership-library.html">ownership</a></span> 
+
+</dt>
+<dd>Manages the Ownership NFTs.
+</dd>
+
+          <h3>Node</h3>
+            <dt id="backup">
+  <span class="name"><a href="backup/backup-library.html">backup</a></span> 
+
+</dt>
+<dd>Handles backup requests to L0 storage.
+</dd>
+
+            <dt id="block">
+  <span class="name"><a href="block/block-library.html">block</a></span> 
+
+</dt>
+<dd>Handles block-related operations.
+</dd>
+
+            <dt id="keys">
+  <span class="name"><a href="keys/keys-library.html">keys</a></span> 
+
+</dt>
+<dd>Manages RSA keys
+</dd>
+
+            <dt id="l0_storage">
+  <span class="name"><a href="l0_storage/l0_storage-library.html">l0_storage</a></span> 
+
+</dt>
+<dd>L0 Storage APIs
+</dd>
+
+            <dt id="transaction">
+  <span class="name"><a href="transaction/transaction-library.html">transaction</a></span> 
+
+</dt>
+<dd>Handles transactions in the chain.
+</dd>
+
+            <dt id="wasabi">
+  <span class="name"><a href="wasabi/wasabi-library.html">wasabi</a></span> 
+
+</dt>
+<dd>Wasabi object storage APIs.
+</dd>
+
+            <dt id="xchain">
+  <span class="name"><a href="xchain/xchain-library.html">xchain</a></span> 
+
+</dt>
+<dd>Handles the cross chain references.
+</dd>
+
+          <h3>Utils</h3>
+            <dt id="bytes">
+  <span class="name"><a href="bytes/bytes-library.html">bytes</a></span> 
+
+</dt>
+<dd>Helper functions handle data in <code>Uint8List</code>.
+</dd>
+
+            <dt id="compact_size">
+  <span class="name"><a href="compact_size/compact_size-library.html">compact_size</a></span> 
+
+</dt>
+<dd>Compact Size operations.
+</dd>
+
+            <dt id="merkel_tree">
+  <span class="name"><a href="merkel_tree/merkel_tree-library.html">merkel_tree</a></span> 
+
+</dt>
+<dd>Caculates and validates Merkel Tree and repective proofs.
+</dd>
+
+            <dt id="rsa">
+  <span class="name"><a href="rsa/rsa-library.html">rsa</a></span> 
+
+</dt>
+<dd>Helper functions for asymmetric keys in RSA
+</dd>
+
+        </dl>
+      </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="https://github.com/tiki/tiki-sdk-dart">tiki_sdk_dart package</a></li>
+</ol>
+
+
+    <h5 class="hidden-xs"><span class="package-name">tiki_sdk_dart</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li class="section-subtitle">SDK</li>
+        <li class="section-subitem"><a href="consent/consent-library.html">consent</a></li>
+        <li class="section-subitem"><a href="metadata/metadata-library.html">metadata</a></li>
+        <li class="section-subitem"><a href="node/node-library.html">node</a></li>
+        <li class="section-subitem"><a href="ownership/ownership-library.html">ownership</a></li>
+      <li class="section-subtitle">Node</li>
+        <li class="section-subitem"><a href="backup/backup-library.html">backup</a></li>
+        <li class="section-subitem"><a href="block/block-library.html">block</a></li>
+        <li class="section-subitem"><a href="keys/keys-library.html">keys</a></li>
+        <li class="section-subitem"><a href="l0_storage/l0_storage-library.html">l0_storage</a></li>
+        <li class="section-subitem"><a href="transaction/transaction-library.html">transaction</a></li>
+        <li class="section-subitem"><a href="wasabi/wasabi-library.html">wasabi</a></li>
+        <li class="section-subitem"><a href="xchain/xchain-library.html">xchain</a></li>
+      <li class="section-subtitle">Utils</li>
+        <li class="section-subitem"><a href="bytes/bytes-library.html">bytes</a></li>
+        <li class="section-subitem"><a href="compact_size/compact_size-library.html">compact_size</a></li>
+        <li class="section-subitem"><a href="merkel_tree/merkel_tree-library.html">merkel_tree</a></li>
+        <li class="section-subitem"><a href="rsa/rsa-library.html">rsa</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+
