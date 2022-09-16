@@ -5,32 +5,28 @@ import 'dart:typed_data';
 import 'package:pointycastle/api.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/src/node/node_service.dart';
-import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
-import 'package:tiki_sdk_dart/src/node/transaction/transaction_service.dart';
-import 'package:tiki_sdk_dart/src/node/wasabi/wasabi_service.dart';
-import 'package:tiki_sdk_dart/src/utils/bytes.dart';
-import 'package:tiki_sdk_dart/src/utils/mem_keys_store.dart';
+import 'package:tiki_sdk_dart/node/block/block_model.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
+import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
+import 'package:tiki_sdk_dart/node/wasabi/wasabi_service.dart';
+import 'package:tiki_sdk_dart/utils/bytes.dart';
+import 'package:tiki_sdk_dart/utils/in_mem_keys.dart';
 
 void main() {
   String apiId = 'd25d2e69-89de-47aa-b5e9-5e8987cf5318';
   group('Node tests', () {
     Database db = sqlite3.openInMemory();
     test('create keys', () async {
-      NodeService nodeService = await NodeService().init(
-          database: db,
-          apiKey: apiId,
-          keysSecureStorage: MemSecureStorageStrategy());
+      NodeService nodeService = await NodeService()
+          .init(database: db, apiKey: apiId, keysInterface: InMemoryKeys());
       expect(nodeService.publicKey.encode().isNotEmpty, true);
     });
     test('create transactions', () async {
-      NodeService nodeService = await NodeService().init(
-          database: db,
-          apiKey: apiId,
-          keysSecureStorage: MemSecureStorageStrategy());
+      NodeService nodeService = await NodeService()
+          .init(database: db, apiKey: apiId, keysInterface: InMemoryKeys());
       TransactionModel txn =
           nodeService.write(Uint8List.fromList('test contents'.codeUnits));
       expect(txn.id != null, true);
@@ -43,7 +39,7 @@ void main() {
           blkInterval: const Duration(seconds: 20),
           database: db,
           apiKey: apiId,
-          keysSecureStorage: MemSecureStorageStrategy());
+          keysInterface: InMemoryKeys());
       int count = 0;
       List<TransactionModel> transactions = [];
       while (transactions.length < 200) {
@@ -64,7 +60,7 @@ void main() {
           blkInterval: const Duration(seconds: 5),
           database: db,
           apiKey: apiId,
-          keysSecureStorage: MemSecureStorageStrategy());
+          keysInterface: InMemoryKeys());
       int size = 0;
       List<TransactionModel> transactions = [];
       while (transactions.length < 10) {
@@ -84,13 +80,10 @@ void main() {
       }
     });
     test('create keys, backup and retrieve', () async {
-      MemSecureStorageStrategy memSecureStorageStrategy =
-          MemSecureStorageStrategy();
-      NodeService nodeService = await NodeService().init(
-          database: db,
-          apiKey: apiId,
-          keysSecureStorage: memSecureStorageStrategy);
-      KeysService keysService = KeysService(memSecureStorageStrategy);
+      InMemoryKeys inMemoryKeys = InMemoryKeys();
+      NodeService nodeService = await NodeService()
+          .init(database: db, apiKey: apiId, keysInterface: inMemoryKeys);
+      KeysService keysService = KeysService(inMemoryKeys);
       KeysModel? keys = await keysService.get(base64.encode(Digest("SHA3-256")
           .process(base64.decode(nodeService.publicKey.encode()))));
       WasabiService wasabiService = WasabiService(apiId, keys!.privateKey);
@@ -98,13 +91,12 @@ void main() {
       expect(base64.encode(publicKey), keys.privateKey.public.encode());
     });
     test('create block, backup and retrieve', () async {
-      MemSecureStorageStrategy memSecureStorageStrategy =
-          MemSecureStorageStrategy();
+      InMemoryKeys inMemoryKeys = InMemoryKeys();
       NodeService nodeService = await NodeService().init(
           blkInterval: const Duration(seconds: 5),
           database: db,
           apiKey: apiId,
-          keysSecureStorage: memSecureStorageStrategy);
+          keysInterface: inMemoryKeys);
       int size = 0;
       List<TransactionModel> transactions = [];
       while (transactions.length < 10) {
@@ -120,13 +112,12 @@ void main() {
     });
 
     test('create chain', () async {
-      MemSecureStorageStrategy memSecureStorageStrategy =
-          MemSecureStorageStrategy();
+      InMemoryKeys inMemoryKeys = InMemoryKeys();
       NodeService nodeService = await NodeService().init(
           blkInterval: const Duration(seconds: 1),
           database: db,
           apiKey: apiId,
-          keysSecureStorage: memSecureStorageStrategy);
+          keysInterface: inMemoryKeys);
       for (int i = 0; i < 10; i++) {
         int total = Random().nextInt(200);
         List<TransactionModel> transactions = [];
@@ -135,7 +126,7 @@ void main() {
               .write(Uint8List.fromList('test contents $j$i'.codeUnits));
           transactions.add(txn);
         }
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
       }
       BlockModel block = nodeService.getLastBlock()!;
       int count = 0;

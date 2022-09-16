@@ -1,9 +1,13 @@
+/// The SDK to handle data ownership and consent NFTs with TIKI.
+/// {@category SDK}
 library tiki_sdk_dart;
 
-import 'tiki_sdk_data_type_enum.dart';
-import 'tiki_sdk_destination.dart';
+export 'tiki_sdk_data_type_enum.dart';
+export 'tiki_sdk_destination.dart';
 
-// TODO investigate optional debug
+import 'tiki_sdk_data_type_enum.dart' as type_enum;
+import 'tiki_sdk_destination.dart' as destination;
+
 class TikiSdk {
   /// The origin that will be used as default origin for all ownership
   /// assignments. It should follow a reversed FQDN syntax.
@@ -37,7 +41,7 @@ class TikiSdk {
   /// [types] describe the various types of data represented by
   /// the referenced data. Optionally, the [origin] can be overridden
   /// for the specific ownership grant.
-  Future<String> grantOwnership(String data, List<TikiSdkDataTypeEnum> types,
+  Future<String> grantOwnership(String data, List<type_enum.TikiSdkDataTypeEnum> types,
       {String? origin}) {
     throw UnimplementedError();
   }
@@ -47,7 +51,7 @@ class TikiSdk {
   /// Meaning all requests will be denied by default unless the
   /// destination is explicitly defined in [destinations].
   Future<String> modifyConsent(
-      String data, List<TikiSdkDestination> destinations) {
+      String data, List<destination.TikiSdkDestination> destinations) {
     throw UnimplementedError();
   }
 
@@ -55,7 +59,7 @@ class TikiSdk {
   /// If consent exists for the destination, [request] will be
   /// executed. Else [onBlocked] is called.
   Future<void> applyConsent(
-      String data, TikiSdkDestination destination, Function request,
+      String data, destination.TikiSdkDestination destination, Function request,
       {void Function(String)? onBlocked}) {
     throw UnimplementedError();
   }

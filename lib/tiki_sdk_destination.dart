@@ -1,3 +1,4 @@
+/// {@category SDK}
 class TikiSdkDestination {
   /// An optional list of application specific uses cases
   /// applicable to the given destination. Prefix with NOT

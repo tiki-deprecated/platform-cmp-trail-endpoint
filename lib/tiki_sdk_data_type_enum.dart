@@ -1,3 +1,4 @@
+/// {@category SDK}
 enum TikiSdkDataTypeEnum {
   emailAddress('email_address');
 

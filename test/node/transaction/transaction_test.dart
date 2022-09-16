@@ -4,23 +4,21 @@
  */
 
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/src/node/block/block_model.dart';
-import 'package:tiki_sdk_dart/src/node/block/block_repository.dart';
-import 'package:tiki_sdk_dart/src/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/src/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/src/node/transaction/transaction_model.dart';
-import 'package:tiki_sdk_dart/src/node/transaction/transaction_repository.dart';
-import 'package:tiki_sdk_dart/src/node/transaction/transaction_service.dart';
-import 'package:tiki_sdk_dart/src/utils/mem_keys_store.dart';
-import 'package:tiki_sdk_dart/src/utils/merkel_tree.dart';
+import 'package:tiki_sdk_dart/node/block/block_model.dart';
+import 'package:tiki_sdk_dart/node/block/block_repository.dart';
+import 'package:tiki_sdk_dart/node/block/block_service.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
+import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_repository.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
+import 'package:tiki_sdk_dart/utils/in_mem_keys.dart';
+import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
 
-import '../block/block_test.dart';
 import '../node_test_helpers.dart';
 
 void main() {
@@ -29,7 +27,7 @@ void main() {
       Database db = sqlite3.openInMemory();
       TransactionRepository repository = TransactionRepository(db);
       BlockRepository blockRepository = BlockRepository(db);
-      KeysModel keys = await KeysService(MemSecureStorageStrategy()).create();
+      KeysModel keys = await KeysService(InMemoryKeys()).create();
       //BlockRepository blkRepo = BlockRepository(db);
       TransactionModel txn1 = generateTransactionModel(1, keys);
       TransactionModel txn2 = generateTransactionModel(2, keys);
@@ -61,7 +59,7 @@ void main() {
     test('''Transaction Service: create transaction and check inclusion, 
     integrity and authorship''', () async {
       Database db = sqlite3.openInMemory();
-      MemSecureStorageStrategy keyStorage = MemSecureStorageStrategy();
+      InMemoryKeys keyStorage = InMemoryKeys();
       KeysService keysService = KeysService(keyStorage);
 
       TransactionService transactionService = TransactionService(db);
@@ -95,9 +93,9 @@ void main() {
     });
 
     test('Transaction serialize and deserialize', () async {
-      KeysModel keys = await KeysService(MemSecureStorageStrategy()).create();
+      KeysModel keys = await KeysService(InMemoryKeys()).create();
       Database db = sqlite3.openInMemory();
-      MemSecureStorageStrategy keyStorage = MemSecureStorageStrategy();
+      InMemoryKeys keyStorage = InMemoryKeys();
       KeysService keysService = KeysService(keyStorage);
 
       TransactionService transactionService = TransactionService(db);
