@@ -16,6 +16,7 @@ import '../../utils/xml.dart' as xml;
 import 'wasabi_exception_expired.dart';
 import 'wasabi_model_list.dart';
 
+/// The repository to connect to Wasabi object storage APIs.
 class WasabiRepository {
   final Uri _bucketUri =
       Uri(scheme: 'https', host: 'test.bucket.storage.l0.mytiki.com');

@@ -65,8 +65,8 @@
 <p>When a <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> is created it is not added to the next block
 immediately. It needs to wait until the <code>_blkTimer</code> runs again to check if
 the oldest transaction was created more than <code>_blkInterval</code> duration or
-if the <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> waiting to be added in a <a href="../../block/BlockModel-class.html">BlockModel</a> already
-reached 100Kb in size.</p>
+if there are more than 200 <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> waiting to be added to a 
+<a href="../../block/BlockModel-class.html">BlockModel</a>.</p>
 </section>
 
 

@@ -15,6 +15,7 @@ import 'wasabi_model_list.dart';
 import 'wasabi_model_list_ver.dart';
 import 'wasabi_repository.dart';
 
+/// The service to use Wasabi object storage.
 class WasabiService {
   final WasabiRepository _repository;
   final L0StorageService _l0storageService;

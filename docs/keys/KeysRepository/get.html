@@ -66,7 +66,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;KeysModel?&gt; get(String address) async {
-  String? raw = await _secureStorage.read(key: _keyPrefix + address);
+  String? raw = await _keysInterface.read(key: _keyPrefix + address);
   return raw != null ? KeysModel.fromJson(raw) : null;
 }</code></pre>
 </section>

@@ -59,7 +59,7 @@ class NodeService {
   /// used for tests or thin clients with read-only operations. It is NOT RECOMMENDED
   /// for writing to the chain.
   ///
-  /// The [keysInterface] should be a [keysInterface] implementation
+  /// The [keysInterface] should be a [KeysInterface] implementation
   /// using encrypted key-value storage, specifically for each host OS.
   /// It should not be accessed by other applications or users because it will
   /// store the private keys of the user, which is required for write operations
@@ -113,8 +113,8 @@ class NodeService {
   /// When a [TransactionModel] is created it is not added to the next block
   /// immediately. It needs to wait until the [_blkTimer] runs again to check if
   /// the oldest transaction was created more than [_blkInterval] duration or
-  /// if the [TransactionModel] waiting to be added in a [BlockModel] already
-  /// reached 100Kb in size.
+  /// if there are more than 200 [TransactionModel] waiting to be added to a 
+  /// [BlockModel].
   TransactionModel write(Uint8List contents) {
     TransactionModel txn =
         _transactionService.build(keys: _keys, contents: contents);

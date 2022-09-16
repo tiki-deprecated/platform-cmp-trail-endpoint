@@ -16,7 +16,7 @@ import 'l0_storage_model_policy_req.dart';
 import 'l0_storage_model_policy_rsp.dart';
 import 'l0_storage_repository.dart';
 
-// Service to interact with L0 Storage APIs
+/// Service to interact with L0 Storage APIs
 class L0StorageService {
   final L0StorageRepository _repository;
   final CryptoRSAPrivateKey _privateKey;

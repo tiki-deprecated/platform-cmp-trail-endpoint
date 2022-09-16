@@ -50,6 +50,23 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>The interface for <a href="../keys/KeysModel-class.html">KeysModel</a> persistance class.</p>
+<p>The implementation should use OS level encrypted storage. It should not be 
+accessible to other applications or users because it will store the private 
+keys of the user, which is required for write operations in the chain.</p>
+<p>EncryptedSharedPreferences should be used for Android. AES encryption is
+another option with AES secret key encrypted with RSA and RSA key is stored
+in KeyStore.
+See <a href="https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences">https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences</a></p>
+<p>Keychain is recommended for iOS and MacOS.
+See <a href="https://developer.apple.com/documentation/security/keychain_services">https://developer.apple.com/documentation/security/keychain_services</a></p>
+<p>For Linux libscret is a reliable option.
+See <a href="https://gitlab.gnome.org/GNOME/libsecret">https://gitlab.gnome.org/GNOME/libsecret</a></p>
+<p>In JavaScript web environments the recommendation is WebCrypto with HTST enabled.
+See <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Web_Crypto_API">https://developer.mozilla.org/pt-BR/docs/Web/API/Web_Crypto_API</a></p>
+<p>In other enviroments, use equivalent implementations of the recommended ones.</p>
+</section>
 
 
 

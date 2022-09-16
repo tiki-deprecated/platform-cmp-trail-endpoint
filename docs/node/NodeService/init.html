@@ -79,7 +79,7 @@ appropriate library. If no <code>database</code> is provided the SDK will use th
 memory for persistence what could cause inconsistencies. It should only be
 used for tests or thin clients with read-only operations. It is NOT RECOMMENDED
 for writing to the chain.</p>
-<p>The <code>keysInterface</code> should be a <code>keysInterface</code> implementation
+<p>The <code>keysInterface</code> should be a <a href="../../keys/KeysInterface-class.html">KeysInterface</a> implementation
 using encrypted key-value storage, specifically for each host OS.
 It should not be accessed by other applications or users because it will
 store the private keys of the user, which is required for write operations

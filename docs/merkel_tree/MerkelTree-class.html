@@ -50,6 +50,9 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>The Merkel Tree representation.</p>
+</section>
 
 
 
@@ -62,7 +65,7 @@
           <span class="name"><a href="../merkel_tree/MerkelTree/MerkelTree.build.html">MerkelTree.build</a></span><span class="signature">(<span class="parameter" id="build-param-hashes"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">Uint8List</span>&gt;</span></span> <span class="parameter-name">hashes</span></span>)</span>
         </dt>
         <dd>
-          
+          Builds this Mekel Tree from a list of hashes.
         </dd>
     </dl>
   </section>
@@ -99,7 +102,7 @@
 
 </dt>
 <dd>
-  
+  The list of hashes that are used to build this Merkel Tree.
   <div class="features">final</div>
 
 </dd>
@@ -110,7 +113,7 @@
 
 </dt>
 <dd>
-  
+  The list of Merkel Proofs for each hash in <a href="../merkel_tree/MerkelTree/hashes.html">hashes</a>.
   <div class="features">read / write</div>
 
 </dd>
@@ -121,7 +124,7 @@
 
 </dt>
 <dd>
-  
+  The merkel root.
   <div class="features">late, final</div>
 
 </dd>
@@ -208,7 +211,7 @@
 
 </dt>
 <dd>
-  
+  Validates the inclusion of the <code>hash</code> in <code>root</code> by renuilding it using <code>proof</code>
   
 
 </dd>

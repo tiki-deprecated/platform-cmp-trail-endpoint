@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../../utils/rsa/rsa_private_key.dart';
-
+/// The keys storage model.
 class KeysModel {
   final Uint8List address;
   final CryptoRSAPrivateKey privateKey;

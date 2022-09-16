@@ -12,6 +12,7 @@ import '../transaction/transaction_model.dart';
 import 'block_model.dart';
 import 'block_repository.dart';
 
+/// A service to handle block-related operations.
 class BlockService {
   static const int version = 1;
   final BlockRepository _repository;

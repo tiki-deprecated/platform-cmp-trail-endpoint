@@ -8,7 +8,7 @@ import 'package:html/dom.dart';
 
 import '../../utils/xml.dart' as xml;
 import 'wasabi_model_list_ver.dart';
-
+/// The Wasabi object data model.
 class WasabiModelList {
   String? name;
   String? prefix;

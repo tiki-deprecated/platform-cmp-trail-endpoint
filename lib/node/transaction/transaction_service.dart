@@ -19,6 +19,7 @@ import '../keys/keys_model.dart';
 import 'transaction_model.dart';
 import 'transaction_repository.dart';
 
+/// The service to manage transactions in the chain.
 class TransactionService {
   final TransactionRepository _repository;
 

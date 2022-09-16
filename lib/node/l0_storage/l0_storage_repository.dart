@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'l0_storage_model_policy_req.dart';
 import 'l0_storage_model_policy_rsp.dart';
 
+/// The repository for L0 API access.
 class L0StorageRepository {
   final Uri _uri = Uri(
       scheme: 'https',
