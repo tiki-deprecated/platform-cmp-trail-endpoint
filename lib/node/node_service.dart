@@ -2,28 +2,31 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category Node}
+library node;
+
 import 'dart:async';
 
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
-import '../utils/merkel_tree.dart';
-
-import '../utils/rsa/rsa_public_key.dart';
-import 'block/block_model.dart';
-import 'keys/keys_interface.dart';
-import 'keys/keys_model.dart';
-import 'transaction/transaction_model.dart';
+import '../utils/utils.dart';
 
 import 'backup/backup_service.dart';
+import 'block/block_model.dart';
 import 'block/block_service.dart';
 import 'keys/keys_service.dart';
 import 'transaction/transaction_service.dart';
 import 'wasabi/wasabi_service.dart';
-import 'xchain/xchain_model.dart';
 import 'xchain/xchain_service.dart';
+
+export './backup/backup_service.dart';
+export './block/block_service.dart';
+export './keys/keys_service.dart';
+export './l0_storage/l0_storage_service.dart';
+export './transaction/transaction_service.dart';
+export './wasabi/wasabi_service.dart';
+export './xchain/xchain_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other

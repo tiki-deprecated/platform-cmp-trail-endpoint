@@ -64,7 +64,7 @@
   <p>Creates a List of <code>TransactionModel</code>] from a <code>Uint8List</code> of the serialized
 transactions.</p>
 <p>This is the revers function for <a href="../../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a>. It should be used
-when recovering a <a href="../../block/BlockModel-class.html">BlockModel</a> body.</p>
+when recovering a <code>BlockModel</code> body.</p>
 </section>
 
 
@@ -74,8 +74,10 @@ when recovering a <a href="../../block/BlockModel-class.html">BlockModel</a> bod
   <pre class="language-dart"><code class="language-dart">static List&lt;TransactionModel&gt; deserializeTransactions(
     Uint8List serializedBlock) {
   List&lt;TransactionModel&gt; txns = [];
-  List&lt;Uint8List&gt; extractedBlockBytes = compact_size.decode(serializedBlock);
-  int transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
+  List&lt;Uint8List&gt; extractedBlockBytes =
+      UtilsCompactSize.decode(serializedBlock);
+  int transactionCount =
+      UtilsBytes.decodeBigInt(extractedBlockBytes[4]).toInt();
   if (extractedBlockBytes.sublist(5).length == transactionCount) {
     throw Exception(
         &#39;Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}&#39;);
@@ -153,7 +155,7 @@ when recovering a <a href="../../block/BlockModel-class.html">BlockModel</a> bod
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

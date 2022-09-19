@@ -2,6 +2,11 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+library xchain;
+
+export 'xchain_repository.dart';
+export 'xchain_model.dart';
+
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';

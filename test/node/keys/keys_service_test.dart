@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
 import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/utils/in_mem_keys.dart';
+import '../../in_mem_keys.dart';
 
 void main() {
   final InMemoryKeys secureStorage = InMemoryKeys();

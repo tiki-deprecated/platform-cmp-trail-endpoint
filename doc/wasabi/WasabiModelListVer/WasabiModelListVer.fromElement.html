@@ -62,19 +62,19 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">WasabiModelListVer.fromElement(Element? element) {
   if (element != null) {
-    key = xml.element(element, &#39;Key&#39;)?.text;
-    versionId = xml.element(element, &#39;VersionId&#39;)?.text;
+    key = UtilsXml.element(element, &#39;Key&#39;)?.text;
+    versionId = UtilsXml.element(element, &#39;VersionId&#39;)?.text;
     isLatest =
-        xml.element(element, &#39;IsLatest&#39;)?.text == &quot;true&quot; ? true : false;
-    if (xml.element(element, &#39;LastModified&#39;) != null) {
-      lastModified =
-          DateTime.tryParse(xml.element(element, &#39;LastModified&#39;)?.text ?? &#39;&#39;);
+        UtilsXml.element(element, &#39;IsLatest&#39;)?.text == &quot;true&quot; ? true : false;
+    if (UtilsXml.element(element, &#39;LastModified&#39;) != null) {
+      lastModified = DateTime.tryParse(
+          UtilsXml.element(element, &#39;LastModified&#39;)?.text ?? &#39;&#39;);
     }
-    eTag = xml.element(element, &#39;ETag&#39;)?.text;
-    size = int.tryParse(xml.element(element, &#39;Size&#39;)?.text ?? &#39;&#39;);
-    owner =
-        WasabiModelListVerOwner.fromElement(xml.element(element, &#39;Owner&#39;));
-    storageClass = xml.element(element, &#39;StorageClass&#39;)?.text;
+    eTag = UtilsXml.element(element, &#39;ETag&#39;)?.text;
+    size = int.tryParse(UtilsXml.element(element, &#39;Size&#39;)?.text ?? &#39;&#39;);
+    owner = WasabiModelListVerOwner.fromElement(
+        UtilsXml.element(element, &#39;Owner&#39;));
+    storageClass = UtilsXml.element(element, &#39;StorageClass&#39;)?.text;
   }
 }</code></pre>
 </section>
@@ -141,7 +141,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

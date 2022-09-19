@@ -140,7 +140,7 @@ and <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.
 
 </dt>
 <dd>
-  Gets all the transactions from a <a href="../block/BlockModel-class.html">BlockModel</a> by its <a href="../block/BlockModel/id.html">BlockModel.id</a>.
+  Gets all the transactions from a <code>BlockModel</code> by its <code>BlockModel.id</code>.
   
 
 </dd>
@@ -179,7 +179,7 @@ and <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.
 
 </dt>
 <dd>
-  Creates a <code>Uint8List</code> of the transactions included in a <a href="../block/BlockModel-class.html">BlockModel</a>.
+  Creates a <code>Uint8List</code> of the transactions included in a <code>BlockModel</code>.
   
 
 </dd>
@@ -240,21 +240,21 @@ transactions.
 </dd>
 
         <dt id="validateAuthor" class="callable">
-  <span class="name"><a href="../transaction/TransactionService/validateAuthor.html">validateAuthor</a></span><span class="signature">(<wbr><span class="parameter" id="validateAuthor-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateAuthor-param-pubKey"><span class="type-annotation">CryptoRSAPublicKey</span> <span class="parameter-name">pubKey</span></span>)
+  <span class="name"><a href="../transaction/TransactionService/validateAuthor.html">validateAuthor</a></span><span class="signature">(<wbr><span class="parameter" id="validateAuthor-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateAuthor-param-pubKey"><span class="type-annotation"><a href="../utils/CryptoRSAPublicKey-class.html">CryptoRSAPublicKey</a></span> <span class="parameter-name">pubKey</span></span>)
     <span class="returntype parameter">&#8594; bool</span>
   </span>
   
 
 </dt>
 <dd>
-  Validates the author of the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by calling <a href="../rsa/verify.html">verify</a> with its
+  Validates the author of the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by calling <code>verify</code> with its
 <a href="../transaction/TransactionModel/signature.html">TransactionModel.signature</a>.
   
 
 </dd>
 
         <dt id="validateInclusion" class="callable">
-  <span class="name"><a href="../transaction/TransactionService/validateInclusion.html">validateInclusion</a></span><span class="signature">(<wbr><span class="parameter" id="validateInclusion-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateInclusion-param-block"><span class="type-annotation"><a href="../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span></span>)
+  <span class="name"><a href="../transaction/TransactionService/validateInclusion.html">validateInclusion</a></span><span class="signature">(<wbr><span class="parameter" id="validateInclusion-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateInclusion-param-block"><span class="type-annotation">BlockModel</span> <span class="parameter-name">block</span></span>)
     <span class="returntype parameter">&#8594; bool</span>
   </span>
   
@@ -262,7 +262,7 @@ transactions.
 </dt>
 <dd>
   Validates the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> inclusion in <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a> by
-checking validating its <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> with <a href="../merkel_tree/MerkelTree/validate.html">MerkelTree.validate</a>.
+checking validating its <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> with <a href="../utils/MerkelTree/validate.html">MerkelTree.validate</a>.
   
 
 </dd>
@@ -361,7 +361,7 @@ checking validating its <a href="../transaction/TransactionModel/merkelProof.htm
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

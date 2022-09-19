@@ -6,7 +6,7 @@
 
 import 'package:html/dom.dart';
 
-import '../../utils/xml.dart' as xml;
+import '../../utils/xml.dart';
 
 /// The Wasabi object data model version owner.
 class WasabiModelListVerOwner {
@@ -17,8 +17,8 @@ class WasabiModelListVerOwner {
 
   WasabiModelListVerOwner.fromElement(Element? element) {
     if (element != null) {
-      id = xml.element(element, 'ID')?.text;
-      displayName = xml.element(element, 'DisplayName')?.text;
+      id = UtilsXml.element(element, 'ID')?.text;
+      displayName = UtilsXml.element(element, 'DisplayName')?.text;
     }
   }
 

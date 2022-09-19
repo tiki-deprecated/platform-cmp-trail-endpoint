@@ -3,9 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// Caculates and validates Merkel Tree and repective proofs.
-/// {@category Utils}
-library merkel_tree;
-
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -60,7 +57,7 @@ class MerkelTree {
           .toBytes());
     }
     if (proof.length > 33) return validate(hash, proof.sublist(33), root);
-    return memEquals(hash, root);
+    return UtilsBytes.memEquals(hash, root);
   }
 
   Uint8List _calculate(List<Uint8List> inputHashes) {

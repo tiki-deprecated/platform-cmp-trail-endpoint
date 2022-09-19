@@ -62,15 +62,17 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">WasabiModelList.fromElement(Element? element) {
   if (element != null) {
-    name = xml.element(element, &#39;Name&#39;)?.text;
-    prefix = xml.element(element, &#39;Prefix&#39;)?.text;
-    keyMarker = xml.element(element, &#39;KeyMarker&#39;)?.text;
-    versionIdMarker = xml.element(element, &#39;VersionIdMarker&#39;)?.text;
-    maxKeys = int.tryParse(xml.element(element, &#39;MaxKeys&#39;)?.text ?? &#39;&#39;);
-    isTruncated =
-        xml.element(element, &#39;IsTruncated&#39;)?.text == &quot;true&quot; ? true : false;
-    nextKeyMarker = xml.element(element, &#39;NextKeyMarker&#39;)?.text;
-    nextVersionIdMarker = xml.element(element, &#39;NextVersionIdMarker&#39;)?.text;
+    name = UtilsXml.element(element, &#39;Name&#39;)?.text;
+    prefix = UtilsXml.element(element, &#39;Prefix&#39;)?.text;
+    keyMarker = UtilsXml.element(element, &#39;KeyMarker&#39;)?.text;
+    versionIdMarker = UtilsXml.element(element, &#39;VersionIdMarker&#39;)?.text;
+    maxKeys = int.tryParse(UtilsXml.element(element, &#39;MaxKeys&#39;)?.text ?? &#39;&#39;);
+    isTruncated = UtilsXml.element(element, &#39;IsTruncated&#39;)?.text == &quot;true&quot;
+        ? true
+        : false;
+    nextKeyMarker = UtilsXml.element(element, &#39;NextKeyMarker&#39;)?.text;
+    nextVersionIdMarker =
+        UtilsXml.element(element, &#39;NextVersionIdMarker&#39;)?.text;
     List&lt;Element&gt; versionElements = element.getElementsByTagName(&#39;Version&#39;);
     versions = List.of(
         versionElements.map((e) =&gt; WasabiModelListVer.fromElement(e)));
@@ -141,7 +143,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

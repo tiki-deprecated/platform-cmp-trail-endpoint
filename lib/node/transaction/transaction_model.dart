@@ -9,9 +9,8 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 
-import '../../utils/bytes.dart';
+import '../../utils/utils.dart';
 import '../block/block_model.dart';
-import '../../utils/compact_size.dart' as compact_size;
 import 'transaction_repository.dart';
 
 /// A transaction in the blockchain.
@@ -101,11 +100,11 @@ class TransactionModel {
   ///
   /// Check [serialize] for more information on how the [transaction] is built.
   TransactionModel.deserialize(Uint8List transaction) {
-    List<Uint8List> extractedBytes = compact_size.decode(transaction);
-    version = decodeBigInt(extractedBytes[0]).toInt();
+    List<Uint8List> extractedBytes = UtilsCompactSize.decode(transaction);
+    version = UtilsBytes.decodeBigInt(extractedBytes[0]).toInt();
     address = extractedBytes[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
-        decodeBigInt(extractedBytes[2]).toInt() * 1000);
+        UtilsBytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
     assetRef = base64.encode(extractedBytes[3]);
     signature = extractedBytes[4];
     contents = extractedBytes[5];
@@ -115,48 +114,48 @@ class TransactionModel {
   /// Creates a [Uint8List] representation of this.
   ///
   /// The Uint8List is built by a list of the transaction properties, prepended
-  /// by its size obtained from [compact_size.toSize].
+  /// by its size obtained from [UtilsCompactSize.toSize].
   /// Use with [includeSignature] to false, to sign and verify the signature.
   ///
   /// ```
   /// Uint8List serialized = Uint8List.fromList([
-  ///   ...compact_size.toSize(version),
+  ///   ...UtilsCompactSize.toSize(version),
   ///   ...version,
-  ///   ...compact_size.toSize(address),
+  ///   ...UtilsCompactSize.toSize(address),
   ///   ...address,
-  ///   ...compact_size.toSize(timestamp),
+  ///   ...UtilsCompactSize.toSize(timestamp),
   ///   ...timestamp,
-  ///   ...compact_size.toSize(assetRef),
+  ///   ...UtilsCompactSize.toSize(assetRef),
   ///   ...assetRef,
-  ///   ...compact_size.toSize(signature),
+  ///   ...UtilsCompactSize.toSize(signature),
   ///   ...signature,
-  ///   ...compact_size.toSize(contents),
+  ///   ...UtilsCompactSize.toSize(contents),
   ///   ...contents,
   /// ]);
   /// ```
   Uint8List serialize({includeSignature = true}) {
-    Uint8List versionBytes = encodeBigInt(BigInt.from(version));
+    Uint8List versionBytes = UtilsBytes.encodeBigInt(BigInt.from(version));
     Uint8List serializedVersion = (BytesBuilder()
-          ..add(compact_size.toSize(versionBytes))
+          ..add(UtilsCompactSize.toSize(versionBytes))
           ..add(versionBytes))
         .toBytes();
     Uint8List serializedAddress = (BytesBuilder()
-          ..add(compact_size.toSize(address))
+          ..add(UtilsCompactSize.toSize(address))
           ..add(address))
         .toBytes();
-    Uint8List timestampBytes =
-        encodeBigInt(BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000));
+    Uint8List timestampBytes = UtilsBytes.encodeBigInt(
+        BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000));
     Uint8List serializedTimestamp = (BytesBuilder()
-          ..add(compact_size.toSize(timestampBytes))
+          ..add(UtilsCompactSize.toSize(timestampBytes))
           ..add(timestampBytes))
         .toBytes();
     Uint8List assetRefBytes = base64.decode(assetRef);
     Uint8List serializedAssetRef = (BytesBuilder()
-          ..add(compact_size.toSize(assetRefBytes))
+          ..add(UtilsCompactSize.toSize(assetRefBytes))
           ..add(assetRefBytes))
         .toBytes();
     Uint8List serializedSignature = (BytesBuilder()
-          ..add(compact_size.toSize(includeSignature && signature != null
+          ..add(UtilsCompactSize.toSize(includeSignature && signature != null
               ? signature!
               : Uint8List(0)))
           ..add(includeSignature && signature != null
@@ -164,7 +163,7 @@ class TransactionModel {
               : Uint8List(0)))
         .toBytes();
     Uint8List serializedContents = (BytesBuilder()
-          ..add(compact_size.toSize(contents))
+          ..add(UtilsCompactSize.toSize(contents))
           ..add(contents))
         .toBytes();
     return (BytesBuilder()

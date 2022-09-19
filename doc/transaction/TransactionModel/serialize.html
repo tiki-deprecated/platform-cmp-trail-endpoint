@@ -63,20 +63,20 @@
 <section class="desc markdown">
   <p>Creates a <code>Uint8List</code> representation of this.</p>
 <p>The Uint8List is built by a list of the transaction properties, prepended
-by its size obtained from <a href="../../compact_size/toSize.html">compact_size.toSize</a>.
+by its size obtained from <a href="../../utils/UtilsCompactSize/toSize.html">UtilsCompactSize.toSize</a>.
 Use with <code>includeSignature</code> to false, to sign and verify the signature.</p>
 <pre class="language-dart"><code>Uint8List serialized = Uint8List.fromList([
-  ...compact_size.toSize(version),
+  ...UtilsCompactSize.toSize(version),
   ...version,
-  ...compact_size.toSize(address),
+  ...UtilsCompactSize.toSize(address),
   ...address,
-  ...compact_size.toSize(timestamp),
+  ...UtilsCompactSize.toSize(timestamp),
   ...timestamp,
-  ...compact_size.toSize(assetRef),
+  ...UtilsCompactSize.toSize(assetRef),
   ...assetRef,
-  ...compact_size.toSize(signature),
+  ...UtilsCompactSize.toSize(signature),
   ...signature,
-  ...compact_size.toSize(contents),
+  ...UtilsCompactSize.toSize(contents),
   ...contents,
 ]);
 </code></pre>
@@ -87,28 +87,28 @@ Use with <code>includeSignature</code> to false, to sign and verify the signatur
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Uint8List serialize({includeSignature = true}) {
-  Uint8List versionBytes = encodeBigInt(BigInt.from(version));
+  Uint8List versionBytes = UtilsBytes.encodeBigInt(BigInt.from(version));
   Uint8List serializedVersion = (BytesBuilder()
-        ..add(compact_size.toSize(versionBytes))
+        ..add(UtilsCompactSize.toSize(versionBytes))
         ..add(versionBytes))
       .toBytes();
   Uint8List serializedAddress = (BytesBuilder()
-        ..add(compact_size.toSize(address))
+        ..add(UtilsCompactSize.toSize(address))
         ..add(address))
       .toBytes();
-  Uint8List timestampBytes =
-      encodeBigInt(BigInt.from(timestamp.millisecondsSinceEpoch ~&#47; 1000));
+  Uint8List timestampBytes = UtilsBytes.encodeBigInt(
+      BigInt.from(timestamp.millisecondsSinceEpoch ~&#47; 1000));
   Uint8List serializedTimestamp = (BytesBuilder()
-        ..add(compact_size.toSize(timestampBytes))
+        ..add(UtilsCompactSize.toSize(timestampBytes))
         ..add(timestampBytes))
       .toBytes();
   Uint8List assetRefBytes = base64.decode(assetRef);
   Uint8List serializedAssetRef = (BytesBuilder()
-        ..add(compact_size.toSize(assetRefBytes))
+        ..add(UtilsCompactSize.toSize(assetRefBytes))
         ..add(assetRefBytes))
       .toBytes();
   Uint8List serializedSignature = (BytesBuilder()
-        ..add(compact_size.toSize(includeSignature &amp;&amp; signature != null
+        ..add(UtilsCompactSize.toSize(includeSignature &amp;&amp; signature != null
             ? signature!
             : Uint8List(0)))
         ..add(includeSignature &amp;&amp; signature != null
@@ -116,7 +116,7 @@ Use with <code>includeSignature</code> to false, to sign and verify the signatur
             : Uint8List(0)))
       .toBytes();
   Uint8List serializedContents = (BytesBuilder()
-        ..add(compact_size.toSize(contents))
+        ..add(UtilsCompactSize.toSize(contents))
         ..add(contents))
       .toBytes();
   return (BytesBuilder()
@@ -197,7 +197,7 @@ Use with <code>includeSignature</code> to false, to sign and verify the signatur
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

@@ -93,10 +93,10 @@ in KeyStore.</p>
 <p>For Linux libscret is a reliable option.</p>
 <p>In JavaScript web environments the recommendation is WebCrypto with HTST enabled.</p>
 <p>In other enviroments, use equivalent implementations of the recommended ones.</p>
-<p>The <code>NodeService</code> uses a internal <code>Timer</code> to build a new <a href="../../block/BlockModel-class.html">BlockModel</a> every
+<p>The <code>NodeService</code> uses a internal <code>Timer</code> to build a new <code>BlockModel</code> every
 <code>blkInterval</code>. The default value is 1 minute. If there are any <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>
-in the <code>database</code> that was not added to a <a href="../../block/BlockModel-class.html">BlockModel</a> yet, it creates a new
-<a href="../../block/BlockModel-class.html">BlockModel</a> if the last <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> was created before 1 minute ago
+in the <code>database</code> that was not added to a <code>BlockModel</code> yet, it creates a new
+<code>BlockModel</code> if the last <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> was created before 1 minute ago
 or if the total size of the serialized transactions is greater than 100kb.</p>
 </section>
 
@@ -192,7 +192,7 @@ or if the total size of the serialized transactions is greater than 100kb.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

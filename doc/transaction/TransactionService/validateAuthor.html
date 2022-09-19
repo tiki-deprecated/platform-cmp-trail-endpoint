@@ -54,7 +54,7 @@
 
 <span class="returntype">bool</span>
 <span class="name ">validateAuthor</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="validateAuthor-param-transaction"><span class="type-annotation"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span></li>
-<li><span class="parameter" id="validateAuthor-param-pubKey"><span class="type-annotation">CryptoRSAPublicKey</span> <span class="parameter-name">pubKey</span></span></li>
+<li><span class="parameter" id="validateAuthor-param-pubKey"><span class="type-annotation"><a href="../../utils/CryptoRSAPublicKey-class.html">CryptoRSAPublicKey</a></span> <span class="parameter-name">pubKey</span></span></li>
 </ol>)
 
       
@@ -62,7 +62,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Validates the author of the <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> by calling <a href="../../rsa/verify.html">verify</a> with its
+  <p>Validates the author of the <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> by calling <code>verify</code> with its
 <a href="../../transaction/TransactionModel/signature.html">TransactionModel.signature</a>.</p>
 </section>
 
@@ -72,7 +72,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static bool validateAuthor(
         TransactionModel transaction, CryptoRSAPublicKey pubKey) =&gt;
-    verify(pubKey, transaction.serialize(includeSignature: false),
+    UtilsRsa.verify(pubKey, transaction.serialize(includeSignature: false),
         transaction.signature!);</code></pre>
 </section>
 
@@ -139,7 +139,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

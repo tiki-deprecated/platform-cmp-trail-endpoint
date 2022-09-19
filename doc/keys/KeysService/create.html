@@ -60,7 +60,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Create a new <a href="../../rsa/RsaKeyPair.html">RsaKeyPair</a> and save its public key in object storage.</p>
+  <p>Create a new <a href="../../utils/RsaKeyPair.html">RsaKeyPair</a> and save its public key in object storage.</p>
 </section>
 
 
@@ -68,7 +68,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;KeysModel&gt; create() async {
-  RsaKeyPair rsaKeyPair = await generateAsync();
+  RsaKeyPair rsaKeyPair = await UtilsRsa.generateAsync();
   Uint8List address = Digest(&quot;SHA3-256&quot;)
       .process(base64.decode(rsaKeyPair.publicKey.encode()));
   KeysModel keys = KeysModel(
@@ -135,7 +135,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   
