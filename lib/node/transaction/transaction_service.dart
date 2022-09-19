@@ -3,21 +3,19 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+library transaction;
+
+import '../block/block_model.dart';
+import '../node_service.dart';
+
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
-
-import '../../utils/merkel_tree.dart';
-import '../../utils/rsa/rsa.dart';
-import '../../utils/rsa/rsa_public_key.dart';
-import '../../utils/bytes.dart';
-import '../../utils/compact_size.dart' as compact_size;
-import '../block/block_model.dart';
-import '../keys/keys_model.dart';
-import 'transaction_model.dart';
-import 'transaction_repository.dart';
+import '../../utils/utils.dart';
+export 'transaction_model.dart';
+export 'transaction_repository.dart';
 
 /// The service to manage transactions in the chain.
 class TransactionService {
@@ -38,7 +36,7 @@ class TransactionService {
       String assetRef = 'AA=='}) {
     TransactionModel txn = TransactionModel(
         address: keys.address, contents: contents, assetRef: assetRef);
-    txn.signature = sign(keys.privateKey, txn.serialize());
+    txn.signature = UtilsRsa.sign(keys.privateKey, txn.serialize());
     txn.id = Digest("SHA3-256").process(txn.serialize());
     txn = _repository.save(txn);
     return txn;
@@ -56,27 +54,28 @@ class TransactionService {
           transaction.id!, transaction.merkelProof!, block.transactionRoot);
 
   /// Validates the [TransactionModel] integrity by rebuilds it hash [TransactionModel.id].
-  static bool validateIntegrity(TransactionModel transaction) => memEquals(
-      Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
+  static bool validateIntegrity(TransactionModel transaction) =>
+      UtilsBytes.memEquals(
+          Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
   /// Validates the author of the [TransactionModel] by calling [verify] with its
   /// [TransactionModel.signature].
   static bool validateAuthor(
           TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
-      verify(pubKey, transaction.serialize(includeSignature: false),
+      UtilsRsa.verify(pubKey, transaction.serialize(includeSignature: false),
           transaction.signature!);
 
   /// Creates a [Uint8List] of the transactions included in a [BlockModel].
   ///
   /// This [Uint8List] is built as the body of the [BlockModel]. It creates a list
   /// of each [TransactionModel.serialize] bytes prepended by its size obtained
-  /// by [compact_size.toSize].
+  /// by [UtilsCompactSize.toSize].
   Uint8List serializeTransactions(String blockId) {
     BytesBuilder body = BytesBuilder();
     List<TransactionModel> txns = getByBlock(base64.decode(blockId));
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
-      Uint8List cSize = compact_size.toSize(serialized);
+      Uint8List cSize = UtilsCompactSize.toSize(serialized);
       body.add(cSize);
       body.add(serialized);
     }
@@ -91,8 +90,10 @@ class TransactionService {
   static List<TransactionModel> deserializeTransactions(
       Uint8List serializedBlock) {
     List<TransactionModel> txns = [];
-    List<Uint8List> extractedBlockBytes = compact_size.decode(serializedBlock);
-    int transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
+    List<Uint8List> extractedBlockBytes =
+        UtilsCompactSize.decode(serializedBlock);
+    int transactionCount =
+        UtilsBytes.decodeBigInt(extractedBlockBytes[4]).toInt();
     if (extractedBlockBytes.sublist(5).length == transactionCount) {
       throw Exception(
           'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');

@@ -3,6 +3,12 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+library wasabi;
+
+export 'wasabi_exception_expired.dart';
+export 'wasabi_model_list.dart';
+export 'wasabi_model_list_ver.dart';
+export 'wasabi_repository.dart';
 
 import 'dart:io';
 import 'dart:typed_data';

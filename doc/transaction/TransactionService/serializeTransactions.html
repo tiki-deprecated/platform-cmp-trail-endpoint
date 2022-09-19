@@ -61,10 +61,10 @@
     </section>
     
 <section class="desc markdown">
-  <p>Creates a <code>Uint8List</code> of the transactions included in a <a href="../../block/BlockModel-class.html">BlockModel</a>.</p>
-<p>This <code>Uint8List</code> is built as the body of the <a href="../../block/BlockModel-class.html">BlockModel</a>. It creates a list
+  <p>Creates a <code>Uint8List</code> of the transactions included in a <code>BlockModel</code>.</p>
+<p>This <code>Uint8List</code> is built as the body of the <code>BlockModel</code>. It creates a list
 of each <a href="../../transaction/TransactionModel/serialize.html">TransactionModel.serialize</a> bytes prepended by its size obtained
-by <a href="../../compact_size/toSize.html">compact_size.toSize</a>.</p>
+by <a href="../../utils/UtilsCompactSize/toSize.html">UtilsCompactSize.toSize</a>.</p>
 </section>
 
 
@@ -76,7 +76,7 @@ by <a href="../../compact_size/toSize.html">compact_size.toSize</a>.</p>
   List&lt;TransactionModel&gt; txns = getByBlock(base64.decode(blockId));
   for (TransactionModel txn in txns) {
     Uint8List serialized = txn.serialize();
-    Uint8List cSize = compact_size.toSize(serialized);
+    Uint8List cSize = UtilsCompactSize.toSize(serialized);
     body.add(cSize);
     body.add(serialized);
   }
@@ -147,7 +147,7 @@ by <a href="../../compact_size/toSize.html">compact_size.toSize</a>.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

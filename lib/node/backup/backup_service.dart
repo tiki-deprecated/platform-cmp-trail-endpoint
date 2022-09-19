@@ -3,20 +3,19 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+library backup;
+
+export 'backup_model.dart';
+export 'backup_repository.dart';
+
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import '../../utils/rsa/rsa.dart';
+import '../../utils/utils.dart';
 import '../block/block_model.dart';
-import '../block/block_service.dart';
-import '../keys/keys_model.dart';
-import '../keys/keys_service.dart';
-import '../transaction/transaction_service.dart';
-import '../wasabi/wasabi_service.dart';
-import 'backup_model.dart';
-import 'backup_repository.dart';
+import '../node_service.dart';
 
 /// A service to handle the backup requests to [WasabiService].
 class BackupService {
@@ -64,7 +63,7 @@ class BackupService {
           Uint8List body = _transactionService
               .serializeTransactions(base64.encode(block.id!));
           Uint8List serializedBlock = block.serialize(body);
-          bkp.signature = sign(keys.privateKey, serializedBlock);
+          bkp.signature = UtilsRsa.sign(keys.privateKey, serializedBlock);
           bkp.path = '${bkp.path}.block';
           obj = (BytesBuilder()
                 ..add(bkp.signature!)

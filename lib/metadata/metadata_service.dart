@@ -2,6 +2,11 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+library metadata;
+
+export 'metadata_key.dart';
+export 'metadata_repository.dart';
+export 'metadata_service.dart';
 
 import 'package:sqlite3/sqlite3.dart';
 

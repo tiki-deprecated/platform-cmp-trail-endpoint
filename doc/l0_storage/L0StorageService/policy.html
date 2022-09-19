@@ -52,7 +52,7 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../l0_storage/L0StorageModelPolicyRsp-class.html">L0StorageModelPolicyRsp</a></span>&gt;</span></span>
+<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../node/L0StorageModelPolicyRsp-class.html">L0StorageModelPolicyRsp</a></span>&gt;</span></span>
 <span class="name ">policy</span>(<wbr>)
 
       
@@ -72,8 +72,8 @@ such as <code>SocketException</code> and <code>FormatException</code> are propag
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;L0StorageModelPolicyRsp&gt; policy() async {
   String stringToSign = const Uuid().v4();
-  Uint8List signature =
-      rsa.sign(_privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
+  Uint8List signature = UtilsRsa.sign(
+      _privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
   return await _repository.policy(L0StorageModelPolicyReq(
       pubKey: _privateKey.public.encode(),
       signature: base64Encode(signature),
@@ -135,7 +135,7 @@ such as <code>SocketException</code> and <code>FormatException</code> are propag
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

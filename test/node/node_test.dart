@@ -6,14 +6,9 @@ import 'package:pointycastle/api.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/block/block_model.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
-import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
-import 'package:tiki_sdk_dart/node/wasabi/wasabi_service.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
-import 'package:tiki_sdk_dart/utils/in_mem_keys.dart';
+import '../in_mem_keys.dart';
 
 void main() {
   String apiId = 'd25d2e69-89de-47aa-b5e9-5e8987cf5318';
@@ -130,7 +125,7 @@ void main() {
       }
       BlockModel block = nodeService.getLastBlock()!;
       int count = 0;
-      while (!memEquals(block.previousHash, Uint8List(1))) {
+      while (!UtilsBytes.memEquals(block.previousHash, Uint8List(1))) {
         List<TransactionModel> txns =
             nodeService.getTransactionsByBlockId(base64.encode(block.id!));
         expect(txns.isNotEmpty, true);

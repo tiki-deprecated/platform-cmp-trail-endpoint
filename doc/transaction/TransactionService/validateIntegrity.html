@@ -68,8 +68,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static bool validateIntegrity(TransactionModel transaction) =&gt; memEquals(
-    Digest(&quot;SHA3-256&quot;).process(transaction.serialize()), transaction.id!);</code></pre>
+  <pre class="language-dart"><code class="language-dart">static bool validateIntegrity(TransactionModel transaction) =&gt;
+    UtilsBytes.memEquals(
+        Digest(&quot;SHA3-256&quot;).process(transaction.serialize()), transaction.id!);</code></pre>
 </section>
 
 
@@ -135,7 +136,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

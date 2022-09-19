@@ -67,7 +67,7 @@
 <p>Uses the wallet address from <code>keys</code> (<a href="../../keys/KeysModel/address.html">KeysModel.address</a>) to sign the transaction.
 If the <code>assetRef</code> is not set, it defaults to AA==.
 The return is a uncommited <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>. The <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>
-should be added to a <a href="../../block/BlockModel-class.html">BlockModel</a> by providing its <a href="../../transaction/TransactionModel/block.html">TransactionModel.block</a>
+should be added to a <code>BlockModel</code> by providing its <a href="../../transaction/TransactionModel/block.html">TransactionModel.block</a>
 and <a href="../../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> values and calling the <a href="../../transaction/TransactionService/commit.html">commit</a> method.</p>
 </section>
 
@@ -81,7 +81,7 @@ and <a href="../../transaction/TransactionModel/merkelProof.html">TransactionMod
     String assetRef = &#39;AA==&#39;}) {
   TransactionModel txn = TransactionModel(
       address: keys.address, contents: contents, assetRef: assetRef);
-  txn.signature = sign(keys.privateKey, txn.serialize());
+  txn.signature = UtilsRsa.sign(keys.privateKey, txn.serialize());
   txn.id = Digest(&quot;SHA3-256&quot;).process(txn.serialize());
   txn = _repository.save(txn);
   return txn;
@@ -151,7 +151,7 @@ and <a href="../../transaction/TransactionModel/merkelProof.html">TransactionMod
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

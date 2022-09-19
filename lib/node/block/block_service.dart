@@ -3,14 +3,15 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+library block;
+
+import '../node_service.dart';
+import 'block_model.dart';
+import 'block_repository.dart';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
-
-import '../transaction/transaction_model.dart';
-import 'block_model.dart';
-import 'block_repository.dart';
 
 /// A service to handle block-related operations.
 class BlockService {
