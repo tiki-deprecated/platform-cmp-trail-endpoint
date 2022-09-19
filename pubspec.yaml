@@ -1,6 +1,6 @@
 name: tiki_sdk_dart
 description: TIKI SDK - Dart
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/tiki/tiki-sdk-dart
 
 environment:
