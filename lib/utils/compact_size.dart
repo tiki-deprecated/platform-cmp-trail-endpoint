@@ -11,80 +11,79 @@
 ///
 /// From https://developer.bitcoin.org/reference/transactions.html#compactsize-unsigned-integers
 
-/// {@category Utils}
-library compact_size;
-
 import 'dart:typed_data';
 
-/// Encodes a [Uint8List] into a compact size prepended Uint8List.
-Uint8List encode(Uint8List uint8list) {
-  Uint8List cSize = toSize(uint8list);
-  return (BytesBuilder()
-        ..add(cSize)
-        ..add(uint8list))
-      .toBytes();
-}
+class UtilsCompactSize {
+  /// Encodes a [Uint8List] into a compact size prepended Uint8List.
+  static Uint8List encode(Uint8List uint8list) {
+    Uint8List cSize = toSize(uint8list);
+    return (BytesBuilder()
+          ..add(cSize)
+          ..add(uint8list))
+        .toBytes();
+  }
 
-/// Decodes a compact size prepended Uint8List.
-List<Uint8List> decode(Uint8List bytes) {
-  List<Uint8List> extractedBytes = [];
-  int currentSize = 0;
-  for (int i = 0; i < bytes.length; i += currentSize) {
-    currentSize = toInt(bytes.sublist(i));
-    if (bytes[i] <= 252) {
-      i++;
-    } else if (bytes[i] == 253) {
-      i += 3;
-    } else if (bytes[i] == 254) {
-      i += 5;
-    } else {
-      i += 9;
+  /// Decodes a compact size prepended Uint8List.
+  static List<Uint8List> decode(Uint8List bytes) {
+    List<Uint8List> extractedBytes = [];
+    int currentSize = 0;
+    for (int i = 0; i < bytes.length; i += currentSize) {
+      currentSize = toInt(bytes.sublist(i));
+      if (bytes[i] <= 252) {
+        i++;
+      } else if (bytes[i] == 253) {
+        i += 3;
+      } else if (bytes[i] == 254) {
+        i += 5;
+      } else {
+        i += 9;
+      }
+      Uint8List currentBytes = bytes.sublist(i, i + currentSize);
+      extractedBytes.add(currentBytes);
     }
-    Uint8List currentBytes = bytes.sublist(i, i + currentSize);
-    extractedBytes.add(currentBytes);
+    return extractedBytes;
   }
-  return extractedBytes;
-}
 
-/// Converts a [Uint8List] into its compact size representation.
-Uint8List toSize(Uint8List bytes) {
-  int size = bytes.length;
-  BytesBuilder byteList = BytesBuilder();
-  if (size <= 252) {
-    byteList.addByte(size);
-  } else if (size <= 0xffff) {
-    byteList.addByte(253);
-    Uint16List uint16list = Uint16List.fromList([size]);
-    byteList.add(uint16list.buffer.asUint8List());
-  } else if (size <= 0xffffffff) {
-    byteList.addByte(254);
-    Uint32List uint32list = Uint32List.fromList([size]);
-    byteList.add(uint32list.buffer.asUint8List());
-  } else {
-    byteList.addByte(255);
-    Uint64List uint64list = Uint64List.fromList([size]);
-    byteList.add(uint64list.buffer.asUint8List());
+  /// Converts a [Uint8List] into its compact size representation.
+  static Uint8List toSize(Uint8List bytes) {
+    int size = bytes.length;
+    BytesBuilder byteList = BytesBuilder();
+    if (size <= 252) {
+      byteList.addByte(size);
+    } else if (size <= 0xffff) {
+      byteList.addByte(253);
+      Uint16List uint16list = Uint16List.fromList([size]);
+      byteList.add(uint16list.buffer.asUint8List());
+    } else if (size <= 0xffffffff) {
+      byteList.addByte(254);
+      Uint32List uint32list = Uint32List.fromList([size]);
+      byteList.add(uint32list.buffer.asUint8List());
+    } else {
+      byteList.addByte(255);
+      Uint64List uint64list = Uint64List.fromList([size]);
+      byteList.add(uint64list.buffer.asUint8List());
+    }
+    return byteList.toBytes();
   }
-  return byteList.toBytes();
-}
 
-/// Converts a compact size [Uint8List] into [int].
-int toInt(Uint8List compactSize) {
-  int size = compactSize[0];
-  Uint8List bytes;
-  if (size <= 252) {
-    return size;
-  } else if (size == 253) {
-    bytes = compactSize.sublist(1, 3);
-  } else if (size == 254) {
-    bytes = compactSize.sublist(1, 5);
-  } else {
-    bytes = compactSize.sublist(1, 9);
+  /// Converts a compact size [Uint8List] into [int].
+  static int toInt(Uint8List compactSize) {
+    int size = compactSize[0];
+    Uint8List bytes;
+    if (size <= 252) {
+      return size;
+    } else if (size == 253) {
+      bytes = compactSize.sublist(1, 3);
+    } else if (size == 254) {
+      bytes = compactSize.sublist(1, 5);
+    } else {
+      bytes = compactSize.sublist(1, 9);
+    }
+    int value = 0;
+    for (int i = bytes.length - 1; i >= 0; i--) {
+      value = value << 8;
+      value = value | bytes[i];
+    }
+    return value;
   }
-  int value = 0;
-  for (int i = bytes.length - 1; i >= 0; i--) {
-    value = value << 8;
-    value = value | bytes[i];
-  }
-  return value;
 }

@@ -12,7 +12,7 @@ import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:pointycastle/digests/md5.dart';
 
-import '../../utils/xml.dart' as xml;
+import '../../utils/utils.dart';
 import 'wasabi_exception_expired.dart';
 import 'wasabi_model_list.dart';
 
@@ -43,8 +43,8 @@ class WasabiRepository {
     http.Response rsp =
         await http.get(_bucketUri.replace(query: 'versions&prefix=$path'));
     if (rsp.statusCode == 200) {
-      WasabiModelList list = WasabiModelList.fromElement(xml
-          .first(parse(rsp.body).getElementsByTagName('ListVersionsResult')));
+      WasabiModelList list = WasabiModelList.fromElement(UtilsXml.first(
+          parse(rsp.body).getElementsByTagName('ListVersionsResult')));
       if (list.isTruncated == true) {
         throw UnimplementedError('Version lists > 1000 keys are not supported');
       }

@@ -13,7 +13,7 @@ import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
 import 'package:tiki_sdk_dart/node/wasabi/wasabi_service.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
-import 'package:tiki_sdk_dart/utils/in_mem_keys.dart';
+import '../in_mem_keys.dart';
 
 void main() {
   String apiId = 'd25d2e69-89de-47aa-b5e9-5e8987cf5318';
