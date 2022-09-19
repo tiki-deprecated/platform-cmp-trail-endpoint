@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-
 export 'rsa_private_key.dart';
 export 'rsa_public_key.dart';
 
@@ -17,7 +16,7 @@ import '../isolate.dart';
 import 'rsa_private_key.dart';
 import 'rsa_public_key.dart';
 
-/// A RSA asymmetric key pair 
+/// A RSA asymmetric key pair
 typedef RsaKeyPair = AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey>;
 
 /// Utility functions for asymmetric keys in RSA

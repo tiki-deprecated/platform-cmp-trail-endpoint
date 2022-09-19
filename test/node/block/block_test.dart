@@ -76,7 +76,8 @@ void main() {
         transactionService.commit(transactions[i]);
       }
       blockService.commit(block);
-      expect(UtilsBytes.memEquals(validationTree.root!, block.transactionRoot), true);
+      expect(UtilsBytes.memEquals(validationTree.root!, block.transactionRoot),
+          true);
       for (TransactionModel txn in transactions) {
         Uint8List hash = txn.id!;
         expect(
