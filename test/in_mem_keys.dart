@@ -2,8 +2,9 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+import 'package:tiki_sdk_dart/node/keys/keys_interface.dart';
+
 /// {@category Utils}
-import '../lib/node/keys/keys_interface.dart';
 
 /// A ephemeral key-value storage.
 class InMemoryKeys extends KeysInterface {

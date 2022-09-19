@@ -1,6 +1,5 @@
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/metadata/metadata_key.dart';
 import 'package:tiki_sdk_dart/metadata/metadata_service.dart';
 
 void main() {
