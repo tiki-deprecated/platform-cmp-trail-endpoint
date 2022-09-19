@@ -6,6 +6,7 @@
 import 'package:sqlite3/sqlite3.dart';
 import 'metadata_key.dart';
 
+/// The repository for metadata database operations.
 class MetadataRepository {
   static const table = 'metadata';
 

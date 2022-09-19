@@ -6,17 +6,17 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/l0_storage/l0_storage_model_policy_rsp.dart';
 import 'package:tiki_sdk_dart/node/l0_storage/l0_storage_service.dart';
-import 'package:tiki_sdk_dart/utils/rsa/rsa.dart' as rsa;
+import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
+import 'package:tiki_sdk_dart/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
-  const String apiId = '';
+  const String apiId = 'd25d2e69-89de-47aa-b5e9-5e8987cf5318';
 
   group('l0_storage tests', skip: apiId.isEmpty, () {
     test('Get policy', () async {
-      rsa.RsaKeyPair kp = rsa.generate();
+      RsaKeyPair kp = UtilsRsa.generate();
 
       L0StorageService service = L0StorageService(apiId, kp.privateKey);
       L0StorageModelPolicyRsp rsp = await service.policy();
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('Bad API Id', () async {
-      rsa.RsaKeyPair kp = rsa.generate();
+      RsaKeyPair kp = UtilsRsa.generate();
 
       L0StorageService service =
           L0StorageService(const Uuid().v4(), kp.privateKey);

@@ -12,7 +12,8 @@ TransactionModel generateTransactionModel(int index, KeysModel keys) {
       contents: Uint8List.fromList([index]),
       version: 1,
       assetRef: 'AA==');
-  txn.signature = sign(keys.privateKey, txn.serialize(includeSignature: false));
+  txn.signature =
+      UtilsRsa.sign(keys.privateKey, txn.serialize(includeSignature: false));
   txn.id = Digest("SHA3-256").process(txn.serialize());
   return txn;
 }

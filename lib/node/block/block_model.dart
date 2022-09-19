@@ -5,8 +5,7 @@
 /// {@category Node}
 import 'package:pointycastle/api.dart';
 
-import '../../utils/bytes.dart';
-import '../../utils/compact_size.dart' as compact_size;
+import '../../utils/utils.dart';
 import 'dart:typed_data';
 
 import 'block_repository.dart';
@@ -79,13 +78,13 @@ class BlockModel {
   ///
   /// Check [serialize] for more information on how the [serialized] is built.
   BlockModel.deserialize(Uint8List serialized) {
-    List<Uint8List> extractedBlockBytes = compact_size.decode(serialized);
-    version = decodeBigInt(extractedBlockBytes[0]).toInt();
+    List<Uint8List> extractedBlockBytes = UtilsCompactSize.decode(serialized);
+    version = UtilsBytes.decodeBigInt(extractedBlockBytes[0]).toInt();
     timestamp = DateTime.fromMillisecondsSinceEpoch(
-        decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
+        UtilsBytes.decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
     previousHash = extractedBlockBytes[2];
     transactionRoot = extractedBlockBytes[3];
-    transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
+    transactionCount = UtilsBytes.decodeBigInt(extractedBlockBytes[4]).toInt();
     if (extractedBlockBytes.sublist(5).length != transactionCount) {
       throw Exception(
           'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
@@ -109,42 +108,42 @@ class BlockModel {
   /// Creates the [Uint8List] representation of the block header.
   ///
   /// The block header is represented by a [Uint8List] of the block properties.
-  /// Each item is prepended by its size calculate with [compact_size.toSize].
+  /// Each item is prepended by its size calculate with [UtilsCompactSize.toSize].
   /// The Uint8List structure is:
   /// ```
   /// Uint8List<Uint8List> header = Uin8List.fromList([
-  ///   ...compact_size.toSize(version),
+  ///   ...UtilsCompactSize.toSize(version),
   ///   ...version,
-  ///   ...compact_size.toSize(timestamp),
+  ///   ...UtilsCompactSize.toSize(timestamp),
   ///   ...timestamp,
-  ///   ...compact_size.toSize(previousHash),
+  ///   ...UtilsCompactSize.toSize(previousHash),
   ///   ...previousHash,
-  ///   ...compact_size.toSize(transactionRoot),
+  ///   ...UtilsCompactSize.toSize(transactionRoot),
   ///   ...transactionRoot,
-  ///   ...compact_size.toSize(transactionCount),
+  ///   ...UtilsCompactSize.toSize(transactionCount),
   ///   ...transactionCount,
   /// ]);
   /// ```
   Uint8List header() {
-    Uint8List serializedVersion = encodeBigInt(BigInt.from(version));
+    Uint8List serializedVersion = UtilsBytes.encodeBigInt(BigInt.from(version));
     Uint8List serializedTimestamp = (BytesBuilder()
-          ..add(encodeBigInt(
+          ..add(UtilsBytes.encodeBigInt(
               BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000))))
         .toBytes();
     Uint8List serializedPreviousHash = previousHash;
     Uint8List serializedTransactionRoot = transactionRoot;
     Uint8List serializedTransactionCount =
-        encodeBigInt(BigInt.from(transactionCount));
+        UtilsBytes.encodeBigInt(BigInt.from(transactionCount));
     return (BytesBuilder()
-          ..add(compact_size.toSize(serializedVersion))
+          ..add(UtilsCompactSize.toSize(serializedVersion))
           ..add(serializedVersion)
-          ..add(compact_size.toSize(serializedTimestamp))
+          ..add(UtilsCompactSize.toSize(serializedTimestamp))
           ..add(serializedTimestamp)
-          ..add(compact_size.toSize(serializedPreviousHash))
+          ..add(UtilsCompactSize.toSize(serializedPreviousHash))
           ..add(serializedPreviousHash)
-          ..add(compact_size.toSize(serializedTransactionRoot))
+          ..add(UtilsCompactSize.toSize(serializedTransactionRoot))
           ..add(serializedTransactionRoot)
-          ..add(compact_size.toSize(serializedTransactionCount))
+          ..add(UtilsCompactSize.toSize(serializedTransactionCount))
           ..add(serializedTransactionCount))
         .toBytes();
   }

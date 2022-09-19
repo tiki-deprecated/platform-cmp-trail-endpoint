@@ -10,13 +10,11 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/node/block/block_repository.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
 import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
-import 'package:tiki_sdk_dart/utils/in_mem_keys.dart';
+import 'package:tiki_sdk_dart/utils/utils.dart';
+import '../../in_mem_keys.dart';
 import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
-import 'package:tiki_sdk_dart/utils/bytes.dart';
 
 void main() {
   group('block repository tests', () {
@@ -78,7 +76,8 @@ void main() {
         transactionService.commit(transactions[i]);
       }
       blockService.commit(block);
-      expect(memEquals(validationTree.root!, block.transactionRoot), true);
+      expect(UtilsBytes.memEquals(validationTree.root!, block.transactionRoot),
+          true);
       for (TransactionModel txn in transactions) {
         Uint8List hash = txn.id!;
         expect(

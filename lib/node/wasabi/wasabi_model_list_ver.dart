@@ -6,7 +6,7 @@
 
 import 'package:html/dom.dart';
 
-import '../../utils/xml.dart' as xml;
+import '../../utils/utils.dart';
 import 'wasabi_model_list_ver_owner.dart';
 
 /// The Wasabi object data model versions.
@@ -32,19 +32,19 @@ class WasabiModelListVer {
 
   WasabiModelListVer.fromElement(Element? element) {
     if (element != null) {
-      key = xml.element(element, 'Key')?.text;
-      versionId = xml.element(element, 'VersionId')?.text;
+      key = UtilsXml.element(element, 'Key')?.text;
+      versionId = UtilsXml.element(element, 'VersionId')?.text;
       isLatest =
-          xml.element(element, 'IsLatest')?.text == "true" ? true : false;
-      if (xml.element(element, 'LastModified') != null) {
-        lastModified =
-            DateTime.tryParse(xml.element(element, 'LastModified')?.text ?? '');
+          UtilsXml.element(element, 'IsLatest')?.text == "true" ? true : false;
+      if (UtilsXml.element(element, 'LastModified') != null) {
+        lastModified = DateTime.tryParse(
+            UtilsXml.element(element, 'LastModified')?.text ?? '');
       }
-      eTag = xml.element(element, 'ETag')?.text;
-      size = int.tryParse(xml.element(element, 'Size')?.text ?? '');
-      owner =
-          WasabiModelListVerOwner.fromElement(xml.element(element, 'Owner'));
-      storageClass = xml.element(element, 'StorageClass')?.text;
+      eTag = UtilsXml.element(element, 'ETag')?.text;
+      size = int.tryParse(UtilsXml.element(element, 'Size')?.text ?? '');
+      owner = WasabiModelListVerOwner.fromElement(
+          UtilsXml.element(element, 'Owner'));
+      storageClass = UtilsXml.element(element, 'StorageClass')?.text;
     }
   }
 

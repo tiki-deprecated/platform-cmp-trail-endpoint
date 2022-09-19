@@ -16,6 +16,7 @@ import 'package:pointycastle/asymmetric/api.dart';
 
 import 'rsa_public_key.dart';
 
+/// The RSA private key implementation
 class CryptoRSAPrivateKey extends RSAPrivateKey {
   CryptoRSAPrivateKey(
       BigInt modulus, BigInt privateExponent, BigInt? p, BigInt? q)

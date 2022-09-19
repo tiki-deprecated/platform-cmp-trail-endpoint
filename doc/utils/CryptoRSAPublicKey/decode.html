@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the decode method from the CryptoRSAPublicKey class, for the Dart programming language.">
+  <title>decode method - CryptoRSAPublicKey class - utils library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">tiki_sdk_dart</a></li>
+    <li><a href="../../utils/utils-library.html">utils</a></li>
+    <li><a href="../../utils/CryptoRSAPublicKey-class.html">CryptoRSAPublicKey</a></li>
+    <li class="self-crumb">decode method</li>
+  </ol>
+  <div class="self-name">decode</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">decode</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="../../utils/CryptoRSAPublicKey-class.html">CryptoRSAPublicKey</a></span>
+<span class="name ">decode</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="decode-param-encodedKey"><span class="type-annotation">String</span> <span class="parameter-name">encodedKey</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static CryptoRSAPublicKey decode(String encodedKey) {
+  ASN1Parser topLevelParser = ASN1Parser(base64.decode(encodedKey));
+  ASN1Sequence topLevelSeq = topLevelParser.nextObject() as ASN1Sequence;
+
+  ASN1BitString publicKeyBitString =
+      topLevelSeq.elements![1] as ASN1BitString;
+  ASN1Sequence publicKeySeq =
+      ASN1Sequence.fromBytes(publicKeyBitString.stringValues as Uint8List);
+
+  ASN1Integer modulus = publicKeySeq.elements![0] as ASN1Integer;
+  ASN1Integer exponent = publicKeySeq.elements![1] as ASN1Integer;
+  return CryptoRSAPublicKey(modulus.integer!, exponent.integer!);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">tiki_sdk_dart</a></li>
+  <li><a href="../../utils/utils-library.html">utils</a></li>
+  <li><a href="../../utils/CryptoRSAPublicKey-class.html">CryptoRSAPublicKey</a></li>
+  <li class="self-crumb">decode method</li>
+</ol>
+
+
+    <h5>CryptoRSAPublicKey class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../utils/CryptoRSAPublicKey-class.html#constructors">Constructors</a></li>
+          <li><a href="../../utils/CryptoRSAPublicKey/CryptoRSAPublicKey.html">CryptoRSAPublicKey</a></li>
+
+
+    <li class="section-title inherited">
+      <a href="../../utils/CryptoRSAPublicKey-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a class="deprecated" href="../../utils/CryptoRSAPublicKey/e.html">e</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/exponent.html">exponent</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/modulus.html">modulus</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/n.html">n</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/publicExponent.html">publicExponent</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../../utils/CryptoRSAPublicKey-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../utils/CryptoRSAPublicKey/encode.html">encode</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/noSuchMethod.html">noSuchMethod</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../utils/CryptoRSAPublicKey-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/operator_equals.html">operator ==</a></li>
+
+
+
+        <li class="section-title"><a href="../../utils/CryptoRSAPublicKey-class.html#static-methods">Static methods</a></li>
+          <li><a href="../../utils/CryptoRSAPublicKey/decode.html">decode</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.2
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

@@ -52,7 +52,7 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype"><a href="../../block/BlockModel-class.html">BlockModel</a></span>
+<span class="returntype">BlockModel</span>
 <span class="name ">build</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="build-param-transactions"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span> <span class="parameter-name">transactions</span>, </span></li>
 <li><span class="parameter" id="build-param-transactionRoot"><span class="type-annotation">Uint8List</span> <span class="parameter-name">transactionRoot</span></span></li>
 </ol>)
@@ -63,10 +63,10 @@
     
 <section class="desc markdown">
   <p>Builds a new block from a <code>List</code> of <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> and a <code>transactionRoot</code>.</p>
-<p>It gets the last created block from the <code>db</code> to extract <a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a>
+<p>It gets the last created block from the <code>db</code> to extract <code>BlockModel.previousHash</code>
 from it. If there are no blocks itmeans that it is the genesis block, i.e,
-the first block created by the chain and the <a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> will be 0.</p>
-<p>This method returns the <a href="../../block/BlockModel-class.html">BlockModel</a> created in-memory. Its return should be used
+the first block created by the chain and the <code>BlockModel.previousHash</code> will be 0.</p>
+<p>This method returns the <code>BlockModel</code> created in-memory. Its return should be used
 to commit the <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>. After commiting all the transactions,
 <a href="../../block/BlockService/commit.html">commit</a> needs to be called to persist the block into <code>db</code>.</p>
 <pre class="language-dart"><code> BlockModel blk = blockService.build(transactions, transactionRoot);
@@ -156,7 +156,7 @@ to commit the <a href="../../transaction/TransactionModel-class.html">Transactio
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.2
   </span>
 
   

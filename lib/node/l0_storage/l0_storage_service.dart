@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+library l0_storage;
 
 import 'dart:convert';
 import 'dart:io';
@@ -10,11 +11,16 @@ import 'dart:typed_data';
 
 import 'package:uuid/uuid.dart';
 
-import '../../utils/rsa/rsa.dart' as rsa;
-import '../../utils/rsa/rsa_private_key.dart';
+import '../../utils/utils.dart';
 import 'l0_storage_model_policy_req.dart';
 import 'l0_storage_model_policy_rsp.dart';
 import 'l0_storage_repository.dart';
+
+export 'l0_storage_model_policy_req.dart';
+export 'l0_storage_model_policy_rsp_fields.dart';
+export 'l0_storage_model_policy_rsp.dart';
+export 'l0_storage_service.dart';
+export 'l0_storage_repository.dart';
 
 /// Service to interact with L0 Storage APIs
 class L0StorageService {
@@ -36,8 +42,8 @@ class L0StorageService {
   /// such as [SocketException] and [FormatException] are propagated.
   Future<L0StorageModelPolicyRsp> policy() async {
     String stringToSign = const Uuid().v4();
-    Uint8List signature =
-        rsa.sign(_privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
+    Uint8List signature = UtilsRsa.sign(
+        _privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
     return await _repository.policy(L0StorageModelPolicyReq(
         pubKey: _privateKey.public.encode(),
         signature: base64Encode(signature),
