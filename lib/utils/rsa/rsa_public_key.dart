@@ -14,6 +14,7 @@ import 'package:pointycastle/asn1/primitives/asn1_object_identifier.dart';
 import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 
+/// The RSA public key implementation
 class CryptoRSAPublicKey extends RSAPublicKey {
   CryptoRSAPublicKey(BigInt modulus, BigInt exponent)
       : super(modulus, exponent);

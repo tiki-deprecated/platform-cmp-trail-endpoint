@@ -2,6 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+/// The backup library for node service.
 /// {@category Node}
 library backup;
 

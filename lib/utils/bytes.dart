@@ -5,7 +5,7 @@
 /// Helper functions handle data in [Uint8List].
 
 import 'dart:typed_data';
-
+/// Utility methods to work with raw bytes data.
 class UtilsBytes {
   /// Encode a BigInt into bytes using big-endian encoding.
   /// It encodes the integer to a minimal twos-compliment integer as defined by

@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// Helper functions for asymmetric keys in RSA
+
 
 export 'rsa_private_key.dart';
 export 'rsa_public_key.dart';
@@ -17,8 +17,10 @@ import '../isolate.dart';
 import 'rsa_private_key.dart';
 import 'rsa_public_key.dart';
 
+/// A RSA asymmetric key pair 
 typedef RsaKeyPair = AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey>;
 
+/// Utility functions for asymmetric keys in RSA
 class UtilsRsa {
   /// Generates a [RsaKeyPair] a [secureRandom]
   static RsaKeyPair generate() {

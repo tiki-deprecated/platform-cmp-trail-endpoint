@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 import 'package:html/dom.dart';
-
+/// Utility methods for XML parsing.
 class UtilsXml {
   static Element? first(List<Element> elements) {
     if (elements.isNotEmpty) {

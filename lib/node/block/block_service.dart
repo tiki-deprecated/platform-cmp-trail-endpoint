@@ -5,9 +5,10 @@
 /// {@category Node}
 library block;
 
+export 'block_model.dart';
+export 'block_repository.dart';
+
 import '../node_service.dart';
-import 'block_model.dart';
-import 'block_repository.dart';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
