@@ -58,8 +58,10 @@ class BlockService {
   void commit(BlockModel block) => _repository.save(block);
 
   /// Gets a [BlockModel] by [BlockModel.id]
-  BlockModel? get(String id) => _repository.getById(id);
+  BlockModel? get(String id, {String? xchainAddress}) =>
+    _repository.getById(id, xchainAddress : xchainAddress);
 
   /// Gets the last commited block from the [db].
-  BlockModel? getLast() => _repository.getLast();
+  BlockModel? getLast({String? xchainAddress}) => 
+    _repository.getLast(xchainAddress: xchainAddress);
 }

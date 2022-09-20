@@ -136,7 +136,26 @@ class NodeService {
 
   BlockModel? getLastBlock() => _blockService.getLast();
 
-  BlockModel? getBlockById(String blockId) => _blockService.get(blockId);
+  Future<BlockModel?> getBlockById(String blockId,
+      {String? xchainAddress}) async {
+    BlockModel? block =
+        _blockService.get(blockId, xchainAddress: xchainAddress);
+    if (xchainAddress == null) return block;
+    if (block == null) {
+      await _syncChain(xchainAddress);
+    }
+    return _blockService.get(blockId, xchainAddress: xchainAddress);
+  }
+
+  Future<BlockModel?> getBlockByPath(String path) async {
+    Uint8List pathBytes = base64.decode(path);
+    Uint8List address = pathBytes.sublist(0, 33);
+    String blkId = base64.encode(pathBytes.sublist(33));
+    String? xchainAddress = UtilsBytes.memEquals(address, _keys.address)
+        ? null
+        : base64.encode(address);
+    return getBlockById(blkId, xchainAddress: xchainAddress);
+  }
 
   Future<void> _createBlock() async {
     List<TransactionModel> txns = _transactionService.getPending();
@@ -173,6 +192,17 @@ class NodeService {
   }
 
   Future<void> _loadChain(String address) async {
+    /// TODO
+    /// 1. load the chain public key from wasabi
+    /// 2. call xchainservice.add
+    /// what should be the action if the keys fetch fail?
+    /// - skip chain and try to load again when it is referred
+    /// - throw an error
+    ///
+    await _syncChain(address);
+  }
+
+  Future<void> _syncChain(String xchainAddress) async {
     /// TODO
     /// 1. load the chain public key from wasabi
     /// 2. call xchainservice.add

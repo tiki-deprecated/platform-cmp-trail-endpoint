@@ -72,14 +72,14 @@ class BlockRepository {
   }
 
   /// Gets a [BlockModel] by its [BlockModel.id].
-  BlockModel? getById(String id) {
+  BlockModel? getById(String id, {String? xchainAddress}) {
     List<BlockModel> blocks =
         _select(whereStmt: "WHERE $table.$columnId = '$id'");
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
   /// Gets the last persisted [BlockModel].
-  BlockModel? getLast() {
+  BlockModel? getLast({String? xchainAddress}) {
     List<BlockModel> blocks = _select(last: true);
     return blocks.isNotEmpty ? blocks.first : null;
   }
