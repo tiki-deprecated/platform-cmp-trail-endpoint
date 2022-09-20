@@ -142,7 +142,9 @@ class NodeService {
         _blockService.get(blockId, xchainAddress: xchainAddress);
     if (xchainAddress == null) return block;
     if (block == null) {
-      await _syncChain(xchainAddress);
+      XchainModel? xchain = _xchainService.get(xchainAddress);
+      xchain ??= await (_loadChain(xchainAddress));
+      await _syncChain(xchain.address, base64Url.decode(blockId), xchain.publicKey);
     }
     return _blockService.get(blockId, xchainAddress: xchainAddress);
   }
@@ -155,6 +157,14 @@ class NodeService {
         ? null
         : base64.encode(address);
     return getBlockById(blkId, xchainAddress: xchainAddress);
+  }
+
+  static bool validateBlock(
+      BlockModel blk, List<TransactionModel> transactions) {
+    List<Uint8List> hashes = transactions.map((e) => e.id!).toList();
+    MerkelTree merkelTree = MerkelTree.build(hashes);
+    Uint8List transactionRoot = merkelTree.root!;
+    return UtilsBytes.memEquals(transactionRoot, blk.transactionRoot);
   }
 
   Future<void> _createBlock() async {
@@ -191,37 +201,30 @@ class NodeService {
     _keys = await _keysService.create();
   }
 
-  Future<void> _loadChain(String address) async {
+  Future<XchainModel> _loadChain(String address) async {
     XchainModel? xchain = _xchainService.get(address);
     if (xchain == null) {
-      Uint8List publicKey = await _wasabiService.read('$address.publicKey');
-      xchain = _xchainService.add(base64.encode(publicKey));
+      Uint8List publicKeyBytes = await _wasabiService.read('$address.publicKey');
+      CryptoRSAPublicKey xchainPublicKey =
+          CryptoRSAPublicKey.decode(base64.encode(publicKeyBytes));
+      xchain = _xchainService.add(publicKey);
     }
-    await _syncChain(xchain.address);
+    // Uint8List? lastBlkId = await _wasabiService.getLastAsset(address);
+    // CryptoRSAPublicKey xchainPublicKey =
+    //     CryptoRSAPublicKey.decode(base64.encode(xchain.publicKey));
+    // await _syncChain(xchain.address, lastBlkId, xchainPublicKey);
+    return xchain;
   }
 
-  Future<void> _syncChain(String xchainAddress) async {
-    XchainModel xchain = _xchainService.get(xchainAddress)!;
-    String? bkpPath = _wasabiService.getLastPath(xchainAddress);
-    CryptoRSAPublicKey publicKey =
-        CryptoRSAPublicKey.decode(base64.encode(xchain.publicKey));
-    while (bkpPath != null) {
-      Uint8List bkpObj = await _wasabiService.read(bkpPath);
-      BlockModel blk = _loadBlockBackup(bkpObj, publicKey);
-      if (blk.previousHash.length == 1) {
-        bkpPath = null;
-      } else {
-        bkpPath = "${base64Url.encode(blk.id!)}.block";
-      }
+  Future<void> _syncChain(
+      String xchainAddress, Uint8List from, CryptoRSAPublicKey xchainPublicKey,
+      {Uint8List? until}) async {
+    String path = "$xchainAddress/${base64Url.encode(from)}.block";
+    Uint8List bkpObj = await _wasabiService.read(path);
+    BlockModel blk = _loadBlockBackup(bkpObj, publicKey);
+    if (!UtilsBytes.memEquals(blk.previousHash, until ?? Uint8List(1))) {
+      _syncChain(xchainAddress, blk.id!, xchainPublicKey, until: until);
     }
-  }
-
-  static bool validateBlock(
-      BlockModel blk, List<TransactionModel> transactions) {
-    List<Uint8List> hashes = transactions.map((e) => e.id!).toList();
-    MerkelTree merkelTree = MerkelTree.build(hashes);
-    Uint8List transactionRoot = merkelTree.root!;
-    return UtilsBytes.memEquals(transactionRoot, blk.transactionRoot);
   }
 
   void _setBlkTimer() {

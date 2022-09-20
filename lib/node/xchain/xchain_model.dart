@@ -7,6 +7,7 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 
+import '../../utils/utils.dart';
 import 'xchain_repository.dart';
 
 /// {@category Node}
@@ -16,7 +17,7 @@ class XchainModel {
   String address;
 
   /// The chain public key bytes.
-  Uint8List publicKey;
+  final CryptoRSAPublicKey publicKey;
 
   /// The id for the last validated block.
   String? lastBlock;
@@ -26,7 +27,7 @@ class XchainModel {
   /// The [address] is derived from the [publicKey] using the SHA3-256 hash.
   /// If the chain was not synced yet, [lastBlock] should be null.
   XchainModel(this.publicKey, {this.lastBlock})
-      : address = base64.encode(Digest("SHA3-256").process(publicKey));
+      : address = base64.encode(Digest("SHA3-256").process(base64.decode(publicKey.encode())));
 
   /// Builds a [XchainModel] from a [map].
   ///
@@ -41,7 +42,7 @@ class XchainModel {
   /// ```
   XchainModel.fromMap(Map<String, dynamic> map)
       : address = map[XchainRepository.columnAddress],
-        publicKey = map[XchainRepository.columnPublicKey],
+        publicKey = CryptoRSAPublicKey.decode(base64.encode(map[XchainRepository.columnPublicKey])),
         lastBlock = map[XchainRepository.columnLastBlock];
 
   /// Overrides toString() method for useful error messages
@@ -49,7 +50,7 @@ class XchainModel {
   String toString() {
     return '''XchainModel
       address : $address,
-      publicKey : ${base64.encode(publicKey)},
+      publicKey : $publicKey,
       lastBlock : $lastBlock,
     ''';
   }

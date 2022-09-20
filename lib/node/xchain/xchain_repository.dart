@@ -50,4 +50,6 @@ class XchainRepository {
   List<XchainModel> _select({String? whereStmt}) {
     throw UnimplementedError();
   }
+
+  get(String address) {}
 }

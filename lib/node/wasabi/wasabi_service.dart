@@ -71,5 +71,5 @@ class WasabiService {
     return first;
   }
 
-  String? getLastPath(String xchainAddress) {}
+  Uint8List? getLastAsset(String xchainAddress) {}
 }
