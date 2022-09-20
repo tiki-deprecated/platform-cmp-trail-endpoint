@@ -76,6 +76,14 @@ class BackupRepository {
     return _select(whereStmt: where);
   }
 
+  /// Gets all backup requests by path.
+  /// 
+  /// It prevents that duplicate backups are done for the same path
+  List<BackupModel> getByPath(String path) {
+    String where = 'WHERE $columnPath = "$path"';
+    return _select(whereStmt: where);
+  }
+
   List<BackupModel> _select({String? whereStmt}) {
     ResultSet results = _db.select('''
         SELECT * FROM $table

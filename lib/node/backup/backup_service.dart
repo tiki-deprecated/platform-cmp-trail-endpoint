@@ -17,6 +17,7 @@ import 'package:sqlite3/sqlite3.dart';
 import '../../utils/utils.dart';
 import '../block/block_model.dart';
 import '../node_service.dart';
+import 'backup_blk_obj.dart';
 
 /// A service to handle the backup requests to [WasabiService].
 class BackupService {
@@ -43,11 +44,12 @@ class BackupService {
   /// The request is received by [BackupService] and is added to the database.
   /// Afterwards it calls [_writePending] that will query the database for any
   /// [BackupModel] that was not processed yet and process it in FIFO order.
-  /// TODO check if the path is already in the repository to avoid duplicates
   Future<void> write(String path) async {
     BackupModel bkpModel = BackupModel(path: path);
-    _repository.save(bkpModel);
-    await _writePending();
+   if((_repository.getByPath(path)).isEmpty){
+      _repository.save(bkpModel);
+      await _writePending();
+    }
   }
 
   Future<void> _writePending() async {
@@ -61,18 +63,12 @@ class BackupService {
         } else {
           BlockModel? block = _blockService.get(bkp.path);
           if (block == null) continue;
-          Uint8List body = _transactionService
-              .serializeTransactions(base64.encode(block.id!));
-          Uint8List serializedBlock = block.serialize(body);
-          bkp.signature = UtilsRsa.sign(keys.privateKey, serializedBlock);
+          List<TransactionModel> txns =
+              _transactionService.getByBlock(block.id!);
+          obj = BackupBlkObj(block, txns).serialize(keys);
           bkp.path = '${bkp.path}.block';
-          obj = (BytesBuilder()
-                ..add(bkp.signature!)
-                ..add(serializedBlock))
-              .toBytes();
         }
         await _wasabiService.write(bkp.path, obj);
-
         bkp.timestamp = DateTime.now();
         _repository.update(bkp);
       }
