@@ -88,8 +88,10 @@ void main() {
       Map<String, Uint8List> rsp =
           await UtilsRsa.encryptBulk(keyPair.publicKey, req);
 
-      expect(utf8.decode(UtilsRsa.decrypt(keyPair.privateKey, rsp['1']!)), 'hello');
-      expect(utf8.decode(UtilsRsa.decrypt(keyPair.privateKey, rsp['2']!)), 'world');
+      expect(utf8.decode(UtilsRsa.decrypt(keyPair.privateKey, rsp['1']!)),
+          'hello');
+      expect(utf8.decode(UtilsRsa.decrypt(keyPair.privateKey, rsp['2']!)),
+          'world');
     });
 
     test('decrypt_success', () async {
@@ -98,7 +100,8 @@ void main() {
       String plainText = "hello world";
       Uint8List cipherText = UtilsRsa.encrypt(
           keyPair.publicKey, Uint8List.fromList(utf8.encode(plainText)));
-      String result = utf8.decode(UtilsRsa.decrypt(keyPair.privateKey, cipherText));
+      String result =
+          utf8.decode(UtilsRsa.decrypt(keyPair.privateKey, cipherText));
       expect(result, plainText);
     });
 
@@ -108,8 +111,8 @@ void main() {
       String plainText = "hello world";
       Uint8List cipherText = UtilsRsa.encrypt(
           keyPair.publicKey, Uint8List.fromList(utf8.encode(plainText)));
-      String result =
-          utf8.decode(await UtilsRsa.decryptAsync(keyPair.privateKey, cipherText));
+      String result = utf8
+          .decode(await UtilsRsa.decryptAsync(keyPair.privateKey, cipherText));
       expect(result, plainText);
     });
 
@@ -138,7 +141,8 @@ void main() {
         '1': Uint8List.fromList(utf8.encode('hello')),
         '2': Uint8List.fromList(utf8.encode('world'))
       };
-      Map<String, Uint8List> rsp = await UtilsRsa.signBulk(keyPair.privateKey, req);
+      Map<String, Uint8List> rsp =
+          await UtilsRsa.signBulk(keyPair.privateKey, req);
       expect(rsp.length, 2);
     });
 

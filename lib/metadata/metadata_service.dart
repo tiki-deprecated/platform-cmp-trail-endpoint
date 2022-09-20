@@ -13,6 +13,7 @@ import 'package:sqlite3/sqlite3.dart';
 
 import 'metadata_key.dart';
 import 'metadata_repository.dart';
+
 /// The service for storing metadata as key-value pairs.
 class MetadataService {
   final MetadataRepository _repository;

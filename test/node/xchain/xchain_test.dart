@@ -2,6 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+<<<<<<< HEAD
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -311,3 +312,5 @@ T/gM+E4rTBHPZBfrBk5Z8FQYC/E2wuMovXzYkf+tQUafxdPG2TQ3OFY33D13jUwU7TJNh/xDcBjHnCR
 XPsjUsljSWm4XgO1YM6suq5V1VbvuwCJoCjqKrW5KpaPnW1xT2jxmRyNhMEJoWAQ07twb8IcOixD+ZJ
 6CgcvvPdd+XJbAnI5JZe4H9QeiPIFn7CMPzIcHoB5v7Mpnk+faTGIUSjzXR+RLMfnWSsmSp7eWY8gKb
 0xTUOFIkorjYpHJmRB/PHhpBYw1104CADE=.''';
+=======
+>>>>>>> 1c81fa034486ad9e9d6cbd89e804756b5db94d96
