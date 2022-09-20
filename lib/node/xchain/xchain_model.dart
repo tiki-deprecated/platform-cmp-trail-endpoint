@@ -27,7 +27,8 @@ class XchainModel {
   /// The [address] is derived from the [publicKey] using the SHA3-256 hash.
   /// If the chain was not synced yet, [lastBlock] should be null.
   XchainModel(this.publicKey, {this.lastBlock})
-      : address = base64.encode(Digest("SHA3-256").process(base64.decode(publicKey.encode())));
+      : address = base64.encode(
+            Digest("SHA3-256").process(base64.decode(publicKey.encode())));
 
   /// Builds a [XchainModel] from a [map].
   ///
@@ -42,7 +43,8 @@ class XchainModel {
   /// ```
   XchainModel.fromMap(Map<String, dynamic> map)
       : address = map[XchainRepository.columnAddress],
-        publicKey = CryptoRSAPublicKey.decode(base64.encode(map[XchainRepository.columnPublicKey])),
+        publicKey = CryptoRSAPublicKey.decode(
+            base64.encode(map[XchainRepository.columnPublicKey])),
         lastBlock = map[XchainRepository.columnLastBlock];
 
   /// Overrides toString() method for useful error messages

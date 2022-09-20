@@ -98,14 +98,14 @@ class TransactionService {
         UtilsCompactSize.decode(serializedBlock);
     int transactionCount =
         UtilsBytes.decodeBigInt(extractedBlockBytes[4]).toInt();
-    if (extractedBlockBytes.sublist(5).length == transactionCount) {
+    if (extractedBlockBytes.sublist(5).length != transactionCount) {
       throw Exception(
           'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
     }
     for (int i = 5; i < extractedBlockBytes.length; i++) {
       TransactionModel txn =
           TransactionModel.deserialize(extractedBlockBytes[i]);
-      if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
+      //if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
       txns.add(txn);
     }
     return txns;

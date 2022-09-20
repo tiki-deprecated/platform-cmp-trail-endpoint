@@ -61,7 +61,9 @@ class TransactionModel {
       timestamp,
       this.merkelProof,
       this.block}) {
-    this.timestamp = timestamp ?? DateTime.now();
+    this.timestamp = timestamp ??
+        DateTime.fromMillisecondsSinceEpoch(
+            (DateTime.now().millisecondsSinceEpoch ~/ 1000) * 1000);
     this.assetRef = assetRef ?? "AA==";
   }
 

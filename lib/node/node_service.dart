@@ -144,7 +144,8 @@ class NodeService {
     if (block == null) {
       XchainModel? xchain = _xchainService.get(xchainAddress);
       xchain ??= await (_loadChain(xchainAddress));
-      await _syncChain(xchain.address, base64Url.decode(blockId), xchain.publicKey);
+      await _syncChain(
+          xchain.address, base64Url.decode(blockId), xchain.publicKey);
     }
     return _blockService.get(blockId, xchainAddress: xchainAddress);
   }
@@ -204,7 +205,8 @@ class NodeService {
   Future<XchainModel> _loadChain(String address) async {
     XchainModel? xchain = _xchainService.get(address);
     if (xchain == null) {
-      Uint8List publicKeyBytes = await _wasabiService.read('$address.publicKey');
+      Uint8List publicKeyBytes =
+          await _wasabiService.read('$address.publicKey');
       CryptoRSAPublicKey xchainPublicKey =
           CryptoRSAPublicKey.decode(base64.encode(publicKeyBytes));
       xchain = _xchainService.add(publicKey);
