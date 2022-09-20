@@ -71,8 +71,12 @@ class TransactionService {
   /// of each [TransactionModel.serialize] bytes prepended by its size obtained
   /// by [UtilsCompactSize.toSize].
   Uint8List serializeTransactions(String blockId) {
-    BytesBuilder body = BytesBuilder();
     List<TransactionModel> txns = getByBlock(base64.decode(blockId));
+    return staticTransactionsSerializer(txns);
+  }
+
+  static Uint8List staticTransactionsSerializer(List<TransactionModel> txns){
+    BytesBuilder body = BytesBuilder();
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
       Uint8List cSize = UtilsCompactSize.toSize(serialized);
