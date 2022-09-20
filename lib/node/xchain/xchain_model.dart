@@ -19,7 +19,7 @@ class XchainModel {
   Uint8List publicKey;
 
   /// The id for the last validated block.
-  Uint8List? lastBlock;
+  String? lastBlock;
 
   /// Builds a [XchainModel] from its [publicKey].
   ///
@@ -50,7 +50,7 @@ class XchainModel {
     return '''XchainModel
       address : $address,
       publicKey : ${base64.encode(publicKey)},
-      lastBlock : ${lastBlock == null ? 'null' : base64.encode(lastBlock!)},
+      lastBlock : $lastBlock,
     ''';
   }
 }

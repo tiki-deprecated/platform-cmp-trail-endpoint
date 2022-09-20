@@ -77,7 +77,7 @@ class BackupRepository {
   }
 
   /// Gets all backup requests by path.
-  /// 
+  ///
   /// It prevents that duplicate backups are done for the same path
   List<BackupModel> getByPath(String path) {
     String where = 'WHERE $columnPath = "$path"';

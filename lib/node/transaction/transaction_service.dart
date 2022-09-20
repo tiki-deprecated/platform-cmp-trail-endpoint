@@ -75,7 +75,7 @@ class TransactionService {
     return staticTransactionsSerializer(txns);
   }
 
-  static Uint8List staticTransactionsSerializer(List<TransactionModel> txns){
+  static Uint8List staticTransactionsSerializer(List<TransactionModel> txns) {
     BytesBuilder body = BytesBuilder();
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
@@ -117,4 +117,6 @@ class TransactionService {
 
   /// Gets all the transactions that were not commited by [commit].
   List<TransactionModel> getPending() => _repository.getPending();
+
+  void addAll(List<TransactionModel> txns) {}
 }

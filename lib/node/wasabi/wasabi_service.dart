@@ -70,4 +70,6 @@ class WasabiService {
     }
     return first;
   }
+
+  String? getLastPath(String xchainAddress) {}
 }

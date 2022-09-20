@@ -26,12 +26,14 @@ class XchainService {
   /// The service will derive the [XchainModel.address].
   /// If the address already exists, it will not be added.
   /// method will be called.
-  void add(String publicKey) {
+  XchainModel add(String publicKey) {
     throw UnimplementedError();
   }
 
   /// Updates the [XchainModel.lastBlock].
-  void update(String address, Uint8List lastBlock) {
+  Future<void> update(String address, Uint8List lastBlock) {
     throw UnimplementedError();
   }
+
+  XchainModel? get(String address) {}
 }

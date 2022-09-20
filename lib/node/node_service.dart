@@ -12,8 +12,8 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 import '../utils/utils.dart';
 
+import 'backup/backup_blk_obj.dart';
 import 'backup/backup_service.dart';
-import 'block/block_model.dart';
 import 'block/block_service.dart';
 import 'keys/keys_service.dart';
 import 'transaction/transaction_service.dart';
@@ -192,26 +192,59 @@ class NodeService {
   }
 
   Future<void> _loadChain(String address) async {
-    /// TODO
-    /// 1. load the chain public key from wasabi
-    /// 2. call xchainservice.add
-    /// what should be the action if the keys fetch fail?
-    /// - skip chain and try to load again when it is referred
-    /// - throw an error
-    ///
-    await _syncChain(address);
+    XchainModel? xchain = _xchainService.get(address);
+    if (xchain == null) {
+      Uint8List publicKey = await _wasabiService.read('$address.publicKey');
+      xchain = _xchainService.add(base64.encode(publicKey));
+    }
+    await _syncChain(xchain.address);
   }
 
   Future<void> _syncChain(String xchainAddress) async {
-    /// TODO
-    /// 1. load the chain public key from wasabi
-    /// 2. call xchainservice.add
-    /// what should be the action if the keys fetch fail?
-    /// - skip chain and try to load again when it is referred
-    /// - throw an error
+    XchainModel xchain = _xchainService.get(xchainAddress)!;
+    String? bkpPath = _wasabiService.getLastPath(xchainAddress);
+    CryptoRSAPublicKey publicKey =
+        CryptoRSAPublicKey.decode(base64.encode(xchain.publicKey));
+    while (bkpPath != null) {
+      Uint8List bkpObj = await _wasabiService.read(bkpPath);
+      BlockModel blk = _loadBlockBackup(bkpObj, publicKey);
+      if (blk.previousHash.length == 1) {
+        bkpPath = null;
+      } else {
+        bkpPath = "${base64Url.encode(blk.id!)}.block";
+      }
+    }
+  }
+
+  static bool validateBlock(
+      BlockModel blk, List<TransactionModel> transactions) {
+    List<Uint8List> hashes = transactions.map((e) => e.id!).toList();
+    MerkelTree merkelTree = MerkelTree.build(hashes);
+    Uint8List transactionRoot = merkelTree.root!;
+    return UtilsBytes.memEquals(transactionRoot, blk.transactionRoot);
   }
 
   void _setBlkTimer() {
     _blkTimer = Timer.periodic(_blkInterval, (_) => _createBlock());
+  }
+
+  BlockModel _loadBlockBackup(Uint8List bkp, CryptoRSAPublicKey publicKey) {
+    BackupBlkObj bkpObj = BackupBlkObj.deserialize(bkp);
+    BlockModel blk = bkpObj.block;
+    List<TransactionModel> txns = bkpObj.transactions;
+    if (!validateBlock(blk, txns)) {
+      throw Exception('Error in xchain sync. Invalid block ${blk.toString()}');
+    }
+    for (TransactionModel transaction in txns) {
+      if (!TransactionService.validateIntegrity(transaction) ||
+          !TransactionService.validateAuthor(transaction, publicKey) ||
+          !TransactionService.validateInclusion(transaction, blk)) {
+        throw Exception(
+            'Error in xchain sync. Invalid transaction ${transaction.toString()}');
+      }
+    }
+    _transactionService.addAll(txns);
+    _blockService.add(blk);
+    return blk;
   }
 }

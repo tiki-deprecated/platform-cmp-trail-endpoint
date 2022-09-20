@@ -129,7 +129,8 @@ void main() {
         List<TransactionModel> txns =
             nodeService.getTransactionsByBlockId(base64.encode(block.id!));
         expect(txns.isNotEmpty, true);
-        block = nodeService.getBlockById(base64.encode(block.previousHash))!;
+        block = (await nodeService
+            .getBlockById(base64.encode(block.previousHash)))!;
         count++;
       }
       expect(count > 1, true);

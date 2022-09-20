@@ -46,7 +46,7 @@ class BackupService {
   /// [BackupModel] that was not processed yet and process it in FIFO order.
   Future<void> write(String path) async {
     BackupModel bkpModel = BackupModel(path: path);
-   if((_repository.getByPath(path)).isEmpty){
+    if ((_repository.getByPath(path)).isEmpty) {
       _repository.save(bkpModel);
       await _writePending();
     }
