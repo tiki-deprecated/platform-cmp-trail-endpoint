@@ -14,8 +14,6 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import '../../utils/utils.dart';
-import '../block/block_model.dart';
 import '../node_service.dart';
 import 'backup_blk_obj.dart';
 

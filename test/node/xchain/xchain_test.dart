@@ -16,6 +16,18 @@ import '../../in_mem_keys.dart';
 
 void main() async {
   group('Cross chain reference tests', skip: apiId.isEmpty, () {
+    test('Xchain repository test', () async {
+      KeysService keysService = KeysService(InMemoryKeys());
+      KeysModel keys = await keysService.create();
+      Database db = sqlite3.openInMemory();
+      XchainRepository xchainRepository = XchainRepository(db);
+      XchainModel xchainModel = XchainModel(keys.privateKey.public);
+      xchainRepository.save(xchainModel);
+      XchainModel xchain = xchainRepository.get(base64.encode(keys.address))!;
+      expect(xchain.address, xchainModel.address);
+      expect(xchain.publicKey.encode(), xchainModel.publicKey.encode());
+      expect(xchain.lastBlock, xchainModel.lastBlock);
+    });
     test('Load block from backup', () async {
       List<BlockModel> blocks = [];
       Database db = sqlite3.openInMemory();
@@ -26,7 +38,7 @@ void main() async {
           apiKey: apiId,
           keysInterface: inMemoryKeys);
       for (int i = 0; i < 10; i++) {
-        int total = Random().nextInt(200);
+        int total = Random().nextInt(20);
         List<TransactionModel> transactions = [];
         for (int j = 0; j < total; j++) {
           TransactionModel txn = nodeService
@@ -38,9 +50,26 @@ void main() async {
       BlockModel block = nodeService.getLastBlock()!;
       blocks.add(block);
       while (!UtilsBytes.memEquals(block.previousHash, Uint8List(1))) {
-        blocks.add((await nodeService
-            .getBlockById(base64.encode(block.previousHash)))!);
+        block = (await nodeService
+            .getBlockById(base64.encode(block.previousHash)))!;
+        blocks.add(block);
       }
+      db = sqlite3.openInMemory();
+      inMemoryKeys = InMemoryKeys();
+      nodeService = await NodeService().init(
+          blkInterval: const Duration(seconds: 1),
+          database: db,
+          apiKey: apiId,
+          keysInterface: inMemoryKeys);
+      Uint8List xchainAddress = Digest("SHA3-256")
+          .process(base64.decode(nodeService.publicKey.encode()));
+      for (BlockModel blk in blocks) {
+        BlockModel newBlock = (await nodeService.getBlockById(
+            base64.encode(blk.id!),
+            xchainAddress: base64.encode(xchainAddress)))!;
+        expect(UtilsBytes.memEquals(newBlock.id!, blk.id!), true);
+      }
+      expect(1, 1);
     });
     test('Read remote blocks and transactions', () async {
       // create blocks

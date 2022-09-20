@@ -43,8 +43,7 @@ class XchainModel {
   /// ```
   XchainModel.fromMap(Map<String, dynamic> map)
       : address = map[XchainRepository.columnAddress],
-        publicKey = CryptoRSAPublicKey.decode(
-            base64.encode(map[XchainRepository.columnPublicKey])),
+        publicKey = map[XchainRepository.columnPublicKey],
         lastBlock = map[XchainRepository.columnLastBlock];
 
   /// Overrides toString() method for useful error messages

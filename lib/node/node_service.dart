@@ -101,7 +101,7 @@ class NodeService {
     _keysService = KeysService(keysInterface);
     _transactionService = TransactionService(database);
     _blockService = BlockService(database);
-
+    _xchainService = XchainService(database);
     await _loadKeysAndChains(addresses);
 
     _wasabiService = WasabiService(apiKey, _keys.privateKey);
