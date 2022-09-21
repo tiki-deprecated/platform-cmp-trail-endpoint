@@ -5,17 +5,17 @@
 library node;
 
 import 'dart:async';
-
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
-import '../utils/utils.dart';
 
+import '../utils/utils.dart';
 import 'backup/backup_service.dart';
 import 'block/block_model.dart';
 import 'block/block_service.dart';
 import 'keys/keys_service.dart';
+import 'l0_storage/l0_storage_service.dart';
 import 'transaction/transaction_service.dart';
 import 'wasabi/wasabi_service.dart';
 import 'xchain/xchain_service.dart';
@@ -104,9 +104,15 @@ class NodeService {
 
     await _loadKeysAndChains(addresses);
 
-    _wasabiService = WasabiService(apiKey, _keys.privateKey);
-    _backupService = BackupService(base64.encode(_keys.address), _keysService,
-        _blockService, _transactionService, _wasabiService, database);
+    _wasabiService = WasabiService();
+    _backupService = BackupService(
+        base64.encode(_keys.address),
+        _keysService,
+        _blockService,
+        _transactionService,
+        _wasabiService,
+        L0StorageService(apiKey, _keys.privateKey),
+        database);
 
     await _backupService.write('public.key');
 

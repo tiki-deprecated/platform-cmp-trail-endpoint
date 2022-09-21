@@ -6,36 +6,45 @@
 /// {@category Node}
 library backup;
 
-export 'backup_model.dart';
-export 'backup_repository.dart';
-
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
-import '../block/block_model.dart';
 import '../node_service.dart';
+
+export 'backup_model.dart';
+export 'backup_repository.dart';
 
 /// A service to handle the backup requests to [WasabiService].
 class BackupService {
   final String _address;
   final BackupRepository _repository;
   final WasabiService _wasabiService;
+  final L0StorageService _l0storageService;
   final KeysService _keysService;
   final BlockService _blockService;
   final TransactionService _transactionService;
+
+  L0StorageModelPolicyRsp? policy;
 
   /// Creates a [BackupService] to handle backup requests to [_wasabiService] at
   /// the chain identified by [_address].
   ///
   /// It uses [_blockService] and [_transactionService] to build the serialized
   /// [BlockModel] that will be uploaded, and [_keysService] for the the public key.
-  BackupService(this._address, this._keysService, this._blockService,
-      this._transactionService, this._wasabiService, Database db)
+  BackupService(
+      this._address,
+      this._keysService, //TODO Why not just provide the key on construct?
+      this._blockService, //TODO this is odd. likely better off as a f(x)
+      this._transactionService, //TODO this is odd. likely better off as a f(x)
+      this._wasabiService,
+      this._l0storageService, //TODO If you provide the keys on construct, you can construct l0 too.
+      Database db)
       : _repository = BackupRepository(db) {
     _writePending();
+    _l0storageService.policy().then((policy) => this.policy = policy);
   }
 
   /// Records a request to write the asset defined by the [path] to [_wasabiService].
@@ -71,11 +80,22 @@ class BackupService {
                 ..add(serializedBlock))
               .toBytes();
         }
-        await _wasabiService.write(bkp.path, obj);
-
+        await _writeWasabi(bkp.path, obj);
         bkp.timestamp = DateTime.now();
         _repository.update(bkp);
       }
+    }
+  }
+
+  Future<void> _writeWasabi(String filename, Uint8List obj) async {
+    policy ??= await _l0storageService.policy();
+    try {
+      await _wasabiService.write('${policy!.keyPrefix}', obj,
+          fields: policy!.fields!);
+    } on WasabiExceptionExpired catch (_) {
+      policy = await _l0storageService.policy();
+      await _wasabiService.write('${policy!.keyPrefix}', obj,
+          fields: policy!.fields!);
     }
   }
 }
