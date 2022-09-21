@@ -39,13 +39,13 @@ class NodeService {
   late final KeysService _keysService;
   late final TransactionService _transactionService;
   late final WasabiService _wasabiService;
-  late final KeysModel _keys;
   late final XchainService _xchainService;
-
+ 
+  KeysModel? _keys;
   Timer? _blkTimer;
   late final Duration _blkInterval;
 
-  CryptoRSAPublicKey get publicKey => _keys.privateKey.public;
+  CryptoRSAPublicKey get publicKey => _keys!.privateKey.public;
 
   /// Initialzes de service
   ///
@@ -104,8 +104,8 @@ class NodeService {
     _xchainService = XchainService(database);
     await _loadKeysAndChains(addresses);
 
-    _wasabiService = WasabiService(apiKey, _keys.privateKey);
-    _backupService = BackupService(base64.encode(_keys.address), _keysService,
+    _wasabiService = WasabiService(apiKey, _keys!.privateKey);
+    _backupService = BackupService(base64.encode(_keys!.address), _keysService,
         _blockService, _transactionService, _wasabiService, database);
 
     await _backupService.write('public.key');
@@ -126,7 +126,7 @@ class NodeService {
   /// [BlockModel].
   TransactionModel write(Uint8List contents) {
     TransactionModel txn =
-        _transactionService.build(keys: _keys, contents: contents);
+        _transactionService.build(keys: _keys!, contents: contents);
     _createBlock();
     return txn;
   }
@@ -145,7 +145,7 @@ class NodeService {
       XchainModel? xchain = _xchainService.get(xchainAddress);
       xchain ??= await (_loadChain(xchainAddress));
       await _syncChain(
-          xchain.address, base64Url.decode(blockId), xchain.publicKey);
+          xchain.address, base64.decode(blockId), xchain.publicKey);
     }
     return _blockService.get(blockId, xchainAddress: xchainAddress);
   }
@@ -154,7 +154,7 @@ class NodeService {
     Uint8List pathBytes = base64.decode(path);
     Uint8List address = pathBytes.sublist(0, 33);
     String blkId = base64.encode(pathBytes.sublist(33));
-    String? xchainAddress = UtilsBytes.memEquals(address, _keys.address)
+    String? xchainAddress = UtilsBytes.memEquals(address, _keys!.address)
         ? null
         : base64.encode(address);
     return getBlockById(blkId, xchainAddress: xchainAddress);
@@ -199,7 +199,7 @@ class NodeService {
         _loadChain(address);
       }
     }
-    _keys = await _keysService.create();
+    _keys ??= await _keysService.create();
   }
 
   Future<XchainModel> _loadChain(String address) async {
@@ -209,7 +209,7 @@ class NodeService {
           await _wasabiService.read('$address.publicKey');
       CryptoRSAPublicKey xchainPublicKey =
           CryptoRSAPublicKey.decode(base64.encode(publicKeyBytes));
-      xchain = _xchainService.add(publicKey);
+      xchain = _xchainService.add(xchainPublicKey);
     }
     // Uint8List? lastBlkId = await _wasabiService.getLastAsset(address);
     // CryptoRSAPublicKey xchainPublicKey =

@@ -3,8 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:pointycastle/export.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/l0_storage/l0_storage_service.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
@@ -52,6 +55,16 @@ void main() {
           L0StorageService(const Uuid().v4(), kp.privateKey);
 
       expect(() async => await service.policy(), throwsA(isA<HttpException>()));
+    });
+
+    test('Check keyprefix', () async {
+      RsaKeyPair kp = UtilsRsa.generate();
+      L0StorageService service = L0StorageService(apiId, kp.privateKey);
+      L0StorageModelPolicyRsp rsp = await service.policy();
+      String kpAddress = base64Url.encode(
+          Digest("SHA3-256").process(kp.publicKey.bytes));
+      List<String> pathParts = rsp.keyPrefix!.split('/');
+      expect(pathParts[1], kpAddress);
     });
   });
 }

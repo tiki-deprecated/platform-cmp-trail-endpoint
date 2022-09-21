@@ -62,11 +62,11 @@ void main() async {
           apiKey: apiId,
           keysInterface: inMemoryKeys);
       Uint8List xchainAddress = Digest("SHA3-256")
-          .process(base64.decode(nodeService.publicKey.encode()));
+          .process(base64Url.decode(nodeService.publicKey.encode()));
       for (BlockModel blk in blocks) {
         BlockModel newBlock = (await nodeService.getBlockById(
-            base64.encode(blk.id!),
-            xchainAddress: base64.encode(xchainAddress)))!;
+            base64Url.encode(blk.id!),
+            xchainAddress: base64Url.encode(xchainAddress)))!;
         expect(UtilsBytes.memEquals(newBlock.id!, blk.id!), true);
       }
       expect(1, 1);

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
 import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
 import '../../in_mem_keys.dart';
 

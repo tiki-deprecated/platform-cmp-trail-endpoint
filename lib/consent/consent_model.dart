@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category SDK}
-import '../tiki_sdk_data_type_enum.dart';
 import '../tiki_sdk_destination.dart';
 
 /// The registry of consent to use a data asset identified by [assetRef].

@@ -5,7 +5,6 @@
 /// {@category Node}
 library transaction;
 
-import '../block/block_model.dart';
 import '../node_service.dart';
 
 import 'dart:convert';

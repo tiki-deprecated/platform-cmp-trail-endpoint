@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 

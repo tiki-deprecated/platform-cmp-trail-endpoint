@@ -12,7 +12,6 @@ import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_model.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_repository.dart';
-import 'package:tiki_sdk_dart/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
 import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
 

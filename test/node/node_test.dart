@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:pointycastle/api.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
 import '../in_mem_keys.dart';

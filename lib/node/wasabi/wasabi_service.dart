@@ -14,7 +14,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import '../../utils/rsa/rsa_private_key.dart';
-import '../l0_storage/l0_storage_model_policy_rsp.dart';
 import '../l0_storage/l0_storage_service.dart';
 import 'wasabi_exception_expired.dart';
 import 'wasabi_model_list.dart';
@@ -31,7 +30,7 @@ class WasabiService {
       : _repository = WasabiRepository(),
         _l0storageService = L0StorageService(apiId, privateKey);
 
-  Future<Uint8List> read(String path) async {
+  Future<Uint8List> read(String path, {CryptoRSAPrivateKey? signKey}) async {
     policy ??= await _l0storageService.policy();
     WasabiModelList versions = await _repository.versions(path);
     String? versionId;
@@ -44,12 +43,15 @@ class WasabiService {
   Future<void> write(String path, Uint8List obj, {int retries = 3}) async {
     policy ??= await _l0storageService.policy();
     try {
+      String fullpath = '${policy!.keyPrefix}$path';
       await _repository.upload(
-          '${policy!.keyPrefix}$path', policy!.fields!, obj);
+          fullpath, policy!.fields!, obj);
     } on WasabiExceptionExpired catch (_) {
       policy = await _l0storageService.policy();
+      String fullpath = '${policy!.keyPrefix}$path';
+      
       await _repository.upload(
-          '${policy!.keyPrefix}$path', policy!.fields!, obj);
+          fullpath, policy!.fields!, obj);
     } on SocketException catch (_) {
       if (retries > 0) {
         return write(path, obj, retries: retries - 1);
@@ -71,5 +73,4 @@ class WasabiService {
     return first;
   }
 
-  Uint8List? getLastAsset(String xchainAddress) {}
 }
