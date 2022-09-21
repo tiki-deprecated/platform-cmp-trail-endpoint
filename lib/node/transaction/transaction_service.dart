@@ -5,15 +5,16 @@
 /// {@category Node}
 library transaction;
 
-import '../block/block_model.dart';
-import '../node_service.dart';
-
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
+
 import '../../utils/utils.dart';
+import '../block/block_model.dart';
+import '../node_service.dart';
+
 export 'transaction_model.dart';
 export 'transaction_repository.dart';
 
@@ -72,7 +73,8 @@ class TransactionService {
   /// by [UtilsCompactSize.toSize].
   Uint8List serializeTransactions(String blockId) {
     BytesBuilder body = BytesBuilder();
-    List<TransactionModel> txns = getByBlock(base64.decode(blockId));
+    List<TransactionModel> txns =
+        getByBlock(base64.decode(blockId)); //TODO this is not a good design
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
       Uint8List cSize = UtilsCompactSize.toSize(serialized);

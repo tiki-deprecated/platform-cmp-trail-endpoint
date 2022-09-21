@@ -140,6 +140,7 @@ class NodeService {
   List<TransactionModel> getTransactionsByBlockId(String blockId) =>
       _transactionService.getByBlock(base64.decode(blockId));
 
+  // TODO dont create functions just for testing.
   BlockModel? getLastBlock() => _blockService.getLast();
 
   BlockModel? getBlockById(String blockId) => _blockService.get(blockId);

@@ -3,13 +3,14 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+import 'dart:typed_data';
+
 import 'package:pointycastle/api.dart';
 
 import '../../utils/utils.dart';
-import 'dart:typed_data';
-
 import 'block_repository.dart';
 
+//TODO this can be treated as just the block header. remove txn count entirely.
 /// The block model entity for local storage.
 ///
 /// This model is used only for local operations. For blockchain operations the
@@ -74,6 +75,7 @@ class BlockModel {
         timestamp = DateTime.fromMillisecondsSinceEpoch(
             map[BlockRepository.columnTimestamp] * 1000);
 
+  //TODO this is weird, as it only deserializes part of the object.
   /// Builds a [BlockModel] from a [serialized] list of bytes.
   ///
   /// Check [serialize] for more information on how the [serialized] is built.
@@ -92,6 +94,7 @@ class BlockModel {
     id = Digest("SHA3-256").process(header());
   }
 
+  //TODO this doesn't belong in the model if you have to pass in the body to do it.
   /// Creates a [Uint8List] representation of the block.
   ///
   /// The serialized [BlockModel] is created by combining in a [Uint8List] the
@@ -105,6 +108,7 @@ class BlockModel {
         .toBytes();
   }
 
+  //TODO the header doesn't normally have the txn count. the txn count is in the body.
   /// Creates the [Uint8List] representation of the block header.
   ///
   /// The block header is represented by a [Uint8List] of the block properties.
