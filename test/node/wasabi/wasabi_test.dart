@@ -15,7 +15,7 @@ void main() async {
   const String apiId = 'd25d2e69-89de-47aa-b5e9-5e8987cf5318';
   const bool runTests = false;
 
-  group('l0_storage tests', skip: apiId.isNotEmpty && !runTests, () {
+  group('l0_storage tests', skip: apiId.isEmpty && !runTests, () {
     test('Upload - Read', () async {
       rsa.RsaKeyPair kp = UtilsRsa.generate();
 
@@ -27,9 +27,11 @@ void main() async {
           'test.block', Uint8List.fromList(utf8.encode(testFile)));
 
       Uint8List rsp =
-          await service.read('${service.policy!.keyPrefix}test.block');
+          await service.read('test.block');
 
       expect(testFile, utf8.decode(rsp));
     });
+
+    
   });
 }
