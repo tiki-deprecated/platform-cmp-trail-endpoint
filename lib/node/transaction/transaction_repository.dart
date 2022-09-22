@@ -3,11 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import '../../utils/bytes.dart';
 import '../block/block_model.dart';
 import '../block/block_repository.dart';
 import 'transaction_model.dart';
@@ -98,10 +98,16 @@ class TransactionRepository {
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(
       whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
-          : "WHERE $columnBlockId = ?",
-      params: id == null ? [] : [id]);
+          : "WHERE $columnBlockId = x'${UtilsBytes.hexEncode(id)}'");
 
-  List<TransactionModel> _select({String? whereStmt, List params = const []}) {
+  TransactionModel? getById(Uint8List id) {
+    List<TransactionModel> txns = _select(
+        whereStmt: "WHERE $table.$columnId = x'${UtilsBytes.hexEncode(id)}'");
+    return txns.isEmpty ? null : txns.first;
+  }
+
+  List<TransactionModel> _select(
+      {String? whereStmt, int? page, int pageSize = 100}) {
     ResultSet results = _db.select('''
       SELECT 
         $table.$columnId as '$table.$columnId',
@@ -113,6 +119,7 @@ class TransactionRepository {
         $table.$columnBlockId as '$table.$columnBlockId',
         $table.$columnTimestamp as '$table.$columnTimestamp',
         $table.$columnSignature as '$table.$columnSignature',
+        $table.oid as 'oid',
         ${BlockRepository.table}.${BlockRepository.columnId} as '${BlockRepository.table}.${BlockRepository.columnId}',
         ${BlockRepository.table}.${BlockRepository.columnVersion} as '${BlockRepository.table}.${BlockRepository.columnVersion}',
         ${BlockRepository.table}.${BlockRepository.columnPreviousHash} as '${BlockRepository.table}.${BlockRepository.columnPreviousHash}',
@@ -122,20 +129,21 @@ class TransactionRepository {
       LEFT JOIN ${BlockRepository.table}
       ON $table.$columnBlockId = ${BlockRepository.table}.${BlockRepository.columnId}
       ${whereStmt ?? ''}
-      ORDER BY $table.rowid ASC
-      ''', params);
+      ORDER BY oid ASC
+      ${page == null ? '' : 'LIMIT ${page * pageSize},$pageSize'};
+      ''');
     List<TransactionModel> transactions = [];
     for (final Row row in results) {
       Map<String, dynamic>? blockMap =
           row['${BlockRepository.table}.${BlockRepository.columnId}'] == null
               ? null
               : {
-                  BlockRepository.columnId: base64.decode(row[
-                      '${BlockRepository.table}.${BlockRepository.columnId}']),
+                  BlockRepository.columnId: row[
+                      '${BlockRepository.table}.${BlockRepository.columnId}'],
                   BlockRepository.columnVersion: row[
                       '${BlockRepository.table}.${BlockRepository.columnVersion}'],
-                  BlockRepository.columnPreviousHash: base64.decode(row[
-                      '${BlockRepository.table}.${BlockRepository.columnPreviousHash}']),
+                  BlockRepository.columnPreviousHash: row[
+                      '${BlockRepository.table}.${BlockRepository.columnPreviousHash}'],
                   BlockRepository.columnTransactionRoot: row[
                       '${BlockRepository.table}.${BlockRepository.columnTransactionRoot}'],
                   BlockRepository.columnTimestamp:

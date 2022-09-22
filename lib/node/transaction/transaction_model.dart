@@ -51,16 +51,17 @@ class TransactionModel {
   ///
   /// If no [timestamp] is provided, the object creation time is used.
   /// If no [assetRef] is provided, it uses AA== as [assetRef] value.
-  TransactionModel({
-    this.id,
-    this.version = 1,
-    required this.address,
-    required this.contents,
-    this.assetRef = "AA==",
-    DateTime? timestamp,
-    this.merkelProof,
-    this.block,
-  }) : timestamp = timestamp ?? DateTime.now();
+  TransactionModel(
+      {this.id,
+      this.version = 1,
+      required this.address,
+      required this.contents,
+      this.assetRef = "AA==",
+      DateTime? timestamp,
+      this.merkelProof,
+      this.block,
+      this.signature})
+      : timestamp = timestamp ?? DateTime.now();
 
   /// Builds a [BlockModel] from a [map].
   ///

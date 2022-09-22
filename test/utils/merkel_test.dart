@@ -7,18 +7,19 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/node/key/key_model.dart';
 import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
 
-import '../in_mem_keys.dart';
+import '../in_mem_key.dart';
 import '../node/node_test_helpers.dart';
 
 void main() {
   group('Merkel tests', () {
     test('Build and validate merkel proof for 1 transaction', () async {
-      KeyModel keys = await KeyService(InMemoryKeys()).create();
-      TransactionModel txn = generateTransactionModel(1, keys);
+      KeyModel key = await KeyService(InMemoryKey()).create();
+      TransactionModel txn = generateTransactionModel(1, key);
       txn.id = Digest("SHA3-256").process(txn.serialize());
       MerkelTree merkelTree = MerkelTree.build([txn.id!]);
       Uint8List merkelRoot = merkelTree.root!;
@@ -27,9 +28,9 @@ void main() {
     });
 
     test('Build and validate merkel proof for 10 transactions', () async {
-      KeyModel keys = await KeyService(InMemoryKeys()).create();
+      KeyModel key = await KeyService(InMemoryKey()).create();
       List<TransactionModel> txns = List.generate(10, (index) {
-        TransactionModel txn = generateTransactionModel(1, keys);
+        TransactionModel txn = generateTransactionModel(1, key);
         txn.id = Digest("SHA3-256").process(txn.serialize());
         return txn;
       });
@@ -44,9 +45,9 @@ void main() {
     });
 
     test('Build and validate merkel proof for 100 transactions', () async {
-      KeyModel keys = await KeyService(InMemoryKeys()).create();
+      KeyModel key = await KeyService(InMemoryKey()).create();
       List<TransactionModel> txns = List.generate(100, (index) {
-        TransactionModel txn = generateTransactionModel(1, keys);
+        TransactionModel txn = generateTransactionModel(1, key);
         txn.id = Digest("SHA3-256").process(txn.serialize());
         return txn;
       });
@@ -61,9 +62,9 @@ void main() {
     });
 
     test('Build and validate merkel proof for 1000 transactions', () async {
-      KeyModel keys = await KeyService(InMemoryKeys()).create();
+      KeyModel key = await KeyService(InMemoryKey()).create();
       List<TransactionModel> txns = List.generate(100, (index) {
-        TransactionModel txn = generateTransactionModel(1, keys);
+        TransactionModel txn = generateTransactionModel(1, key);
         txn.id = Digest("SHA3-256").process(txn.serialize());
         return txn;
       });
