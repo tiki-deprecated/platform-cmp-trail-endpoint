@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/node/wasabi/wasabi_service.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart' as rsa;
 import 'package:tiki_sdk_dart/utils/utils.dart';
@@ -22,12 +23,16 @@ void main() async {
       String testFile =
           '{"Test":["OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK"]}';
 
-      WasabiService service = WasabiService(apiId, kp.privateKey);
-      await service.write(
-          'test.block', Uint8List.fromList(utf8.encode(testFile)));
+      L0StorageService l0storageService =
+          L0StorageService(apiId, kp.privateKey);
+      L0StorageModelPolicyRsp policy = await l0storageService.policy();
 
-      Uint8List rsp =
-          await service.read('test.block');
+      WasabiService service = WasabiService();
+      await service.write('${policy.keyPrefix}test.block',
+          Uint8List.fromList(utf8.encode(testFile)),
+          fields: policy.fields!);
+
+      Uint8List rsp = await service.read('${policy.keyPrefix}test.block');
 
       expect(testFile, utf8.decode(rsp));
     });

@@ -8,12 +8,12 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:pointycastle/pointycastle.dart';
-import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
+import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_model.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_repository.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
+import 'package:tiki_sdk_dart/node/keys/key_service.dart';
 
 import '../../in_mem_keys.dart';
 

@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -54,11 +53,11 @@ class WasabiRepository {
     }
   }
 
-  Future<String?> upload(
-      String path, Map<String, String> fields, Uint8List obj) async {
+  Future<String?> upload(String path, Uint8List obj,
+      {Map<String, String>? fields}) async {
     if (path.startsWith('/')) path = path.replaceFirst('/', '');
     http.MultipartRequest request = http.MultipartRequest('POST', _uploadUri);
-    request.fields.addAll(fields);
+    if (fields != null) request.fields.addAll(fields);
     request.fields["content-md5"] = base64.encode(MD5Digest().process(obj));
     request.fields['key'] = path;
     request.files.add(http.MultipartFile.fromBytes('file', obj));

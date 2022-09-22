@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-import 'package:tiki_sdk_dart/node/keys/keys_interface.dart';
+import 'package:tiki_sdk_dart/node/keys/key_interface.dart';
 
 /// {@category Utils}
 

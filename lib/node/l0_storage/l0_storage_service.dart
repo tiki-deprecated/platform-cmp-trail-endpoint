@@ -17,35 +17,32 @@ import 'l0_storage_model_policy_rsp.dart';
 import 'l0_storage_repository.dart';
 
 export 'l0_storage_model_policy_req.dart';
-export 'l0_storage_model_policy_rsp_fields.dart';
 export 'l0_storage_model_policy_rsp.dart';
-export 'l0_storage_service.dart';
+export 'l0_storage_model_policy_rsp_fields.dart';
 export 'l0_storage_repository.dart';
+export 'l0_storage_service.dart';
 
 /// Service to interact with L0 Storage APIs
 class L0StorageService {
   final L0StorageRepository _repository;
-  final CryptoRSAPrivateKey _privateKey;
 
   /// Construct a new instance of [L0StorageService]
   /// Requires a [apiId] provided by the
   /// [L0 Storage Service](https://github.com/tiki/l0-storage) team.
   /// Requires a [_privateKey] to sign all policy requests.
-  L0StorageService(String apiId, CryptoRSAPrivateKey privateKey)
-      : _repository = L0StorageRepository(apiId),
-        _privateKey = privateKey;
+  L0StorageService(String apiId) : _repository = L0StorageRepository(apiId);
 
   /// Request a new [L0StorageModelPolicyRsp].
   ///
   /// If there is any HTTP response other than 200 the response
   /// is thrown as an [HttpException]. Other http client exceptions
   /// such as [SocketException] and [FormatException] are propagated.
-  Future<L0StorageModelPolicyRsp> policy() async {
+  Future<L0StorageModelPolicyRsp> policy(CryptoRSAPrivateKey privateKey) async {
     String stringToSign = const Uuid().v4();
     Uint8List signature = UtilsRsa.sign(
-        _privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
+        privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
     return await _repository.policy(L0StorageModelPolicyReq(
-        pubKey: _privateKey.public.encode(),
+        pubKey: privateKey.public.encode(),
         signature: base64Encode(signature),
         stringToSign: stringToSign));
   }

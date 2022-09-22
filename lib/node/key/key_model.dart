@@ -9,13 +9,13 @@ import 'dart:typed_data';
 import '../../utils/rsa/rsa_private_key.dart';
 
 /// The keys storage model.
-class KeysModel {
+class KeyModel {
   final Uint8List address;
   final CryptoRSAPrivateKey privateKey;
 
-  KeysModel(this.address, this.privateKey);
+  KeyModel(this.address, this.privateKey);
 
-  KeysModel.fromJson(String jsonString)
+  KeyModel.fromJson(String jsonString)
       : address = base64.decode(json.decode(jsonString)['address']!),
         privateKey =
             CryptoRSAPrivateKey.decode(jsonDecode(jsonString)['private_key']!);

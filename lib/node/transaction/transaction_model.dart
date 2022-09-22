@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -52,20 +51,16 @@ class TransactionModel {
   ///
   /// If no [timestamp] is provided, the object creation time is used.
   /// If no [assetRef] is provided, it uses AA== as [assetRef] value.
-  TransactionModel(
-      {this.id,
-      this.version = 1,
-      required this.address,
-      required this.contents,
-      assetRef,
-      timestamp,
-      this.merkelProof,
-      this.block}) {
-    this.timestamp = timestamp ??
-        DateTime.fromMillisecondsSinceEpoch(
-            (DateTime.now().millisecondsSinceEpoch ~/ 1000) * 1000);
-    this.assetRef = assetRef ?? "AA==";
-  }
+  TransactionModel({
+    this.id,
+    this.version = 1,
+    required this.address,
+    required this.contents,
+    String assetRef = "AA==",
+    DateTime? timestamp,
+    this.merkelProof,
+    this.block,
+  }) : timestamp = timestamp ?? DateTime.now();
 
   /// Builds a [BlockModel] from a [map].
   ///
@@ -92,11 +87,8 @@ class TransactionModel {
         merkelProof = map[TransactionRepository.columnMerkelProof],
         block = map['block'],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
-            map[TransactionRepository.columnTimestamp] * 1000),
+            map[TransactionRepository.columnTimestamp]),
         signature = map[TransactionRepository.columnSignature];
-
-  static TransactionModel fromJson(String json) =>
-      TransactionModel.fromMap(jsonDecode(json));
 
   /// Builds a [TransactionModel] from a [transaction] list of bytes.
   ///

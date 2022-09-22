@@ -7,6 +7,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
+
 import '../in_mem_keys.dart';
 
 void main() {
@@ -80,9 +81,9 @@ void main() {
       KeysService keysService = KeysService(inMemoryKeys);
       KeysModel? keys = await keysService.get(base64.encode(Digest("SHA3-256")
           .process(base64.decode(nodeService.publicKey.encode()))));
-      WasabiService wasabiService = WasabiService(apiId, keys!.privateKey);
+      WasabiService wasabiService = WasabiService();
       Uint8List publicKey = await wasabiService.read('public.key');
-      expect(base64.encode(publicKey), keys.privateKey.public.encode());
+      expect(base64.encode(publicKey), keys!.privateKey.public.encode());
     });
     test('create block, backup and retrieve', () async {
       InMemoryKeys inMemoryKeys = InMemoryKeys();
