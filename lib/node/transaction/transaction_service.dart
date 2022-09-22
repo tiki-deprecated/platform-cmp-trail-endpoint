@@ -42,7 +42,7 @@ class TransactionService {
     return txn;
   }
 
-  /// Commits a [TransactionModel] by persisting its its [TransactionModel.block]
+  /// Commits a [TransactionModel] by persisting its [TransactionModel.block]
   /// and [TransactionModel.merkelProof] values.
   void commit(TransactionModel transaction) {
     if (transaction.block?.id == null || transaction.merkelProof == null) {

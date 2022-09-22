@@ -5,6 +5,7 @@
 /// {@category Node}
 library block;
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
@@ -57,7 +58,7 @@ class BlockService {
   void commit(BlockModel block) => _repository.save(block);
 
   /// Gets a [BlockModel] by [BlockModel.id]
-  BlockModel? get(String id, {String? xchainAddress}) =>
+  BlockModel? get(Uint8List id, {Uint8List? xchainAddress}) =>
       _repository.getById(id, xchainAddress: xchainAddress);
 
   /// Gets the last committed block from the [db].

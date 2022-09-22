@@ -56,7 +56,7 @@ class TransactionModel {
     this.version = 1,
     required this.address,
     required this.contents,
-    String assetRef = "AA==",
+    this.assetRef = "AA==",
     DateTime? timestamp,
     this.merkelProof,
     this.block,

@@ -4,6 +4,7 @@
  */
 /// {@category Node}
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
@@ -54,7 +55,7 @@ class BlockRepository {
   /// Persists a [block] in the local [_db].
   void save(BlockModel block) => _db.execute('''
     INSERT INTO $table 
-    VALUES (?, ?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?);
     ''', [
         block.id,
         block.version,
@@ -64,9 +65,11 @@ class BlockRepository {
       ]);
 
   /// Gets a [BlockModel] by its [BlockModel.id].
-  BlockModel? getById(String id, {String? xchainAddress}) {
+  BlockModel? getById(Uint8List id, {Uint8List? xchainAddress}) {
+    String where = "WHERE $table.$columnId = ?";
+    List params = [id];
     List<BlockModel> blocks =
-        _select(whereStmt: "WHERE $table.$columnId = x'$id'");
+        _select(whereStmt: where, params: params);
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
@@ -76,9 +79,7 @@ class BlockRepository {
     return blocks.isNotEmpty ? blocks.first : null;
   }
 
-  List<BlockModel> _select(
-      {int? page, int pageSize = 100, String? whereStmt, bool last = false}) {
-    String limit = page != null ? 'LIMIT ${page * pageSize},$pageSize' : '';
+  List<BlockModel> _select({String? whereStmt, bool last = false, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT 
         $table.$columnId as '$table.$columnId',
@@ -89,14 +90,13 @@ class BlockRepository {
       FROM $table
       ${whereStmt ?? ''}
       ORDER BY oid ${last ? 'DESC' : 'ASC'};
-      $limit
-      ''');
+      ''', params);
     List<BlockModel> blocks = [];
     for (final Row row in results) {
       Map<String, dynamic> blockMap = {
-        columnId: base64.decode(row['$table.$columnId']),
+        columnId: row['$table.$columnId'],
         columnVersion: row['$table.$columnVersion'],
-        columnPreviousHash: base64.decode(row['$table.$columnPreviousHash']),
+        columnPreviousHash: row['$table.$columnPreviousHash'],
         columnTransactionRoot: row['$table.$columnTransactionRoot'],
         columnTimestamp: row['$table.$columnTimestamp'],
       };

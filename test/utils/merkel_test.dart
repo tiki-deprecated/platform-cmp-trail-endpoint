@@ -7,8 +7,8 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/keys/key_model.dart';
-import 'package:tiki_sdk_dart/node/keys/key_service.dart';
+import 'package:tiki_sdk_dart/node/key/key_model.dart';
+import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
 
@@ -18,7 +18,7 @@ import '../node/node_test_helpers.dart';
 void main() {
   group('Merkel tests', () {
     test('Build and validate merkel proof for 1 transaction', () async {
-      KeysModel keys = await KeysService(InMemoryKeys()).create();
+      KeyModel keys = await KeyService(InMemoryKeys()).create();
       TransactionModel txn = generateTransactionModel(1, keys);
       txn.id = Digest("SHA3-256").process(txn.serialize());
       MerkelTree merkelTree = MerkelTree.build([txn.id!]);
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('Build and validate merkel proof for 10 transactions', () async {
-      KeysModel keys = await KeysService(InMemoryKeys()).create();
+      KeyModel keys = await KeyService(InMemoryKeys()).create();
       List<TransactionModel> txns = List.generate(10, (index) {
         TransactionModel txn = generateTransactionModel(1, keys);
         txn.id = Digest("SHA3-256").process(txn.serialize());
@@ -45,7 +45,7 @@ void main() {
     });
 
     test('Build and validate merkel proof for 100 transactions', () async {
-      KeysModel keys = await KeysService(InMemoryKeys()).create();
+      KeyModel keys = await KeyService(InMemoryKeys()).create();
       List<TransactionModel> txns = List.generate(100, (index) {
         TransactionModel txn = generateTransactionModel(1, keys);
         txn.id = Digest("SHA3-256").process(txn.serialize());
@@ -62,7 +62,7 @@ void main() {
     });
 
     test('Build and validate merkel proof for 1000 transactions', () async {
-      KeysModel keys = await KeysService(InMemoryKeys()).create();
+      KeyModel keys = await KeyService(InMemoryKeys()).create();
       List<TransactionModel> txns = List.generate(100, (index) {
         TransactionModel txn = generateTransactionModel(1, keys);
         txn.id = Digest("SHA3-256").process(txn.serialize());

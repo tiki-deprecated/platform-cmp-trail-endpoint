@@ -13,14 +13,14 @@ import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_model.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_repository.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/node/keys/key_service.dart';
+import 'package:tiki_sdk_dart/node/key/key_service.dart';
 
 import '../../in_mem_keys.dart';
 
 void main() async {
   final db = sqlite3.openInMemory();
-  KeysService keysService = KeysService(InMemoryKeys());
-  KeysModel keys = await keysService.create();
+  KeyService keysService = KeyService(InMemoryKeys());
+  KeyModel keys = await keysService.create();
   group('backup tests', () {
     test('backup repository test, retrieve all', () {
       BackupRepository repository = BackupRepository(db);
@@ -30,9 +30,8 @@ void main() async {
           previousHash: Uint8List.fromList(
               List.generate(50, (index) => Random().nextInt(33) + 89)),
           transactionRoot: Uint8List(1),
-          transactionCount: 0,
           timestamp: DateTime.now());
-      blk.id = Digest("SHA3-256").process(blk.header());
+      blk.id = Digest("SHA3-256").process(blk.serialize());
       BackupModel bkp1 = _generateBackupModel(blk, keys);
       BackupModel bkp2 = _generateBackupModel(blk, keys);
       BackupModel bkp3 = _generateBackupModel(blk, keys);
@@ -48,7 +47,7 @@ void main() async {
   });
 }
 
-BackupModel _generateBackupModel(BlockModel block, KeysModel signKey) =>
+BackupModel _generateBackupModel(BlockModel block, KeyModel signKey) =>
     BackupModel(
       path: base64Url.encode(block.id!),
     );
