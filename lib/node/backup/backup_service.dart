@@ -13,6 +13,7 @@ import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/rsa/rsa.dart';
 import '../node_service.dart';
+import 'backup_storage_interface.dart';
 
 export 'backup_model.dart';
 export 'backup_repository.dart';
@@ -20,17 +21,13 @@ export 'backup_repository.dart';
 /// A service to handle the backup requests to [WasabiService].
 class BackupService {
   final BackupRepository _repository;
-  final WasabiService _wasabiService;
-  final L0StorageService _l0storageService;
+  final BackupStorageInterface _storage;
   final KeyModel _key;
   final Uint8List? Function(Uint8List) _getBlock;
 
-  L0StorageModelPolicyRsp? _policy;
-
-  BackupService(this._wasabiService, Database database, String apiId, this._key,
-      this._getBlock)
-      : _repository = BackupRepository(database),
-        _l0storageService = L0StorageService(apiId) {
+  BackupService(this._storage, Database database,
+      String apiId, this._key, this._getBlock)
+      : _repository = BackupRepository(database) {
     String keyBackupPath = '${base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
 
@@ -41,7 +38,7 @@ class BackupService {
 
     if (keyBackup.timestamp == null) {
       Uint8List obj = base64.decode(_key.privateKey.public.encode());
-      _writeWasabi('public.key', obj);
+      _storage.write('public.key', obj);
       keyBackup.timestamp = DateTime.now();
       _repository.update(keyBackup);
     }
@@ -68,24 +65,12 @@ class BackupService {
           Uint8List? block = _getBlock(base64Decode(id));
           if (block != null) {
             Uint8List signedBlock = UtilsRsa.sign(_key.privateKey, block);
-            await _writeWasabi('$id.block', signedBlock);
+            await _storage.write('$id.block', signedBlock);
             backup.timestamp = DateTime.now();
             _repository.update(backup);
           }
         }
       }
-    }
-  }
-
-  Future<void> _writeWasabi(String filename, Uint8List obj) async {
-    _policy ??= await _l0storageService.policy(_key.privateKey);
-    try {
-      await _wasabiService.write('${_policy!.keyPrefix}$filename', obj,
-          fields: _policy!.fields!);
-    } on WasabiExceptionExpired catch (_) {
-      _policy = await _l0storageService.policy(_key.privateKey);
-      await _wasabiService.write('${_policy!.keyPrefix}$filename', obj,
-          fields: _policy!.fields!);
     }
   }
 }

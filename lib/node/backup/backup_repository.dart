@@ -86,7 +86,7 @@ class BackupRepository {
       SELECT 
         $table.$columnPath as '$columnPath',
         $table.$columnSignature as '$columnSignature',
-        $table.$columnTimestamp as '$columnTimestamp',
+        $table.$columnTimestamp as '$columnTimestamp'
       FROM $table
       ${whereStmt ?? ''};
       ''');

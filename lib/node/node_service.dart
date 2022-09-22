@@ -12,17 +12,15 @@ import 'package:sqlite3/sqlite3.dart';
 
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
+import 'backup/backup_storage_interface.dart';
 import 'block/block_service.dart';
 import 'key/key_service.dart';
 import 'transaction/transaction_service.dart';
-import 'wasabi/wasabi_service.dart';
 
 export './backup/backup_service.dart';
 export './block/block_service.dart';
 export './key/key_service.dart';
-export './l0_storage/l0_storage_service.dart';
 export './transaction/transaction_service.dart';
-export './wasabi/wasabi_service.dart';
 export './xchain/xchain_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
@@ -32,7 +30,6 @@ class NodeService {
   late final TransactionService _transactionService;
   late final BlockService _blockService;
   late final KeyService _keyService;
-  late final WasabiService _wasabiService;
   late final KeyModel _primaryKey;
   late final BackupService _backupService;
   late final Duration _blockInterval;
@@ -86,14 +83,13 @@ class NodeService {
   /// or if the total size of the serialized transactions is greater than 100kb.
   ///
   Future<NodeService> init(
-      String apiId, Database database, KeyInterface keysInterface,
+      String apiId, Database database, KeyInterface keysInterface, BackupStorageInterface backupStorage,
       {String? primary,
       List<String> readOnly = const [],
       int maxTransactions = 200,
       Duration blockInterval = const Duration(minutes: 1)}) async {
     _transactionService = TransactionService(database);
     _blockService = BlockService(database);
-    _wasabiService = WasabiService();
     _keyService = KeyService(keysInterface);
     _blockInterval = blockInterval;
     _maxTransactions = maxTransactions;
@@ -101,7 +97,7 @@ class NodeService {
     await _loadPrimaryKey(primary);
 
     _backupService =
-        BackupService(_wasabiService, database, apiId, _primaryKey, (id) {
+        BackupService(backupStorage, database, apiId, _primaryKey, (id) {
       BlockModel? header = _blockService.get(id);
       if (header == null) return null;
 
