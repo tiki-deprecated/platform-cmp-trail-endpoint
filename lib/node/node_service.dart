@@ -34,9 +34,10 @@ class NodeService {
   late final BlockService _blockService;
   late final KeyService _keyService;
   late final WasabiService _wasabiService;
-  late final Duration _blockInterval;
   late final KeyModel _primaryKey;
   late final BackupService _backupService;
+  late final Duration _blockInterval;
+  late final int _maxTransactions;
 
   CryptoRSAPublicKey get publicKey => _primaryKey.privateKey.public;
 
@@ -89,12 +90,14 @@ class NodeService {
       String apiId, Database database, KeyInterface keysInterface,
       {String? primary,
       List<String> readOnly = const [],
-      blockInterval = const Duration(minutes: 1)}) async {
+      int maxTransactions = 200,
+      Duration blockInterval = const Duration(minutes: 1)}) async {
     _transactionService = TransactionService(database);
     _blockService = BlockService(database);
     _wasabiService = WasabiService();
     _keyService = KeyService(keysInterface);
     _blockInterval = blockInterval;
+    _maxTransactions = maxTransactions;
 
     await _loadPrimaryKey(primary);
 
@@ -131,7 +134,7 @@ class NodeService {
     TransactionModel transaction =
         _transactionService.create(contents, _primaryKey);
     List<TransactionModel> transactions = _transactionService.getPending();
-    if (transactions.length >= 200) {
+    if (transactions.length >= _maxTransactions) {
       await _createBlock(transactions);
     }
     return transaction;
