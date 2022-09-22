@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// Helper functions handle data in [Uint8List].
-
 import 'dart:typed_data';
 
 /// Utility methods to work with raw bytes data.
@@ -92,4 +91,7 @@ class UtilsBytes {
 
     return true;
   }
+
+  static String hexEncode(Uint8List bytes) =>
+      bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
 }

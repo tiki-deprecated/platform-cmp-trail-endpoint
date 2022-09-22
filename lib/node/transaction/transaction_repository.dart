@@ -3,11 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import '../../utils/bytes.dart';
 import '../block/block_model.dart';
 import '../block/block_repository.dart';
 import 'transaction_model.dart';
@@ -100,6 +100,12 @@ class TransactionRepository {
           ? 'WHERE $columnBlockId IS NULL'
           : "WHERE $columnBlockId = x'$id'");
 
+  TransactionModel? getById(Uint8List id) {
+    List<TransactionModel> txns = _select(
+        whereStmt: "WHERE $table.$columnId = x'${UtilsBytes.hexEncode(id)}'");
+    return txns.isEmpty ? null : txns.first;
+  }
+
   List<TransactionModel> _select(
       {String? whereStmt, int? page, int pageSize = 100}) {
     ResultSet results = _db.select('''
@@ -113,6 +119,7 @@ class TransactionRepository {
         $table.$columnBlockId as '$table.$columnBlockId',
         $table.$columnTimestamp as '$table.$columnTimestamp',
         $table.$columnSignature as '$table.$columnSignature',
+        $table.oid as 'oid',
         ${BlockRepository.table}.${BlockRepository.columnId} as '${BlockRepository.table}.${BlockRepository.columnId}',
         ${BlockRepository.table}.${BlockRepository.columnVersion} as '${BlockRepository.table}.${BlockRepository.columnVersion}',
         ${BlockRepository.table}.${BlockRepository.columnPreviousHash} as '${BlockRepository.table}.${BlockRepository.columnPreviousHash}',
@@ -121,8 +128,8 @@ class TransactionRepository {
       FROM $table
       LEFT JOIN ${BlockRepository.table}
       ON $table.$columnBlockId = ${BlockRepository.table}.${BlockRepository.columnId}
-      ORDER BY oid ASC
       ${whereStmt ?? ''}
+      ORDER BY oid ASC
       ${page == null ? '' : 'LIMIT ${page * pageSize},$pageSize'};
       ''');
     List<TransactionModel> transactions = [];
@@ -131,19 +138,19 @@ class TransactionRepository {
           row['${BlockRepository.table}.${BlockRepository.columnId}'] == null
               ? null
               : {
-                  BlockRepository.columnId: base64.decode(row[
-                      '${BlockRepository.table}.${BlockRepository.columnId}']),
+                  BlockRepository.columnId: row[
+                      '${BlockRepository.table}.${BlockRepository.columnId}'],
                   BlockRepository.columnVersion: row[
                       '${BlockRepository.table}.${BlockRepository.columnVersion}'],
-                  BlockRepository.columnPreviousHash: base64.decode(row[
-                      '${BlockRepository.table}.${BlockRepository.columnPreviousHash}']),
+                  BlockRepository.columnPreviousHash: row[
+                      '${BlockRepository.table}.${BlockRepository.columnPreviousHash}'],
                   BlockRepository.columnTransactionRoot: row[
                       '${BlockRepository.table}.${BlockRepository.columnTransactionRoot}'],
                   BlockRepository.columnTimestamp:
                       row['${BlockRepository.table}.$columnTimestamp'],
                 };
       Map<String, dynamic>? transactionMap = {
-        columnId: base64.decode(row['$table.$columnId']),
+        columnId: row['$table.$columnId'],
         columnMerkelProof: row['$table.$columnMerkelProof'],
         columnVersion: row['$table.$columnVersion'],
         columnAddress: row['$table.$columnAddress'],
