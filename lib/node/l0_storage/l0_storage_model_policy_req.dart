@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
 /// @nodoc
 /// A L0 Storage Policy Request Model
 class L0StorageModelPolicyReq {

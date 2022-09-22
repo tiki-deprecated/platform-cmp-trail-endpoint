@@ -12,7 +12,6 @@ import 'package:sqlite3/sqlite3.dart';
 
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
-import 'block/block_model.dart';
 import 'block/block_service.dart';
 import 'key/key_service.dart';
 import 'transaction/transaction_service.dart';
