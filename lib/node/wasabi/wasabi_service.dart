@@ -20,6 +20,8 @@ export 'wasabi_repository.dart';
 /// The service to use Wasabi object storage.
 class WasabiService {
   final WasabiRepository _repository;
+  static const String _customerId =
+      'QTNa3Ypp6vkiZ8xvBY2Dch7f1qlvwHVTTXqx52hIVQc';
 
   WasabiService() : _repository = WasabiRepository();
 
@@ -29,16 +31,17 @@ class WasabiService {
     if (versions.versions != null && versions.versions!.isNotEmpty) {
       versionId = _first(versions.versions!).versionId;
     }
-    return _repository.get(path, versionId: versionId);
+    return _repository.get('$_customerId/$path', versionId: versionId);
   }
 
   Future<void> write(String path, Uint8List obj,
       {Map<String, String>? fields, int retries = 3}) async {
     try {
-      await _repository.upload(path, obj, fields: fields);
+      await _repository.upload('$_customerId/$path', obj, fields: fields);
     } on SocketException catch (_) {
       if (retries > 0) {
-        return write(path, obj, fields: fields, retries: retries - 1);
+        return write('$_customerId/$path', obj,
+            fields: fields, retries: retries - 1);
       } else {
         rethrow;
       }
