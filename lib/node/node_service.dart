@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../utils/utils.dart';
@@ -16,6 +17,7 @@ import 'backup/backup_storage_interface.dart';
 import 'block/block_service.dart';
 import 'key/key_service.dart';
 import 'transaction/transaction_service.dart';
+import 'xchain/xchain_service.dart';
 
 export './backup/backup_service.dart';
 export './block/block_service.dart';
@@ -32,8 +34,10 @@ class NodeService {
   late final KeyService _keyService;
   late final KeyModel _primaryKey;
   late final BackupService _backupService;
+  late final BackupStorageInterface _backupStorage;
   late final Duration _blockInterval;
   late final int _maxTransactions;
+  late final XchainService _xchainService;
 
   CryptoRSAPublicKey get publicKey => _primaryKey.privateKey.public;
 
@@ -91,13 +95,13 @@ class NodeService {
     _transactionService = TransactionService(database);
     _blockService = BlockService(database);
     _keyService = KeyService(keysInterface);
+    _xchainService = XchainService(database, _backupStorage);
     _blockInterval = blockInterval;
     _maxTransactions = maxTransactions;
 
     await _loadPrimaryKey(primary);
 
-    _backupService =
-        BackupService(backupStorage, database, apiId, _primaryKey, (id) {
+    _backupService = BackupService(_backupStorage, database, _primaryKey, (id) {
       BlockModel? header = _blockService.get(id);
       if (header == null) return null;
 
@@ -180,4 +184,60 @@ class NodeService {
   }
 
   BlockModel? getLastBlock() => _blockService.last();
+
+  Future<BlockModel?> getBlockById(Uint8List blockId,
+      {Uint8List? xchainId}) async {
+    BlockModel? block = _blockService.get(blockId, xchainAddress: xchainId);
+    if (block != null || xchainId == null) return block;
+    await loadXchain(xchainId, blockId);
+    return _blockService.get(blockId, xchainAddress: xchainId);
+  }
+
+  Future<TransactionModel?> getTransactionByPath(String path) async {
+    List<String> pathParts = path.split('/');
+    Uint8List blockId = base64Url.decode(pathParts[pathParts.length - 2]);
+    Uint8List xchainId = base64Url.decode(pathParts[pathParts.length - 3]);
+    BlockModel? block = await getBlockById(blockId, xchainId: xchainId);
+    if (block != null) {
+      Uint8List transactionId = base64Url.decode(pathParts.removeLast());
+      String blockPath = pathParts.join('/');
+      Uint8List serializedBlock = await _backupStorage.read(blockPath);
+      List<TransactionModel> transactions =
+          TransactionService.deserializeTransactions(serializedBlock);
+      for (TransactionModel transactionModel in transactions) {
+        if (UtilsBytes.memEquals(transactionModel.id!, transactionId)) {
+          return transactionModel;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<void> loadXchain(xchainId, startBlockId) async {
+    XchainModel xchain = await _xchainService.load(xchainId);
+    String path =
+        '${base64UrlEncode(xchain.address)}/${base64UrlEncode(startBlockId)}.block';
+    Uint8List serializedBlock = await _backupStorage.read(path);
+    BlockModel block = BlockModel.deserialize(serializedBlock);
+    if (!UtilsBytes.memEquals(
+        Digest('SHA3-256').process(block.serialize()), startBlockId)) {
+      throw Exception('Corrupted Block ${block.toString()}');
+    }
+    List<TransactionModel> transactions =
+        TransactionService.deserializeTransactions(serializedBlock);
+    MerkelTree merkelTree = MerkelTree.build(
+        transactions.map((TransactionModel txn) => txn.id!).toList());
+    if (!UtilsBytes.memEquals(block.transactionRoot, merkelTree.root!)) {
+      throw Exception('Invalid transaction root for ${block.toString()}');
+    }
+    for (TransactionModel transaction in transactions) {
+      transaction.block = block;
+      transaction.merkelProof = merkelTree.proofs[transaction.id!];
+      if (TransactionService.validateAuthor(transaction, xchain.publicKey)) {
+        throw Exception(
+            'Transaction authorshhip could not be verified: ${transaction.toString()}');
+      }
+    }
+    _blockService.add(block);
+  }
 }

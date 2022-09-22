@@ -73,12 +73,12 @@ class TransactionService {
   /// This [Uint8List] is built as the body of the [BlockModel]. It creates a list
   /// of each [TransactionModel.serialize] bytes prepended by its size obtained
   /// by [UtilsCompactSize.toSize].
-  Uint8List serializeTransactions(String blockId) {
+  Uint8List serializeTransactionsByBlockId(String blockId) {
     List<TransactionModel> txns = getByBlock(base64.decode(blockId));
-    return staticTransactionsSerializer(txns);
+    return serializeTransactions(txns);
   }
 
-  static Uint8List staticTransactionsSerializer(List<TransactionModel> txns) {
+  static Uint8List serializeTransactions(List<TransactionModel> txns) {
     BytesBuilder body = BytesBuilder();
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
@@ -108,7 +108,7 @@ class TransactionService {
     for (int i = 5; i < extractedBlockBytes.length; i++) {
       TransactionModel txn =
           TransactionModel.deserialize(extractedBlockBytes[i]);
-      //if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
+      if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
       txns.add(txn);
     }
     return txns;

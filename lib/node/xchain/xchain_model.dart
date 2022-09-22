@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 
@@ -12,8 +13,8 @@ import 'xchain_repository.dart';
 /// {@category Node}
 /// The model to store information about cross chain reference.
 class XchainModel {
-  /// The base64Url representation of the chain address.
-  String address;
+  /// The chain address. It is the SHA3-256 hash of the
+  Uint8List address;
 
   /// The chain public key bytes.
   final CryptoRSAPublicKey publicKey;
@@ -26,8 +27,7 @@ class XchainModel {
   /// The [address] is derived from the [publicKey] using the SHA3-256 hash.
   /// If the chain was not synced yet, [lastBlock] should be null.
   XchainModel(this.publicKey, {this.lastBlock})
-      : address = base64.encode(
-            Digest("SHA3-256").process(base64.decode(publicKey.encode())));
+      : address = Digest("SHA3-256").process(base64.decode(publicKey.encode()));
 
   /// Builds a [XchainModel] from a [map].
   ///

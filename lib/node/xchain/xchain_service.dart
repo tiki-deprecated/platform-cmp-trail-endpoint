@@ -7,11 +7,15 @@ library xchain;
 export 'xchain_repository.dart';
 export 'xchain_model.dart';
 
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:pointycastle/pointycastle.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
+import '../backup/backup_storage_interface.dart';
+import '../node_service.dart';
 import 'xchain_repository.dart';
 import 'xchain_model.dart';
 
@@ -20,7 +24,10 @@ import 'xchain_model.dart';
 class XchainService {
   final XchainRepository _repository;
 
-  XchainService(Database db) : _repository = XchainRepository(db);
+  final BackupStorageInterface _backupStorage;
+
+  XchainService(Database db, this._backupStorage)
+      : _repository = XchainRepository(db);
 
   /// Adds a new Xchain by [publicKey].
   ///
@@ -34,8 +41,20 @@ class XchainService {
   }
 
   /// Updates the [XchainModel.lastBlock].
-  void update(String address, Uint8List lastBlock) =>
+  void update(Uint8List address, Uint8List lastBlock) =>
       _repository.update(address, lastBlock);
 
-  XchainModel? get(String address) => _repository.get(address);
+  XchainModel? get(Uint8List address) => _repository.get(address);
+
+  Future<XchainModel> load(Uint8List address) async {
+    XchainModel? xchain = _repository.get(address);
+    if (xchain == null) {
+      Uint8List bytesPublicKey =
+          await _backupStorage.read('$address/public.key');
+      CryptoRSAPublicKey publicKey =
+          CryptoRSAPublicKey.decode(base64Encode(bytesPublicKey));
+      xchain = add(publicKey);
+    }
+    return xchain;
+  }
 }

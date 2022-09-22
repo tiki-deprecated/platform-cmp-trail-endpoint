@@ -37,7 +37,7 @@ class XchainRepository {
   void createTable() async {
     _db.execute('''
       CREATE TABLE IF NOT EXISTS $table (
-        $columnAddress TEXT PRIMARY KEY,
+        $columnAddress BLOB PRIMARY KEY,
         $columnPublicKey TEXT,
         $columnLastBlock BLOB
       );
@@ -51,13 +51,13 @@ class XchainRepository {
   }
 
   /// Updates the persisted [XchainModel.lastBlock].
-  void update(String address, Uint8List lastBlock) {
+  void update(Uint8List address, Uint8List lastBlock) {
     _db.execute(
         'UPDATE $table SET $columnLastBlock = ? WHERE $columnAddress = ?',
         [lastBlock, address]);
   }
 
-  XchainModel? get(String address) {
+  XchainModel? get(Uint8List address) {
     List<XchainModel> results =
         _select(whereStmt: 'WHERE $columnAddress = "$address"');
     return results.isNotEmpty ? results.single : null;
