@@ -17,14 +17,14 @@
 /// Keychain is recommended for iOS and MacOS.
 /// See https://developer.apple.com/documentation/security/keychain_services
 ///
-/// For Linux libscret is a reliable option.
+/// For Linux libsecret is a reliable option.
 /// See https://gitlab.gnome.org/GNOME/libsecret
 ///
 /// In JavaScript web environments the recommendation is WebCrypto with HTST enabled.
 /// See https://developer.mozilla.org/pt-BR/docs/Web/API/Web_Crypto_API
 ///
-/// In other enviroments, use equivalent implementations of the recommended ones.
-abstract class KeysInterface {
+/// In other environments, use equivalent implementations of the recommended ones.
+abstract class KeyInterface {
   Future<void> write({required String key, required String value});
 
   Future<String?> read({required String key});

@@ -11,14 +11,14 @@ import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/node/block/block_repository.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
+import 'package:tiki_sdk_dart/node/keys/key_model.dart';
+import 'package:tiki_sdk_dart/node/keys/key_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_repository.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
-import '../../in_mem_keys.dart';
 import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
 
+import '../../in_mem_keys.dart';
 import '../node_test_helpers.dart';
 
 void main() {

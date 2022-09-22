@@ -11,18 +11,15 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../utils/utils.dart';
-import 'backup/backup_service.dart';
 import 'block/block_model.dart';
 import 'block/block_service.dart';
-import 'keys/keys_service.dart';
-import 'l0_storage/l0_storage_service.dart';
+import 'key/key_service.dart';
 import 'transaction/transaction_service.dart';
 import 'wasabi/wasabi_service.dart';
-import 'xchain/xchain_service.dart';
 
 export './backup/backup_service.dart';
 export './block/block_service.dart';
-export './keys/keys_service.dart';
+export './key/key_service.dart';
 export './l0_storage/l0_storage_service.dart';
 export './transaction/transaction_service.dart';
 export './wasabi/wasabi_service.dart';
@@ -32,25 +29,28 @@ export './xchain/xchain_service.dart';
 /// blockchain locally, persist blocks and syncing with remote backup and other
 /// blockchains in the network.
 class NodeService {
-  static const scheme = "tiki://";
+  late final KeyModel _primaryKey;
 
-  late final BackupService _backupService;
-  late final BlockService _blockService;
-  late final KeysService _keysService;
-  late final TransactionService _transactionService;
-  late final WasabiService _wasabiService;
-  late final KeysModel _keys;
-  late final XchainService _xchainService;
+  final TransactionService _transactionService;
+  final BlockService _blockService;
+  final KeyService _keyService;
+  final WasabiService _wasabiService;
+  final Duration _blockInterval;
 
-  Timer? _blkTimer;
-  late final Duration _blkInterval;
+  CryptoRSAPublicKey get publicKey => _primaryKey.privateKey.public;
 
-  CryptoRSAPublicKey get publicKey => _keys.privateKey.public;
+  NodeService(String apiKey, Database database, KeyInterface keysInterface,
+      {blockInterval = const Duration(minutes: 1)})
+      : _transactionService = TransactionService(database),
+        _blockService = BlockService(database),
+        _wasabiService = WasabiService(),
+        _keyService = KeyService(keysInterface),
+        _blockInterval = blockInterval;
 
-  /// Initialzes de service
+  /// Initialize the service
   ///
-  /// All the related chains addresses should be addded to [addresses] list as
-  /// [base64Url] representation of the adress.
+  /// All the related chains addresses should be added to [addresses] list as
+  /// [base64Url] representation of the address.
   ///
   /// The first address in the [addresses] list for which [keysInterface] has a private
   /// key is the one that will be used for read and write operations.
@@ -80,11 +80,11 @@ class NodeService {
   ///
   /// Keychain is recommended for iOS and MacOS.
   ///
-  /// For Linux libscret is a reliable option.
+  /// For Linux libsecret is a reliable option.
   ///
   /// In JavaScript web environments the recommendation is WebCrypto with HTST enabled.
   ///
-  /// In other enviroments, use equivalent implementations of the recommended ones.
+  /// In other environments, use equivalent implementations of the recommended ones.
   ///
   /// The [NodeService] uses a internal [Timer] to build a new [BlockModel] every
   /// [blkInterval]. The default value is 1 minute. If there are any [TransactionModel]
@@ -92,22 +92,21 @@ class NodeService {
   /// [BlockModel] if the last [TransactionModel] was created before 1 minute ago
   /// or if the total size of the serialized transactions is greater than 100kb.
   Future<NodeService> init(
-      {required String apiKey,
-      required Database database,
-      required KeysInterface keysInterface,
-      List<String> addresses = const [],
-      blkInterval = const Duration(minutes: 1)}) async {
-    _blkInterval = blkInterval;
-    _keysService = KeysService(keysInterface);
-    _transactionService = TransactionService(database);
-    _blockService = BlockService(database);
+      {String? primary, List<String> addresses = const []}) async {
+    await _loadPrimaryKey(primary);
 
-    await _loadKeysAndChains(addresses);
+    List<TransactionModel> transactions = _transactionService.getPending();
+    if (transactions.isNotEmpty &&
+        transactions.last.timestamp
+            .isBefore(DateTime.now().subtract(_blockInterval))) {
+      await _createBlock(transactions);
+    }
 
-    _wasabiService = WasabiService();
-    _backupService = BackupService(
+    _startBlockTimer();
+
+    /*_backupService = BackupService(
         base64.encode(_keys.address),
-        _keysService,
+        _keyService,
         _blockService,
         _transactionService,
         _wasabiService,
@@ -118,7 +117,7 @@ class NodeService {
 
     await _createBlock();
 
-    _setBlkTimer();
+    _setBlkTimer();*/
 
     return this;
   }
@@ -130,65 +129,52 @@ class NodeService {
   /// the oldest transaction was created more than [_blkInterval] duration or
   /// if there are more than 200 [TransactionModel] waiting to be added to a
   /// [BlockModel].
-  TransactionModel write(Uint8List contents) {
-    TransactionModel txn =
-        _transactionService.build(keys: _keys, contents: contents);
-    _createBlock();
-    return txn;
+  Future<TransactionModel> write(Uint8List contents) async {
+    TransactionModel transaction =
+        _transactionService.create(contents, _primaryKey);
+    List<TransactionModel> transactions = _transactionService.getPending();
+    if (transactions.length >= 200) {
+      await _createBlock(transactions);
+    }
+    return transaction;
   }
 
-  List<TransactionModel> getTransactionsByBlockId(String blockId) =>
-      _transactionService.getByBlock(base64.decode(blockId));
+  Future<void> _loadPrimaryKey(String? address) async {
+    if (address != null) {
+      KeyModel? key = await _keyService.get(address);
+      if (key != null) {
+        _primaryKey = key;
+        return;
+      }
+    }
+    _primaryKey = await _keyService.create();
+  }
 
-  // TODO dont create functions just for testing.
-  BlockModel? getLastBlock() => _blockService.getLast();
-
-  BlockModel? getBlockById(String blockId) => _blockService.get(blockId);
-
-  Future<void> _createBlock() async {
-    List<TransactionModel> txns = _transactionService.getPending();
-    if (txns.isNotEmpty) {
-      DateTime lastCreated = txns.last.timestamp;
-      DateTime oneMinAgo = DateTime.now().subtract(_blkInterval);
-      if (lastCreated.isBefore(oneMinAgo) || txns.length >= 200) {
-        List<Uint8List> hashes = txns.map((e) => e.id!).toList();
-        MerkelTree merkelTree = MerkelTree.build(hashes);
-        Uint8List transactionRoot = merkelTree.root!;
-        BlockModel blk = _blockService.build(txns, transactionRoot);
-        for (TransactionModel transaction in txns) {
-          transaction.block = blk;
-          transaction.merkelProof = merkelTree.proofs[transaction.id];
-          _transactionService.commit(transaction);
+  void _startBlockTimer() => Timer.periodic(_blockInterval, (_) async {
+        List<TransactionModel> transactions = _transactionService.getPending();
+        if (transactions.isNotEmpty) {
+          await _createBlock(transactions);
         }
-        _blockService.commit(blk);
-        await _backupService.write(base64Url.encode(blk.id!));
-      }
-      if (_blkTimer == null || !_blkTimer!.isActive) _setBlkTimer();
+        _startBlockTimer();
+      });
+
+  Future<void> _createBlock(List<TransactionModel> transactions) async {
+    List<Uint8List> hashes = transactions.map((e) => e.id!).toList();
+    MerkelTree merkelTree = MerkelTree.build(hashes);
+    BlockModel header = _blockService.create(merkelTree.root!);
+
+    BytesBuilder bytes = BytesBuilder();
+    bytes.add(header.serialize());
+    bytes.add(UtilsBytes.encodeBigInt(BigInt.from(transactions.length)));
+
+    for (TransactionModel transaction in transactions) {
+      transaction.block = header;
+      transaction.merkelProof = merkelTree.proofs[transaction.id];
+      _transactionService.commit(transaction);
+      bytes.add(UtilsCompactSize.encode(transaction.serialize()));
     }
-  }
+    _blockService.commit(header);
 
-  Future<void> _loadKeysAndChains(List<String> addresses) async {
-    for (String address in addresses) {
-      KeysModel? keys = await _keysService.get(address);
-      if (keys != null) {
-        _keys = keys;
-      } else {
-        _loadChain(address);
-      }
-    }
-    _keys = await _keysService.create();
-  }
-
-  Future<void> _loadChain(String address) async {
-    /// TODO
-    /// 1. load the chain public key from wasabi
-    /// 2. call xchainservice.add
-    /// what should be the action if the keys fetch fail?
-    /// - skip chain and try to load again when it is referred
-    /// - throw an error
-  }
-
-  void _setBlkTimer() {
-    _blkTimer = Timer.periodic(_blkInterval, (_) => _createBlock());
+    //backup block
   }
 }

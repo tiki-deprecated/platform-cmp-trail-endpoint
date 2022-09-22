@@ -10,7 +10,6 @@ import 'package:pointycastle/api.dart';
 import '../../utils/utils.dart';
 import 'block_repository.dart';
 
-//TODO this can be treated as just the block header. remove txn count entirely.
 /// The block model entity for local storage.
 ///
 /// This model is used only for local operations. For blockchain operations the
@@ -33,9 +32,6 @@ class BlockModel {
   /// The [MerkelTree.root] of the [TransactionModel] hashes taht are part of this.
   late Uint8List transactionRoot;
 
-  /// The total number of [TransactionModel] that are part of this.
-  late int transactionCount;
-
   /// The block creation timestamp.
   late final DateTime timestamp;
 
@@ -47,11 +43,8 @@ class BlockModel {
     this.version = 1,
     required this.previousHash,
     required this.transactionRoot,
-    required this.transactionCount,
-    timestamp,
-  }) {
-    this.timestamp = timestamp ?? DateTime.now();
-  }
+    DateTime? timestamp,
+  }) : timestamp = timestamp ?? DateTime.now();
 
   /// Builds a [BlockModel] from a [map].
   ///
@@ -71,44 +64,22 @@ class BlockModel {
         version = map[BlockRepository.columnVersion],
         previousHash = map[BlockRepository.columnPreviousHash],
         transactionRoot = map[BlockRepository.columnTransactionRoot],
-        transactionCount = map[BlockRepository.columnTransactionCount],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
             map[BlockRepository.columnTimestamp] * 1000);
 
-  //TODO this is weird, as it only deserializes part of the object.
   /// Builds a [BlockModel] from a [serialized] list of bytes.
   ///
   /// Check [serialize] for more information on how the [serialized] is built.
-  BlockModel.deserialize(Uint8List serialized) {
-    List<Uint8List> extractedBlockBytes = UtilsCompactSize.decode(serialized);
+  BlockModel.deserialize(Uint8List block) {
+    List<Uint8List> extractedBlockBytes = UtilsCompactSize.decode(block);
     version = UtilsBytes.decodeBigInt(extractedBlockBytes[0]).toInt();
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         UtilsBytes.decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
     previousHash = extractedBlockBytes[2];
     transactionRoot = extractedBlockBytes[3];
-    transactionCount = UtilsBytes.decodeBigInt(extractedBlockBytes[4]).toInt();
-    if (extractedBlockBytes.sublist(5).length != transactionCount) {
-      throw Exception(
-          'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
-    }
-    id = Digest("SHA3-256").process(header());
+    id = Digest("SHA3-256").process(serialize());
   }
 
-  //TODO this doesn't belong in the model if you have to pass in the body to do it.
-  /// Creates a [Uint8List] representation of the block.
-  ///
-  /// The serialized [BlockModel] is created by combining in a [Uint8List] the
-  /// [BlockModel.header] and the block [body], that is built from the
-  /// [TransactionModel] list by [TransactionService.serializeTransactions].
-  Uint8List serialize(Uint8List body) {
-    Uint8List head = header();
-    return (BytesBuilder()
-          ..add(head)
-          ..add(body))
-        .toBytes();
-  }
-
-  //TODO the header doesn't normally have the txn count. the txn count is in the body.
   /// Creates the [Uint8List] representation of the block header.
   ///
   /// The block header is represented by a [Uint8List] of the block properties.
@@ -124,11 +95,9 @@ class BlockModel {
   ///   ...previousHash,
   ///   ...UtilsCompactSize.toSize(transactionRoot),
   ///   ...transactionRoot,
-  ///   ...UtilsCompactSize.toSize(transactionCount),
-  ///   ...transactionCount,
   /// ]);
   /// ```
-  Uint8List header() {
+  Uint8List serialize() {
     Uint8List serializedVersion = UtilsBytes.encodeBigInt(BigInt.from(version));
     Uint8List serializedTimestamp = (BytesBuilder()
           ..add(UtilsBytes.encodeBigInt(
@@ -136,8 +105,7 @@ class BlockModel {
         .toBytes();
     Uint8List serializedPreviousHash = previousHash;
     Uint8List serializedTransactionRoot = transactionRoot;
-    Uint8List serializedTransactionCount =
-        UtilsBytes.encodeBigInt(BigInt.from(transactionCount));
+    ;
     return (BytesBuilder()
           ..add(UtilsCompactSize.toSize(serializedVersion))
           ..add(serializedVersion)
@@ -146,20 +114,18 @@ class BlockModel {
           ..add(UtilsCompactSize.toSize(serializedPreviousHash))
           ..add(serializedPreviousHash)
           ..add(UtilsCompactSize.toSize(serializedTransactionRoot))
-          ..add(serializedTransactionRoot)
-          ..add(UtilsCompactSize.toSize(serializedTransactionCount))
-          ..add(serializedTransactionCount))
+          ..add(serializedTransactionRoot))
         .toBytes();
   }
 
   /// Overrides toString() method for useful error messages
   @override
-  String toString() => '''BlockModel
+  String toString() => '''
+      BlockModel - 
       'id': $id,
       'version': $version,
       'previousHash': $previousHash,
       'transactionRoot': $transactionRoot,
-      'transactionCount': $transactionCount,
       'timestamp': $timestamp
     ''';
 }
