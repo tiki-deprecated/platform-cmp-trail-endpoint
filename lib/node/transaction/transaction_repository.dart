@@ -98,10 +98,10 @@ class TransactionRepository {
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(
       whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
-          : "WHERE $columnBlockId = '$id'");
+          : "WHERE $columnBlockId = ?", 
+      params: id == null ? [] : [id]);
 
-  List<TransactionModel> _select(
-      {String? whereStmt, int? page, int pageSize = 100}) {
+  List<TransactionModel> _select({String? whereStmt, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT 
         $table.$columnId as '$table.$columnId',
@@ -121,10 +121,9 @@ class TransactionRepository {
       FROM $table
       LEFT JOIN ${BlockRepository.table}
       ON $table.$columnBlockId = ${BlockRepository.table}.${BlockRepository.columnId}
-      ORDER BY oid ASC
       ${whereStmt ?? ''}
-      ${page == null ? '' : 'LIMIT ${page * pageSize},$pageSize'};
-      ''');
+      ORDER BY $table.rowid ASC
+      ''', params);
     List<TransactionModel> transactions = [];
     for (final Row row in results) {
       Map<String, dynamic>? blockMap =
@@ -143,7 +142,7 @@ class TransactionRepository {
                       row['${BlockRepository.table}.$columnTimestamp'],
                 };
       Map<String, dynamic>? transactionMap = {
-        columnId: base64.decode(row['$table.$columnId']),
+        columnId: row['$table.$columnId'],
         columnMerkelProof: row['$table.$columnMerkelProof'],
         columnVersion: row['$table.$columnVersion'],
         columnAddress: row['$table.$columnAddress'],

@@ -182,4 +182,6 @@ class NodeService {
     }
     return bytes.toBytes();
   }
+
+  BlockModel? getLastBlock() => _blockService.last();
 }

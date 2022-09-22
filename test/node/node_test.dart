@@ -1,12 +1,8 @@
-import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:pointycastle/api.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/utils/bytes.dart';
 
 import '../in_mem_keys.dart';
 
@@ -16,13 +12,13 @@ void main() {
     Database db = sqlite3.openInMemory();
     test('create keys', () async {
       NodeService nodeService = await NodeService()
-          .init(database: db, apiKey: apiId, keysInterface: InMemoryKeys());
+          .init(apiId, db, InMemoryKeys());
       expect(nodeService.publicKey.encode().isNotEmpty, true);
     });
     test('create transactions', () async {
       NodeService nodeService = await NodeService()
-          .init(database: db, apiKey: apiId, keysInterface: InMemoryKeys());
-      TransactionModel txn =
+          .init(apiId, db, InMemoryKeys());
+      TransactionModel txn = await
           nodeService.write(Uint8List.fromList('test contents'.codeUnits));
       expect(txn.id != null, true);
       expect(
@@ -30,15 +26,13 @@ void main() {
       expect(TransactionService.validateIntegrity(txn), true);
     });
     test('create block by transactions count', () async {
-      NodeService nodeService = await NodeService().init(
-          blkInterval: const Duration(seconds: 20),
-          database: db,
-          apiKey: apiId,
-          keysInterface: InMemoryKeys());
+       NodeService nodeService = await NodeService()
+          .init(apiId, db, InMemoryKeys(),
+          blockInterval: const Duration(seconds: 20));
       int count = 0;
       List<TransactionModel> transactions = [];
       while (transactions.length < 200) {
-        TransactionModel txn = nodeService
+        TransactionModel txn = await nodeService
             .write(Uint8List.fromList('test contents $count'.codeUnits));
         count++;
         transactions.add(txn);
@@ -46,20 +40,14 @@ void main() {
       await Future.delayed(const Duration(seconds: 5));
       BlockModel? block = nodeService.getLastBlock();
       expect(block != null, true);
-      List<TransactionModel> txns =
-          nodeService.getTransactionsByBlockId(base64.encode(block!.id!));
-      expect(txns.length, transactions.length);
     });
     test('create block by last transaction creation time', () async {
-      NodeService nodeService = await NodeService().init(
-          blkInterval: const Duration(seconds: 5),
-          database: db,
-          apiKey: apiId,
-          keysInterface: InMemoryKeys());
+       NodeService nodeService = await NodeService().init(apiId, db, InMemoryKeys(),
+          blockInterval: const Duration(seconds: 5));
       int size = 0;
       List<TransactionModel> transactions = [];
       while (transactions.length < 10) {
-        TransactionModel txn = nodeService
+        TransactionModel txn = await nodeService
             .write(Uint8List.fromList('test contents $size'.codeUnits));
         size += txn.serialize().buffer.lengthInBytes;
         transactions.add(txn);
@@ -67,73 +55,6 @@ void main() {
       await Future.delayed(const Duration(seconds: 10));
       BlockModel? block = nodeService.getLastBlock();
       expect(block != null, true);
-      List<TransactionModel> txns =
-          nodeService.getTransactionsByBlockId(base64.encode(block!.id!));
-      expect(txns.length, transactions.length);
-      for (int i = 0; i < txns.length; i++) {
-        expect(txns[i].id!, transactions[i].id!);
-      }
-    });
-    test('create keys, backup and retrieve', () async {
-      InMemoryKeys inMemoryKeys = InMemoryKeys();
-      NodeService nodeService = await NodeService()
-          .init(database: db, apiKey: apiId, keysInterface: inMemoryKeys);
-      KeysService keysService = KeysService(inMemoryKeys);
-      KeysModel? keys = await keysService.get(base64.encode(Digest("SHA3-256")
-          .process(base64.decode(nodeService.publicKey.encode()))));
-      WasabiService wasabiService = WasabiService();
-      Uint8List publicKey = await wasabiService.read('public.key');
-      expect(base64.encode(publicKey), keys!.privateKey.public.encode());
-    });
-    test('create block, backup and retrieve', () async {
-      InMemoryKeys inMemoryKeys = InMemoryKeys();
-      NodeService nodeService = await NodeService().init(
-          blkInterval: const Duration(seconds: 5),
-          database: db,
-          apiKey: apiId,
-          keysInterface: inMemoryKeys);
-      int size = 0;
-      List<TransactionModel> transactions = [];
-      while (transactions.length < 10) {
-        TransactionModel txn = nodeService
-            .write(Uint8List.fromList('test contents $size'.codeUnits));
-        size += txn.serialize().buffer.lengthInBytes;
-        transactions.add(txn);
-      }
-      BlockModel? block;
-      while (block == null) {
-        block = nodeService.getLastBlock();
-      }
-    });
-
-    test('create chain', () async {
-      InMemoryKeys inMemoryKeys = InMemoryKeys();
-      NodeService nodeService = await NodeService().init(
-          blkInterval: const Duration(seconds: 1),
-          database: db,
-          apiKey: apiId,
-          keysInterface: inMemoryKeys);
-      for (int i = 0; i < 10; i++) {
-        int total = Random().nextInt(200);
-        List<TransactionModel> transactions = [];
-        for (int j = 0; j < total; j++) {
-          TransactionModel txn = nodeService
-              .write(Uint8List.fromList('test contents $j$i'.codeUnits));
-          transactions.add(txn);
-        }
-        await Future.delayed(const Duration(seconds: 1));
-      }
-      BlockModel block = nodeService.getLastBlock()!;
-      int count = 0;
-      while (!UtilsBytes.memEquals(block.previousHash, Uint8List(1))) {
-        List<TransactionModel> txns =
-            nodeService.getTransactionsByBlockId(base64.encode(block.id!));
-        expect(txns.isNotEmpty, true);
-        block = (await nodeService
-            .getBlockById(base64.encode(block.previousHash)))!;
-        count++;
-      }
-      expect(count > 1, true);
     });
   });
 }
