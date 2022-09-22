@@ -4,6 +4,7 @@
  */
 /// {@category Node}
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
@@ -44,9 +45,9 @@ class BlockRepository {
   /// It calls [createTable] to make sure the table exists.
   void createTable() => _db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
-      $columnId TEXT PRIMARY KEY NOT NULL,
+      $columnId BLOB PRIMARY KEY NOT NULL,
       $columnVersion INTEGER NOT NULL,
-      $columnPreviousHash TEXT,
+      $columnPreviousHash BLOB,
       $columnTransactionRoot BLOB,
       $columnTimestamp INTEGER);
     ''');
@@ -56,17 +57,17 @@ class BlockRepository {
     INSERT INTO $table 
     VALUES (?, ?, ?, ?, ?, ?);
     ''', [
-        base64.encode([...block.id!]),
+        block.id,
         block.version,
-        base64.encode([...block.previousHash]),
+        block.previousHash,
         block.transactionRoot,
         block.timestamp.millisecondsSinceEpoch
       ]);
 
   /// Gets a [BlockModel] by its [BlockModel.id].
-  BlockModel? getById(String id) {
+  BlockModel? getById(Uint8List id) {
     List<BlockModel> blocks =
-        _select(whereStmt: "WHERE $table.$columnId = '$id'");
+        _select(whereStmt: "WHERE $table.$columnId = x'$id'");
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 

@@ -11,6 +11,7 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../utils/utils.dart';
+import 'backup/backup_service.dart';
 import 'block/block_model.dart';
 import 'block/block_service.dart';
 import 'key/key_service.dart';
@@ -29,23 +30,15 @@ export './xchain/xchain_service.dart';
 /// blockchain locally, persist blocks and syncing with remote backup and other
 /// blockchains in the network.
 class NodeService {
+  late final TransactionService _transactionService;
+  late final BlockService _blockService;
+  late final KeyService _keyService;
+  late final WasabiService _wasabiService;
+  late final Duration _blockInterval;
   late final KeyModel _primaryKey;
-
-  final TransactionService _transactionService;
-  final BlockService _blockService;
-  final KeyService _keyService;
-  final WasabiService _wasabiService;
-  final Duration _blockInterval;
+  late final BackupService _backupService;
 
   CryptoRSAPublicKey get publicKey => _primaryKey.privateKey.public;
-
-  NodeService(String apiKey, Database database, KeyInterface keysInterface,
-      {blockInterval = const Duration(minutes: 1)})
-      : _transactionService = TransactionService(database),
-        _blockService = BlockService(database),
-        _wasabiService = WasabiService(),
-        _keyService = KeyService(keysInterface),
-        _blockInterval = blockInterval;
 
   /// Initialize the service
   ///
@@ -91,9 +84,30 @@ class NodeService {
   /// in the [database] that was not added to a [BlockModel] yet, it creates a new
   /// [BlockModel] if the last [TransactionModel] was created before 1 minute ago
   /// or if the total size of the serialized transactions is greater than 100kb.
+  ///
   Future<NodeService> init(
-      {String? primary, List<String> addresses = const []}) async {
+      String apiId, Database database, KeyInterface keysInterface,
+      {String? primary,
+      List<String> readOnly = const [],
+      blockInterval = const Duration(minutes: 1)}) async {
+    _transactionService = TransactionService(database);
+    _blockService = BlockService(database);
+    _wasabiService = WasabiService();
+    _keyService = KeyService(keysInterface);
+    _blockInterval = blockInterval;
+
     await _loadPrimaryKey(primary);
+
+    _backupService =
+        BackupService(_wasabiService, database, apiId, _primaryKey, (id) {
+      BlockModel? header = _blockService.get(id);
+      if (header == null) return null;
+
+      List<TransactionModel> transactions = _transactionService.getByBlock(id);
+      if (transactions.isEmpty) return null;
+
+      return _serializeBlock(header, transactions);
+    });
 
     List<TransactionModel> transactions = _transactionService.getPending();
     if (transactions.isNotEmpty &&
@@ -103,22 +117,6 @@ class NodeService {
     }
 
     _startBlockTimer();
-
-    /*_backupService = BackupService(
-        base64.encode(_keys.address),
-        _keyService,
-        _blockService,
-        _transactionService,
-        _wasabiService,
-        L0StorageService(apiKey, _keys.privateKey),
-        database);
-
-    await _backupService.write('public.key');
-
-    await _createBlock();
-
-    _setBlkTimer();*/
-
     return this;
   }
 
@@ -163,18 +161,23 @@ class NodeService {
     MerkelTree merkelTree = MerkelTree.build(hashes);
     BlockModel header = _blockService.create(merkelTree.root!);
 
-    BytesBuilder bytes = BytesBuilder();
-    bytes.add(header.serialize());
-    bytes.add(UtilsBytes.encodeBigInt(BigInt.from(transactions.length)));
-
     for (TransactionModel transaction in transactions) {
       transaction.block = header;
       transaction.merkelProof = merkelTree.proofs[transaction.id];
       _transactionService.commit(transaction);
-      bytes.add(UtilsCompactSize.encode(transaction.serialize()));
     }
     _blockService.commit(header);
+    _backupService.block(header.id!);
+  }
 
-    //backup block
+  Uint8List? _serializeBlock(
+      BlockModel header, List<TransactionModel> transactions) {
+    BytesBuilder bytes = BytesBuilder();
+    bytes.add(header.serialize());
+    bytes.add(UtilsBytes.encodeBigInt(BigInt.from(transactions.length)));
+    for (TransactionModel transaction in transactions) {
+      bytes.add(UtilsCompactSize.encode(transaction.serialize()));
+    }
+    return bytes.toBytes();
   }
 }

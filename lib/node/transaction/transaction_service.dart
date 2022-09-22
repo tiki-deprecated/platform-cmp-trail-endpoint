@@ -69,8 +69,8 @@ class TransactionService {
           transaction.signature!);
 
   /// Gets all the transactions from a [BlockModel] by its [BlockModel.id].
-  List<TransactionModel> getByBlock(Uint8List blockId) =>
-      _repository.getByBlockId(blockId);
+  List<TransactionModel> getByBlock(Uint8List id) =>
+      _repository.getByBlockId(id);
 
   /// Gets all the transactions that were not committed by [commit].
   List<TransactionModel> getPending() => _repository.getByBlockId(null);

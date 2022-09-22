@@ -11,7 +11,7 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import '../../utils/utils.dart';
+import '../../utils/rsa/rsa.dart';
 import '../node_service.dart';
 
 export 'backup_model.dart';
@@ -19,83 +19,73 @@ export 'backup_repository.dart';
 
 /// A service to handle the backup requests to [WasabiService].
 class BackupService {
-  final String _address;
   final BackupRepository _repository;
   final WasabiService _wasabiService;
   final L0StorageService _l0storageService;
-  final KeysService _keysService;
-  final BlockService _blockService;
-  final TransactionService _transactionService;
+  final KeyModel _key;
+  final Uint8List? Function(Uint8List) _getBlock;
 
-  L0StorageModelPolicyRsp? policy;
+  L0StorageModelPolicyRsp? _policy;
 
-  /// Creates a [BackupService] to handle backup requests to [_wasabiService] at
-  /// the chain identified by [_address].
-  ///
-  /// It uses [_blockService] and [_transactionService] to build the serialized
-  /// [BlockModel] that will be uploaded, and [_keysService] for the the public key.
-  BackupService(
-      this._address,
-      this._keysService, //TODO Why not just provide the key on construct?
-      this._blockService, //TODO this is odd. likely better off as a f(x)
-      this._transactionService, //TODO this is odd. likely better off as a f(x)
-      this._wasabiService,
-      this._l0storageService, //TODO If you provide the keys on construct, you can construct l0 too.
-      Database db)
-      : _repository = BackupRepository(db) {
-    _writePending();
-    _l0storageService.policy().then((policy) => this.policy = policy);
+  BackupService(this._wasabiService, Database database, String apiId, this._key,
+      this._getBlock)
+      : _repository = BackupRepository(database),
+        _l0storageService = L0StorageService(apiId) {
+    String keyBackupPath = '${base64UrlEncode(_key.address)}/public.key';
+    BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
+
+    if (keyBackup == null) {
+      keyBackup = BackupModel(path: keyBackupPath);
+      _repository.save(keyBackup);
+    }
+
+    if (keyBackup.timestamp == null) {
+      Uint8List obj = base64.decode(_key.privateKey.public.encode());
+      _writeWasabi('public.key', obj);
+      keyBackup.timestamp = DateTime.now();
+      _repository.update(keyBackup);
+    }
+
+    _pending();
   }
 
-  /// Records a request to write the asset defined by the [path] to [_wasabiService].
-  ///
-  /// The request is received by [BackupService] and is added to the database.
-  /// Afterwards it calls [_writePending] that will query the database for any
-  /// [BackupModel] that was not processed yet and process it in FIFO order.
-  /// TODO check if the path is already in the repository to avoid duplicates
-  Future<void> write(String path) async {
-    BackupModel bkpModel = BackupModel(path: path);
+  Future<void> block(Uint8List id) async {
+    String b64address = base64UrlEncode(_key.address);
+    BackupModel bkpModel =
+        BackupModel(path: '$b64address/${base64UrlEncode(id)}.block');
     _repository.save(bkpModel);
-    await _writePending();
+    return _pending();
   }
 
-  Future<void> _writePending() async {
+  Future<void> _pending() async {
+    String b64address = base64UrlEncode(_key.address);
     List<BackupModel> pending = _repository.getPending();
     if (pending.isNotEmpty) {
-      KeysModel keys = (await _keysService.get(_address))!;
-      for (BackupModel bkp in pending) {
-        Uint8List obj;
-        if (bkp.path == 'public.key') {
-          obj = base64.decode(keys.privateKey.public.encode());
-        } else {
-          BlockModel? block = _blockService.get(bkp.path);
-          if (block == null) continue;
-          Uint8List body = _transactionService
-              .serializeTransactions(base64.encode(block.id!));
-          Uint8List serializedBlock = block.serialize(body);
-          bkp.signature = UtilsRsa.sign(keys.privateKey, serializedBlock);
-          bkp.path = '${bkp.path}.block';
-          obj = (BytesBuilder()
-                ..add(bkp.signature!)
-                ..add(serializedBlock))
-              .toBytes();
+      for (BackupModel backup in pending) {
+        if (backup.path.startsWith(b64address)) {
+          String noAddress = backup.path.replaceFirst('$b64address/', '');
+          String id = noAddress.substring(0, noAddress.length - 6);
+          Uint8List? block = _getBlock(base64Decode(id));
+          if (block != null) {
+            Uint8List signedBlock = UtilsRsa.sign(_key.privateKey, block);
+            await _writeWasabi('$id.block', signedBlock);
+            backup.timestamp = DateTime.now();
+            _repository.update(backup);
+          }
         }
-        await _writeWasabi(bkp.path, obj);
-        bkp.timestamp = DateTime.now();
-        _repository.update(bkp);
       }
     }
   }
 
   Future<void> _writeWasabi(String filename, Uint8List obj) async {
-    policy ??= await _l0storageService.policy();
+    _policy ??= await _l0storageService.policy(_key.privateKey);
     try {
-      await _wasabiService.write('${policy!.keyPrefix}', obj,
-          fields: policy!.fields!);
+      await _wasabiService.write('${_policy!.keyPrefix}$filename', obj,
+          fields: _policy!.fields!);
     } on WasabiExceptionExpired catch (_) {
-      policy = await _l0storageService.policy();
-      await _wasabiService.write('${policy!.keyPrefix}', obj,
-          fields: policy!.fields!);
+      _policy = await _l0storageService.policy(_key.privateKey);
+      await _wasabiService.write('${_policy!.keyPrefix}$filename', obj,
+          fields: _policy!.fields!);
     }
   }
 }

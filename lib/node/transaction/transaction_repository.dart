@@ -59,15 +59,15 @@ class TransactionRepository {
   /// Creates the [TransactionRepository.table] if it does not exist.
   void _createTable() => _db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
-      $columnId STRING PRIMARY KEY NOT NULL,
+      $columnId BLOB PRIMARY KEY NOT NULL,
       $columnMerkelProof BLOB,
       $columnVersion INTEGER NOT NULL,
       $columnAddress BLOB NOT NULL,
       $columnContents BLOB NOT NULL,
       $columnAssetRef TEXT NOT NULL,
-      $columnBlockId TEXT, 
+      $columnBlockId BLOB, 
       $columnTimestamp INTEGER NOT NULL,
-      $columnSignature TEXT NOT NULL); 
+      $columnSignature BlOB NOT NULL); 
     ''');
 
   /// Persists a [transaction] in [_db].
@@ -75,13 +75,13 @@ class TransactionRepository {
     INSERT INTO $table 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     ''', [
-        base64.encode(transaction.id!),
+        transaction.id,
         transaction.merkelProof,
         transaction.version,
         transaction.address,
         transaction.contents,
         transaction.assetRef,
-        transaction.block == null ? null : "'${transaction.block!.id}'",
+        transaction.block?.id,
         transaction.timestamp.millisecondsSinceEpoch,
         transaction.signature,
       ]);
@@ -91,18 +91,14 @@ class TransactionRepository {
   void commit(TransactionModel transaction) => _db.execute('''
     UPDATE $table 
     SET $columnMerkelProof = ?, $columnBlockId = ? 
-    WHERE $columnId = ?;
-    ''', [
-        transaction.merkelProof,
-        base64.encode(transaction.block!.id!),
-        base64.encode(transaction.id!),
-      ]);
+    WHERE $columnId = x'${transaction.id}';
+    ''', [transaction.merkelProof, transaction.block!.id!]);
 
   /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
-  List<TransactionModel> getByBlockId(Uint8List? blockId) => _select(
-      whereStmt: blockId == null
+  List<TransactionModel> getByBlockId(Uint8List? id) => _select(
+      whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
-          : 'WHERE $columnBlockId = "${base64.encode(blockId)}"');
+          : "WHERE $columnBlockId = x'$id'");
 
   List<TransactionModel> _select(
       {String? whereStmt, int? page, int pageSize = 100}) {
