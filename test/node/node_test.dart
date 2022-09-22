@@ -12,23 +12,23 @@ void main() {
   group('Node tests', () {
     Database db = sqlite3.openInMemory();
     test('create keys', () async {
-      NodeService nodeService = await NodeService()
-          .init(apiId, db, InMemoryKeys(), InMemBackup());
+      NodeService nodeService =
+          await NodeService().init(apiId, db, InMemoryKeys(), InMemBackup());
       expect(nodeService.publicKey.encode().isNotEmpty, true);
     });
     test('create transactions', () async {
-      NodeService nodeService = await NodeService()
-          .init(apiId, db, InMemoryKeys(), InMemBackup());
-      TransactionModel txn = await
-          nodeService.write(Uint8List.fromList('test contents'.codeUnits));
+      NodeService nodeService =
+          await NodeService().init(apiId, db, InMemoryKeys(), InMemBackup());
+      TransactionModel txn = await nodeService
+          .write(Uint8List.fromList('test contents'.codeUnits));
       expect(txn.id != null, true);
       expect(
           TransactionService.validateAuthor(txn, nodeService.publicKey), true);
       expect(TransactionService.validateIntegrity(txn), true);
     });
     test('create block by transactions count', () async {
-       NodeService nodeService = await NodeService()
-          .init(apiId, db, InMemoryKeys(), InMemBackup(),
+      NodeService nodeService = await NodeService().init(
+          apiId, db, InMemoryKeys(), InMemBackup(),
           blockInterval: const Duration(seconds: 20));
       int count = 0;
       List<TransactionModel> transactions = [];
@@ -43,7 +43,8 @@ void main() {
       expect(block != null, true);
     });
     test('create block by last transaction creation time', () async {
-       NodeService nodeService = await NodeService().init(apiId, db, InMemoryKeys(), InMemBackup(),
+      NodeService nodeService = await NodeService().init(
+          apiId, db, InMemoryKeys(), InMemBackup(),
           blockInterval: const Duration(seconds: 5));
       int size = 0;
       List<TransactionModel> transactions = [];

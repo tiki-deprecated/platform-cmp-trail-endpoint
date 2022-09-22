@@ -19,7 +19,7 @@ class CryptoRSAPublicKey extends RSAPublicKey {
   CryptoRSAPublicKey(BigInt modulus, BigInt exponent)
       : super(modulus, exponent);
 
- Uint8List get bytes {
+  Uint8List get bytes {
     ASN1Sequence sequence = ASN1Sequence();
     ASN1Sequence algorithm = ASN1Sequence();
     ASN1Object paramsAsn1Obj =

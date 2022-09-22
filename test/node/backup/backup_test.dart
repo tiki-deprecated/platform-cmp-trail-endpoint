@@ -24,7 +24,6 @@ void main() async {
   group('backup tests', () {
     test('backup repository test, retrieve all', () {
       BackupRepository repository = BackupRepository(db);
-      BlockService blockService = BlockService(db);
       BlockModel blk = BlockModel(
           version: 1,
           previousHash: Uint8List.fromList(

@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
@@ -68,8 +67,7 @@ class BlockRepository {
   BlockModel? getById(Uint8List id, {Uint8List? xchainAddress}) {
     String where = "WHERE $table.$columnId = ?";
     List params = [id];
-    List<BlockModel> blocks =
-        _select(whereStmt: where, params: params);
+    List<BlockModel> blocks = _select(whereStmt: where, params: params);
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
@@ -79,7 +77,8 @@ class BlockRepository {
     return blocks.isNotEmpty ? blocks.first : null;
   }
 
-  List<BlockModel> _select({String? whereStmt, bool last = false, List params = const []}) {
+  List<BlockModel> _select(
+      {String? whereStmt, bool last = false, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT 
         $table.$columnId as '$table.$columnId',

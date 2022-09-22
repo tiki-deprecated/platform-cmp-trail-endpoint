@@ -82,8 +82,8 @@ class NodeService {
   /// [BlockModel] if the last [TransactionModel] was created before 1 minute ago
   /// or if the total size of the serialized transactions is greater than 100kb.
   ///
-  Future<NodeService> init(
-      String apiId, Database database, KeyInterface keysInterface, BackupStorageInterface backupStorage,
+  Future<NodeService> init(String apiId, Database database,
+      KeyInterface keysInterface, BackupStorageInterface backupStorage,
       {String? primary,
       List<String> readOnly = const [],
       int maxTransactions = 200,

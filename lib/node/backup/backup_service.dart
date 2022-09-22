@@ -25,8 +25,8 @@ class BackupService {
   final KeyModel _key;
   final Uint8List? Function(Uint8List) _getBlock;
 
-  BackupService(this._storage, Database database,
-      String apiId, this._key, this._getBlock)
+  BackupService(
+      this._storage, Database database, String apiId, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
     String keyBackupPath = '${base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);

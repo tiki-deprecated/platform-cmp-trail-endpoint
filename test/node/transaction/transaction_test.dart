@@ -21,7 +21,7 @@ void main() {
     test('TransactionRepository: create and retrieve transactions', () async {
       Database db = sqlite3.openInMemory();
       TransactionRepository repository = TransactionRepository(db);
-      BlockRepository blockRepository = BlockRepository(db);
+      BlockRepository(db);
       KeyModel key = await KeyService(InMemoryKeys()).create();
       TransactionModel txn1 = generateTransactionModel(1, key);
       TransactionModel txn2 = generateTransactionModel(2, key);
@@ -62,8 +62,8 @@ void main() {
       KeyModel key = await keysService.create();
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.create(
-            Uint8List.fromList([i]), key);
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
         transactions.add(txn);
         expect(TransactionService.validateAuthor(txn, key.privateKey.public),
             true);
@@ -82,20 +82,18 @@ void main() {
       blockService.commit(block);
       List<TransactionModel> txns = transactionService.getByBlock(block.id!);
       for (TransactionModel transaction in txns) {
-        expect(TransactionService.validateInclusion(transaction, merkelTree.root!), true);
+        expect(
+            TransactionService.validateInclusion(transaction, merkelTree.root!),
+            true);
       }
     });
 
     test('Transaction serialize and deserialize', () async {
       KeyModel key = await KeyService(InMemoryKeys()).create();
       Database db = sqlite3.openInMemory();
-      InMemoryKeys keyStorage = InMemoryKeys();
-      KeyService keysService = KeyService(keyStorage);
-
       TransactionService transactionService = TransactionService(db);
-      BlockService blockService = BlockService(db);
-      TransactionModel txn = transactionService.create(
-           Uint8List.fromList([0]), key);
+      TransactionModel txn =
+          transactionService.create(Uint8List.fromList([0]), key);
       Uint8List serialized = txn.serialize(includeSignature: true);
       TransactionModel newTxn = TransactionModel.deserialize(serialized);
       expect(TransactionService.validateIntegrity(txn), true);
@@ -109,5 +107,5 @@ void main() {
       expect(base64.encode(txn.signature!), base64.encode(newTxn.signature!));
       expect(base64.encode(txn.contents), base64.encode(newTxn.contents));
     });
-});
+  });
 }

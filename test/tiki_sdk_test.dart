@@ -1,7 +1,5 @@
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
-import 'package:tiki_sdk_dart/tiki_sdk_data_type_enum.dart';
-import 'package:tiki_sdk_dart/tiki_sdk_destination.dart';
 
 void main() {
   String defaultOrigin = "default";

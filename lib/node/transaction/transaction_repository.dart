@@ -98,7 +98,7 @@ class TransactionRepository {
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(
       whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
-          : "WHERE $columnBlockId = ?", 
+          : "WHERE $columnBlockId = ?",
       params: id == null ? [] : [id]);
 
   List<TransactionModel> _select({String? whereStmt, List params = const []}) {

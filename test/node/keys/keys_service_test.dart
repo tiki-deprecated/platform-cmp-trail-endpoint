@@ -13,8 +13,7 @@ void main() {
       KeyModel key = await keysService.create();
       expect(key.address.isEmpty, false);
       expect(key.privateKey.encode().isEmpty, false);
-      KeyModel? retrieveKey =
-          await keysService.get(base64.encode(key.address));
+      KeyModel? retrieveKey = await keysService.get(base64.encode(key.address));
       expect(retrieveKey == null, false);
       expect(retrieveKey!.address, key.address);
       expect(retrieveKey.privateKey.encode(), key.privateKey.encode());

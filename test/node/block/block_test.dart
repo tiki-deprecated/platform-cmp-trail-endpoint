@@ -30,8 +30,8 @@ void main() {
       BlockService blockService = BlockService(db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.create(
-            Uint8List.fromList([i]), key);
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
         transactions.add(txn);
       }
       MerkelTree merkelTree =
@@ -58,8 +58,8 @@ void main() {
       KeyModel key = await keysService.create();
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.create(
-            Uint8List.fromList([i]), key);
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
         transactions.add(txn);
       }
       MerkelTree validationTree =
@@ -90,8 +90,8 @@ void main() {
       BlockService blockService = BlockService(db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.create(
-            Uint8List.fromList([i]), key);
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
         transactions.add(txn);
       }
       MerkelTree merkelTree =
