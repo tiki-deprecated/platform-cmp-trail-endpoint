@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
@@ -64,6 +66,44 @@ main() {
           true);
       expect(block.timestamp.millisecondsSinceEpoch,
           blk.timestamp.millisecondsSinceEpoch);
+    });
+    test('create transaction, backup and retrieve by path', () async {
+      KeyModel key = await keysService.create();
+      BackupService backupService = BackupService(storage, db, key, getBlock);
+      List<TransactionModel> transactions = [];
+      for (int i = 0; i < 50; i++) {
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
+        transactions.add(txn);
+      }
+      MerkelTree merkelTree =
+          MerkelTree.build(transactions.map((txn) => txn.id!).toList());
+      Uint8List transactionRoot = merkelTree.root!;
+      BlockModel blk = blockService.create(transactionRoot);
+      for (TransactionModel transaction in transactions) {
+        transaction.block = blk;
+        transaction.merkelProof = merkelTree.proofs[transaction.id];
+        transactionService.commit(transaction);
+      }
+      blockService.commit(blk);
+      backupService.block(blk.id!);
+
+      db = sqlite3.openInMemory();
+      TransactionModel originalTxn = transactions[Random().nextInt(49)];
+      NodeService nodeService =
+          await NodeService().init(db, InMemoryKey(), storage);
+
+      TransactionModel? transaction =
+          await nodeService.getTransactionByPath(originalTxn.path);
+      expect(transaction != null, true);
+      expect(UtilsBytes.memEquals(transaction!.id!, originalTxn.id!),true);
+      expect(transaction.version, originalTxn.version);
+      expect(UtilsBytes.memEquals(transaction.address, originalTxn.address),true);
+      expect(UtilsBytes.memEquals(transaction.contents, originalTxn.contents),true);
+      expect(transaction.assetRef, originalTxn.assetRef);
+      expect(UtilsBytes.memEquals(transaction.merkelProof!, originalTxn.merkelProof!),true);
+      expect(UtilsBytes.memEquals(transaction.block!.id!, originalTxn.block!.id!),true);
+      expect(transaction.timestamp, originalTxn.timestamp);
     });
   });
 }

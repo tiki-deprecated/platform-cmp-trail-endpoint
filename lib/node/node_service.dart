@@ -140,6 +140,51 @@ class NodeService {
     return transaction;
   }
 
+  BlockModel? getLastBlock() => _blockService.last();
+
+  Future<BlockModel?> getBlockById(Uint8List blockId,
+      {Uint8List? xchainId}) async {
+    BlockModel? block = _blockService.get(blockId, xchainAddress: xchainId);
+    if (block != null || xchainId == null) return block;
+    await _loadXchain(xchainId, blockId);
+    block = _blockService.get(blockId, xchainAddress: xchainId);
+    if (block != null) _xchainService.update(xchainId, blockId);
+    return block;
+  }
+
+  Future<TransactionModel?> getTransactionByPath(String path) async {
+    List<String> pathParts = path.split('/');
+    Uint8List blockId = base64Url.decode(pathParts[pathParts.length - 2]);
+    Uint8List xchainId = base64Url.decode(pathParts[pathParts.length - 3]);
+    BlockModel? block = await getBlockById(blockId, xchainId: xchainId);
+    if (block != null) {
+      Uint8List transactionId = base64Url.decode(pathParts.removeLast());
+      String blockPath = pathParts.join('/');
+      Uint8List serializedBackup =
+          await _backupStorage.read('$blockPath.block');
+      List<Uint8List> backupList = UtilsCompactSize.decode(serializedBackup);
+      Uint8List signature = backupList[0];
+      Uint8List serializedBlock = backupList[1];
+      /// TODO verify block signature
+      List<TransactionModel> transactions =
+          TransactionService.deserializeTransactions(serializedBlock);
+      MerkelTree merkelTree = MerkelTree.build(
+          transactions.map((TransactionModel txn) => txn.id!).toList());
+      if (!UtilsBytes.memEquals(block.transactionRoot, merkelTree.root!)) {
+        throw Exception('Invalid transaction root for ${block.toString()}');
+      }
+      for (TransactionModel transaction in transactions) {
+        if (UtilsBytes.memEquals(transaction.id!, transactionId)) {
+          transaction.block = block;
+          transaction.merkelProof = merkelTree.proofs[transaction.id!];
+          _transactionService.commit(transaction);
+          return transaction;
+        }
+      }
+    }
+    return null;
+  }
+
   Future<void> _loadPrimaryKey(String? address) async {
     if (address != null) {
       KeyModel? key = await _keyService.get(address);
@@ -181,36 +226,6 @@ class NodeService {
     return bytes.toBytes();
   }
 
-  BlockModel? getLastBlock() => _blockService.last();
-
-  Future<BlockModel?> getBlockById(Uint8List blockId,
-      {Uint8List? xchainId}) async {
-    BlockModel? block = _blockService.get(blockId, xchainAddress: xchainId);
-    if (block != null || xchainId == null) return block;
-    await _loadXchain(xchainId, blockId);
-    return _blockService.get(blockId, xchainAddress: xchainId);
-  }
-
-  Future<TransactionModel?> getTransactionByPath(String path) async {
-    List<String> pathParts = path.split('/');
-    Uint8List blockId = base64Url.decode(pathParts[pathParts.length - 2]);
-    Uint8List xchainId = base64Url.decode(pathParts[pathParts.length - 3]);
-    BlockModel? block = await getBlockById(blockId, xchainId: xchainId);
-    if (block != null) {
-      Uint8List transactionId = base64Url.decode(pathParts.removeLast());
-      String blockPath = pathParts.join('/');
-      Uint8List serializedBlock = await _backupStorage.read(blockPath);
-      List<TransactionModel> transactions =
-          TransactionService.deserializeTransactions(serializedBlock);
-      for (TransactionModel transactionModel in transactions) {
-        if (UtilsBytes.memEquals(transactionModel.id!, transactionId)) {
-          return transactionModel;
-        }
-      }
-    }
-    return null;
-  }
-
   Future<void> _loadXchain(xchainId, startBlockId) async {
     XchainModel xchain = await _xchainService.load(xchainId);
     String path =
@@ -219,6 +234,7 @@ class NodeService {
     List<Uint8List> backupList = UtilsCompactSize.decode(serializedBackup);
     Uint8List signature = backupList[0];
     Uint8List serializedBlock = backupList[1];
+    // TODO investigate author validation error
     // if (!UtilsRsa.verify(xchain.publicKey, serializedBlock, signature)) {
     //   throw StateError(
     //       'Backup signature could not be verified for $path');
@@ -238,11 +254,15 @@ class NodeService {
     for (TransactionModel transaction in transactions) {
       transaction.block = block;
       transaction.merkelProof = merkelTree.proofs[transaction.id!];
+      // TODO investigate author validation error
       // if (TransactionService.validateAuthor(transaction, xchain.publicKey)) {
       //   throw Exception(
       //       'Transaction authorshhip could not be verified: ${transaction.toString()}');
       // }
     }
     _blockService.add(block, xchainId);
+    if (UtilsBytes.memEquals(block.id!, xchain.lastBlock)) {
+      _loadXchain(xchainId, block.previousHash);
+    }
   }
 }

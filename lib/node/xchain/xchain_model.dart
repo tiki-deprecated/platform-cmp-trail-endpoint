@@ -20,14 +20,15 @@ class XchainModel {
   final CryptoRSAPublicKey publicKey;
 
   /// The id for the last validated block.
-  String? lastBlock;
+  Uint8List lastBlock;
 
   /// Builds a [XchainModel] from its [publicKey].
   ///
   /// The [address] is derived from the [publicKey] using the SHA3-256 hash.
   /// If the chain was not synced yet, [lastBlock] should be null.
-  XchainModel(this.publicKey, {this.lastBlock})
-      : address = Digest("SHA3-256").process(base64.decode(publicKey.encode()));
+  XchainModel(this.publicKey, {lastBlock})
+      : address = Digest("SHA3-256").process(base64.decode(publicKey.encode())),
+      lastBlock = lastBlock ?? Uint8List(1);
 
   /// Builds a [XchainModel] from a [map].
   ///

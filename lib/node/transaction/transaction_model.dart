@@ -47,6 +47,8 @@ class TransactionModel {
   /// The asymmetric digital signature (RSA) for the [serialize] transaction.
   Uint8List? signature;
 
+  String get path => "${base64Url.encode(address)}/${base64Url.encode(block!.id!)}/${base64Url.encode(id!)}";
+
   /// Builds a new [TransactionModel]
   ///
   /// If no [timestamp] is provided, the object creation time is used.
@@ -61,7 +63,7 @@ class TransactionModel {
       this.merkelProof,
       this.block,
       this.signature})
-      : timestamp = timestamp ?? DateTime.now();
+      : timestamp = timestamp ?? DateTime.fromMillisecondsSinceEpoch((DateTime.now().millisecondsSinceEpoch ~/1000) * 1000);
 
   /// Builds a [BlockModel] from a [map].
   ///
