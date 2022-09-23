@@ -23,7 +23,6 @@ export './key/key_service.dart';
 export './l0_storage/l0_storage_service.dart';
 export './transaction/transaction_service.dart';
 export './wasabi/wasabi_service.dart';
-export './xchain/xchain_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
