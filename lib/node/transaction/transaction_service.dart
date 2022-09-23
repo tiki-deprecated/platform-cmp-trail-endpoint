@@ -92,14 +92,18 @@ class TransactionService {
   ///
   /// This is the revers function for [serializeTransactions]. It should be used
   /// when recovering a [BlockModel] body.
-  static List<TransactionModel> deserializeTransactions(Uint8List serializedBlock) {
+  static List<TransactionModel> deserializeTransactions(
+      Uint8List serializedBlock) {
     List<TransactionModel> txns = [];
     List<Uint8List> extractedBlockBytes =
         UtilsCompactSize.decode(serializedBlock);
     for (int i = 4; i < extractedBlockBytes.length; i++) {
       TransactionModel txn =
           TransactionModel.deserialize(extractedBlockBytes[i]);
-      // if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
+      if (!validateIntegrity(txn)) {
+        int j = 1;
+        throw Exception('Corrupted transaction $txn');
+      }
       txns.add(txn);
     }
     return txns;
@@ -111,4 +115,6 @@ class TransactionService {
 
   /// Gets all the transactions that were not committed by [commit].
   List<TransactionModel> getPending() => _repository.getByBlockId(null);
+
+  TransactionModel? getById(Uint8List id) => _repository.getById(id);
 }

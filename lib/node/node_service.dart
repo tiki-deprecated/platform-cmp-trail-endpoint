@@ -158,29 +158,32 @@ class NodeService {
     Uint8List xchainId = base64Url.decode(pathParts[pathParts.length - 3]);
     BlockModel? block = await getBlockById(blockId, xchainId: xchainId);
     if (block != null) {
-      Uint8List transactionId = base64Url.decode(pathParts.removeLast());
-      String blockPath = pathParts.join('/');
-      Uint8List serializedBackup =
-          await _backupStorage.read('$blockPath.block');
-      List<Uint8List> backupList = UtilsCompactSize.decode(serializedBackup);
-      Uint8List signature = backupList[0];
-      Uint8List serializedBlock = backupList[1];
-      /// TODO verify block signature
-      List<TransactionModel> transactions =
-          TransactionService.deserializeTransactions(serializedBlock);
-      MerkelTree merkelTree = MerkelTree.build(
-          transactions.map((TransactionModel txn) => txn.id!).toList());
-      if (!UtilsBytes.memEquals(block.transactionRoot, merkelTree.root!)) {
-        throw Exception('Invalid transaction root for ${block.toString()}');
-      }
-      for (TransactionModel transaction in transactions) {
-        if (UtilsBytes.memEquals(transaction.id!, transactionId)) {
-          transaction.block = block;
-          transaction.merkelProof = merkelTree.proofs[transaction.id!];
-          _transactionService.commit(transaction);
-          return transaction;
+      Uint8List transactionId = base64.decode(pathParts.removeLast());
+      TransactionModel? txn =
+          _transactionService.getById(transactionId);
+      if (txn == null) {
+        String blockPath = pathParts.join('/');
+        Uint8List serializedBackup =
+            await _backupStorage.read('$blockPath.block');
+        List<Uint8List> backupList = UtilsCompactSize.decode(serializedBackup);
+        Uint8List serializedBlock = backupList[1];
+        List<TransactionModel> transactions =
+            TransactionService.deserializeTransactions(serializedBlock);
+        MerkelTree merkelTree = MerkelTree.build(
+            transactions.map((TransactionModel txn) => txn.id!).toList());
+        if (!UtilsBytes.memEquals(block.transactionRoot, merkelTree.root!)) {
+          throw Exception('Invalid transaction root for ${block.toString()}');
+        }
+        for (TransactionModel transaction in transactions) {
+          if (UtilsBytes.memEquals(transaction.id!, transactionId)) {
+            transaction.block = block;
+            transaction.merkelProof = merkelTree.proofs[transaction.id!];
+            _transactionService.commit(transaction);
+            txn = transaction;
+          }
         }
       }
+      return txn;
     }
     return null;
   }
@@ -234,11 +237,10 @@ class NodeService {
     List<Uint8List> backupList = UtilsCompactSize.decode(serializedBackup);
     Uint8List signature = backupList[0];
     Uint8List serializedBlock = backupList[1];
-    // TODO investigate author validation error
-    // if (!UtilsRsa.verify(xchain.publicKey, serializedBlock, signature)) {
-    //   throw StateError(
-    //       'Backup signature could not be verified for $path');
-    // }
+    if (!UtilsRsa.verify(xchain.publicKey, serializedBlock, signature)) {
+      throw StateError(
+          'Backup signature could not be verified for $path');
+    }
     BlockModel block = BlockModel.deserialize(serializedBlock);
     if (!UtilsBytes.memEquals(
         Digest('SHA3-256').process(block.serialize()), startBlockId)) {
@@ -254,11 +256,10 @@ class NodeService {
     for (TransactionModel transaction in transactions) {
       transaction.block = block;
       transaction.merkelProof = merkelTree.proofs[transaction.id!];
-      // TODO investigate author validation error
-      // if (TransactionService.validateAuthor(transaction, xchain.publicKey)) {
-      //   throw Exception(
-      //       'Transaction authorshhip could not be verified: ${transaction.toString()}');
-      // }
+      if (!TransactionService.validateAuthor(transaction, xchain.publicKey)) {
+        throw Exception(
+            'Transaction authorshhip could not be verified: ${transaction.toString()}');
+      }
     }
     _blockService.add(block, xchainId);
     if (UtilsBytes.memEquals(block.id!, xchain.lastBlock)) {
