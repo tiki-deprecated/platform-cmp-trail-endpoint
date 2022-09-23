@@ -68,7 +68,13 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void createTable() async {
-  throw UnimplementedError();
+  _db.execute(&#39;&#39;&#39;
+    CREATE TABLE IF NOT EXISTS $table (
+      $columnAddress BLOB PRIMARY KEY,
+      $columnPublicKey TEXT,
+      $columnLastBlock BLOB
+    );
+  &#39;&#39;&#39;);
 }</code></pre>
 </section>
 
@@ -105,6 +111,7 @@
 
     <li class="section-title"><a href="../../xchain/XchainRepository-class.html#instance-methods">Methods</a></li>
     <li><a href="../../xchain/XchainRepository/createTable.html">createTable</a></li>
+    <li><a href="../../xchain/XchainRepository/get.html">get</a></li>
     <li class="inherited"><a href="../../xchain/XchainRepository/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../xchain/XchainRepository/save.html">save</a></li>
     <li class="inherited"><a href="../../xchain/XchainRepository/toString.html">toString</a></li>
@@ -133,7 +140,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.3
   </span>
 
   

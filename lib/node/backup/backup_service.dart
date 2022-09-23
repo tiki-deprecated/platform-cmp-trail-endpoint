@@ -11,8 +11,6 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import '../../utils/bytes.dart';
-import '../../utils/rsa/rsa.dart';
 import '../../utils/utils.dart';
 import '../node_service.dart';
 import 'backup_storage_interface.dart';
@@ -20,13 +18,25 @@ import 'backup_storage_interface.dart';
 export 'backup_model.dart';
 export 'backup_repository.dart';
 
-/// A service to handle the backup requests to [WasabiService].
+/// A service to handle the backup requests to remote backup.
+///
+/// The remote backup implementation should follow the key-value interface defined
+/// in [BackupStorageInterface]. This service does not do any security checks.
+/// It is up to the implementation of [BackupStorageInterface] to implement it.
 class BackupService {
+  /// The local database repository for backup requests.
   final BackupRepository _repository;
+
+  /// The remote storage for backups.
   final BackupStorageInterface _storage;
+
+  /// The chain [KeyModel]
   final KeyModel _key;
+
+  /// The function to get a [BlockModel] by its [BlockModel.id].
   final Uint8List? Function(Uint8List) _getBlock;
 
+  /// Initializes a [BackupService] and backs up the public key for the chain.
   BackupService(this._storage, Database database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
     String keyBackupPath = '${base64UrlEncode(_key.address)}/public.key';
@@ -47,6 +57,8 @@ class BackupService {
     _pending();
   }
 
+  /// Creates a backup request for a [BlockModel] by its [id] and process pending
+  /// backups.
   Future<void> block(Uint8List id) async {
     String b64address = base64UrlEncode(_key.address);
     BackupModel bkpModel =
@@ -67,9 +79,9 @@ class BackupService {
           if (block != null) {
             Uint8List signature = UtilsRsa.sign(_key.privateKey, block);
             Uint8List signedBlock = (BytesBuilder()
-              ..add(UtilsCompactSize.encode(signature))
-              ..add(UtilsCompactSize.encode(block))
-             ).toBytes();
+                  ..add(UtilsCompactSize.encode(signature))
+                  ..add(UtilsCompactSize.encode(block)))
+                .toBytes();
             await _storage.write(backup.path, signedBlock);
             backup.timestamp = DateTime.now();
             _repository.update(backup);

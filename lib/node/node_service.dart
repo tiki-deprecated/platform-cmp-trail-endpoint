@@ -152,6 +152,7 @@ class NodeService {
     return block;
   }
 
+  /// Gets a [TransactionModel] by its [TransactionModel.path]
   Future<TransactionModel?> getTransactionByPath(String path) async {
     List<String> pathParts = path.split('/');
     Uint8List blockId = base64Url.decode(pathParts[pathParts.length - 2]);
@@ -159,8 +160,7 @@ class NodeService {
     BlockModel? block = await getBlockById(blockId, xchainId: xchainId);
     if (block != null) {
       Uint8List transactionId = base64.decode(pathParts.removeLast());
-      TransactionModel? txn =
-          _transactionService.getById(transactionId);
+      TransactionModel? txn = _transactionService.getById(transactionId);
       if (txn == null) {
         String blockPath = pathParts.join('/');
         Uint8List serializedBackup =
@@ -238,8 +238,7 @@ class NodeService {
     Uint8List signature = backupList[0];
     Uint8List serializedBlock = backupList[1];
     if (!UtilsRsa.verify(xchain.publicKey, serializedBlock, signature)) {
-      throw StateError(
-          'Backup signature could not be verified for $path');
+      throw StateError('Backup signature could not be verified for $path');
     }
     BlockModel block = BlockModel.deserialize(serializedBlock);
     if (!UtilsBytes.memEquals(

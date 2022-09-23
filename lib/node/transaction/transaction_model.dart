@@ -47,7 +47,12 @@ class TransactionModel {
   /// The asymmetric digital signature (RSA) for the [serialize] transaction.
   Uint8List? signature;
 
-  String get path => "${base64Url.encode(address)}/${base64Url.encode(block!.id!)}/${base64Url.encode(id!)}";
+  /// The transaction path for asset reference.
+  ///
+  /// It is composed by base 64 url encoded ids:
+  /// [xchain public address]/[block id]/[transaction id]
+  String get path =>
+      "${base64Url.encode(address)}/${base64Url.encode(block!.id!)}/${base64Url.encode(id!)}";
 
   /// Builds a new [TransactionModel]
   ///
@@ -63,7 +68,9 @@ class TransactionModel {
       this.merkelProof,
       this.block,
       this.signature})
-      : timestamp = timestamp ?? DateTime.fromMillisecondsSinceEpoch((DateTime.now().millisecondsSinceEpoch ~/1000) * 1000);
+      : timestamp = timestamp ??
+            DateTime.fromMillisecondsSinceEpoch(
+                (DateTime.now().millisecondsSinceEpoch ~/ 1000) * 1000);
 
   /// Builds a [BlockModel] from a [map].
   ///

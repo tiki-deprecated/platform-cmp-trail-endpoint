@@ -63,7 +63,10 @@ class BlockService {
   /// Gets the last committed block from the [db].
   BlockModel? last() => _repository.getLast();
 
-  void validate(BlockModel blk) {}
-
-  void add(BlockModel blk, Uint8List xchainId) => _repository.save(blk, xchain: xchainId);
+  /// Adds a [BlockModel] in the [BlockRepository].
+  ///
+  /// This method should only be called after verifying blocks's integrity and
+  /// authorship.
+  void add(BlockModel blk, Uint8List xchainId) =>
+      _repository.save(blk, xchain: xchainId);
 }

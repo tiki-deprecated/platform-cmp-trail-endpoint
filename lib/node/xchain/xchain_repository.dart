@@ -57,6 +57,7 @@ class XchainRepository {
         [lastBlock, address]);
   }
 
+  /// Gets a xchain by its address.
   XchainModel? get(Uint8List address) {
     List<XchainModel> results =
         _select(whereStmt: 'WHERE $columnAddress = "$address"');

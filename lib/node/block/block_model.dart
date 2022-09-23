@@ -44,8 +44,9 @@ class BlockModel {
     required this.previousHash,
     required this.transactionRoot,
     DateTime? timestamp,
-  }) : timestamp = timestamp ?? DateTime.fromMillisecondsSinceEpoch(
-    (DateTime.now().millisecondsSinceEpoch ~/1000) * 1000);
+  }) : timestamp = timestamp ??
+            DateTime.fromMillisecondsSinceEpoch(
+                (DateTime.now().millisecondsSinceEpoch ~/ 1000) * 1000);
 
   /// Builds a [BlockModel] from a [map].
   ///

@@ -16,8 +16,7 @@ import 'backup_repository.dart';
 /// The [timestamp] is the [DateTime] that the asset was backed up in L0. If it
 /// is not set that means the backup was not done yet.
 class BackupModel {
-  late String
-      path; 
+  late String path;
   Uint8List? signature;
   DateTime? timestamp;
 

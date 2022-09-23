@@ -53,7 +53,7 @@
       
 
 <span class="returntype">Uint8List</span>
-<span class="name ">serializeTransactions</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="serializeTransactions-param-blockId"><span class="type-annotation">String</span> <span class="parameter-name">blockId</span></span></li>
+<span class="name ">serializeTransactions</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="serializeTransactions-param-txns"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span> <span class="parameter-name">txns</span></span></li>
 </ol>)
 
       
@@ -61,24 +61,20 @@
     </section>
     
 <section class="desc markdown">
-  <p>Creates a <code>Uint8List</code> of the transactions included in a <code>BlockModel</code>.</p>
-<p>This <code>Uint8List</code> is built as the body of the <code>BlockModel</code>. It creates a list
-of each <a href="../../transaction/TransactionModel/serialize.html">TransactionModel.serialize</a> bytes prepended by its size obtained
-by <a href="../../utils/UtilsCompactSize/toSize.html">UtilsCompactSize.toSize</a>.</p>
+  <p>Creates a serialized <code>Uint8List</code> from a List of <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>.</p>
+<p>This is the revert function for <a href="../../transaction/TransactionService/deserializeTransactions.html">deserializeTransactions</a>. It should be used
+when creating a <a href="../../block/BlockModel-class.html">BlockModel</a> body.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Uint8List serializeTransactions(String blockId) {
+  <pre class="language-dart"><code class="language-dart">static Uint8List serializeTransactions(List&lt;TransactionModel&gt; txns) {
   BytesBuilder body = BytesBuilder();
-  List&lt;TransactionModel&gt; txns = getByBlock(base64.decode(blockId));
   for (TransactionModel txn in txns) {
     Uint8List serialized = txn.serialize();
-    Uint8List cSize = UtilsCompactSize.toSize(serialized);
-    body.add(cSize);
-    body.add(serialized);
+    body.add(UtilsCompactSize.encode(serialized));
   }
   return body.toBytes();
 }</code></pre>
@@ -116,12 +112,13 @@ by <a href="../../utils/UtilsCompactSize/toSize.html">UtilsCompactSize.toSize</a
     <li class="inherited"><a href="../../transaction/TransactionService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../transaction/TransactionService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../transaction/TransactionService/build.html">build</a></li>
     <li><a href="../../transaction/TransactionService/commit.html">commit</a></li>
+    <li><a href="../../transaction/TransactionService/create.html">create</a></li>
     <li><a href="../../transaction/TransactionService/getByBlock.html">getByBlock</a></li>
+    <li><a href="../../transaction/TransactionService/getById.html">getById</a></li>
     <li><a href="../../transaction/TransactionService/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../../transaction/TransactionService/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
+    <li><a href="../../transaction/TransactionService/serializeTransactionsByBlockId.html">serializeTransactionsByBlockId</a></li>
     <li class="inherited"><a href="../../transaction/TransactionService/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../../transaction/TransactionService-class.html#operators">Operators</a></li>
@@ -131,6 +128,7 @@ by <a href="../../utils/UtilsCompactSize/toSize.html">UtilsCompactSize.toSize</a
 
         <li class="section-title"><a href="../../transaction/TransactionService-class.html#static-methods">Static methods</a></li>
           <li><a href="../../transaction/TransactionService/deserializeTransactions.html">deserializeTransactions</a></li>
+          <li><a href="../../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
           <li><a href="../../transaction/TransactionService/validateAuthor.html">validateAuthor</a></li>
           <li><a href="../../transaction/TransactionService/validateInclusion.html">validateInclusion</a></li>
           <li><a href="../../transaction/TransactionService/validateIntegrity.html">validateIntegrity</a></li>
@@ -147,7 +145,7 @@ by <a href="../../utils/UtilsCompactSize/toSize.html">UtilsCompactSize.toSize</a
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.3
   </span>
 
   

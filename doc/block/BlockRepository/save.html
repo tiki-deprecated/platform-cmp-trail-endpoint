@@ -53,7 +53,8 @@
       
 
 <span class="returntype">void</span>
-<span class="name ">save</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="save-param-block"><span class="type-annotation"><a href="../../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span></span></li>
+<span class="name ">save</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="save-param-block"><span class="type-annotation"><a href="../../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span>, </span></li>
+<li><span class="parameter" id="save-param-xchain">{<span class="type-annotation">Uint8List?</span> <span class="parameter-name">xchain</span>}</span></li>
 </ol>)
 
       
@@ -68,17 +69,17 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void save(BlockModel block) {
-  List&lt;dynamic&gt; params = [
-    base64.encode([...block.id!]),
-    block.version,
-    base64.encode([...block.previousHash]),
-    block.transactionRoot,
-    block.transactionCount,
-    block.timestamp.millisecondsSinceEpoch ~&#47; 1000
-  ];
-  _db.execute(&#39;INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?);&#39;, params);
-}</code></pre>
+  <pre class="language-dart"><code class="language-dart">void save(BlockModel block, {Uint8List? xchain}) =&gt; _db.execute(&#39;&#39;&#39;
+  INSERT INTO $table
+  VALUES (?, ?, ?, ?, ?, ?);
+  &#39;&#39;&#39;, [
+      block.id,
+      block.version,
+      block.previousHash,
+      xchain,
+      block.transactionRoot,
+      block.timestamp.millisecondsSinceEpoch
+    ]);</code></pre>
 </section>
 
 
@@ -130,9 +131,9 @@
           <li><a href="../../block/BlockRepository/columnId-constant.html">columnId</a></li>
           <li><a href="../../block/BlockRepository/columnPreviousHash-constant.html">columnPreviousHash</a></li>
           <li><a href="../../block/BlockRepository/columnTimestamp-constant.html">columnTimestamp</a></li>
-          <li><a href="../../block/BlockRepository/columnTransactionCount-constant.html">columnTransactionCount</a></li>
           <li><a href="../../block/BlockRepository/columnTransactionRoot-constant.html">columnTransactionRoot</a></li>
           <li><a href="../../block/BlockRepository/columnVersion-constant.html">columnVersion</a></li>
+          <li><a href="../../block/BlockRepository/columnXchain-constant.html">columnXchain</a></li>
           <li><a href="../../block/BlockRepository/table-constant.html">table</a></li>
 </ol>
 
@@ -146,7 +147,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.3
   </span>
 
   

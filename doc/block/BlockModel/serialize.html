@@ -53,29 +53,43 @@
       
 
 <span class="returntype">Uint8List</span>
-<span class="name ">serialize</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="serialize-param-body"><span class="type-annotation">Uint8List</span> <span class="parameter-name">body</span></span></li>
-</ol>)
+<span class="name ">serialize</span>(<wbr>)
 
       
 
     </section>
     
 <section class="desc markdown">
-  <p>Creates a <code>Uint8List</code> representation of the block.</p>
-<p>The serialized <a href="../../block/BlockModel-class.html">BlockModel</a> is created by combining in a <code>Uint8List</code> the
-<a href="../../block/BlockModel/header.html">BlockModel.header</a> and the block <code>body</code>, that is built from the
-<a href="../../transaction/TransactionModel-class.html">TransactionModel</a> list by <a href="../../transaction/TransactionService/serializeTransactions.html">TransactionService.serializeTransactions</a>.</p>
+  <p>Creates the <code>Uint8List</code> representation of the block header.</p>
+<p>The block header is represented by a <code>Uint8List</code> of the block properties.
+Each item is prepended by its size calculate with <a href="../../utils/UtilsCompactSize/toSize.html">UtilsCompactSize.toSize</a>.
+The Uint8List structure is:</p>
+<pre class="language-dart"><code>Uint8List&lt;Uint8List&gt; header = Uin8List.fromList([
+  ..add(UtilsCompactSize.encode(serializedVersion))
+  ..add(UtilsCompactSize.encode(serializedTimestamp))
+  ..add(UtilsCompactSize.encode(serializedPreviousHash))
+  ..add(UtilsCompactSize.encode(serializedTransactionRoot)))
+]);
+</code></pre>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Uint8List serialize(Uint8List body) {
-  Uint8List head = header();
+  <pre class="language-dart"><code class="language-dart">Uint8List serialize() {
+  Uint8List serializedVersion = UtilsBytes.encodeBigInt(BigInt.from(version));
+  Uint8List serializedTimestamp = (BytesBuilder()
+        ..add(UtilsBytes.encodeBigInt(
+            BigInt.from(timestamp.millisecondsSinceEpoch ~&#47; 1000))))
+      .toBytes();
+  Uint8List serializedPreviousHash = previousHash;
+  Uint8List serializedTransactionRoot = transactionRoot;
   return (BytesBuilder()
-        ..add(head)
-        ..add(body))
+        ..add(UtilsCompactSize.encode(serializedVersion))
+        ..add(UtilsCompactSize.encode(serializedTimestamp))
+        ..add(UtilsCompactSize.encode(serializedPreviousHash))
+        ..add(UtilsCompactSize.encode(serializedTransactionRoot)))
       .toBytes();
 }</code></pre>
 </section>
@@ -115,12 +129,10 @@
     <li><a href="../../block/BlockModel/previousHash.html">previousHash</a></li>
     <li class="inherited"><a href="../../block/BlockModel/runtimeType.html">runtimeType</a></li>
     <li><a href="../../block/BlockModel/timestamp.html">timestamp</a></li>
-    <li><a href="../../block/BlockModel/transactionCount.html">transactionCount</a></li>
     <li><a href="../../block/BlockModel/transactionRoot.html">transactionRoot</a></li>
     <li><a href="../../block/BlockModel/version.html">version</a></li>
 
     <li class="section-title"><a href="../../block/BlockModel-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../block/BlockModel/header.html">header</a></li>
     <li class="inherited"><a href="../../block/BlockModel/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../block/BlockModel/serialize.html">serialize</a></li>
     <li><a href="../../block/BlockModel/toString.html">toString</a></li>
@@ -143,7 +155,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.3
   </span>
 
   
