@@ -5,20 +5,19 @@ import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 
 import '../in_mem_backup.dart';
-import '../in_mem_keys.dart';
+import '../in_mem_key.dart';
 
 void main() {
-  String apiId = 'd25d2e69-89de-47aa-b5e9-5e8987cf5318';
   group('Node tests', () {
     Database db = sqlite3.openInMemory();
     test('create keys', () async {
       NodeService nodeService =
-          await NodeService().init(apiId, db, InMemoryKeys(), InMemBackup());
+          await NodeService().init(db, InMemoryKey(), InMemBackup());
       expect(nodeService.publicKey.encode().isNotEmpty, true);
     });
     test('create transactions', () async {
       NodeService nodeService =
-          await NodeService().init(apiId, db, InMemoryKeys(), InMemBackup());
+          await NodeService().init(db, InMemoryKey(), InMemBackup());
       TransactionModel txn = await nodeService
           .write(Uint8List.fromList('test contents'.codeUnits));
       expect(txn.id != null, true);
@@ -28,7 +27,7 @@ void main() {
     });
     test('create block by transactions count', () async {
       NodeService nodeService = await NodeService().init(
-          apiId, db, InMemoryKeys(), InMemBackup(),
+          db, InMemoryKey(), InMemBackup(),
           blockInterval: const Duration(seconds: 20));
       int count = 0;
       List<TransactionModel> transactions = [];
@@ -44,7 +43,7 @@ void main() {
     });
     test('create block by last transaction creation time', () async {
       NodeService nodeService = await NodeService().init(
-          apiId, db, InMemoryKeys(), InMemBackup(),
+          db, InMemoryKey(), InMemBackup(),
           blockInterval: const Duration(seconds: 5));
       int size = 0;
       List<TransactionModel> transactions = [];

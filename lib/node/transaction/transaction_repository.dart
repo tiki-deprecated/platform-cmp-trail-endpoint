@@ -91,8 +91,8 @@ class TransactionRepository {
   void commit(TransactionModel transaction) => _db.execute('''
     UPDATE $table 
     SET $columnMerkelProof = ?, $columnBlockId = ? 
-    WHERE $columnId = '${transaction.id}';
-    ''', [transaction.merkelProof, transaction.block!.id!]);
+    WHERE $columnId = ?;
+    ''', [transaction.merkelProof, transaction.block!.id!, transaction.id]);
 
   /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(

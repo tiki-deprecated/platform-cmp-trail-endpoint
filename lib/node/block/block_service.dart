@@ -65,5 +65,5 @@ class BlockService {
 
   void validate(BlockModel blk) {}
 
-  void add(BlockModel blk) {}
+  void add(BlockModel blk, Uint8List xchainId) => _repository.save(blk, xchain: xchainId);
 }

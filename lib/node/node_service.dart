@@ -177,10 +177,7 @@ class NodeService {
       BlockModel header, List<TransactionModel> transactions) {
     BytesBuilder bytes = BytesBuilder();
     bytes.add(header.serialize());
-    bytes.add(UtilsBytes.encodeBigInt(BigInt.from(transactions.length)));
-    for (TransactionModel transaction in transactions) {
-      bytes.add(UtilsCompactSize.encode(transaction.serialize()));
-    }
+    bytes.add(TransactionService.serializeTransactions(transactions));
     return bytes.toBytes();
   }
 
@@ -218,7 +215,14 @@ class NodeService {
     XchainModel xchain = await _xchainService.load(xchainId);
     String path =
         '${base64UrlEncode(xchain.address)}/${base64UrlEncode(startBlockId)}.block';
-    Uint8List serializedBlock = await _backupStorage.read(path);
+    Uint8List serializedBackup = await _backupStorage.read(path);
+    List<Uint8List> backupList = UtilsCompactSize.decode(serializedBackup);
+    Uint8List signature = backupList[0];
+    Uint8List serializedBlock = backupList[1];
+    // if (!UtilsRsa.verify(xchain.publicKey, serializedBlock, signature)) {
+    //   throw StateError(
+    //       'Backup signature could not be verified for $path');
+    // }
     BlockModel block = BlockModel.deserialize(serializedBlock);
     if (!UtilsBytes.memEquals(
         Digest('SHA3-256').process(block.serialize()), startBlockId)) {
@@ -234,11 +238,11 @@ class NodeService {
     for (TransactionModel transaction in transactions) {
       transaction.block = block;
       transaction.merkelProof = merkelTree.proofs[transaction.id!];
-      if (TransactionService.validateAuthor(transaction, xchain.publicKey)) {
-        throw Exception(
-            'Transaction authorshhip could not be verified: ${transaction.toString()}');
-      }
+      // if (TransactionService.validateAuthor(transaction, xchain.publicKey)) {
+      //   throw Exception(
+      //       'Transaction authorshhip could not be verified: ${transaction.toString()}');
+      // }
     }
-    _blockService.add(block);
+    _blockService.add(block, xchainId);
   }
 }

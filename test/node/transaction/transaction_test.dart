@@ -13,7 +13,7 @@ import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
 import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
 
-import '../../in_mem_keys.dart';
+import '../../in_mem_key.dart';
 import '../node_test_helpers.dart';
 
 void main() {
@@ -22,7 +22,7 @@ void main() {
       Database db = sqlite3.openInMemory();
       TransactionRepository repository = TransactionRepository(db);
       BlockRepository(db);
-      KeyModel key = await KeyService(InMemoryKeys()).create();
+      KeyModel key = await KeyService(InMemoryKey()).create();
       TransactionModel txn1 = generateTransactionModel(1, key);
       TransactionModel txn2 = generateTransactionModel(2, key);
       TransactionModel txn3 = generateTransactionModel(3, key);
@@ -53,7 +53,7 @@ void main() {
     test('''Transaction Service: create transaction and check inclusion, 
     integrity and authorship''', () async {
       Database db = sqlite3.openInMemory();
-      InMemoryKeys keyStorage = InMemoryKeys();
+      InMemoryKey keyStorage = InMemoryKey();
       KeyService keysService = KeyService(keyStorage);
 
       TransactionService transactionService = TransactionService(db);
@@ -89,7 +89,7 @@ void main() {
     });
 
     test('Transaction serialize and deserialize', () async {
-      KeyModel key = await KeyService(InMemoryKeys()).create();
+      KeyModel key = await KeyService(InMemoryKey()).create();
       Database db = sqlite3.openInMemory();
       TransactionService transactionService = TransactionService(db);
       TransactionModel txn =

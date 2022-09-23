@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 
-import '../../in_mem_keys.dart';
+import '../../in_mem_key.dart';
 
 void main() {
-  final InMemoryKeys secureStorage = InMemoryKeys();
+  final InMemoryKey secureStorage = InMemoryKey();
   final KeyService keysService = KeyService(secureStorage);
   group('key service tests', () {
     test('Create keys, save and retrieve', () async {

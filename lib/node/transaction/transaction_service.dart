@@ -82,9 +82,7 @@ class TransactionService {
     BytesBuilder body = BytesBuilder();
     for (TransactionModel txn in txns) {
       Uint8List serialized = txn.serialize();
-      Uint8List cSize = UtilsCompactSize.toSize(serialized);
-      body.add(cSize);
-      body.add(serialized);
+      body.add(UtilsCompactSize.encode(serialized));
     }
     return body.toBytes();
   }
@@ -94,21 +92,14 @@ class TransactionService {
   ///
   /// This is the revers function for [serializeTransactions]. It should be used
   /// when recovering a [BlockModel] body.
-  static List<TransactionModel> deserializeTransactions(
-      Uint8List serializedBlock) {
+  static List<TransactionModel> deserializeTransactions(Uint8List serializedBlock) {
     List<TransactionModel> txns = [];
     List<Uint8List> extractedBlockBytes =
         UtilsCompactSize.decode(serializedBlock);
-    int transactionCount =
-        UtilsBytes.decodeBigInt(extractedBlockBytes[4]).toInt();
-    if (extractedBlockBytes.sublist(5).length != transactionCount) {
-      throw Exception(
-          'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
-    }
-    for (int i = 5; i < extractedBlockBytes.length; i++) {
+    for (int i = 4; i < extractedBlockBytes.length; i++) {
       TransactionModel txn =
           TransactionModel.deserialize(extractedBlockBytes[i]);
-      if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
+      // if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
       txns.add(txn);
     }
     return txns;

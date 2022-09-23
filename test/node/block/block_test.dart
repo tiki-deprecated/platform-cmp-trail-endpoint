@@ -9,11 +9,11 @@ import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/utils/utils.dart';
 
-import '../../in_mem_keys.dart';
+import '../../in_mem_key.dart';
 
 void main() {
   group('block repository tests', () {
-    test('save blocks, retrieve all', () {
+    test('save blocks to repository', () {
       Database db = sqlite3.openInMemory();
       BlockRepository repository = BlockRepository(db);
       BlockModel block1 = _generateBlockModel();
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('create block, save and retrive', () async {
-      KeyService keysService = KeyService(InMemoryKeys());
+      KeyService keysService = KeyService(InMemoryKey());
       KeyModel key = await keysService.create();
       Database db = sqlite3.openInMemory();
       TransactionService transactionService = TransactionService(db);
@@ -51,7 +51,7 @@ void main() {
 
     test('create block, save and validate integrity', () async {
       Database db = sqlite3.openInMemory();
-      InMemoryKeys keyStorage = InMemoryKeys();
+      InMemoryKey keyStorage = InMemoryKey();
       KeyService keysService = KeyService(keyStorage);
       TransactionService transactionService = TransactionService(db);
       BlockService blockService = BlockService(db);
@@ -83,7 +83,7 @@ void main() {
     });
     test('create block, serialize and deserilaize', () async {
       Database db = sqlite3.openInMemory();
-      InMemoryKeys keyStorage = InMemoryKeys();
+      InMemoryKey keyStorage = InMemoryKey();
       KeyService keysService = KeyService(keyStorage);
       KeyModel key = await keysService.create();
       TransactionService transactionService = TransactionService(db);
@@ -108,6 +108,10 @@ void main() {
       Uint8List serialized = blk.serialize();
       BlockModel newBlock = BlockModel.deserialize(serialized);
       expect(newBlock.id, blk.id);
+      expect(newBlock.version, blk.version);
+      expect(newBlock.timestamp, blk.timestamp);
+      expect(newBlock.previousHash, blk.previousHash);
+      expect(newBlock.transactionRoot , blk.transactionRoot);
     });
   });
 }

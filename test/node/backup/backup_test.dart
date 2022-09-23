@@ -15,11 +15,11 @@ import 'package:tiki_sdk_dart/node/backup/backup_repository.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
 import 'package:tiki_sdk_dart/node/key/key_service.dart';
 
-import '../../in_mem_keys.dart';
+import '../../in_mem_key.dart';
 
 void main() async {
   final db = sqlite3.openInMemory();
-  KeyService keysService = KeyService(InMemoryKeys());
+  KeyService keysService = KeyService(InMemoryKey());
   KeyModel keys = await keysService.create();
   group('backup tests', () {
     test('backup repository test, retrieve all', () {

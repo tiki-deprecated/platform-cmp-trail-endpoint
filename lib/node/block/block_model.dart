@@ -44,7 +44,8 @@ class BlockModel {
     required this.previousHash,
     required this.transactionRoot,
     DateTime? timestamp,
-  }) : timestamp = timestamp ?? DateTime.now();
+  }) : timestamp = timestamp ?? DateTime.fromMillisecondsSinceEpoch(
+    (DateTime.now().millisecondsSinceEpoch ~/1000) * 1000);
 
   /// Builds a [BlockModel] from a [map].
   ///
@@ -74,7 +75,7 @@ class BlockModel {
     List<Uint8List> extractedBlockBytes = UtilsCompactSize.decode(block);
     version = UtilsBytes.decodeBigInt(extractedBlockBytes[0]).toInt();
     timestamp = DateTime.fromMillisecondsSinceEpoch(
-        UtilsBytes.decodeBigInt(extractedBlockBytes[1]).toInt());
+        UtilsBytes.decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
     previousHash = extractedBlockBytes[2];
     transactionRoot = extractedBlockBytes[3];
     id = Digest("SHA3-256").process(serialize());
@@ -87,14 +88,10 @@ class BlockModel {
   /// The Uint8List structure is:
   /// ```
   /// Uint8List<Uint8List> header = Uin8List.fromList([
-  ///   ...UtilsCompactSize.toSize(version),
-  ///   ...version,
-  ///   ...UtilsCompactSize.toSize(timestamp),
-  ///   ...timestamp,
-  ///   ...UtilsCompactSize.toSize(previousHash),
-  ///   ...previousHash,
-  ///   ...UtilsCompactSize.toSize(transactionRoot),
-  ///   ...transactionRoot,
+  ///   ..add(UtilsCompactSize.encode(serializedVersion))
+  ///   ..add(UtilsCompactSize.encode(serializedTimestamp))
+  ///   ..add(UtilsCompactSize.encode(serializedPreviousHash))
+  ///   ..add(UtilsCompactSize.encode(serializedTransactionRoot)))
   /// ]);
   /// ```
   Uint8List serialize() {
@@ -106,14 +103,10 @@ class BlockModel {
     Uint8List serializedPreviousHash = previousHash;
     Uint8List serializedTransactionRoot = transactionRoot;
     return (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(serializedVersion))
-          ..add(serializedVersion)
-          ..add(UtilsCompactSize.toSize(serializedTimestamp))
-          ..add(serializedTimestamp)
-          ..add(UtilsCompactSize.toSize(serializedPreviousHash))
-          ..add(serializedPreviousHash)
-          ..add(UtilsCompactSize.toSize(serializedTransactionRoot))
-          ..add(serializedTransactionRoot))
+          ..add(UtilsCompactSize.encode(serializedVersion))
+          ..add(UtilsCompactSize.encode(serializedTimestamp))
+          ..add(UtilsCompactSize.encode(serializedPreviousHash))
+          ..add(UtilsCompactSize.encode(serializedTransactionRoot)))
         .toBytes();
   }
 

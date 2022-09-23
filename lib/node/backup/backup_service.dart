@@ -11,7 +11,9 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import '../../utils/bytes.dart';
 import '../../utils/rsa/rsa.dart';
+import '../../utils/utils.dart';
 import '../node_service.dart';
 import 'backup_storage_interface.dart';
 
@@ -63,8 +65,12 @@ class BackupService {
           String id = noAddress.substring(0, noAddress.length - 6);
           Uint8List? block = _getBlock(base64Decode(id));
           if (block != null) {
-            Uint8List signedBlock = UtilsRsa.sign(_key.privateKey, block);
-            await _storage.write('$id.block', signedBlock);
+            Uint8List signature = UtilsRsa.sign(_key.privateKey, block);
+            Uint8List signedBlock = (BytesBuilder()
+              ..add(UtilsCompactSize.encode(signature))
+              ..add(UtilsCompactSize.encode(block))
+             ).toBytes();
+            await _storage.write(backup.path, signedBlock);
             backup.timestamp = DateTime.now();
             _repository.update(backup);
           }

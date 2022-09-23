@@ -17,7 +17,7 @@ import 'backup_repository.dart';
 /// is not set that means the backup was not done yet.
 class BackupModel {
   late String
-      path; //TODO you're not actually using the path, you're using the filename.
+      path; 
   Uint8List? signature;
   DateTime? timestamp;
 
