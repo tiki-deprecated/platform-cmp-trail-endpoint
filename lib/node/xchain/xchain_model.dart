@@ -28,7 +28,7 @@ class XchainModel {
   /// If the chain was not synced yet, [lastBlock] should be null.
   XchainModel(this.publicKey, {lastBlock})
       : address = Digest("SHA3-256").process(base64.decode(publicKey.encode())),
-      lastBlock = lastBlock ?? Uint8List(1);
+        lastBlock = lastBlock ?? Uint8List(1);
 
   /// Builds a [XchainModel] from a [map].
   ///

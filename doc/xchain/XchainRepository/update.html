@@ -53,7 +53,7 @@
       
 
 <span class="returntype">void</span>
-<span class="name ">update</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="update-param-address"><span class="type-annotation">String</span> <span class="parameter-name">address</span>, </span></li>
+<span class="name ">update</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="update-param-address"><span class="type-annotation">Uint8List</span> <span class="parameter-name">address</span>, </span></li>
 <li><span class="parameter" id="update-param-lastBlock"><span class="type-annotation">Uint8List</span> <span class="parameter-name">lastBlock</span></span></li>
 </ol>)
 
@@ -69,8 +69,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void update(String address, Uint8List lastBlock) {
-  throw UnimplementedError();
+  <pre class="language-dart"><code class="language-dart">void update(Uint8List address, Uint8List lastBlock) {
+  _db.execute(
+      &#39;UPDATE $table SET $columnLastBlock = ? WHERE $columnAddress = ?&#39;,
+      [lastBlock, address]);
 }</code></pre>
 </section>
 
@@ -107,6 +109,7 @@
 
     <li class="section-title"><a href="../../xchain/XchainRepository-class.html#instance-methods">Methods</a></li>
     <li><a href="../../xchain/XchainRepository/createTable.html">createTable</a></li>
+    <li><a href="../../xchain/XchainRepository/get.html">get</a></li>
     <li class="inherited"><a href="../../xchain/XchainRepository/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../xchain/XchainRepository/save.html">save</a></li>
     <li class="inherited"><a href="../../xchain/XchainRepository/toString.html">toString</a></li>
@@ -135,7 +138,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.3
   </span>
 
   

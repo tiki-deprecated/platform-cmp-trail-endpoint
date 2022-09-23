@@ -94,12 +94,13 @@ class TransactionRepository {
     WHERE $columnId = ?;
     ''', [transaction.merkelProof, transaction.block!.id!, transaction.id]);
 
-  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
+  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [BlockModel.id].
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(
       whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
           : "WHERE $columnBlockId = x'${UtilsBytes.hexEncode(id)}'");
 
+  /// Gets the [TransactionModel] by its [TransactionModel.id].
   TransactionModel? getById(Uint8List id) {
     List<TransactionModel> txns = _select(
         whereStmt: "WHERE $table.$columnId = x'${UtilsBytes.hexEncode(id)}'");

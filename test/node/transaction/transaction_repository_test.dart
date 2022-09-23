@@ -40,7 +40,8 @@ void main() {
 
       expect(found != null, true);
       expect(found?.assetRef, assetRef);
-      expect(found?.timestamp, timestamp.subtract(Duration(microseconds: timestamp.microsecond)));
+      expect(found?.timestamp,
+          timestamp.subtract(Duration(microseconds: timestamp.microsecond)));
       expect(found?.address, address);
       expect(found?.contents, contents);
       expect(found?.signature, signature);

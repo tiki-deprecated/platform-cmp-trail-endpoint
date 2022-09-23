@@ -105,19 +105,6 @@
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="build" class="callable">
-  <span class="name"><a href="../transaction/TransactionService/build.html">build</a></span><span class="signature">(<wbr><span class="parameter" id="build-param-contents">{<span>required</span> <span class="type-annotation">Uint8List</span> <span class="parameter-name">contents</span>, </span><span class="parameter" id="build-param-keys"><span>required</span> <span class="type-annotation"><a href="../keys/KeysModel-class.html">KeysModel</a></span> <span class="parameter-name">keys</span>, </span><span class="parameter" id="build-param-assetRef"><span class="type-annotation">String</span> <span class="parameter-name">assetRef</span> = <span class="default-value">&#39;AA==&#39;</span>}</span>)
-    <span class="returntype parameter">&#8594; <a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Builds a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> with <code>contents</code>.
-  
-
-</dd>
-
         <dt id="commit" class="callable">
   <span class="name"><a href="../transaction/TransactionService/commit.html">commit</a></span><span class="signature">(<wbr><span class="parameter" id="commit-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span>)
     <span class="returntype parameter">&#8594; void</span>
@@ -126,21 +113,47 @@
 
 </dt>
 <dd>
-  Commits a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by persisting its its <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a>
+  Commits a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by persisting its <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a>
 and <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> values.
   
 
 </dd>
 
+        <dt id="create" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/create.html">create</a></span><span class="signature">(<wbr><span class="parameter" id="create-param-contents"><span class="type-annotation">Uint8List</span> <span class="parameter-name">contents</span>, </span><span class="parameter" id="create-param-key"><span class="type-annotation"><a href="../node/KeyModel-class.html">KeyModel</a></span> <span class="parameter-name">key</span>, </span><span class="parameter" id="create-param-assetRef">{<span class="type-annotation">String</span> <span class="parameter-name">assetRef</span> = <span class="default-value">&#39;AA==&#39;</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> with <code>contents</code>.
+  
+
+</dd>
+
         <dt id="getByBlock" class="callable">
-  <span class="name"><a href="../transaction/TransactionService/getByBlock.html">getByBlock</a></span><span class="signature">(<wbr><span class="parameter" id="getByBlock-param-blockId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">blockId</span></span>)
+  <span class="name"><a href="../transaction/TransactionService/getByBlock.html">getByBlock</a></span><span class="signature">(<wbr><span class="parameter" id="getByBlock-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span></span>)
     <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  Gets all the transactions from a <code>BlockModel</code> by its <code>BlockModel.id</code>.
+  Gets all the transactions from a <a href="../block/BlockModel-class.html">BlockModel</a> by its <a href="../block/BlockModel/id.html">BlockModel.id</a>.
+  
+
+</dd>
+
+        <dt id="getById" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/getById.html">getById</a></span><span class="signature">(<wbr><span class="parameter" id="getById-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../transaction/TransactionModel-class.html">TransactionModel</a>?</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Gets <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by <a href="../transaction/TransactionModel/id.html">TransactionModel.id</a>
   
 
 </dd>
@@ -153,7 +166,7 @@ and <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.
 
 </dt>
 <dd>
-  Gets all the transactions that were not commited by <a href="../transaction/TransactionService/commit.html">commit</a>.
+  Gets all the transactions that were not committed by <a href="../transaction/TransactionService/commit.html">commit</a>.
   
 
 </dd>
@@ -171,15 +184,15 @@ and <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.
 
 </dd>
 
-        <dt id="serializeTransactions" class="callable">
-  <span class="name"><a href="../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></span><span class="signature">(<wbr><span class="parameter" id="serializeTransactions-param-blockId"><span class="type-annotation">String</span> <span class="parameter-name">blockId</span></span>)
+        <dt id="serializeTransactionsByBlockId" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/serializeTransactionsByBlockId.html">serializeTransactionsByBlockId</a></span><span class="signature">(<wbr><span class="parameter" id="serializeTransactionsByBlockId-param-blockId"><span class="type-annotation">String</span> <span class="parameter-name">blockId</span></span>)
     <span class="returntype parameter">&#8594; Uint8List</span>
   </span>
   
 
 </dt>
 <dd>
-  Creates a <code>Uint8List</code> of the transactions included in a <code>BlockModel</code>.
+  Creates a <code>Uint8List</code> of the transactions included in a <a href="../block/BlockModel-class.html">BlockModel</a>.
   
 
 </dd>
@@ -239,6 +252,19 @@ transactions.
 
 </dd>
 
+        <dt id="serializeTransactions" class="callable">
+  <span class="name"><a href="../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></span><span class="signature">(<wbr><span class="parameter" id="serializeTransactions-param-txns"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span> <span class="parameter-name">txns</span></span>)
+    <span class="returntype parameter">&#8594; Uint8List</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a serialized <code>Uint8List</code> from a List of <a href="../transaction/TransactionModel-class.html">TransactionModel</a>.
+  
+
+</dd>
+
         <dt id="validateAuthor" class="callable">
   <span class="name"><a href="../transaction/TransactionService/validateAuthor.html">validateAuthor</a></span><span class="signature">(<wbr><span class="parameter" id="validateAuthor-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateAuthor-param-pubKey"><span class="type-annotation"><a href="../utils/CryptoRSAPublicKey-class.html">CryptoRSAPublicKey</a></span> <span class="parameter-name">pubKey</span></span>)
     <span class="returntype parameter">&#8594; bool</span>
@@ -254,7 +280,7 @@ transactions.
 </dd>
 
         <dt id="validateInclusion" class="callable">
-  <span class="name"><a href="../transaction/TransactionService/validateInclusion.html">validateInclusion</a></span><span class="signature">(<wbr><span class="parameter" id="validateInclusion-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateInclusion-param-block"><span class="type-annotation">BlockModel</span> <span class="parameter-name">block</span></span>)
+  <span class="name"><a href="../transaction/TransactionService/validateInclusion.html">validateInclusion</a></span><span class="signature">(<wbr><span class="parameter" id="validateInclusion-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateInclusion-param-root"><span class="type-annotation">Uint8List</span> <span class="parameter-name">root</span></span>)
     <span class="returntype parameter">&#8594; bool</span>
   </span>
   
@@ -333,12 +359,13 @@ checking validating its <a href="../transaction/TransactionModel/merkelProof.htm
     <li class="inherited"><a href="../transaction/TransactionService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../transaction/TransactionService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../transaction/TransactionService/build.html">build</a></li>
     <li><a href="../transaction/TransactionService/commit.html">commit</a></li>
+    <li><a href="../transaction/TransactionService/create.html">create</a></li>
     <li><a href="../transaction/TransactionService/getByBlock.html">getByBlock</a></li>
+    <li><a href="../transaction/TransactionService/getById.html">getById</a></li>
     <li><a href="../transaction/TransactionService/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../transaction/TransactionService/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
+    <li><a href="../transaction/TransactionService/serializeTransactionsByBlockId.html">serializeTransactionsByBlockId</a></li>
     <li class="inherited"><a href="../transaction/TransactionService/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../transaction/TransactionService-class.html#operators">Operators</a></li>
@@ -348,6 +375,7 @@ checking validating its <a href="../transaction/TransactionModel/merkelProof.htm
 
         <li class="section-title"><a href="../transaction/TransactionService-class.html#static-methods">Static methods</a></li>
           <li><a href="../transaction/TransactionService/deserializeTransactions.html">deserializeTransactions</a></li>
+          <li><a href="../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
           <li><a href="../transaction/TransactionService/validateAuthor.html">validateAuthor</a></li>
           <li><a href="../transaction/TransactionService/validateInclusion.html">validateInclusion</a></li>
           <li><a href="../transaction/TransactionService/validateIntegrity.html">validateIntegrity</a></li>
@@ -361,7 +389,7 @@ checking validating its <a href="../transaction/TransactionModel/merkelProof.htm
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.3
   </span>
 
   

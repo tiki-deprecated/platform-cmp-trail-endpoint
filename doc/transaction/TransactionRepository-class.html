@@ -51,7 +51,7 @@
 
     
 <section class="desc markdown">
-  <p>The repository for <a href="../transaction/TransactionModel-class.html">TransactionModel</a> persistance in <code>Database</code>.</p>
+  <p>The repository for <a href="../transaction/TransactionModel-class.html">TransactionModel</a> persistence in <code>Database</code>.</p>
 </section>
 
 
@@ -107,7 +107,7 @@
     <dl class="callables">
         <dt id="commit" class="callable">
   <span class="name"><a href="../transaction/TransactionRepository/commit.html">commit</a></span><span class="signature">(<wbr><span class="parameter" id="commit-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span>)
-    <span class="returntype parameter">&#8594; <a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>
+    <span class="returntype parameter">&#8594; void</span>
   </span>
   
 
@@ -119,54 +119,28 @@
 
 </dd>
 
-        <dt id="createTable" class="callable">
-  <span class="name"><a href="../transaction/TransactionRepository/createTable.html">createTable</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates the <a href="../transaction/TransactionRepository/table-constant.html">TransactionRepository.table</a> if it does not exist.
-  
-
-</dd>
-
         <dt id="getByBlockId" class="callable">
-  <span class="name"><a href="../transaction/TransactionRepository/getByBlockId.html">getByBlockId</a></span><span class="signature">(<wbr><span class="parameter" id="getByBlockId-param-blockId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">blockId</span></span>)
+  <span class="name"><a href="../transaction/TransactionRepository/getByBlockId.html">getByBlockId</a></span><span class="signature">(<wbr><span class="parameter" id="getByBlockId-param-id"><span class="type-annotation">Uint8List?</span> <span class="parameter-name">id</span></span>)
     <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  Gets the <code>List</code> of <code>TransactionModel</code> from the <code>BlockModel</code> from its <code>blockId</code>.
+  Gets the <code>List</code> of <code>TransactionModel</code> from the <a href="../block/BlockModel-class.html">BlockModel</a> from its <a href="../block/BlockModel/id.html">BlockModel.id</a>.
   
 
 </dd>
 
         <dt id="getById" class="callable">
-  <span class="name"><a href="../transaction/TransactionRepository/getById.html">getById</a></span><span class="signature">(<wbr><span class="parameter" id="getById-param-id"><span class="type-annotation">String</span> <span class="parameter-name">id</span></span>)
+  <span class="name"><a href="../transaction/TransactionRepository/getById.html">getById</a></span><span class="signature">(<wbr><span class="parameter" id="getById-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span></span>)
     <span class="returntype parameter">&#8594; <a href="../transaction/TransactionModel-class.html">TransactionModel</a>?</span>
   </span>
   
 
 </dt>
 <dd>
-  Gets a transaction by its <code>id</code>.
-  
-
-</dd>
-
-        <dt id="getPending" class="callable">
-  <span class="name"><a href="../transaction/TransactionRepository/getPending.html">getPending</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Gets all the transactions that were not commited yet. See <a href="../transaction/TransactionRepository/commit.html">commit</a>.
+  Gets the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by its <a href="../transaction/TransactionModel/id.html">TransactionModel.id</a>.
   
 
 </dd>
@@ -186,7 +160,7 @@
 
         <dt id="save" class="callable">
   <span class="name"><a href="../transaction/TransactionRepository/save.html">save</a></span><span class="signature">(<wbr><span class="parameter" id="save-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span>)
-    <span class="returntype parameter">&#8594; <a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>
+    <span class="returntype parameter">&#8594; void</span>
   </span>
   
 
@@ -278,7 +252,7 @@
 
 </dt>
 <dd>
-  The <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a> column identified by <code>BlockModel.id</code>.
+  The <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a> column identified by <a href="../block/BlockModel/id.html">BlockModel.id</a>.
   
 
   <div>
@@ -443,10 +417,8 @@
 
     <li class="section-title"><a href="../transaction/TransactionRepository-class.html#instance-methods">Methods</a></li>
     <li><a href="../transaction/TransactionRepository/commit.html">commit</a></li>
-    <li><a href="../transaction/TransactionRepository/createTable.html">createTable</a></li>
     <li><a href="../transaction/TransactionRepository/getByBlockId.html">getByBlockId</a></li>
     <li><a href="../transaction/TransactionRepository/getById.html">getById</a></li>
-    <li><a href="../transaction/TransactionRepository/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../transaction/TransactionRepository/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../transaction/TransactionRepository/save.html">save</a></li>
     <li class="inherited"><a href="../transaction/TransactionRepository/toString.html">toString</a></li>
@@ -477,7 +449,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.3
   </span>
 
   

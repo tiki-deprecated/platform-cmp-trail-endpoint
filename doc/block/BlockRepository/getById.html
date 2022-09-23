@@ -53,7 +53,8 @@
       
 
 <span class="returntype"><a href="../../block/BlockModel-class.html">BlockModel</a>?</span>
-<span class="name ">getById</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="getById-param-id"><span class="type-annotation">String</span> <span class="parameter-name">id</span></span></li>
+<span class="name ">getById</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="getById-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span>, </span></li>
+<li><span class="parameter" id="getById-param-xchainAddress">{<span class="type-annotation">Uint8List?</span> <span class="parameter-name">xchainAddress</span>}</span></li>
 </ol>)
 
       
@@ -68,9 +69,16 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">BlockModel? getById(String id) {
-  List&lt;BlockModel&gt; blocks =
-      _select(whereStmt: &quot;WHERE $table.$columnId = &#39;$id&#39;&quot;);
+  <pre class="language-dart"><code class="language-dart">BlockModel? getById(Uint8List id, {Uint8List? xchainAddress}) {
+  String where = &quot;WHERE $table.$columnId = ?&quot;;
+  List params = [id];
+  if (xchainAddress != null) {
+    where = &quot;$where AND $table.$columnXchain = ?&quot;;
+    params.add(xchainAddress);
+  } else {
+    where = &quot;$where AND $table.$columnXchain IS NULL&quot;;
+  }
+  List&lt;BlockModel&gt; blocks = _select(whereStmt: where, params: params);
   return blocks.isNotEmpty ? blocks[0] : null;
 }</code></pre>
 </section>
@@ -124,9 +132,9 @@
           <li><a href="../../block/BlockRepository/columnId-constant.html">columnId</a></li>
           <li><a href="../../block/BlockRepository/columnPreviousHash-constant.html">columnPreviousHash</a></li>
           <li><a href="../../block/BlockRepository/columnTimestamp-constant.html">columnTimestamp</a></li>
-          <li><a href="../../block/BlockRepository/columnTransactionCount-constant.html">columnTransactionCount</a></li>
           <li><a href="../../block/BlockRepository/columnTransactionRoot-constant.html">columnTransactionRoot</a></li>
           <li><a href="../../block/BlockRepository/columnVersion-constant.html">columnVersion</a></li>
+          <li><a href="../../block/BlockRepository/columnXchain-constant.html">columnXchain</a></li>
           <li><a href="../../block/BlockRepository/table-constant.html">table</a></li>
 </ol>
 
@@ -140,7 +148,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.3
   </span>
 
   

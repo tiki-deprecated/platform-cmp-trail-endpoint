@@ -75,7 +75,7 @@ class BlockRepository {
     if (xchainAddress != null) {
       where = "$where AND $table.$columnXchain = ?";
       params.add(xchainAddress);
-    }else{
+    } else {
       where = "$where AND $table.$columnXchain IS NULL";
     }
     List<BlockModel> blocks = _select(whereStmt: where, params: params);

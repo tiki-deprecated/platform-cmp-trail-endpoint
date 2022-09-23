@@ -66,13 +66,11 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void update(MetadataKey key, String value) {
-  _db.execute(&#39;&#39;&#39;UPDATE $table SET
-      $columnValue = &#39;$value&#39;
-      WHERE
-      $columnKey = &#39;${key.value}&#39;
-    ;&#39;&#39;&#39;);
-}</code></pre>
+  <pre class="language-dart"><code class="language-dart">void update(MetadataKey key, String value) =&gt; _db.execute(&#39;&#39;&#39;
+  UPDATE $table
+  SET $columnValue = &#39;$value&#39;
+  WHERE $columnKey = &#39;${key.value}&#39;;
+  &#39;&#39;&#39;);</code></pre>
 </section>
 
 
@@ -136,7 +134,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.3
   </span>
 
   

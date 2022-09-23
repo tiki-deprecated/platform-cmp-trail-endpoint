@@ -63,8 +63,8 @@
 <section class="desc markdown">
   <p>Creates a List of <code>TransactionModel</code>] from a <code>Uint8List</code> of the serialized
 transactions.</p>
-<p>This is the revers function for <a href="../../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a>. It should be used
-when recovering a <code>BlockModel</code> body.</p>
+<p>This is the revert function for <a href="../../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a>. It should be used
+when recovering a <a href="../../block/BlockModel-class.html">BlockModel</a> body.</p>
 </section>
 
 
@@ -76,16 +76,13 @@ when recovering a <code>BlockModel</code> body.</p>
   List&lt;TransactionModel&gt; txns = [];
   List&lt;Uint8List&gt; extractedBlockBytes =
       UtilsCompactSize.decode(serializedBlock);
-  int transactionCount =
-      UtilsBytes.decodeBigInt(extractedBlockBytes[4]).toInt();
-  if (extractedBlockBytes.sublist(5).length == transactionCount) {
-    throw Exception(
-        &#39;Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}&#39;);
-  }
-  for (int i = 5; i &lt; extractedBlockBytes.length; i++) {
+  for (int i = 4; i &lt; extractedBlockBytes.length; i++) {
     TransactionModel txn =
         TransactionModel.deserialize(extractedBlockBytes[i]);
-    if (validateIntegrity(txn)) throw Exception(&#39;Corrupted transaction $txn&#39;);
+    if (!validateIntegrity(txn)) {
+      int j = 1;
+      throw Exception(&#39;Corrupted transaction $txn&#39;);
+    }
     txns.add(txn);
   }
   return txns;
@@ -124,12 +121,13 @@ when recovering a <code>BlockModel</code> body.</p>
     <li class="inherited"><a href="../../transaction/TransactionService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../transaction/TransactionService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../transaction/TransactionService/build.html">build</a></li>
     <li><a href="../../transaction/TransactionService/commit.html">commit</a></li>
+    <li><a href="../../transaction/TransactionService/create.html">create</a></li>
     <li><a href="../../transaction/TransactionService/getByBlock.html">getByBlock</a></li>
+    <li><a href="../../transaction/TransactionService/getById.html">getById</a></li>
     <li><a href="../../transaction/TransactionService/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../../transaction/TransactionService/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
+    <li><a href="../../transaction/TransactionService/serializeTransactionsByBlockId.html">serializeTransactionsByBlockId</a></li>
     <li class="inherited"><a href="../../transaction/TransactionService/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../../transaction/TransactionService-class.html#operators">Operators</a></li>
@@ -139,6 +137,7 @@ when recovering a <code>BlockModel</code> body.</p>
 
         <li class="section-title"><a href="../../transaction/TransactionService-class.html#static-methods">Static methods</a></li>
           <li><a href="../../transaction/TransactionService/deserializeTransactions.html">deserializeTransactions</a></li>
+          <li><a href="../../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
           <li><a href="../../transaction/TransactionService/validateAuthor.html">validateAuthor</a></li>
           <li><a href="../../transaction/TransactionService/validateInclusion.html">validateInclusion</a></li>
           <li><a href="../../transaction/TransactionService/validateIntegrity.html">validateIntegrity</a></li>
@@ -155,7 +154,7 @@ when recovering a <code>BlockModel</code> body.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.3
   </span>
 
   

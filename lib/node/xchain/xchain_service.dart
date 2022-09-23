@@ -2,6 +2,8 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+/// {@category Node}
+/// Handles cross chain references.
 library xchain;
 
 export 'xchain_repository.dart';
@@ -16,7 +18,6 @@ import '../../utils/utils.dart';
 import '../backup/backup_storage_interface.dart';
 import '../node_service.dart';
 
-/// {@category Node}
 /// The service to handle [XchainModel] references and updates.
 class XchainService {
   final XchainRepository _repository;
@@ -41,8 +42,10 @@ class XchainService {
   void update(Uint8List address, Uint8List lastBlock) =>
       _repository.update(address, lastBlock);
 
+  /// Gets a xchain from local database.
   XchainModel? get(Uint8List address) => _repository.get(address);
 
+  /// Loads a xchain from remote backup storage.
   Future<XchainModel> load(Uint8List address) async {
     XchainModel? xchain = _repository.get(address);
     if (xchain == null) {

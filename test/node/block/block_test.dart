@@ -111,7 +111,7 @@ void main() {
       expect(newBlock.version, blk.version);
       expect(newBlock.timestamp, blk.timestamp);
       expect(newBlock.previousHash, blk.previousHash);
-      expect(newBlock.transactionRoot , blk.transactionRoot);
+      expect(newBlock.transactionRoot, blk.transactionRoot);
     });
   });
 }

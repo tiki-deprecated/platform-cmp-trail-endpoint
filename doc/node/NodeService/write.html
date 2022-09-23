@@ -52,7 +52,7 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span>
+<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>
 <span class="name ">write</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="write-param-contents"><span class="type-annotation">Uint8List</span> <span class="parameter-name">contents</span></span></li>
 </ol>)
 
@@ -61,23 +61,26 @@
     </section>
     
 <section class="desc markdown">
-  <p>Creates a <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> with the <code>contents</code> and save to local <code>database</code>.</p>
-<p>When a <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> is created it is not added to the next block
+  <p>Creates a <code>TransactionModel</code> with the <code>contents</code> and save to local <code>database</code>.</p>
+<p>When a <code>TransactionModel</code> is created it is not added to the next block
 immediately. It needs to wait until the <code>_blkTimer</code> runs again to check if
 the oldest transaction was created more than <code>_blkInterval</code> duration or
-if there are more than 200 <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> waiting to be added to a
-<code>BlockModel</code>.</p>
+if there are more than 200 <code>TransactionModel</code> waiting to be added to a
+<a href="../../block/BlockModel-class.html">BlockModel</a>.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">TransactionModel write(Uint8List contents) {
-  TransactionModel txn =
-      _transactionService.build(keys: _keys, contents: contents);
-  _createBlock();
-  return txn;
+  <pre class="language-dart"><code class="language-dart">Future&lt;TransactionModel&gt; write(Uint8List contents) async {
+  TransactionModel transaction =
+      _transactionService.create(contents, _primaryKey);
+  List&lt;TransactionModel&gt; transactions = _transactionService.getPending();
+  if (transactions.length &gt;= _maxTransactions) {
+    await _createBlock(transactions);
+  }
+  return transaction;
 }</code></pre>
 </section>
 
@@ -116,7 +119,7 @@ if there are more than 200 <a href="../../transaction/TransactionModel-class.htm
     <li class="section-title"><a href="../../node/NodeService-class.html#instance-methods">Methods</a></li>
     <li><a href="../../node/NodeService/getBlockById.html">getBlockById</a></li>
     <li><a href="../../node/NodeService/getLastBlock.html">getLastBlock</a></li>
-    <li><a href="../../node/NodeService/getTransactionsByBlockId.html">getTransactionsByBlockId</a></li>
+    <li><a href="../../node/NodeService/getTransactionByPath.html">getTransactionByPath</a></li>
     <li><a href="../../node/NodeService/init.html">init</a></li>
     <li class="inherited"><a href="../../node/NodeService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../node/NodeService/toString.html">toString</a></li>
@@ -128,8 +131,6 @@ if there are more than 200 <a href="../../transaction/TransactionModel-class.htm
 
 
 
-        <li class="section-title"><a href="../../node/NodeService-class.html#constants">Constants</a></li>
-          <li><a href="../../node/NodeService/scheme-constant.html">scheme</a></li>
 </ol>
 
   </div><!--/.sidebar-offcanvas-->
@@ -142,7 +143,7 @@ if there are more than 200 <a href="../../transaction/TransactionModel-class.htm
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.3
   </span>
 
   

@@ -96,13 +96,20 @@ main() {
       TransactionModel? transaction =
           await nodeService.getTransactionByPath(originalTxn.path);
       expect(transaction != null, true);
-      expect(UtilsBytes.memEquals(transaction!.id!, originalTxn.id!),true);
+      expect(UtilsBytes.memEquals(transaction!.id!, originalTxn.id!), true);
       expect(transaction.version, originalTxn.version);
-      expect(UtilsBytes.memEquals(transaction.address, originalTxn.address),true);
-      expect(UtilsBytes.memEquals(transaction.contents, originalTxn.contents),true);
+      expect(
+          UtilsBytes.memEquals(transaction.address, originalTxn.address), true);
+      expect(UtilsBytes.memEquals(transaction.contents, originalTxn.contents),
+          true);
       expect(transaction.assetRef, originalTxn.assetRef);
-      expect(UtilsBytes.memEquals(transaction.merkelProof!, originalTxn.merkelProof!),true);
-      expect(UtilsBytes.memEquals(transaction.block!.id!, originalTxn.block!.id!),true);
+      expect(
+          UtilsBytes.memEquals(
+              transaction.merkelProof!, originalTxn.merkelProof!),
+          true);
+      expect(
+          UtilsBytes.memEquals(transaction.block!.id!, originalTxn.block!.id!),
+          true);
       expect(transaction.timestamp, originalTxn.timestamp);
     });
   });
