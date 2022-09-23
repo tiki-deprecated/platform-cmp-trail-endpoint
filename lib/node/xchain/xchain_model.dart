@@ -7,26 +7,28 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 
+import '../../utils/utils.dart';
 import 'xchain_repository.dart';
 
 /// {@category Node}
 /// The model to store information about cross chain reference.
 class XchainModel {
-  /// The base64Url representation of the chain address.
-  String address;
+  /// The chain address. It is the SHA3-256 hash of the
+  Uint8List address;
 
   /// The chain public key bytes.
-  Uint8List publicKey;
+  final CryptoRSAPublicKey publicKey;
 
   /// The id for the last validated block.
-  Uint8List? lastBlock;
+  Uint8List lastBlock;
 
   /// Builds a [XchainModel] from its [publicKey].
   ///
   /// The [address] is derived from the [publicKey] using the SHA3-256 hash.
   /// If the chain was not synced yet, [lastBlock] should be null.
-  XchainModel(this.publicKey, {this.lastBlock})
-      : address = base64.encode(Digest("SHA3-256").process(publicKey));
+  XchainModel(this.publicKey, {lastBlock})
+      : address = Digest("SHA3-256").process(base64.decode(publicKey.encode())),
+      lastBlock = lastBlock ?? Uint8List(1);
 
   /// Builds a [XchainModel] from a [map].
   ///
@@ -49,8 +51,8 @@ class XchainModel {
   String toString() {
     return '''XchainModel
       address : $address,
-      publicKey : ${base64.encode(publicKey)},
-      lastBlock : ${lastBlock == null ? 'null' : base64.encode(lastBlock!)},
+      publicKey : $publicKey,
+      lastBlock : $lastBlock,
     ''';
   }
 }

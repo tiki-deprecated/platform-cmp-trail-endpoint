@@ -19,21 +19,7 @@ class CryptoRSAPublicKey extends RSAPublicKey {
   CryptoRSAPublicKey(BigInt modulus, BigInt exponent)
       : super(modulus, exponent);
 
-  static CryptoRSAPublicKey decode(String encodedKey) {
-    ASN1Parser topLevelParser = ASN1Parser(base64.decode(encodedKey));
-    ASN1Sequence topLevelSeq = topLevelParser.nextObject() as ASN1Sequence;
-
-    ASN1BitString publicKeyBitString =
-        topLevelSeq.elements![1] as ASN1BitString;
-    ASN1Sequence publicKeySeq =
-        ASN1Sequence.fromBytes(publicKeyBitString.stringValues as Uint8List);
-
-    ASN1Integer modulus = publicKeySeq.elements![0] as ASN1Integer;
-    ASN1Integer exponent = publicKeySeq.elements![1] as ASN1Integer;
-    return CryptoRSAPublicKey(modulus.integer!, exponent.integer!);
-  }
-
-  String encode() {
+  Uint8List get bytes {
     ASN1Sequence sequence = ASN1Sequence();
     ASN1Sequence algorithm = ASN1Sequence();
     ASN1Object paramsAsn1Obj =
@@ -54,6 +40,22 @@ class CryptoRSAPublicKey extends RSAPublicKey {
     sequence.add(algorithm);
     sequence.add(publicKeyBitString);
     sequence.encode();
-    return base64.encode(sequence.encodedBytes!);
+    return sequence.encodedBytes!;
   }
+
+  static CryptoRSAPublicKey decode(String encodedKey) {
+    ASN1Parser topLevelParser = ASN1Parser(base64.decode(encodedKey));
+    ASN1Sequence topLevelSeq = topLevelParser.nextObject() as ASN1Sequence;
+
+    ASN1BitString publicKeyBitString =
+        topLevelSeq.elements![1] as ASN1BitString;
+    ASN1Sequence publicKeySeq =
+        ASN1Sequence.fromBytes(publicKeyBitString.stringValues as Uint8List);
+
+    ASN1Integer modulus = publicKeySeq.elements![0] as ASN1Integer;
+    ASN1Integer exponent = publicKeySeq.elements![1] as ASN1Integer;
+    return CryptoRSAPublicKey(modulus.integer!, exponent.integer!);
+  }
+
+  String encode() => base64.encode(bytes);
 }

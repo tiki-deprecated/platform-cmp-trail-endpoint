@@ -2,23 +2,18 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:test/test.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_sdk_dart/node/block/block_model.dart';
-import 'package:tiki_sdk_dart/node/block/block_repository.dart';
-import 'package:tiki_sdk_dart/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
+import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/utils/utils.dart';
-import '../../in_mem_keys.dart';
-import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
+
+import '../../in_mem_key.dart';
 
 void main() {
   group('block repository tests', () {
-    test('save blocks, retrieve all', () {
+    test('save blocks to repository', () {
       Database db = sqlite3.openInMemory();
       BlockRepository repository = BlockRepository(db);
       BlockModel block1 = _generateBlockModel();
@@ -28,51 +23,51 @@ void main() {
     });
 
     test('create block, save and retrive', () async {
-      KeysService keysService = KeysService(InMemoryKeys());
-      KeysModel keys = await keysService.create();
+      KeyService keysService = KeyService(InMemoryKey());
+      KeyModel key = await keysService.create();
       Database db = sqlite3.openInMemory();
       TransactionService transactionService = TransactionService(db);
       BlockService blockService = BlockService(db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.build(
-            keys: keys, contents: Uint8List.fromList([i]));
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
         transactions.add(txn);
       }
       MerkelTree merkelTree =
           MerkelTree.build(transactions.map((txn) => txn.id!).toList());
       Uint8List transactionRoot = merkelTree.root!;
-      BlockModel blk = blockService.build(transactions, transactionRoot);
+      BlockModel blk = blockService.create(transactionRoot);
       for (TransactionModel transaction in transactions) {
         transaction.block = blk;
         transaction.merkelProof = merkelTree.proofs[transaction.id];
         transactionService.commit(transaction);
       }
       blockService.commit(blk);
-      BlockModel? block1 = blockService.get(base64.encode(blk.id!));
+      BlockModel? block1 = blockService.get(blk.id!);
       expect(block1 != null, true);
       expect(block1?.id, blk.id);
     });
 
     test('create block, save and validate integrity', () async {
       Database db = sqlite3.openInMemory();
-      InMemoryKeys keyStorage = InMemoryKeys();
-      KeysService keysService = KeysService(keyStorage);
+      InMemoryKey keyStorage = InMemoryKey();
+      KeyService keysService = KeyService(keyStorage);
       TransactionService transactionService = TransactionService(db);
       BlockService blockService = BlockService(db);
-      KeysModel keys = await keysService.create();
+      KeyModel key = await keysService.create();
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.build(
-            keys: keys, contents: Uint8List.fromList([i]));
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
         transactions.add(txn);
       }
       MerkelTree validationTree =
           MerkelTree.build((transactions.map((txn) => txn.id!).toList()));
-      BlockModel block = blockService.build(transactions, validationTree.root!);
+      BlockModel block = blockService.create(validationTree.root!);
       for (int i = 0; i < transactions.length; i++) {
         transactions[i].block = block;
-        transactions[i].merkelProof = validationTree.proofs[i];
+        transactions[i].merkelProof = validationTree.proofs[transactions[i].id];
         transactionService.commit(transactions[i]);
       }
       blockService.commit(block);
@@ -88,21 +83,21 @@ void main() {
     });
     test('create block, serialize and deserilaize', () async {
       Database db = sqlite3.openInMemory();
-      InMemoryKeys keyStorage = InMemoryKeys();
-      KeysService keysService = KeysService(keyStorage);
-      KeysModel keys = await keysService.create();
+      InMemoryKey keyStorage = InMemoryKey();
+      KeyService keysService = KeyService(keyStorage);
+      KeyModel key = await keysService.create();
       TransactionService transactionService = TransactionService(db);
       BlockService blockService = BlockService(db);
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.build(
-            keys: keys, contents: Uint8List.fromList([i]));
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
         transactions.add(txn);
       }
       MerkelTree merkelTree =
           MerkelTree.build(transactions.map((txn) => txn.id!).toList());
       Uint8List transactionRoot = merkelTree.root!;
-      BlockModel blk = blockService.build(transactions, transactionRoot);
+      BlockModel blk = blockService.create(transactionRoot);
       for (TransactionModel transaction in transactions) {
         transaction.block = blk;
         transaction.merkelProof = merkelTree.proofs[transaction.id];
@@ -110,10 +105,13 @@ void main() {
       }
       blockService.commit(blk);
 
-      Uint8List serialized = blk.serialize(
-          transactionService.serializeTransactions(base64.encode(blk.id!)));
+      Uint8List serialized = blk.serialize();
       BlockModel newBlock = BlockModel.deserialize(serialized);
       expect(newBlock.id, blk.id);
+      expect(newBlock.version, blk.version);
+      expect(newBlock.timestamp, blk.timestamp);
+      expect(newBlock.previousHash, blk.previousHash);
+      expect(newBlock.transactionRoot , blk.transactionRoot);
     });
   });
 }
@@ -122,5 +120,4 @@ BlockModel _generateBlockModel() => BlockModel(
     version: 1,
     previousHash: Uint8List.fromList([1, 2, 3]),
     transactionRoot: Uint8List(0),
-    transactionCount: 0,
     timestamp: DateTime.now());

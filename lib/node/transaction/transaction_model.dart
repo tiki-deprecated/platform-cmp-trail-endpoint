@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -48,6 +47,8 @@ class TransactionModel {
   /// The asymmetric digital signature (RSA) for the [serialize] transaction.
   Uint8List? signature;
 
+  String get path => "${base64Url.encode(address)}/${base64Url.encode(block!.id!)}/${base64Url.encode(id!)}";
+
   /// Builds a new [TransactionModel]
   ///
   /// If no [timestamp] is provided, the object creation time is used.
@@ -57,13 +58,12 @@ class TransactionModel {
       this.version = 1,
       required this.address,
       required this.contents,
-      assetRef,
-      timestamp,
+      this.assetRef = "AA==",
+      DateTime? timestamp,
       this.merkelProof,
-      this.block}) {
-    this.timestamp = timestamp ?? DateTime.now();
-    this.assetRef = assetRef ?? "AA==";
-  }
+      this.block,
+      this.signature})
+      : timestamp = timestamp ?? DateTime.fromMillisecondsSinceEpoch((DateTime.now().millisecondsSinceEpoch ~/1000) * 1000);
 
   /// Builds a [BlockModel] from a [map].
   ///
@@ -90,11 +90,8 @@ class TransactionModel {
         merkelProof = map[TransactionRepository.columnMerkelProof],
         block = map['block'],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
-            map[TransactionRepository.columnTimestamp] * 1000),
+            map[TransactionRepository.columnTimestamp]),
         signature = map[TransactionRepository.columnSignature];
-
-  static TransactionModel fromJson(String json) =>
-      TransactionModel.fromMap(jsonDecode(json));
 
   /// Builds a [TransactionModel] from a [transaction] list of bytes.
   ///

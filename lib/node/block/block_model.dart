@@ -3,11 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+import 'dart:typed_data';
+
 import 'package:pointycastle/api.dart';
 
 import '../../utils/utils.dart';
-import 'dart:typed_data';
-
 import 'block_repository.dart';
 
 /// The block model entity for local storage.
@@ -32,9 +32,6 @@ class BlockModel {
   /// The [MerkelTree.root] of the [TransactionModel] hashes taht are part of this.
   late Uint8List transactionRoot;
 
-  /// The total number of [TransactionModel] that are part of this.
-  late int transactionCount;
-
   /// The block creation timestamp.
   late final DateTime timestamp;
 
@@ -46,11 +43,9 @@ class BlockModel {
     this.version = 1,
     required this.previousHash,
     required this.transactionRoot,
-    required this.transactionCount,
-    timestamp,
-  }) {
-    this.timestamp = timestamp ?? DateTime.now();
-  }
+    DateTime? timestamp,
+  }) : timestamp = timestamp ?? DateTime.fromMillisecondsSinceEpoch(
+    (DateTime.now().millisecondsSinceEpoch ~/1000) * 1000);
 
   /// Builds a [BlockModel] from a [map].
   ///
@@ -70,39 +65,20 @@ class BlockModel {
         version = map[BlockRepository.columnVersion],
         previousHash = map[BlockRepository.columnPreviousHash],
         transactionRoot = map[BlockRepository.columnTransactionRoot],
-        transactionCount = map[BlockRepository.columnTransactionCount],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
-            map[BlockRepository.columnTimestamp] * 1000);
+            map[BlockRepository.columnTimestamp]);
 
   /// Builds a [BlockModel] from a [serialized] list of bytes.
   ///
   /// Check [serialize] for more information on how the [serialized] is built.
-  BlockModel.deserialize(Uint8List serialized) {
-    List<Uint8List> extractedBlockBytes = UtilsCompactSize.decode(serialized);
+  BlockModel.deserialize(Uint8List block) {
+    List<Uint8List> extractedBlockBytes = UtilsCompactSize.decode(block);
     version = UtilsBytes.decodeBigInt(extractedBlockBytes[0]).toInt();
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         UtilsBytes.decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
     previousHash = extractedBlockBytes[2];
     transactionRoot = extractedBlockBytes[3];
-    transactionCount = UtilsBytes.decodeBigInt(extractedBlockBytes[4]).toInt();
-    if (extractedBlockBytes.sublist(5).length != transactionCount) {
-      throw Exception(
-          'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
-    }
-    id = Digest("SHA3-256").process(header());
-  }
-
-  /// Creates a [Uint8List] representation of the block.
-  ///
-  /// The serialized [BlockModel] is created by combining in a [Uint8List] the
-  /// [BlockModel.header] and the block [body], that is built from the
-  /// [TransactionModel] list by [TransactionService.serializeTransactions].
-  Uint8List serialize(Uint8List body) {
-    Uint8List head = header();
-    return (BytesBuilder()
-          ..add(head)
-          ..add(body))
-        .toBytes();
+    id = Digest("SHA3-256").process(serialize());
   }
 
   /// Creates the [Uint8List] representation of the block header.
@@ -112,19 +88,13 @@ class BlockModel {
   /// The Uint8List structure is:
   /// ```
   /// Uint8List<Uint8List> header = Uin8List.fromList([
-  ///   ...UtilsCompactSize.toSize(version),
-  ///   ...version,
-  ///   ...UtilsCompactSize.toSize(timestamp),
-  ///   ...timestamp,
-  ///   ...UtilsCompactSize.toSize(previousHash),
-  ///   ...previousHash,
-  ///   ...UtilsCompactSize.toSize(transactionRoot),
-  ///   ...transactionRoot,
-  ///   ...UtilsCompactSize.toSize(transactionCount),
-  ///   ...transactionCount,
+  ///   ..add(UtilsCompactSize.encode(serializedVersion))
+  ///   ..add(UtilsCompactSize.encode(serializedTimestamp))
+  ///   ..add(UtilsCompactSize.encode(serializedPreviousHash))
+  ///   ..add(UtilsCompactSize.encode(serializedTransactionRoot)))
   /// ]);
   /// ```
-  Uint8List header() {
+  Uint8List serialize() {
     Uint8List serializedVersion = UtilsBytes.encodeBigInt(BigInt.from(version));
     Uint8List serializedTimestamp = (BytesBuilder()
           ..add(UtilsBytes.encodeBigInt(
@@ -132,30 +102,22 @@ class BlockModel {
         .toBytes();
     Uint8List serializedPreviousHash = previousHash;
     Uint8List serializedTransactionRoot = transactionRoot;
-    Uint8List serializedTransactionCount =
-        UtilsBytes.encodeBigInt(BigInt.from(transactionCount));
     return (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(serializedVersion))
-          ..add(serializedVersion)
-          ..add(UtilsCompactSize.toSize(serializedTimestamp))
-          ..add(serializedTimestamp)
-          ..add(UtilsCompactSize.toSize(serializedPreviousHash))
-          ..add(serializedPreviousHash)
-          ..add(UtilsCompactSize.toSize(serializedTransactionRoot))
-          ..add(serializedTransactionRoot)
-          ..add(UtilsCompactSize.toSize(serializedTransactionCount))
-          ..add(serializedTransactionCount))
+          ..add(UtilsCompactSize.encode(serializedVersion))
+          ..add(UtilsCompactSize.encode(serializedTimestamp))
+          ..add(UtilsCompactSize.encode(serializedPreviousHash))
+          ..add(UtilsCompactSize.encode(serializedTransactionRoot)))
         .toBytes();
   }
 
   /// Overrides toString() method for useful error messages
   @override
-  String toString() => '''BlockModel
+  String toString() => '''
+      BlockModel - 
       'id': $id,
       'version': $version,
       'previousHash': $previousHash,
       'transactionRoot': $transactionRoot,
-      'transactionCount': $transactionCount,
       'timestamp': $timestamp
     ''';
 }

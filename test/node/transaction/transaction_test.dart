@@ -8,17 +8,12 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/block/block_model.dart';
-import 'package:tiki_sdk_dart/node/block/block_repository.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_model.dart';
-import 'package:tiki_sdk_dart/node/keys/keys_service.dart';
-import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
-import 'package:tiki_sdk_dart/node/transaction/transaction_repository.dart';
+import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
-import '../../in_mem_keys.dart';
 import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
 
+import '../../in_mem_key.dart';
 import '../node_test_helpers.dart';
 
 void main() {
@@ -26,16 +21,15 @@ void main() {
     test('TransactionRepository: create and retrieve transactions', () async {
       Database db = sqlite3.openInMemory();
       TransactionRepository repository = TransactionRepository(db);
-      BlockRepository blockRepository = BlockRepository(db);
-      KeysModel keys = await KeysService(InMemoryKeys()).create();
-      //BlockRepository blkRepo = BlockRepository(db);
-      TransactionModel txn1 = generateTransactionModel(1, keys);
-      TransactionModel txn2 = generateTransactionModel(2, keys);
-      TransactionModel txn3 = generateTransactionModel(3, keys);
+      BlockRepository(db);
+      KeyModel key = await KeyService(InMemoryKey()).create();
+      TransactionModel txn1 = generateTransactionModel(1, key);
+      TransactionModel txn2 = generateTransactionModel(2, key);
+      TransactionModel txn3 = generateTransactionModel(3, key);
       repository.save(txn1);
       repository.save(txn2);
       repository.save(txn3);
-      List<TransactionModel> txns = repository.getPending();
+      List<TransactionModel> txns = repository.getByBlockId(null);
       expect(txns.length, 3);
     });
 
@@ -59,26 +53,26 @@ void main() {
     test('''Transaction Service: create transaction and check inclusion, 
     integrity and authorship''', () async {
       Database db = sqlite3.openInMemory();
-      InMemoryKeys keyStorage = InMemoryKeys();
-      KeysService keysService = KeysService(keyStorage);
+      InMemoryKey keyStorage = InMemoryKey();
+      KeyService keysService = KeyService(keyStorage);
 
       TransactionService transactionService = TransactionService(db);
       BlockService blockService = BlockService(db);
 
-      KeysModel keys = await keysService.create();
+      KeyModel key = await keysService.create();
       List<TransactionModel> transactions = [];
       for (int i = 0; i < 50; i++) {
-        TransactionModel txn = transactionService.build(
-            keys: keys, contents: Uint8List.fromList([i]));
+        TransactionModel txn =
+            transactionService.create(Uint8List.fromList([i]), key);
         transactions.add(txn);
-        expect(TransactionService.validateAuthor(txn, keys.privateKey.public),
+        expect(TransactionService.validateAuthor(txn, key.privateKey.public),
             true);
 
         expect(TransactionService.validateIntegrity(txn), true);
       }
       MerkelTree merkelTree =
           MerkelTree.build(transactions.map((txn) => txn.id!).toList());
-      BlockModel block = blockService.build(transactions, merkelTree.root!);
+      BlockModel block = blockService.create(merkelTree.root!);
       for (int i = 0; i < transactions.length; i++) {
         TransactionModel transaction = transactions[i];
         transaction.block = block;
@@ -88,25 +82,22 @@ void main() {
       blockService.commit(block);
       List<TransactionModel> txns = transactionService.getByBlock(block.id!);
       for (TransactionModel transaction in txns) {
-        expect(TransactionService.validateInclusion(transaction, block), true);
+        expect(
+            TransactionService.validateInclusion(transaction, merkelTree.root!),
+            true);
       }
     });
 
     test('Transaction serialize and deserialize', () async {
-      KeysModel keys = await KeysService(InMemoryKeys()).create();
+      KeyModel key = await KeyService(InMemoryKey()).create();
       Database db = sqlite3.openInMemory();
-      InMemoryKeys keyStorage = InMemoryKeys();
-      KeysService keysService = KeysService(keyStorage);
-
       TransactionService transactionService = TransactionService(db);
-      BlockService blockService = BlockService(db);
-      TransactionModel txn = transactionService.build(
-          keys: keys, contents: Uint8List.fromList([0]));
-      expect(
-          TransactionService.validateAuthor(txn, keys.privateKey.public), true);
+      TransactionModel txn =
+          transactionService.create(Uint8List.fromList([0]), key);
       Uint8List serialized = txn.serialize(includeSignature: true);
       TransactionModel newTxn = TransactionModel.deserialize(serialized);
-      expect(TransactionService.validateAuthor(newTxn, keys.privateKey.public),
+      expect(TransactionService.validateIntegrity(txn), true);
+      expect(TransactionService.validateAuthor(newTxn, key.privateKey.public),
           true);
       expect(txn.version, newTxn.version);
       expect(base64.encode(txn.address), base64.encode(newTxn.address));

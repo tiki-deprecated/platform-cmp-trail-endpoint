@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 /*
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
