@@ -54,12 +54,13 @@ class BackupRepository {
   /// Updates the persisted [BackupModel] by adding [BackupModel.signature]
   /// and [BackupModel.timestamp]
   void update(BackupModel backup) {
-    _db.execute('''UPDATE $table SET 
+    _db.execute('''
+      UPDATE $table 
+      SET
         $columnTimestamp = ?, 
         $columnSignature = ?
-        WHERE 
-        $columnPath = ?;
-      ;''', [
+      WHERE $columnPath = ?;
+      ''', [
       backup.timestamp!.millisecondsSinceEpoch,
       backup.signature,
       backup.path
@@ -73,7 +74,7 @@ class BackupRepository {
       _select(whereStmt: 'WHERE $columnTimestamp IS NULL');
 
   BackupModel? getByPath(String path) {
-    List<BackupModel> bkups = _select(whereStmt: 'WHERE $columnPath = $path');
+    List<BackupModel> bkups = _select(whereStmt: "WHERE $columnPath = '$path'");
     return bkups.isNotEmpty ? bkups.first : null;
   }
 
@@ -82,7 +83,7 @@ class BackupRepository {
       SELECT 
         $table.$columnPath as '$columnPath',
         $table.$columnSignature as '$columnSignature',
-        $table.$columnTimestamp as '$columnTimestamp',
+        $table.$columnTimestamp as '$columnTimestamp'
       FROM $table
       ${whereStmt ?? ''};
       ''');

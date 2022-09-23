@@ -41,6 +41,8 @@ void main() {
       expect(found?.previousHash, previousHash);
       expect(found?.id, id);
       expect(found?.transactionRoot, transactionRoot);
+      expect(found?.timestamp,
+          timestamp.subtract(Duration(microseconds: timestamp.microsecond)));
     });
 
     test('Last - Success ', () async {
@@ -70,6 +72,8 @@ void main() {
       expect(last?.previousHash, previousHash);
       expect(last?.id, id);
       expect(last?.transactionRoot, transactionRoot);
+      expect(last?.timestamp,
+          timestamp.subtract(Duration(microseconds: timestamp.microsecond)));
     });
   });
 }

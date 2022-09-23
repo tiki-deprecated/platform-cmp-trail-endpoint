@@ -41,7 +41,7 @@ class BackupModel {
         timestamp = map[BackupRepository.columnTimestamp] == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(
-                map[BackupRepository.columnTimestamp] * 1000);
+                map[BackupRepository.columnTimestamp]);
 
   /// Overrides toString() method for useful error messages
   @override
