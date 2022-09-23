@@ -18,8 +18,8 @@ void main() {
     test('Get policy', () async {
       RsaKeyPair kp = UtilsRsa.generate();
 
-      L0StorageService service = L0StorageService(apiId, kp.privateKey);
-      L0StorageModelPolicyRsp rsp = await service.policy();
+      L0StorageService service = L0StorageService(apiId);
+      L0StorageModelPolicyRsp rsp = await service.policy(kp.privateKey);
 
       expect(rsp.compute?.contains('key'), true);
       expect(rsp.compute?.contains('file'), true);
@@ -48,10 +48,10 @@ void main() {
     test('Bad API Id', () async {
       RsaKeyPair kp = UtilsRsa.generate();
 
-      L0StorageService service =
-          L0StorageService(const Uuid().v4(), kp.privateKey);
+      L0StorageService service = L0StorageService(const Uuid().v4());
 
-      expect(() async => await service.policy(), throwsA(isA<HttpException>()));
+      expect(() async => await service.policy(kp.privateKey),
+          throwsA(isA<HttpException>()));
     });
   });
 }

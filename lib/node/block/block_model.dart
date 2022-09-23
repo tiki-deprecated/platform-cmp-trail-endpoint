@@ -66,7 +66,7 @@ class BlockModel {
         previousHash = map[BlockRepository.columnPreviousHash],
         transactionRoot = map[BlockRepository.columnTransactionRoot],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
-            map[BlockRepository.columnTimestamp] * 1000);
+            map[BlockRepository.columnTimestamp]);
 
   /// Builds a [BlockModel] from a [serialized] list of bytes.
   ///

@@ -58,7 +58,4 @@ class BlockService {
 
   /// Gets a [BlockModel] by [BlockModel.id]
   BlockModel? get(Uint8List id) => _repository.getById(id);
-
-  /// Gets the last committed block from the [db].
-  BlockModel? last() => _repository.getLast();
 }
