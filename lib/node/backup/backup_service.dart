@@ -37,7 +37,7 @@ class BackupService {
 
     if (keyBackup.timestamp == null) {
       Uint8List obj = base64.decode(_key.privateKey.public.encode());
-      _storage.write('public.key', obj);
+      _storage.write('${base64UrlEncode(_key.address)}/public.key', obj);
       keyBackup.timestamp = DateTime.now();
       _repository.update(keyBackup);
     }

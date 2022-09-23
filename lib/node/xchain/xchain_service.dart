@@ -10,14 +10,11 @@ export 'xchain_model.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:pointycastle/pointycastle.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
 import '../backup/backup_storage_interface.dart';
 import '../node_service.dart';
-import 'xchain_repository.dart';
-import 'xchain_model.dart';
 
 /// {@category Node}
 /// The service to handle [XchainModel] references and updates.
@@ -50,7 +47,7 @@ class XchainService {
     XchainModel? xchain = _repository.get(address);
     if (xchain == null) {
       Uint8List bytesPublicKey =
-          await _backupStorage.read('$address/public.key');
+          await _backupStorage.read('${base64Url.encode(address)}/public.key');
       CryptoRSAPublicKey publicKey =
           CryptoRSAPublicKey.decode(base64Encode(bytesPublicKey));
       xchain = add(publicKey);

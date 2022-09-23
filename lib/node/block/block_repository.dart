@@ -29,6 +29,9 @@ class BlockRepository {
   /// The [BlockModel.timestamp] column.
   static const columnTimestamp = 'timestamp';
 
+  /// The address of the block's cross chain reference
+  static const columnXchain = 'xchain';
+
   /// The [Database] used to persist [BlockModel].
   final Database _db;
 
@@ -47,18 +50,20 @@ class BlockRepository {
       $columnId BLOB PRIMARY KEY NOT NULL,
       $columnVersion INTEGER NOT NULL,
       $columnPreviousHash BLOB,
+      $columnXchain BLOB,
       $columnTransactionRoot BLOB,
       $columnTimestamp INTEGER);
     ''');
 
   /// Persists a [block] in the local [_db].
-  void save(BlockModel block) => _db.execute('''
+  void save(BlockModel block, {Uint8List? xchain}) => _db.execute('''
     INSERT INTO $table 
-    VALUES (?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?, ?);
     ''', [
         block.id,
         block.version,
         block.previousHash,
+        xchain,
         block.transactionRoot,
         block.timestamp.millisecondsSinceEpoch
       ]);
@@ -67,6 +72,12 @@ class BlockRepository {
   BlockModel? getById(Uint8List id, {Uint8List? xchainAddress}) {
     String where = "WHERE $table.$columnId = ?";
     List params = [id];
+    if (xchainAddress != null) {
+      where = "$where AND $table.$columnXchain = ?";
+      params.add(xchainAddress);
+    }else{
+      where = "$where AND $table.$columnXchain IS NULL";
+    }
     List<BlockModel> blocks = _select(whereStmt: where, params: params);
     return blocks.isNotEmpty ? blocks[0] : null;
   }

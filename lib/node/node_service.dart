@@ -86,12 +86,13 @@ class NodeService {
   /// [BlockModel] if the last [TransactionModel] was created before 1 minute ago
   /// or if the total size of the serialized transactions is greater than 100kb.
   ///
-  Future<NodeService> init(String apiId, Database database,
-      KeyInterface keysInterface, BackupStorageInterface backupStorage,
+  Future<NodeService> init(Database database, KeyInterface keysInterface,
+      BackupStorageInterface backupStorage,
       {String? primary,
       List<String> readOnly = const [],
       int maxTransactions = 200,
       Duration blockInterval = const Duration(minutes: 1)}) async {
+    _backupStorage = backupStorage;
     _transactionService = TransactionService(database);
     _blockService = BlockService(database);
     _keyService = KeyService(keysInterface);
@@ -189,7 +190,7 @@ class NodeService {
       {Uint8List? xchainId}) async {
     BlockModel? block = _blockService.get(blockId, xchainAddress: xchainId);
     if (block != null || xchainId == null) return block;
-    await loadXchain(xchainId, blockId);
+    await _loadXchain(xchainId, blockId);
     return _blockService.get(blockId, xchainAddress: xchainId);
   }
 
@@ -213,7 +214,7 @@ class NodeService {
     return null;
   }
 
-  Future<void> loadXchain(xchainId, startBlockId) async {
+  Future<void> _loadXchain(xchainId, startBlockId) async {
     XchainModel xchain = await _xchainService.load(xchainId);
     String path =
         '${base64UrlEncode(xchain.address)}/${base64UrlEncode(startBlockId)}.block';

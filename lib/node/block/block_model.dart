@@ -65,7 +65,7 @@ class BlockModel {
         previousHash = map[BlockRepository.columnPreviousHash],
         transactionRoot = map[BlockRepository.columnTransactionRoot],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
-            map[BlockRepository.columnTimestamp] * 1000);
+            map[BlockRepository.columnTimestamp]);
 
   /// Builds a [BlockModel] from a [serialized] list of bytes.
   ///
@@ -74,7 +74,7 @@ class BlockModel {
     List<Uint8List> extractedBlockBytes = UtilsCompactSize.decode(block);
     version = UtilsBytes.decodeBigInt(extractedBlockBytes[0]).toInt();
     timestamp = DateTime.fromMillisecondsSinceEpoch(
-        UtilsBytes.decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
+        UtilsBytes.decodeBigInt(extractedBlockBytes[1]).toInt());
     previousHash = extractedBlockBytes[2];
     transactionRoot = extractedBlockBytes[3];
     id = Digest("SHA3-256").process(serialize());
