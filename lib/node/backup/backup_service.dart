@@ -12,6 +12,7 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/rsa/rsa.dart';
+import '../l0_storage.dart';
 import '../node_service.dart';
 
 export 'backup_model.dart';
@@ -20,17 +21,12 @@ export 'backup_repository.dart';
 /// A service to handle the backup requests to [WasabiService].
 class BackupService {
   final BackupRepository _repository;
-  final WasabiService _wasabiService;
-  final L0StorageService _l0storageService;
+  final L0Storage _l0storage;
   final KeyModel _key;
   final Uint8List? Function(Uint8List) _getBlock;
 
-  L0StorageModelPolicyRsp? _policy;
-
-  BackupService(this._wasabiService, Database database, String apiId, this._key,
-      this._getBlock)
-      : _repository = BackupRepository(database),
-        _l0storageService = L0StorageService(apiId) {
+  BackupService(this._l0storage, Database database, this._key, this._getBlock)
+      : _repository = BackupRepository(database) {
     String keyBackupPath = '${base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
 
@@ -41,7 +37,7 @@ class BackupService {
 
     if (keyBackup.timestamp == null) {
       Uint8List obj = base64.decode(_key.privateKey.public.encode());
-      _writeWasabi('public.key', obj);
+      _l0storage.write('public.key', obj);
       keyBackup.timestamp = DateTime.now();
       _repository.update(keyBackup);
     }
@@ -67,25 +63,13 @@ class BackupService {
           String id = noAddress.substring(0, noAddress.length - 6);
           Uint8List? block = _getBlock(base64Decode(id));
           if (block != null) {
-            Uint8List signedBlock = UtilsRsa.sign(_key.privateKey, block);
-            await _writeWasabi('$id.block', signedBlock);
+            Uint8List signedBlock = Rsa.sign(_key.privateKey, block);
+            await _l0storage.write(backup.path, signedBlock);
             backup.timestamp = DateTime.now();
             _repository.update(backup);
           }
         }
       }
-    }
-  }
-
-  Future<void> _writeWasabi(String filename, Uint8List obj) async {
-    _policy ??= await _l0storageService.policy(_key.privateKey);
-    try {
-      await _wasabiService.write('${_policy!.keyPrefix}$filename', obj,
-          fields: _policy!.fields!);
-    } on WasabiExceptionExpired catch (_) {
-      _policy = await _l0storageService.policy(_key.privateKey);
-      await _wasabiService.write('${_policy!.keyPrefix}$filename', obj,
-          fields: _policy!.fields!);
     }
   }
 }

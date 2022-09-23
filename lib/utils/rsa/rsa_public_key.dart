@@ -15,9 +15,8 @@ import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 
 /// The RSA public key implementation
-class CryptoRSAPublicKey extends RSAPublicKey {
-  CryptoRSAPublicKey(BigInt modulus, BigInt exponent)
-      : super(modulus, exponent);
+class RsaPublicKey extends RSAPublicKey {
+  RsaPublicKey(BigInt modulus, BigInt exponent) : super(modulus, exponent);
 
   Uint8List get bytes {
     ASN1Sequence sequence = ASN1Sequence();
@@ -43,7 +42,7 @@ class CryptoRSAPublicKey extends RSAPublicKey {
     return sequence.encodedBytes!;
   }
 
-  static CryptoRSAPublicKey decode(String encodedKey) {
+  static RsaPublicKey decode(String encodedKey) {
     ASN1Parser topLevelParser = ASN1Parser(base64.decode(encodedKey));
     ASN1Sequence topLevelSeq = topLevelParser.nextObject() as ASN1Sequence;
 
@@ -54,7 +53,7 @@ class CryptoRSAPublicKey extends RSAPublicKey {
 
     ASN1Integer modulus = publicKeySeq.elements![0] as ASN1Integer;
     ASN1Integer exponent = publicKeySeq.elements![1] as ASN1Integer;
-    return CryptoRSAPublicKey(modulus.integer!, exponent.integer!);
+    return RsaPublicKey(modulus.integer!, exponent.integer!);
   }
 
   String encode() => base64.encode(bytes);

@@ -4,7 +4,7 @@
  */
 /// {@category Node}
 /// A L0 Storage Policy Response Fields Model
-class L0StorageModelPolicyRspFields {
+class PolicyModelRspFields {
   String? policy;
   String? contentType;
   String? xAmzCredential;
@@ -14,7 +14,7 @@ class L0StorageModelPolicyRspFields {
   String? xAmzObjectLockMode;
   String? xAmzObjectLockRetainUntilDate;
 
-  L0StorageModelPolicyRspFields(
+  PolicyModelRspFields(
       {this.policy,
       this.contentType,
       this.xAmzCredential,
@@ -24,7 +24,7 @@ class L0StorageModelPolicyRspFields {
       this.xAmzObjectLockMode,
       this.xAmzObjectLockRetainUntilDate});
 
-  L0StorageModelPolicyRspFields.fromMap(Map<String, dynamic>? map) {
+  PolicyModelRspFields.fromMap(Map<String, dynamic>? map) {
     if (map != null) {
       policy = map['policy'];
       contentType = map['content-type'];
@@ -52,6 +52,6 @@ class L0StorageModelPolicyRspFields {
   /// Overrides toString() method for useful error messages
   @override
   String toString() {
-    return 'L0StorageModelPolicyRspFields{policy: $policy, contentType: $contentType, xAmzCredential: $xAmzCredential, xAmzAlgorithm: $xAmzAlgorithm, xAmzDate: $xAmzDate, xAmzSignature: $xAmzSignature, xAmzObjectLockMode: $xAmzObjectLockMode, xAmzObjectLockRetainUntilDate: $xAmzObjectLockRetainUntilDate}';
+    return 'PolicyModelRspFields{policy: $policy, contentType: $contentType, xAmzCredential: $xAmzCredential, xAmzAlgorithm: $xAmzAlgorithm, xAmzDate: $xAmzDate, xAmzSignature: $xAmzSignature, xAmzObjectLockMode: $xAmzObjectLockMode, xAmzObjectLockRetainUntilDate: $xAmzObjectLockRetainUntilDate}';
   }
 }

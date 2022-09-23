@@ -24,7 +24,7 @@
 /// See https://developer.mozilla.org/pt-BR/docs/Web/API/Web_Crypto_API
 ///
 /// In other environments, use equivalent implementations of the recommended ones.
-abstract class KeyInterface {
+abstract class KeyStorage {
   Future<void> write({required String key, required String value});
 
   Future<String?> read({required String key});

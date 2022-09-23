@@ -10,19 +10,19 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import '../shared_storage/wasabi/wasabi_service.dart';
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
 import 'block/block_service.dart';
 import 'key/key_service.dart';
+import 'l0_storage.dart';
 import 'transaction/transaction_service.dart';
-import 'wasabi/wasabi_service.dart';
 
 export './backup/backup_service.dart';
 export './block/block_service.dart';
 export './key/key_service.dart';
-export './l0_storage/l0_storage_service.dart';
 export './transaction/transaction_service.dart';
-export './wasabi/wasabi_service.dart';
+export '../shared_storage/wasabi/wasabi_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
@@ -37,16 +37,16 @@ class NodeService {
   late final Duration _blockInterval;
   late final int _maxTransactions;
 
-  CryptoRSAPublicKey get publicKey => _primaryKey.privateKey.public;
+  RsaPublicKey get publicKey => _primaryKey.privateKey.public;
 
   /// Initialize the service
   ///
   /// All the related chains addresses should be added to [addresses] list as
   /// [base64Url] representation of the address.
   ///
-  /// The first address in the [addresses] list for which [keysInterface] has a private
+  /// The first address in the [addresses] list for which [keyStorage] has a private
   /// key is the one that will be used for read and write operations.
-  /// All the other ones are used in read-only mode, even if [keysInterface]
+  /// All the other ones are used in read-only mode, even if [keyStorage]
   /// has its private key stored.
   ///
   /// The [apiKey] is used for remote backup connection. Please visit mytiki.com
@@ -60,7 +60,7 @@ class NodeService {
   /// used for tests or thin clients with read-only operations. It is NOT RECOMMENDED
   /// for writing to the chain.
   ///
-  /// The [keysInterface] should be a [KeysInterface] implementation
+  /// The [keyStorage] should be a [KeysInterface] implementation
   /// using encrypted key-value storage, specifically for each host OS.
   /// It should not be accessed by other applications or users because it will
   /// store the private keys of the user, which is required for write operations
@@ -85,22 +85,20 @@ class NodeService {
   /// or if the total size of the serialized transactions is greater than 100kb.
   ///
   Future<NodeService> init(
-      String apiId, Database database, KeyInterface keysInterface,
+      Database database, KeyStorage keyStorage, L0Storage l0storage,
       {String? primary,
       List<String> readOnly = const [],
       int maxTransactions = 200,
       Duration blockInterval = const Duration(minutes: 1)}) async {
     _transactionService = TransactionService(database);
     _blockService = BlockService(database);
-    _wasabiService = WasabiService();
-    _keyService = KeyService(keysInterface);
+    _keyService = KeyService(keyStorage);
     _blockInterval = blockInterval;
     _maxTransactions = maxTransactions;
 
     await _loadPrimaryKey(primary);
 
-    _backupService =
-        BackupService(_wasabiService, database, apiId, _primaryKey, (id) {
+    _backupService = BackupService(l0storage, database, _primaryKey, (id) {
       BlockModel? header = _blockService.get(id);
       if (header == null) return null;
 

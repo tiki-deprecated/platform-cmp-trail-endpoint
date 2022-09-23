@@ -2,12 +2,13 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-import 'package:tiki_sdk_dart/node/key/key_interface.dart';
+
+import 'package:tiki_sdk_dart/node/node_service.dart';
 
 /// {@category Utils}
 
 /// A ephemeral key-value storage.
-class InMemoryKey extends KeyInterface {
+class InMemoryKey extends KeyStorage {
   Map<String, String> storage = {};
 
   @override

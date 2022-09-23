@@ -6,7 +6,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/l0_storage/l0_storage_service.dart';
+import 'package:tiki_sdk_dart/node/l0_storage/policy_service.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
 import 'package:tiki_sdk_dart/utils/utils.dart';
 import 'package:uuid/uuid.dart';
@@ -16,10 +16,10 @@ void main() {
 
   group('l0_storage tests', skip: apiId.isEmpty, () {
     test('Get policy', () async {
-      RsaKeyPair kp = UtilsRsa.generate();
+      RsaKeyPair kp = Rsa.generate();
 
       L0StorageService service = L0StorageService(apiId);
-      L0StorageModelPolicyRsp rsp = await service.policy(kp.privateKey);
+      L0StorageModelPolicyRsp rsp = await service.request(kp.privateKey);
 
       expect(rsp.compute?.contains('key'), true);
       expect(rsp.compute?.contains('file'), true);
@@ -46,11 +46,11 @@ void main() {
     });
 
     test('Bad API Id', () async {
-      RsaKeyPair kp = UtilsRsa.generate();
+      RsaKeyPair kp = Rsa.generate();
 
       L0StorageService service = L0StorageService(const Uuid().v4());
 
-      expect(() async => await service.policy(kp.privateKey),
+      expect(() async => await service.request(kp.privateKey),
           throwsA(isA<HttpException>()));
     });
   });

@@ -17,12 +17,11 @@ import 'package:pointycastle/asymmetric/api.dart';
 import 'rsa_public_key.dart';
 
 /// The RSA private key implementation
-class CryptoRSAPrivateKey extends RSAPrivateKey {
-  CryptoRSAPrivateKey(
-      BigInt modulus, BigInt privateExponent, BigInt? p, BigInt? q)
+class RsaPrivateKey extends RSAPrivateKey {
+  RsaPrivateKey(BigInt modulus, BigInt privateExponent, BigInt? p, BigInt? q)
       : super(modulus, privateExponent, p, q);
 
-  static CryptoRSAPrivateKey decode(String encodedKey) {
+  static RsaPrivateKey decode(String encodedKey) {
     ASN1Parser topLevelParser = ASN1Parser(base64.decode(encodedKey));
     ASN1Sequence topLevelSeq = topLevelParser.nextObject() as ASN1Sequence;
 
@@ -36,12 +35,11 @@ class CryptoRSAPrivateKey extends RSAPrivateKey {
     ASN1Integer prime1 = publicKeySeq.elements![4] as ASN1Integer;
     ASN1Integer prime2 = publicKeySeq.elements![5] as ASN1Integer;
 
-    return CryptoRSAPrivateKey(modulus.integer!, privateExponent.integer!,
+    return RsaPrivateKey(modulus.integer!, privateExponent.integer!,
         prime1.integer, prime2.integer);
   }
 
-  CryptoRSAPublicKey get public =>
-      CryptoRSAPublicKey(modulus!, publicExponent!);
+  RsaPublicKey get public => RsaPublicKey(modulus!, publicExponent!);
 
   String encode() {
     ASN1Sequence sequence = ASN1Sequence();

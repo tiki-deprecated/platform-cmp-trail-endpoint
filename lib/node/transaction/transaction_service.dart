@@ -35,7 +35,7 @@ class TransactionService {
     TransactionModel txn = TransactionModel(
         address: key.address, contents: contents, assetRef: assetRef);
     txn.signature =
-        UtilsRsa.sign(key.privateKey, txn.serialize(includeSignature: false));
+        Rsa.sign(key.privateKey, txn.serialize(includeSignature: false));
     txn.id = Digest("SHA3-256").process(txn.serialize());
     _repository.save(txn);
     return txn;
@@ -63,8 +63,8 @@ class TransactionService {
   /// Validates the author of the [TransactionModel] by calling [verify] with its
   /// [TransactionModel.signature].
   static bool validateAuthor(
-          TransactionModel transaction, CryptoRSAPublicKey pubKey) =>
-      UtilsRsa.verify(pubKey, transaction.serialize(includeSignature: false),
+          TransactionModel transaction, RsaPublicKey pubKey) =>
+      Rsa.verify(pubKey, transaction.serialize(includeSignature: false),
           transaction.signature!);
 
   /// Gets all the transactions from a [BlockModel] by its [BlockModel.id].

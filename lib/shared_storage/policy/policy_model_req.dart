@@ -4,14 +4,14 @@
  */
 /// @nodoc
 /// A L0 Storage Policy Request Model
-class L0StorageModelPolicyReq {
+class PolicyModelReq {
   String? pubKey;
   String? signature;
   String? stringToSign;
 
-  L0StorageModelPolicyReq({this.pubKey, this.signature, this.stringToSign});
+  PolicyModelReq({this.pubKey, this.signature, this.stringToSign});
 
-  L0StorageModelPolicyReq.fromMap(Map<String, dynamic>? map) {
+  PolicyModelReq.fromMap(Map<String, dynamic>? map) {
     if (map != null) {
       pubKey = map['pubKey'];
       signature = map['signature'];
@@ -25,6 +25,6 @@ class L0StorageModelPolicyReq {
   /// Overrides toString() method for useful error messages
   @override
   String toString() {
-    return 'L0StorageModelPolicyReq{pubKey: $pubKey, signature: $signature, stringToSign: $stringToSign}';
+    return 'PolicyModelReq{pubKey: $pubKey, signature: $signature, stringToSign: $stringToSign}';
   }
 }

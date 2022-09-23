@@ -8,7 +8,7 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/wasabi/wasabi_service.dart';
+import 'package:tiki_sdk_dart/shared_storage/wasabi/wasabi_service.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart' as rsa;
 import 'package:tiki_sdk_dart/utils/utils.dart';
 
@@ -18,14 +18,14 @@ void main() async {
 
   group('l0_storage tests', skip: apiId.isNotEmpty && !runTests, () {
     test('Upload - Read', () async {
-      rsa.RsaKeyPair kp = UtilsRsa.generate();
+      rsa.RsaKeyPair kp = Rsa.generate();
 
       String testFile =
           '{"Test":["OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK"]}';
 
       L0StorageService l0storageService = L0StorageService(apiId);
       L0StorageModelPolicyRsp policy =
-          await l0storageService.policy(kp.privateKey);
+          await l0storageService.request(kp.privateKey);
 
       WasabiService service = WasabiService();
       await service.write('${policy.keyPrefix}test.block',

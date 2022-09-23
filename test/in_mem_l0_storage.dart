@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
+
 import 'dart:typed_data';
 
-import 'package:tiki_sdk_dart/node/backup/backup_storage_interface.dart';
+import 'package:tiki_sdk_dart/node/l0_storage.dart';
 
-class InMemBackup implements BackupStorageInterface {
+class InMemL0Storage implements L0Storage {
   Map<String, Uint8List> storage = {};
 
   @override
