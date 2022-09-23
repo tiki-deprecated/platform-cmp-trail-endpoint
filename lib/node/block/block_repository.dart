@@ -3,11 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import '../../utils/utils.dart';
 import 'block_model.dart';
 
 /// The repository for [BlockModel] persistance in [Database].
@@ -66,8 +66,8 @@ class BlockRepository {
 
   /// Gets a [BlockModel] by its [BlockModel.id].
   BlockModel? getById(Uint8List id) {
-    List<BlockModel> blocks =
-        _select(whereStmt: "WHERE $table.$columnId = x'$id'");
+    List<BlockModel> blocks = _select(
+        whereStmt: "WHERE $table.$columnId = x'${UtilsBytes.hexEncode(id)}'");
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
@@ -95,9 +95,9 @@ class BlockRepository {
     List<BlockModel> blocks = [];
     for (final Row row in results) {
       Map<String, dynamic> blockMap = {
-        columnId: base64.decode(row['$table.$columnId']),
+        columnId: row['$table.$columnId'],
         columnVersion: row['$table.$columnVersion'],
-        columnPreviousHash: base64.decode(row['$table.$columnPreviousHash']),
+        columnPreviousHash: row['$table.$columnPreviousHash'],
         columnTransactionRoot: row['$table.$columnTransactionRoot'],
         columnTimestamp: row['$table.$columnTimestamp'],
       };

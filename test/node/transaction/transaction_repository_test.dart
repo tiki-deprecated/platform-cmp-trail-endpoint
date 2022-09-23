@@ -30,6 +30,7 @@ void main() {
 
       TransactionModel transaction = TransactionModel(
           id: id,
+          version: 1,
           address: address,
           contents: contents,
           assetRef: assetRef,
@@ -41,6 +42,7 @@ void main() {
 
       expect(found != null, true);
       expect(found?.assetRef, assetRef);
+      expect(found?.version, 1);
       expect(found?.timestamp,
           timestamp.subtract(Duration(microseconds: timestamp.microsecond)));
       expect(found?.address, address);
@@ -63,6 +65,7 @@ void main() {
 
       TransactionModel transaction = TransactionModel(
           id: id,
+          version: 1,
           address: address,
           contents: contents,
           assetRef: assetRef,
@@ -94,6 +97,7 @@ void main() {
 
       expect(found.length, 1);
       expect(found.elementAt(0).assetRef, assetRef);
+      expect(found.elementAt(0).version, 1);
       expect(found.elementAt(0).timestamp,
           timestamp.subtract(Duration(microseconds: timestamp.microsecond)));
       expect(found.elementAt(0).address, address);
