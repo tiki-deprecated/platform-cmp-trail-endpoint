@@ -40,6 +40,7 @@ class BlockModel {
   /// If no [timestamp] is provided, it is considered a new [BlockModel] and
   /// the object creation time becomes the [timestamp].
   BlockModel({
+    this.id,
     this.version = 1,
     required this.previousHash,
     required this.transactionRoot,
