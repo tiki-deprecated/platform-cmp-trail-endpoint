@@ -23,9 +23,9 @@ void main() async {
       String testFile =
           '{"Test":["OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK","OK"]}';
 
-      L0StorageService l0storageService =
-          L0StorageService(apiId, kp.privateKey);
-      L0StorageModelPolicyRsp policy = await l0storageService.policy();
+      L0StorageService l0storageService = L0StorageService(apiId);
+      L0StorageModelPolicyRsp policy =
+          await l0storageService.policy(kp.privateKey);
 
       WasabiService service = WasabiService();
       await service.write('${policy.keyPrefix}test.block',
