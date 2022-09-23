@@ -8,7 +8,7 @@ import 'package:tiki_sdk_dart/node/node_service.dart';
 /// {@category Utils}
 
 /// A ephemeral key-value storage.
-class InMemoryKey extends KeyStorage {
+class InMemKeyStorage extends KeyStorage {
   Map<String, String> storage = {};
 
   @override

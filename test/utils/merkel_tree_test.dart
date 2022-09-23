@@ -18,7 +18,7 @@ import '../in_mem_key.dart';
 void main() {
   group('Merkel Tests', () {
     test('Build/Validate - 1 Txn - Success', () async {
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
       TransactionService transactionService =
           TransactionService(sqlite3.openInMemory());
       TransactionModel txn = transactionService.create(
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('Build/Validate - 10 Txn - Success', () async {
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
       TransactionService transactionService =
           TransactionService(sqlite3.openInMemory());
       List<TransactionModel> txns = List.generate(
@@ -50,7 +50,7 @@ void main() {
     });
 
     test('Build/Validate - 100 Txn - Success', () async {
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
       TransactionService transactionService =
           TransactionService(sqlite3.openInMemory());
       List<TransactionModel> txns = List.generate(
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('Build/Validate - 1000 Txn - Success', () async {
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
       TransactionService transactionService =
           TransactionService(sqlite3.openInMemory());
       List<TransactionModel> txns = List.generate(

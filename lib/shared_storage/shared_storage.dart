@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import '../node/l0_storage.dart';
@@ -27,8 +28,18 @@ class SharedStorage implements L0Storage {
         super();
 
   @override
-  Future<Uint8List> read(String path) =>
-      _wasabiService.read('$_customerId/$path');
+  Future<Uint8List?> read(String path) async {
+    try {
+      Uint8List? rsp = await _wasabiService.read('$_customerId/$path');
+      return rsp;
+    } on HttpException catch (e) {
+      if (e.message.contains('HTTP Error 404:')) {
+        return null;
+      } else {
+        rethrow;
+      }
+    }
+  }
 
   @override
   Future<void> write(String path, Uint8List obj) async {

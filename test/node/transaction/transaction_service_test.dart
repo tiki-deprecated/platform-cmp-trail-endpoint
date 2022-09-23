@@ -21,7 +21,7 @@ void main() {
       TransactionService service = TransactionService(database);
       BlockService blockService = BlockService(database);
 
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
       Uint8List contents = Uint8List.fromList(utf8.encode(const Uuid().v4()));
       Uint8List merkelProof =
           Uint8List.fromList(utf8.encode(const Uuid().v4()));
@@ -57,7 +57,7 @@ void main() {
       TransactionService service = TransactionService(database);
       BlockService blockService = BlockService(database);
 
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
       Uint8List contents = Uint8List.fromList(utf8.encode(const Uuid().v4()));
       Uint8List merkelProof =
           Uint8List.fromList(utf8.encode(const Uuid().v4()));
@@ -92,7 +92,7 @@ void main() {
       Database database = sqlite3.openInMemory();
       TransactionService service = TransactionService(database);
 
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
 
       List<TransactionModel> transactions = [];
       List<Uint8List> hashes = [];
@@ -119,7 +119,7 @@ void main() {
       Database database = sqlite3.openInMemory();
       TransactionService service = TransactionService(database);
 
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
       TransactionModel transaction = service.create(
           Uint8List.fromList(utf8.encode(const Uuid().v4())), key);
 
@@ -132,7 +132,7 @@ void main() {
       Database database = sqlite3.openInMemory();
       TransactionService service = TransactionService(database);
 
-      KeyModel key = await KeyService(InMemoryKey()).create();
+      KeyModel key = await KeyService(InMemKeyStorage()).create();
       TransactionModel transaction = service.create(
           Uint8List.fromList(utf8.encode(const Uuid().v4())), key);
 

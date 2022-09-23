@@ -10,7 +10,6 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import '../shared_storage/wasabi/wasabi_service.dart';
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
 import 'block/block_service.dart';
@@ -30,14 +29,10 @@ export '../shared_storage/wasabi/wasabi_service.dart';
 class NodeService {
   late final TransactionService _transactionService;
   late final BlockService _blockService;
-  late final KeyService _keyService;
-  late final WasabiService _wasabiService;
   late final KeyModel _primaryKey;
   late final BackupService _backupService;
   late final Duration _blockInterval;
   late final int _maxTransactions;
-
-  RsaPublicKey get publicKey => _primaryKey.privateKey.public;
 
   /// Initialize the service
   ///
@@ -92,11 +87,10 @@ class NodeService {
       Duration blockInterval = const Duration(minutes: 1)}) async {
     _transactionService = TransactionService(database);
     _blockService = BlockService(database);
-    _keyService = KeyService(keyStorage);
     _blockInterval = blockInterval;
     _maxTransactions = maxTransactions;
 
-    await _loadPrimaryKey(primary);
+    await _loadPrimaryKey(keyStorage, primary);
 
     _backupService = BackupService(l0storage, database, _primaryKey, (id) {
       BlockModel? header = _blockService.get(id);
@@ -136,15 +130,16 @@ class NodeService {
     return transaction;
   }
 
-  Future<void> _loadPrimaryKey(String? address) async {
+  Future<void> _loadPrimaryKey(KeyStorage keyStorage, String? address) async {
+    KeyService keyService = KeyService(keyStorage);
     if (address != null) {
-      KeyModel? key = await _keyService.get(address);
+      KeyModel? key = await keyService.get(address);
       if (key != null) {
         _primaryKey = key;
         return;
       }
     }
-    _primaryKey = await _keyService.create();
+    _primaryKey = await keyService.create();
   }
 
   void _startBlockTimer() => Timer.periodic(_blockInterval, (_) async {

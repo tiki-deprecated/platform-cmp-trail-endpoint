@@ -6,7 +6,7 @@ import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import '../../in_mem_key.dart';
 
 void main() {
-  final InMemoryKey secureStorage = InMemoryKey();
+  final InMemKeyStorage secureStorage = InMemKeyStorage();
   final KeyService keysService = KeyService(secureStorage);
 
   group('Key Service Tests', () {

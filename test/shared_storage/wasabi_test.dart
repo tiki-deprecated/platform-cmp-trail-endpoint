@@ -4,6 +4,7 @@
  */
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
@@ -13,12 +14,20 @@ import 'package:tiki_sdk_dart/shared_storage/policy/policy_service.dart';
 import 'package:tiki_sdk_dart/shared_storage/wasabi/wasabi_service.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart' as rsa;
 import 'package:tiki_sdk_dart/utils/utils.dart';
+import 'package:uuid/uuid.dart';
 
 void main() async {
   const String apiId = '';
   const bool runTests = false;
 
-  group('Wasabi Tests', skip: apiId.isNotEmpty && !runTests, () {
+  group('Wasabi Tests', skip: apiId.isEmpty || !runTests, () {
+    test('Read - No File - Failure', () async {
+      WasabiService service = WasabiService();
+
+      expect(() async => await service.read(const Uuid().v4()),
+          throwsA(const TypeMatcher<HttpException>()));
+    });
+
     test('Write/Read - Success', () async {
       rsa.RsaKeyPair kp = Rsa.generate();
 
