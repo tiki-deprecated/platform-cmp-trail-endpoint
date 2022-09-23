@@ -11,16 +11,16 @@ import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/utils/utils.dart';
 
 void main() {
-  group('crypto-rsa unit tests', () {
-    test('generate_success', () {
+  group('RSA Tests', () {
+    test('Generate - Success', () {
       UtilsRsa.generate();
     });
 
-    test('generateAsync_success', () async {
+    test('Generate Async - Success', () async {
       await UtilsRsa.generateAsync();
     });
 
-    test('encode_success', () async {
+    test('Encode - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String publicKeyEncoded = keyPair.publicKey.encode();
@@ -29,7 +29,7 @@ void main() {
       expect(privateKeyEncoded.isNotEmpty, true);
     });
 
-    test('publicKeyDecode_success', () async {
+    test('PublicKey Decode - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String publicKeyEncoded = keyPair.publicKey.encode();
@@ -39,7 +39,7 @@ void main() {
       expect(publicKeyDecoded.modulus, keyPair.publicKey.modulus);
     });
 
-    test('privateKeyDecode_success', () async {
+    test('PrivateKey Decode - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String privateKeyEncoded = keyPair.privateKey.encode();
@@ -56,7 +56,7 @@ void main() {
       expect(privateKeyDecoded.q, keyPair.privateKey.q);
     });
 
-    test('encrypt_success', () async {
+    test('Encrypt - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       Uint8List cipherText = UtilsRsa.encrypt(
@@ -67,7 +67,7 @@ void main() {
       expect(cipherTextString.isNotEmpty, true);
     });
 
-    test('encryptAsync_success', () async {
+    test('Encrypt Async - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       Uint8List cipherText = await UtilsRsa.encryptAsync(
@@ -78,7 +78,7 @@ void main() {
       expect(cipherTextString.isNotEmpty, true);
     });
 
-    test('encryptBulk_success', () async {
+    test('Encrypt Bulk - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       Map<String, Uint8List> req = {
@@ -94,7 +94,7 @@ void main() {
           'world');
     });
 
-    test('decrypt_success', () async {
+    test('Decrypt Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String plainText = "hello world";
@@ -105,7 +105,7 @@ void main() {
       expect(result, plainText);
     });
 
-    test('decryptAsync_success', () async {
+    test('Decrypt Async - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String plainText = "hello world";
@@ -116,7 +116,7 @@ void main() {
       expect(result, plainText);
     });
 
-    test('sign_success', () async {
+    test('Sign - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String message = "hello world";
@@ -125,7 +125,7 @@ void main() {
       expect(signature.isNotEmpty, true);
     });
 
-    test('signAsync_success', () async {
+    test('Sign Async - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String message = "hello world";
@@ -134,7 +134,7 @@ void main() {
       expect(signature.isNotEmpty, true);
     });
 
-    test('signBulk_success', () async {
+    test('Sign Bulk - 2 - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       Map<String, Uint8List> req = {
@@ -146,7 +146,7 @@ void main() {
       expect(rsp.length, 2);
     });
 
-    test('verify_success', () async {
+    test('Verify - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String message = "hello world";
@@ -157,7 +157,7 @@ void main() {
       expect(verify, true);
     });
 
-    test('verifyAsync_success', () async {
+    test('Verify Async - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       String message = "hello world";
@@ -168,7 +168,7 @@ void main() {
       expect(verify, true);
     });
 
-    test('verifyAll_success', () async {
+    test('Verify All - 2 - Success', () async {
       AsymmetricKeyPair<CryptoRSAPublicKey, CryptoRSAPrivateKey> keyPair =
           UtilsRsa.generate();
       Map<String, Uint8List> signReq = {

@@ -5,7 +5,7 @@
 import 'package:html/dom.dart';
 
 /// Utility methods for XML parsing.
-class UtilsXml {
+class XmlParse {
   static Element? first(List<Element> elements) {
     if (elements.isNotEmpty) {
       return elements.first;

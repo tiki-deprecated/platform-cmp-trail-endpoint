@@ -42,7 +42,7 @@ class WasabiRepository {
     http.Response rsp =
         await http.get(_bucketUri.replace(query: 'versions&prefix=$path'));
     if (rsp.statusCode == 200) {
-      WasabiModelList list = WasabiModelList.fromElement(UtilsXml.first(
+      WasabiModelList list = WasabiModelList.fromElement(XmlParse.first(
           parse(rsp.body).getElementsByTagName('ListVersionsResult')));
       if (list.isTruncated == true) {
         throw UnimplementedError('Version lists > 1000 keys are not supported');

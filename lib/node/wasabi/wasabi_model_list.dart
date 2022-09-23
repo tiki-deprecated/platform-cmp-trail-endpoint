@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-
 import 'package:html/dom.dart';
 
 import '../../utils/utils.dart';
@@ -34,17 +33,17 @@ class WasabiModelList {
 
   WasabiModelList.fromElement(Element? element) {
     if (element != null) {
-      name = UtilsXml.element(element, 'Name')?.text;
-      prefix = UtilsXml.element(element, 'Prefix')?.text;
-      keyMarker = UtilsXml.element(element, 'KeyMarker')?.text;
-      versionIdMarker = UtilsXml.element(element, 'VersionIdMarker')?.text;
-      maxKeys = int.tryParse(UtilsXml.element(element, 'MaxKeys')?.text ?? '');
-      isTruncated = UtilsXml.element(element, 'IsTruncated')?.text == "true"
+      name = XmlParse.element(element, 'Name')?.text;
+      prefix = XmlParse.element(element, 'Prefix')?.text;
+      keyMarker = XmlParse.element(element, 'KeyMarker')?.text;
+      versionIdMarker = XmlParse.element(element, 'VersionIdMarker')?.text;
+      maxKeys = int.tryParse(XmlParse.element(element, 'MaxKeys')?.text ?? '');
+      isTruncated = XmlParse.element(element, 'IsTruncated')?.text == "true"
           ? true
           : false;
-      nextKeyMarker = UtilsXml.element(element, 'NextKeyMarker')?.text;
+      nextKeyMarker = XmlParse.element(element, 'NextKeyMarker')?.text;
       nextVersionIdMarker =
-          UtilsXml.element(element, 'NextVersionIdMarker')?.text;
+          XmlParse.element(element, 'NextVersionIdMarker')?.text;
       List<Element> versionElements = element.getElementsByTagName('Version');
       versions = List.of(
           versionElements.map((e) => WasabiModelListVer.fromElement(e)));

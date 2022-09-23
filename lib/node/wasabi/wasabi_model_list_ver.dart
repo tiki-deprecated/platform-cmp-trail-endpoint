@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-
 import 'package:html/dom.dart';
 
 import '../../utils/utils.dart';
@@ -32,19 +31,19 @@ class WasabiModelListVer {
 
   WasabiModelListVer.fromElement(Element? element) {
     if (element != null) {
-      key = UtilsXml.element(element, 'Key')?.text;
-      versionId = UtilsXml.element(element, 'VersionId')?.text;
+      key = XmlParse.element(element, 'Key')?.text;
+      versionId = XmlParse.element(element, 'VersionId')?.text;
       isLatest =
-          UtilsXml.element(element, 'IsLatest')?.text == "true" ? true : false;
-      if (UtilsXml.element(element, 'LastModified') != null) {
+          XmlParse.element(element, 'IsLatest')?.text == "true" ? true : false;
+      if (XmlParse.element(element, 'LastModified') != null) {
         lastModified = DateTime.tryParse(
-            UtilsXml.element(element, 'LastModified')?.text ?? '');
+            XmlParse.element(element, 'LastModified')?.text ?? '');
       }
-      eTag = UtilsXml.element(element, 'ETag')?.text;
-      size = int.tryParse(UtilsXml.element(element, 'Size')?.text ?? '');
+      eTag = XmlParse.element(element, 'ETag')?.text;
+      size = int.tryParse(XmlParse.element(element, 'Size')?.text ?? '');
       owner = WasabiModelListVerOwner.fromElement(
-          UtilsXml.element(element, 'Owner'));
-      storageClass = UtilsXml.element(element, 'StorageClass')?.text;
+          XmlParse.element(element, 'Owner'));
+      storageClass = XmlParse.element(element, 'StorageClass')?.text;
     }
   }
 

@@ -91,18 +91,18 @@ class TransactionRepository {
   void commit(TransactionModel transaction) => _db.execute('''
     UPDATE $table 
     SET $columnMerkelProof = ?, $columnBlockId = ? 
-    WHERE $columnId = x'${UtilsBytes.hexEncode(transaction.id!)}';
+    WHERE $columnId = x'${Bytes.hexEncode(transaction.id!)}';
     ''', [transaction.merkelProof, transaction.block!.id!]);
 
   /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(
       whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
-          : "WHERE $columnBlockId = x'${UtilsBytes.hexEncode(id)}'");
+          : "WHERE $columnBlockId = x'${Bytes.hexEncode(id)}'");
 
   TransactionModel? getById(Uint8List id) {
     List<TransactionModel> txns = _select(
-        whereStmt: "WHERE $table.$columnId = x'${UtilsBytes.hexEncode(id)}'");
+        whereStmt: "WHERE $table.$columnId = x'${Bytes.hexEncode(id)}'");
     return txns.isEmpty ? null : txns.first;
   }
 

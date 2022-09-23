@@ -67,7 +67,7 @@ class BlockRepository {
   /// Gets a [BlockModel] by its [BlockModel.id].
   BlockModel? getById(Uint8List id) {
     List<BlockModel> blocks = _select(
-        whereStmt: "WHERE $table.$columnId = x'${UtilsBytes.hexEncode(id)}'");
+        whereStmt: "WHERE $table.$columnId = x'${Bytes.hexEncode(id)}'");
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 

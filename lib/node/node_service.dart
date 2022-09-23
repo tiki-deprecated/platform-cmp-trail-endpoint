@@ -176,9 +176,9 @@ class NodeService {
       BlockModel header, List<TransactionModel> transactions) {
     BytesBuilder bytes = BytesBuilder();
     bytes.add(header.serialize());
-    bytes.add(UtilsBytes.encodeBigInt(BigInt.from(transactions.length)));
+    bytes.add(Bytes.encodeBigInt(BigInt.from(transactions.length)));
     for (TransactionModel transaction in transactions) {
-      bytes.add(UtilsCompactSize.encode(transaction.serialize()));
+      bytes.add(CompactSize.encode(transaction.serialize()));
     }
     return bytes.toBytes();
   }

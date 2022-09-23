@@ -57,7 +57,7 @@ class TransactionService {
 
   /// Validates the [TransactionModel] integrity by rebuilds it hash [TransactionModel.id].
   static bool validateIntegrity(TransactionModel transaction) =>
-      UtilsBytes.memEquals(
+      Bytes.memEquals(
           Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
   /// Validates the author of the [TransactionModel] by calling [verify] with its

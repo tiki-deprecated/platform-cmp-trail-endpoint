@@ -126,7 +126,7 @@ void main() {
       }
       BlockModel block = nodeService.getLastBlock()!;
       int count = 0;
-      while (!UtilsBytes.memEquals(block.previousHash, Uint8List(1))) {
+      while (!Bytes.memEquals(block.previousHash, Uint8List(1))) {
         List<TransactionModel> txns =
             nodeService.getTransactionsByBlockId(base64.encode(block.id!));
         expect(txns.isNotEmpty, true);

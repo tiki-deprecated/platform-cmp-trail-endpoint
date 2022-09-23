@@ -16,8 +16,8 @@ import '../in_mem_key.dart';
 import '../node/node_test_helpers.dart';
 
 void main() {
-  group('Merkel tests', () {
-    test('Build and validate merkel proof for 1 transaction', () async {
+  group('Merkel Tests', () {
+    test('Build/Validate - 1 Txn - Success', () async {
       KeyModel key = await KeyService(InMemoryKey()).create();
       TransactionModel txn = generateTransactionModel(1, key);
       txn.id = Digest("SHA3-256").process(txn.serialize());
@@ -27,7 +27,7 @@ void main() {
       expect(MerkelTree.validate(txn.id!, merkelProof, merkelRoot), true);
     });
 
-    test('Build and validate merkel proof for 10 transactions', () async {
+    test('Build/Validate - 10 Txn - Success', () async {
       KeyModel key = await KeyService(InMemoryKey()).create();
       List<TransactionModel> txns = List.generate(10, (index) {
         TransactionModel txn = generateTransactionModel(1, key);
@@ -44,7 +44,7 @@ void main() {
       }
     });
 
-    test('Build and validate merkel proof for 100 transactions', () async {
+    test('Build/Validate - 100 Txn - Success', () async {
       KeyModel key = await KeyService(InMemoryKey()).create();
       List<TransactionModel> txns = List.generate(100, (index) {
         TransactionModel txn = generateTransactionModel(1, key);
@@ -61,7 +61,7 @@ void main() {
       }
     });
 
-    test('Build and validate merkel proof for 1000 transactions', () async {
+    test('Build/Validate - 1000 Txn - Success', () async {
       KeyModel key = await KeyService(InMemoryKey()).create();
       List<TransactionModel> txns = List.generate(100, (index) {
         TransactionModel txn = generateTransactionModel(1, key);
