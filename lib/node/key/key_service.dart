@@ -23,8 +23,7 @@ export 'key_storage.dart';
 class KeyService {
   final KeyRepository _repository;
 
-  KeyService(KeyStorage keysInterface)
-      : _repository = KeyRepository(keysInterface);
+  KeyService(KeyStorage keyStorage) : _repository = KeyRepository(keyStorage);
 
   /// Create a new [RsaKeyPair] and save its public key in object storage.
   Future<KeyModel> create() async {

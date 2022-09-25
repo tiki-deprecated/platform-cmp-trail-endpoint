@@ -130,6 +130,8 @@ class NodeService {
     return transaction;
   }
 
+  String get address => base64.encode(_primaryKey.address);
+
   Future<void> _loadPrimaryKey(KeyStorage keyStorage, String? address) async {
     KeyService keyService = KeyService(keyStorage);
     if (address != null) {
