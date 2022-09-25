@@ -73,7 +73,7 @@ class XchainRepository {
     for (final Row row in results) {
       Map<String, dynamic> xchainMap = {
         columnAddress: row[columnAddress],
-        columnPublicKey: CryptoRSAPublicKey.decode(row[columnPublicKey]),
+        columnPublicKey: RsaPublicKey.decode(row[columnPublicKey]),
         columnLastBlock: row[columnLastBlock],
       };
       XchainModel xchain = XchainModel.fromMap(xchainMap);

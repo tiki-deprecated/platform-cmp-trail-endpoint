@@ -17,7 +17,7 @@ class XchainModel {
   Uint8List address;
 
   /// The chain public key bytes.
-  final CryptoRSAPublicKey publicKey;
+  final RsaPublicKey publicKey;
 
   /// The id for the last validated block.
   Uint8List lastBlock;
