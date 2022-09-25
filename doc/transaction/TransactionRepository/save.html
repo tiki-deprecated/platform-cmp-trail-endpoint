@@ -52,7 +52,7 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype">void</span>
+<span class="returntype"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span>
 <span class="name ">save</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="save-param-transaction"><span class="type-annotation"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span></li>
 </ol>)
 
@@ -68,20 +68,21 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void save(TransactionModel transaction) =&gt; _db.execute(&#39;&#39;&#39;
-  INSERT INTO $table
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-  &#39;&#39;&#39;, [
-      transaction.id,
-      transaction.merkelProof,
-      transaction.version,
-      transaction.address,
-      transaction.contents,
-      transaction.assetRef,
-      transaction.block?.id,
-      transaction.timestamp.millisecondsSinceEpoch,
-      transaction.signature,
-    ]);</code></pre>
+  <pre class="language-dart"><code class="language-dart">TransactionModel save(TransactionModel transaction) {
+  int timestamp = transaction.timestamp.millisecondsSinceEpoch ~&#47; 1000;
+  _db.execute(&#39;INSERT INTO $table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);&#39;, [
+    base64.encode(transaction.id!),
+    transaction.merkelProof,
+    transaction.version,
+    transaction.address,
+    transaction.contents,
+    transaction.assetRef,
+    transaction.block == null ? null : &quot;&#39;${transaction.block!.id}&#39;&quot;,
+    timestamp,
+    transaction.signature,
+  ]);
+  return transaction;
+}</code></pre>
 </section>
 
 
@@ -117,8 +118,10 @@
 
     <li class="section-title"><a href="../../transaction/TransactionRepository-class.html#instance-methods">Methods</a></li>
     <li><a href="../../transaction/TransactionRepository/commit.html">commit</a></li>
+    <li><a href="../../transaction/TransactionRepository/createTable.html">createTable</a></li>
     <li><a href="../../transaction/TransactionRepository/getByBlockId.html">getByBlockId</a></li>
     <li><a href="../../transaction/TransactionRepository/getById.html">getById</a></li>
+    <li><a href="../../transaction/TransactionRepository/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../../transaction/TransactionRepository/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../transaction/TransactionRepository/save.html">save</a></li>
     <li class="inherited"><a href="../../transaction/TransactionRepository/toString.html">toString</a></li>
@@ -152,7 +155,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

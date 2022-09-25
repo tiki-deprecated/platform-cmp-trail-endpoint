@@ -66,10 +66,12 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void save(MetadataKey key, String value) =&gt; _db.execute(&#39;&#39;&#39;
-  INSERT INTO $table
-  VALUES (&#39;${key.value}&#39;, &#39;$value&#39;);
-  &#39;&#39;&#39;);</code></pre>
+  <pre class="language-dart"><code class="language-dart">void save(MetadataKey key, String value) {
+  _db.execute(&#39;&#39;&#39;INSERT INTO $table VALUES (
+      &#39;${key.value}&#39;,
+      &#39;$value&#39;
+    );&#39;&#39;&#39;);
+}</code></pre>
 </section>
 
 
@@ -133,7 +135,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

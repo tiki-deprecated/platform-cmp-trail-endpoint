@@ -57,16 +57,5 @@ class BlockService {
   void commit(BlockModel block) => _repository.save(block);
 
   /// Gets a [BlockModel] by [BlockModel.id]
-  BlockModel? get(Uint8List id, {Uint8List? xchainAddress}) =>
-      _repository.getById(id, xchainAddress: xchainAddress);
-
-  /// Gets the last committed block from the [db].
-  BlockModel? last() => _repository.getLast();
-
-  /// Adds a [BlockModel] in the [BlockRepository].
-  ///
-  /// This method should only be called after verifying blocks's integrity and
-  /// authorship.
-  void add(BlockModel blk, Uint8List xchainId) =>
-      _repository.save(blk, xchain: xchainId);
+  BlockModel? get(Uint8List id) => _repository.getById(id);
 }

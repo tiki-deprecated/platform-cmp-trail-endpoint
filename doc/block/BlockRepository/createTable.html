@@ -68,15 +68,18 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void createTable() =&gt; _db.execute(&#39;&#39;&#39;
-  CREATE TABLE IF NOT EXISTS $table (
-    $columnId BLOB PRIMARY KEY NOT NULL,
-    $columnVersion INTEGER NOT NULL,
-    $columnPreviousHash BLOB,
-    $columnXchain BLOB,
-    $columnTransactionRoot BLOB,
-    $columnTimestamp INTEGER);
-  &#39;&#39;&#39;);</code></pre>
+  <pre class="language-dart"><code class="language-dart">void createTable() async {
+  _db.execute(&#39;&#39;&#39;
+    CREATE TABLE IF NOT EXISTS $table (
+      $columnId TEXT PRIMARY KEY NOT NULL,
+      $columnVersion INTEGER NOT NULL,
+      $columnPreviousHash TEXT,
+      $columnTransactionRoot BLOB,
+      $columnTransactionCount INTEGER,
+      $columnTimestamp INTEGER
+    );
+  &#39;&#39;&#39;);
+}</code></pre>
 </section>
 
 
@@ -128,9 +131,9 @@
           <li><a href="../../block/BlockRepository/columnId-constant.html">columnId</a></li>
           <li><a href="../../block/BlockRepository/columnPreviousHash-constant.html">columnPreviousHash</a></li>
           <li><a href="../../block/BlockRepository/columnTimestamp-constant.html">columnTimestamp</a></li>
+          <li><a href="../../block/BlockRepository/columnTransactionCount-constant.html">columnTransactionCount</a></li>
           <li><a href="../../block/BlockRepository/columnTransactionRoot-constant.html">columnTransactionRoot</a></li>
           <li><a href="../../block/BlockRepository/columnVersion-constant.html">columnVersion</a></li>
-          <li><a href="../../block/BlockRepository/columnXchain-constant.html">columnXchain</a></li>
           <li><a href="../../block/BlockRepository/table-constant.html">table</a></li>
 </ol>
 
@@ -144,7 +147,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.1
   </span>
 
   

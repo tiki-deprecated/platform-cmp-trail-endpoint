@@ -54,11 +54,10 @@
 <li><span class="parameter" id="-param-version"><span class="type-annotation">int</span> <span class="parameter-name">version</span> = <span class="default-value">1</span>, </span></li>
 <li><span class="parameter" id="-param-address"><span>required</span> <span class="type-annotation">Uint8List</span> <span class="parameter-name">address</span>, </span></li>
 <li><span class="parameter" id="-param-contents"><span>required</span> <span class="type-annotation">Uint8List</span> <span class="parameter-name">contents</span>, </span></li>
-<li><span class="parameter" id="-param-assetRef"><span class="type-annotation">String</span> <span class="parameter-name">assetRef</span> = <span class="default-value">&quot;AA==&quot;</span>, </span></li>
-<li><span class="parameter" id="-param-timestamp"><span class="type-annotation">DateTime?</span> <span class="parameter-name">timestamp</span>, </span></li>
+<li><span class="parameter" id="-param-assetRef"><span class="type-annotation">dynamic</span> <span class="parameter-name">assetRef</span>, </span></li>
+<li><span class="parameter" id="-param-timestamp"><span class="type-annotation">dynamic</span> <span class="parameter-name">timestamp</span>, </span></li>
 <li><span class="parameter" id="-param-merkelProof"><span class="type-annotation">Uint8List?</span> <span class="parameter-name">merkelProof</span>, </span></li>
-<li><span class="parameter" id="-param-block"><span class="type-annotation"><a href="../../block/BlockModel-class.html">BlockModel</a>?</span> <span class="parameter-name">block</span>, </span></li>
-<li><span class="parameter" id="-param-signature"><span class="type-annotation">Uint8List?</span> <span class="parameter-name">signature</span>}</span></li>
+<li><span class="parameter" id="-param-block"><span class="type-annotation">BlockModel?</span> <span class="parameter-name">block</span>}</span></li>
 </ol>)
     </section>
 
@@ -66,7 +65,7 @@
 <section class="desc markdown">
   <p>Builds a new <a href="../../transaction/TransactionModel-class.html">TransactionModel</a></p>
 <p>If no <code>timestamp</code> is provided, the object creation time is used.
-If no <a href="../../transaction/TransactionModel/assetRef.html">assetRef</a> is provided, it uses AA== as <a href="../../transaction/TransactionModel/assetRef.html">assetRef</a> value.</p>
+If no <code>assetRef</code> is provided, it uses AA== as <code>assetRef</code> value.</p>
 </section>
 
 
@@ -78,14 +77,13 @@ If no <a href="../../transaction/TransactionModel/assetRef.html">assetRef</a> is
     this.version = 1,
     required this.address,
     required this.contents,
-    this.assetRef = &quot;AA==&quot;,
-    DateTime? timestamp,
+    assetRef,
+    timestamp,
     this.merkelProof,
-    this.block,
-    this.signature})
-    : timestamp = timestamp ??
-          DateTime.fromMillisecondsSinceEpoch(
-              (DateTime.now().millisecondsSinceEpoch ~&#47; 1000) * 1000);</code></pre>
+    this.block}) {
+  this.timestamp = timestamp ?? DateTime.now();
+  this.assetRef = assetRef ?? &quot;AA==&quot;;
+}</code></pre>
 </section>
 
 
@@ -125,7 +123,6 @@ If no <a href="../../transaction/TransactionModel/assetRef.html">assetRef</a> is
     <li><a href="../../transaction/TransactionModel/hashCode.html">hashCode</a></li>
     <li><a href="../../transaction/TransactionModel/id.html">id</a></li>
     <li><a href="../../transaction/TransactionModel/merkelProof.html">merkelProof</a></li>
-    <li><a href="../../transaction/TransactionModel/path.html">path</a></li>
     <li class="inherited"><a href="../../transaction/TransactionModel/runtimeType.html">runtimeType</a></li>
     <li><a href="../../transaction/TransactionModel/signature.html">signature</a></li>
     <li><a href="../../transaction/TransactionModel/timestamp.html">timestamp</a></li>
@@ -141,6 +138,8 @@ If no <a href="../../transaction/TransactionModel/assetRef.html">assetRef</a> is
 
 
 
+        <li class="section-title"><a href="../../transaction/TransactionModel-class.html#static-methods">Static methods</a></li>
+          <li><a href="../../transaction/TransactionModel/fromJson.html">fromJson</a></li>
 
 </ol>
 
@@ -154,7 +153,7 @@ If no <a href="../../transaction/TransactionModel/assetRef.html">assetRef</a> is
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

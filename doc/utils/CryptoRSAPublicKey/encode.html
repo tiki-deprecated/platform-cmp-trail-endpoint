@@ -64,7 +64,29 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">String encode() =&gt; base64.encode(bytes);</code></pre>
+  <pre class="language-dart"><code class="language-dart">String encode() {
+  ASN1Sequence sequence = ASN1Sequence();
+  ASN1Sequence algorithm = ASN1Sequence();
+  ASN1Object paramsAsn1Obj =
+      ASN1Object.fromBytes(Uint8List.fromList([0x5, 0x0]));
+  algorithm
+      .add(ASN1ObjectIdentifier.fromIdentifierString(&#39;1.2.840.113549.1.1.1&#39;));
+  algorithm.add(paramsAsn1Obj);
+
+  ASN1Sequence publicKeySequence = ASN1Sequence();
+  ASN1Integer modulus = ASN1Integer(this.modulus);
+  ASN1Integer exponent = ASN1Integer(this.exponent);
+  publicKeySequence.add(modulus);
+  publicKeySequence.add(exponent);
+  publicKeySequence.encode();
+  ASN1BitString publicKeyBitString = ASN1BitString();
+  publicKeyBitString.stringValues = publicKeySequence.encodedBytes;
+
+  sequence.add(algorithm);
+  sequence.add(publicKeyBitString);
+  sequence.encode();
+  return base64.encode(sequence.encodedBytes!);
+}</code></pre>
 </section>
 
 
@@ -92,10 +114,9 @@
           <li><a href="../../utils/CryptoRSAPublicKey/CryptoRSAPublicKey.html">CryptoRSAPublicKey</a></li>
 
 
-    <li class="section-title">
+    <li class="section-title inherited">
       <a href="../../utils/CryptoRSAPublicKey-class.html#instance-properties">Properties</a>
     </li>
-    <li><a href="../../utils/CryptoRSAPublicKey/bytes.html">bytes</a></li>
     <li class="inherited"><a class="deprecated" href="../../utils/CryptoRSAPublicKey/e.html">e</a></li>
     <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/exponent.html">exponent</a></li>
     <li class="inherited"><a href="../../utils/CryptoRSAPublicKey/hashCode.html">hashCode</a></li>
@@ -129,7 +150,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

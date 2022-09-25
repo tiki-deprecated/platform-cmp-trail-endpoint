@@ -69,8 +69,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void save(XchainModel xchain) {
-  _db.execute(&#39;INSERT INTO $table VALUES ( ?, ?, ? );&#39;,
-      [xchain.address, xchain.publicKey.encode(), xchain.lastBlock]);
+  throw UnimplementedError();
 }</code></pre>
 </section>
 
@@ -107,7 +106,6 @@
 
     <li class="section-title"><a href="../../xchain/XchainRepository-class.html#instance-methods">Methods</a></li>
     <li><a href="../../xchain/XchainRepository/createTable.html">createTable</a></li>
-    <li><a href="../../xchain/XchainRepository/get.html">get</a></li>
     <li class="inherited"><a href="../../xchain/XchainRepository/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../xchain/XchainRepository/save.html">save</a></li>
     <li class="inherited"><a href="../../xchain/XchainRepository/toString.html">toString</a></li>
@@ -136,7 +134,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.1
   </span>
 
   

@@ -52,8 +52,8 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype"><a href="../../xchain/XchainModel-class.html">XchainModel</a></span>
-<span class="name ">add</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="add-param-publicKey"><span class="type-annotation"><a href="../../utils/CryptoRSAPublicKey-class.html">CryptoRSAPublicKey</a></span> <span class="parameter-name">publicKey</span></span></li>
+<span class="returntype">void</span>
+<span class="name ">add</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="add-param-publicKey"><span class="type-annotation">String</span> <span class="parameter-name">publicKey</span></span></li>
 </ol>)
 
       
@@ -61,7 +61,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Adds a new Xchain by <code>publicKey</code>.</p>
+  <p>Adds a new Xchain by <code>publicKey</code> base64 representation.</p>
 <p>The service will derive the <a href="../../xchain/XchainModel/address.html">XchainModel.address</a>.
 If the address already exists, it will not be added.
 method will be called.</p>
@@ -71,10 +71,8 @@ method will be called.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">XchainModel add(CryptoRSAPublicKey publicKey) {
-  XchainModel xchainModel = XchainModel(publicKey);
-  _repository.save(xchainModel);
-  return xchainModel;
+  <pre class="language-dart"><code class="language-dart">void add(String publicKey) {
+  throw UnimplementedError();
 }</code></pre>
 </section>
 
@@ -111,8 +109,6 @@ method will be called.</p>
 
     <li class="section-title"><a href="../../xchain/XchainService-class.html#instance-methods">Methods</a></li>
     <li><a href="../../xchain/XchainService/add.html">add</a></li>
-    <li><a href="../../xchain/XchainService/get.html">get</a></li>
-    <li><a href="../../xchain/XchainService/load.html">load</a></li>
     <li class="inherited"><a href="../../xchain/XchainService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../xchain/XchainService/toString.html">toString</a></li>
     <li><a href="../../xchain/XchainService/update.html">update</a></li>
@@ -135,7 +131,7 @@ method will be called.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.1
   </span>
 
   

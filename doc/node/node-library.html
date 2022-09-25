@@ -76,23 +76,7 @@
 
 </dt>
 <dd>
-  A service to handle the backup requests to remote backup.
-</dd>
-
-        <dt id="BlockModel">
-  <span class="name "><a href="../block/BlockModel-class.html">BlockModel</a></span> 
-
-</dt>
-<dd>
-  The block model entity for local storage.
-</dd>
-
-        <dt id="BlockRepository">
-  <span class="name "><a href="../block/BlockRepository-class.html">BlockRepository</a></span> 
-
-</dt>
-<dd>
-  The repository for <a href="../block/BlockModel-class.html">BlockModel</a> persistance in <code>Database</code>.
+  A service to handle the backup requests to <a href="../wasabi/WasabiService-class.html">WasabiService</a>.
 </dd>
 
         <dt id="BlockService">
@@ -103,36 +87,68 @@
   A service to handle block-related operations.
 </dd>
 
-        <dt id="KeyInterface">
-  <span class="name "><a href="../node/KeyInterface-class.html">KeyInterface</a></span> 
+        <dt id="KeysInterface">
+  <span class="name "><a href="../keys/KeysInterface-class.html">KeysInterface</a></span> 
 
 </dt>
 <dd>
-  The interface for <code>KeysModel</code> persistance class.
+  The interface for <a href="../keys/KeysModel-class.html">KeysModel</a> persistance class.
 </dd>
 
-        <dt id="KeyModel">
-  <span class="name "><a href="../node/KeyModel-class.html">KeyModel</a></span> 
+        <dt id="KeysModel">
+  <span class="name "><a href="../keys/KeysModel-class.html">KeysModel</a></span> 
 
 </dt>
 <dd>
   The keys storage model.
 </dd>
 
-        <dt id="KeyRepository">
-  <span class="name "><a href="../node/KeyRepository-class.html">KeyRepository</a></span> 
+        <dt id="KeysRepository">
+  <span class="name "><a href="../keys/KeysRepository-class.html">KeysRepository</a></span> 
 
 </dt>
 <dd>
   The repository that performs read and write operations in the keys storage.
 </dd>
 
-        <dt id="KeyService">
-  <span class="name "><a href="../keys/KeyService-class.html">KeyService</a></span> 
+        <dt id="KeysService">
+  <span class="name "><a href="../keys/KeysService-class.html">KeysService</a></span> 
 
 </dt>
 <dd>
   The service that handles keys creation and persistance.
+</dd>
+
+        <dt id="L0StorageModelPolicyRsp">
+  <span class="name "><a href="../node/L0StorageModelPolicyRsp-class.html">L0StorageModelPolicyRsp</a></span> 
+
+</dt>
+<dd>
+  A L0 Storage Policy Response Model
+</dd>
+
+        <dt id="L0StorageModelPolicyRspFields">
+  <span class="name "><a href="../node/L0StorageModelPolicyRspFields-class.html">L0StorageModelPolicyRspFields</a></span> 
+
+</dt>
+<dd>
+  A L0 Storage Policy Response Fields Model
+</dd>
+
+        <dt id="L0StorageRepository">
+  <span class="name "><a href="../node/L0StorageRepository-class.html">L0StorageRepository</a></span> 
+
+</dt>
+<dd>
+  The repository for L0 API access.
+</dd>
+
+        <dt id="L0StorageService">
+  <span class="name "><a href="../l0_storage/L0StorageService-class.html">L0StorageService</a></span> 
+
+</dt>
+<dd>
+  Service to interact with L0 Storage APIs
 </dd>
 
         <dt id="NodeService">
@@ -158,7 +174,7 @@ blockchains in the network.
 
 </dt>
 <dd>
-  The repository for <a href="../transaction/TransactionModel-class.html">TransactionModel</a> persistence in <code>Database</code>.
+  The repository for <a href="../transaction/TransactionModel-class.html">TransactionModel</a> persistance in <code>Database</code>.
 </dd>
 
         <dt id="TransactionService">
@@ -169,8 +185,40 @@ blockchains in the network.
   The service to manage transactions in the chain.
 </dd>
 
+        <dt id="WasabiModelList">
+  <span class="name "><a href="../wasabi/WasabiModelList-class.html">WasabiModelList</a></span> 
+
+</dt>
+<dd>
+  The Wasabi object data model.
+</dd>
+
+        <dt id="WasabiModelListVer">
+  <span class="name "><a href="../wasabi/WasabiModelListVer-class.html">WasabiModelListVer</a></span> 
+
+</dt>
+<dd>
+  The Wasabi object data model versions.
+</dd>
+
+        <dt id="WasabiRepository">
+  <span class="name "><a href="../wasabi/WasabiRepository-class.html">WasabiRepository</a></span> 
+
+</dt>
+<dd>
+  The repository to connect to Wasabi object storage APIs.
+</dd>
+
+        <dt id="WasabiService">
+  <span class="name "><a href="../wasabi/WasabiService-class.html">WasabiService</a></span> 
+
+</dt>
+<dd>
+  The service to use Wasabi object storage.
+</dd>
+
         <dt id="XchainModel">
-  <span class="name "><a href="../xchain/XchainModel-class.html">XchainModel</a></span> 
+  <span class="name "><a href="../node/XchainModel-class.html">XchainModel</a></span> 
 
 </dt>
 <dd>
@@ -178,19 +226,19 @@ blockchains in the network.
 </dd>
 
         <dt id="XchainRepository">
-  <span class="name "><a href="../xchain/XchainRepository-class.html">XchainRepository</a></span> 
+  <span class="name "><a href="../node/XchainRepository-class.html">XchainRepository</a></span> 
 
 </dt>
 <dd>
-  The cross chain repository for <a href="../xchain/XchainModel-class.html">XchainModel</a> database persistance.
+  The cross chain repository for <a href="../node/XchainModel-class.html">XchainModel</a> database persistance.
 </dd>
 
         <dt id="XchainService">
-  <span class="name "><a href="../xchain/XchainService-class.html">XchainService</a></span> 
+  <span class="name "><a href="../node/XchainService-class.html">XchainService</a></span> 
 
 </dt>
 <dd>
-  The service to handle <a href="../xchain/XchainModel-class.html">XchainModel</a> references and updates.
+  The service to handle <a href="../node/XchainModel-class.html">XchainModel</a> references and updates.
 </dd>
 
       </dl>
@@ -203,6 +251,20 @@ blockchains in the network.
 
 
 
+    <section class="summary offset-anchor" id="exceptions">
+      <h2>Exceptions / Errors</h2>
+
+      <dl>
+        <dt id="WasabiExceptionExpired">
+  <span class="name "><a href="../wasabi/WasabiExceptionExpired-class.html">WasabiExceptionExpired</a></span> 
+
+</dt>
+<dd>
+  <code>HttpException</code> for expired expired policy.
+</dd>
+
+      </dl>
+    </section>
 
   </div> <!-- /.main-content -->
 
@@ -229,8 +291,9 @@ blockchains in the network.
         <li class="section-subitem"><a href="../backup/backup-library.html">backup</a></li>
         <li class="section-subitem"><a href="../block/block-library.html">block</a></li>
         <li class="section-subitem"><a href="../keys/keys-library.html">keys</a></li>
+        <li class="section-subitem"><a href="../l0_storage/l0_storage-library.html">l0_storage</a></li>
         <li class="section-subitem"><a href="../transaction/transaction-library.html">transaction</a></li>
-        <li class="section-subitem"><a href="../xchain/xchain-library.html">xchain</a></li>
+        <li class="section-subitem"><a href="../wasabi/wasabi-library.html">wasabi</a></li>
 </ol>
 
   </div>
@@ -242,20 +305,26 @@ blockchains in the network.
   <li><a href="../backup/BackupModel-class.html">BackupModel</a></li>
   <li><a href="../backup/BackupRepository-class.html">BackupRepository</a></li>
   <li><a href="../backup/BackupService-class.html">BackupService</a></li>
-  <li><a href="../block/BlockModel-class.html">BlockModel</a></li>
-  <li><a href="../block/BlockRepository-class.html">BlockRepository</a></li>
   <li><a href="../block/BlockService-class.html">BlockService</a></li>
-  <li><a href="../node/KeyInterface-class.html">KeyInterface</a></li>
-  <li><a href="../node/KeyModel-class.html">KeyModel</a></li>
-  <li><a href="../node/KeyRepository-class.html">KeyRepository</a></li>
-  <li><a href="../keys/KeyService-class.html">KeyService</a></li>
+  <li><a href="../keys/KeysInterface-class.html">KeysInterface</a></li>
+  <li><a href="../keys/KeysModel-class.html">KeysModel</a></li>
+  <li><a href="../keys/KeysRepository-class.html">KeysRepository</a></li>
+  <li><a href="../keys/KeysService-class.html">KeysService</a></li>
+  <li><a href="../node/L0StorageModelPolicyRsp-class.html">L0StorageModelPolicyRsp</a></li>
+  <li><a href="../node/L0StorageModelPolicyRspFields-class.html">L0StorageModelPolicyRspFields</a></li>
+  <li><a href="../node/L0StorageRepository-class.html">L0StorageRepository</a></li>
+  <li><a href="../l0_storage/L0StorageService-class.html">L0StorageService</a></li>
   <li><a href="../node/NodeService-class.html">NodeService</a></li>
   <li><a href="../transaction/TransactionModel-class.html">TransactionModel</a></li>
   <li><a href="../transaction/TransactionRepository-class.html">TransactionRepository</a></li>
   <li><a href="../transaction/TransactionService-class.html">TransactionService</a></li>
-  <li><a href="../xchain/XchainModel-class.html">XchainModel</a></li>
-  <li><a href="../xchain/XchainRepository-class.html">XchainRepository</a></li>
-  <li><a href="../xchain/XchainService-class.html">XchainService</a></li>
+  <li><a href="../wasabi/WasabiModelList-class.html">WasabiModelList</a></li>
+  <li><a href="../wasabi/WasabiModelListVer-class.html">WasabiModelListVer</a></li>
+  <li><a href="../wasabi/WasabiRepository-class.html">WasabiRepository</a></li>
+  <li><a href="../wasabi/WasabiService-class.html">WasabiService</a></li>
+  <li><a href="../node/XchainModel-class.html">XchainModel</a></li>
+  <li><a href="../node/XchainRepository-class.html">XchainRepository</a></li>
+  <li><a href="../node/XchainService-class.html">XchainService</a></li>
 
 
 
@@ -264,6 +333,8 @@ blockchains in the network.
 
 
 
+  <li class="section-title"><a href="../node/node-library.html#exceptions">Exceptions</a></li>
+  <li><a href="../wasabi/WasabiExceptionExpired-class.html">WasabiExceptionExpired</a></li>
 </ol>
 
   </div><!--/sidebar-offcanvas-right-->
@@ -273,7 +344,7 @@ blockchains in the network.
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

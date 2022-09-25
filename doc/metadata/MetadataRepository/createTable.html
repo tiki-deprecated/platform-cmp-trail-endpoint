@@ -64,11 +64,14 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void createTable() =&gt; _db.execute(&#39;&#39;&#39;
-  CREATE TABLE IF NOT EXISTS $table (
-    $columnKey TEXT PRIMARY KEY,
-    $columnValue TEXT);
-  &#39;&#39;&#39;);</code></pre>
+  <pre class="language-dart"><code class="language-dart">void createTable() async {
+  _db.execute(&#39;&#39;&#39;
+    CREATE TABLE IF NOT EXISTS $table (
+      $columnKey TEXT PRIMARY KEY,
+      $columnValue TEXT
+    );
+  &#39;&#39;&#39;);
+}</code></pre>
 </section>
 
 
@@ -132,7 +135,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

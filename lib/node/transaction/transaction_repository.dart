@@ -86,24 +86,24 @@ class TransactionRepository {
         transaction.signature,
       ]);
 
+  ///TODO if it doesn't update the whole model, only accept the fields it does.
   /// Commits the [transaction] by saving its [TransactionModel.merkelProof] and
   /// [TransactionModel.block]
   void commit(TransactionModel transaction) => _db.execute('''
     UPDATE $table 
     SET $columnMerkelProof = ?, $columnBlockId = ? 
-    WHERE $columnId = ?;
-    ''', [transaction.merkelProof, transaction.block!.id!, transaction.id]);
+    WHERE $columnId = x'${Bytes.hexEncode(transaction.id!)}';
+    ''', [transaction.merkelProof, transaction.block!.id!]);
 
-  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [BlockModel.id].
+  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(
       whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
-          : "WHERE $columnBlockId = x'${UtilsBytes.hexEncode(id)}'");
+          : "WHERE $columnBlockId = x'${Bytes.hexEncode(id)}'");
 
-  /// Gets the [TransactionModel] by its [TransactionModel.id].
   TransactionModel? getById(Uint8List id) {
     List<TransactionModel> txns = _select(
-        whereStmt: "WHERE $table.$columnId = x'${UtilsBytes.hexEncode(id)}'");
+        whereStmt: "WHERE $table.$columnId = x'${Bytes.hexEncode(id)}'");
     return txns.isEmpty ? null : txns.first;
   }
 

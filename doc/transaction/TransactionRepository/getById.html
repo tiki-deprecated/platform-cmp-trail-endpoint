@@ -53,7 +53,7 @@
       
 
 <span class="returntype"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a>?</span>
-<span class="name ">getById</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="getById-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span></span></li>
+<span class="name ">getById</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="getById-param-id"><span class="type-annotation">String</span> <span class="parameter-name">id</span></span></li>
 </ol>)
 
       
@@ -61,17 +61,17 @@
     </section>
     
 <section class="desc markdown">
-  <p>Gets the <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> by its <a href="../../transaction/TransactionModel/id.html">TransactionModel.id</a>.</p>
+  <p>Gets a transaction by its <code>id</code>.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">TransactionModel? getById(Uint8List id) {
-  List&lt;TransactionModel&gt; txns = _select(
-      whereStmt: &quot;WHERE $table.$columnId = x&#39;${UtilsBytes.hexEncode(id)}&#39;&quot;);
-  return txns.isEmpty ? null : txns.first;
+  <pre class="language-dart"><code class="language-dart">TransactionModel? getById(String id) {
+  List&lt;TransactionModel&gt; transactions =
+      _select(whereStmt: &quot;WHERE $table.$columnId = &#39;$id&#39;&quot;);
+  return transactions.isNotEmpty ? transactions[0] : null;
 }</code></pre>
 </section>
 
@@ -108,8 +108,10 @@
 
     <li class="section-title"><a href="../../transaction/TransactionRepository-class.html#instance-methods">Methods</a></li>
     <li><a href="../../transaction/TransactionRepository/commit.html">commit</a></li>
+    <li><a href="../../transaction/TransactionRepository/createTable.html">createTable</a></li>
     <li><a href="../../transaction/TransactionRepository/getByBlockId.html">getByBlockId</a></li>
     <li><a href="../../transaction/TransactionRepository/getById.html">getById</a></li>
+    <li><a href="../../transaction/TransactionRepository/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../../transaction/TransactionRepository/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../transaction/TransactionRepository/save.html">save</a></li>
     <li class="inherited"><a href="../../transaction/TransactionRepository/toString.html">toString</a></li>
@@ -143,7 +145,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

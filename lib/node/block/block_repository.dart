@@ -7,6 +7,7 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import '../../utils/utils.dart';
 import 'block_model.dart';
 
 /// The repository for [BlockModel] persistance in [Database].
@@ -29,9 +30,6 @@ class BlockRepository {
   /// The [BlockModel.timestamp] column.
   static const columnTimestamp = 'timestamp';
 
-  /// The address of the block's cross chain reference
-  static const columnXchain = 'xchain';
-
   /// The [Database] used to persist [BlockModel].
   final Database _db;
 
@@ -50,46 +48,38 @@ class BlockRepository {
       $columnId BLOB PRIMARY KEY NOT NULL,
       $columnVersion INTEGER NOT NULL,
       $columnPreviousHash BLOB,
-      $columnXchain BLOB,
       $columnTransactionRoot BLOB,
       $columnTimestamp INTEGER);
     ''');
 
   /// Persists a [block] in the local [_db].
-  void save(BlockModel block, {Uint8List? xchain}) => _db.execute('''
+  void save(BlockModel block) => _db.execute('''
     INSERT INTO $table 
-    VALUES (?, ?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?);
     ''', [
         block.id,
         block.version,
         block.previousHash,
-        xchain,
         block.transactionRoot,
         block.timestamp.millisecondsSinceEpoch
       ]);
 
   /// Gets a [BlockModel] by its [BlockModel.id].
-  BlockModel? getById(Uint8List id, {Uint8List? xchainAddress}) {
-    String where = "WHERE $table.$columnId = ?";
-    List params = [id];
-    if (xchainAddress != null) {
-      where = "$where AND $table.$columnXchain = ?";
-      params.add(xchainAddress);
-    } else {
-      where = "$where AND $table.$columnXchain IS NULL";
-    }
-    List<BlockModel> blocks = _select(whereStmt: where, params: params);
+  BlockModel? getById(Uint8List id) {
+    List<BlockModel> blocks = _select(
+        whereStmt: "WHERE $table.$columnId = x'${Bytes.hexEncode(id)}'");
     return blocks.isNotEmpty ? blocks[0] : null;
   }
 
   /// Gets the last persisted [BlockModel].
-  BlockModel? getLast({String? xchainAddress}) {
-    List<BlockModel> blocks = _select(last: true);
+  BlockModel? getLast() {
+    List<BlockModel> blocks = _select(last: true, page: 0, pageSize: 1);
     return blocks.isNotEmpty ? blocks.first : null;
   }
 
   List<BlockModel> _select(
-      {String? whereStmt, bool last = false, List params = const []}) {
+      {int? page, int pageSize = 100, String? whereStmt, bool last = false}) {
+    String limit = page != null ? 'LIMIT ${page * pageSize},$pageSize' : '';
     ResultSet results = _db.select('''
       SELECT 
         $table.$columnId as '$table.$columnId',
@@ -100,7 +90,8 @@ class BlockRepository {
       FROM $table
       ${whereStmt ?? ''}
       ORDER BY oid ${last ? 'DESC' : 'ASC'};
-      ''', params);
+      $limit
+      ''');
     List<BlockModel> blocks = [];
     for (final Row row in results) {
       Map<String, dynamic> blockMap = {

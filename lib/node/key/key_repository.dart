@@ -5,21 +5,21 @@
 /// {@category Node}
 import 'dart:convert';
 
-import 'key_interface.dart';
 import 'key_model.dart';
+import 'key_storage.dart';
 
 /// The repository that performs read and write operations in the keys storage.
 class KeyRepository {
   static const _keyPrefix = 'com.mytiki.sdk.';
-  late final KeyInterface _keyInterface;
+  late final KeyStorage _keyStorage;
 
-  KeyRepository(this._keyInterface);
+  KeyRepository(this._keyStorage);
 
-  Future<void> save(KeyModel model) => _keyInterface.write(
+  Future<void> save(KeyModel model) => _keyStorage.write(
       key: _keyPrefix + base64.encode(model.address), value: model.toJson());
 
   Future<KeyModel?> get(String address) async {
-    String? raw = await _keyInterface.read(key: _keyPrefix + address);
+    String? raw = await _keyStorage.read(key: _keyPrefix + address);
     return raw != null ? KeyModel.fromJson(raw) : null;
   }
 }

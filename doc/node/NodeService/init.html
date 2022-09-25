@@ -53,13 +53,11 @@
       
 
 <span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../node/NodeService-class.html">NodeService</a></span>&gt;</span></span>
-<span class="name ">init</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="init-param-database"><span class="type-annotation">Database</span> <span class="parameter-name">database</span>, </span></li>
-<li><span class="parameter" id="init-param-keysInterface"><span class="type-annotation"><a href="../../node/KeyInterface-class.html">KeyInterface</a></span> <span class="parameter-name">keysInterface</span>, </span></li>
-<li><span class="parameter" id="init-param-backupStorage"><span class="type-annotation">BackupStorageInterface</span> <span class="parameter-name">backupStorage</span>, </span></li>
-<li><span class="parameter" id="init-param-primary">{<span class="type-annotation">String?</span> <span class="parameter-name">primary</span>, </span></li>
-<li><span class="parameter" id="init-param-readOnly"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">readOnly</span> = <span class="default-value">const []</span>, </span></li>
-<li><span class="parameter" id="init-param-maxTransactions"><span class="type-annotation">int</span> <span class="parameter-name">maxTransactions</span> = <span class="default-value">200</span>, </span></li>
-<li><span class="parameter" id="init-param-blockInterval"><span class="type-annotation">Duration</span> <span class="parameter-name">blockInterval</span> = <span class="default-value">const Duration(minutes: 1)</span>}</span></li>
+<span class="name ">init</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="init-param-apiKey">{<span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">apiKey</span>, </span></li>
+<li><span class="parameter" id="init-param-database"><span>required</span> <span class="type-annotation">Database</span> <span class="parameter-name">database</span>, </span></li>
+<li><span class="parameter" id="init-param-keysInterface"><span>required</span> <span class="type-annotation"><a href="../../keys/KeysInterface-class.html">KeysInterface</a></span> <span class="parameter-name">keysInterface</span>, </span></li>
+<li><span class="parameter" id="init-param-addresses"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">addresses</span> = <span class="default-value">const []</span>, </span></li>
+<li><span class="parameter" id="init-param-blkInterval"><span class="type-annotation">dynamic</span> <span class="parameter-name">blkInterval</span> = <span class="default-value">const Duration(minutes: 1)</span>}</span></li>
 </ol>)
 
       
@@ -67,9 +65,9 @@
     </section>
     
 <section class="desc markdown">
-  <p>Initialize the service</p>
-<p>All the related chains addresses should be added to <code>addresses</code> list as
-<code>base64Url</code> representation of the address.</p>
+  <p>Initialzes de service</p>
+<p>All the related chains addresses should be addded to <code>addresses</code> list as
+<code>base64Url</code> representation of the adress.</p>
 <p>The first address in the <code>addresses</code> list for which <code>keysInterface</code> has a private
 key is the one that will be used for read and write operations.
 All the other ones are used in read-only mode, even if <code>keysInterface</code>
@@ -83,7 +81,7 @@ appropriate library. If no <code>database</code> is provided the SDK will use th
 memory for persistence what could cause inconsistencies. It should only be
 used for tests or thin clients with read-only operations. It is NOT RECOMMENDED
 for writing to the chain.</p>
-<p>The <code>keysInterface</code> should be a <code>KeysInterface</code> implementation
+<p>The <code>keysInterface</code> should be a <a href="../../keys/KeysInterface-class.html">KeysInterface</a> implementation
 using encrypted key-value storage, specifically for each host OS.
 It should not be accessed by other applications or users because it will
 store the private keys of the user, which is required for write operations
@@ -92,13 +90,13 @@ in the chain.</p>
 another option with AES secret key encrypted with RSA and RSA key is stored
 in KeyStore.</p>
 <p>Keychain is recommended for iOS and MacOS.</p>
-<p>For Linux libsecret is a reliable option.</p>
+<p>For Linux libscret is a reliable option.</p>
 <p>In JavaScript web environments the recommendation is WebCrypto with HTST enabled.</p>
-<p>In other environments, use equivalent implementations of the recommended ones.</p>
-<p>The <code>NodeService</code> uses a internal <code>Timer</code> to build a new <a href="../../block/BlockModel-class.html">BlockModel</a> every
+<p>In other enviroments, use equivalent implementations of the recommended ones.</p>
+<p>The <code>NodeService</code> uses a internal <code>Timer</code> to build a new <code>BlockModel</code> every
 <code>blkInterval</code>. The default value is 1 minute. If there are any <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>
-in the <code>database</code> that was not added to a <a href="../../block/BlockModel-class.html">BlockModel</a> yet, it creates a new
-<a href="../../block/BlockModel-class.html">BlockModel</a> if the last <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> was created before 1 minute ago
+in the <code>database</code> that was not added to a <code>BlockModel</code> yet, it creates a new
+<code>BlockModel</code> if the last <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> was created before 1 minute ago
 or if the total size of the serialized transactions is greater than 100kb.</p>
 </section>
 
@@ -106,40 +104,29 @@ or if the total size of the serialized transactions is greater than 100kb.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;NodeService&gt; init(Database database, KeyInterface keysInterface,
-    BackupStorageInterface backupStorage,
-    {String? primary,
-    List&lt;String&gt; readOnly = const [],
-    int maxTransactions = 200,
-    Duration blockInterval = const Duration(minutes: 1)}) async {
-  _backupStorage = backupStorage;
+  <pre class="language-dart"><code class="language-dart">Future&lt;NodeService&gt; init(
+    {required String apiKey,
+    required Database database,
+    required KeysInterface keysInterface,
+    List&lt;String&gt; addresses = const [],
+    blkInterval = const Duration(minutes: 1)}) async {
+  _blkInterval = blkInterval;
+  _keysService = KeysService(keysInterface);
   _transactionService = TransactionService(database);
   _blockService = BlockService(database);
-  _keyService = KeyService(keysInterface);
-  _xchainService = XchainService(database, _backupStorage);
-  _blockInterval = blockInterval;
-  _maxTransactions = maxTransactions;
 
-  await _loadPrimaryKey(primary);
+  await _loadKeysAndChains(addresses);
 
-  _backupService = BackupService(_backupStorage, database, _primaryKey, (id) {
-    BlockModel? header = _blockService.get(id);
-    if (header == null) return null;
+  _wasabiService = WasabiService(apiKey, _keys.privateKey);
+  _backupService = BackupService(base64.encode(_keys.address), _keysService,
+      _blockService, _transactionService, _wasabiService, database);
 
-    List&lt;TransactionModel&gt; transactions = _transactionService.getByBlock(id);
-    if (transactions.isEmpty) return null;
+  await _backupService.write(&#39;public.key&#39;);
 
-    return _serializeBlock(header, transactions);
-  });
+  await _createBlock();
 
-  List&lt;TransactionModel&gt; transactions = _transactionService.getPending();
-  if (transactions.isNotEmpty &amp;&amp;
-      transactions.last.timestamp
-          .isBefore(DateTime.now().subtract(_blockInterval))) {
-    await _createBlock(transactions);
-  }
+  _setBlkTimer();
 
-  _startBlockTimer();
   return this;
 }</code></pre>
 </section>
@@ -179,7 +166,7 @@ or if the total size of the serialized transactions is greater than 100kb.</p>
     <li class="section-title"><a href="../../node/NodeService-class.html#instance-methods">Methods</a></li>
     <li><a href="../../node/NodeService/getBlockById.html">getBlockById</a></li>
     <li><a href="../../node/NodeService/getLastBlock.html">getLastBlock</a></li>
-    <li><a href="../../node/NodeService/getTransactionByPath.html">getTransactionByPath</a></li>
+    <li><a href="../../node/NodeService/getTransactionsByBlockId.html">getTransactionsByBlockId</a></li>
     <li><a href="../../node/NodeService/init.html">init</a></li>
     <li class="inherited"><a href="../../node/NodeService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../node/NodeService/toString.html">toString</a></li>
@@ -191,6 +178,8 @@ or if the total size of the serialized transactions is greater than 100kb.</p>
 
 
 
+        <li class="section-title"><a href="../../node/NodeService-class.html#constants">Constants</a></li>
+          <li><a href="../../node/NodeService/scheme-constant.html">scheme</a></li>
 </ol>
 
   </div><!--/.sidebar-offcanvas-->
@@ -203,7 +192,7 @@ or if the total size of the serialized transactions is greater than 100kb.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

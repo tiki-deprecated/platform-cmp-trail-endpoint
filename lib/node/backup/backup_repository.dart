@@ -54,12 +54,13 @@ class BackupRepository {
   /// Updates the persisted [BackupModel] by adding [BackupModel.signature]
   /// and [BackupModel.timestamp]
   void update(BackupModel backup) {
-    _db.execute('''UPDATE $table SET 
+    _db.execute('''
+      UPDATE $table 
+      SET
         $columnTimestamp = ?, 
         $columnSignature = ?
-        WHERE 
-        $columnPath = ?;
-      ;''', [
+      WHERE $columnPath = ?;
+      ''', [
       backup.timestamp!.millisecondsSinceEpoch,
       backup.signature,
       backup.path
@@ -72,13 +73,9 @@ class BackupRepository {
   List<BackupModel> getPending() =>
       _select(whereStmt: 'WHERE $columnTimestamp IS NULL');
 
-  /// Gets all backup requests by path.
-  ///
-  /// It prevents that duplicate backups are done for the same path
   BackupModel? getByPath(String path) {
-    String where = 'WHERE $columnPath = "$path"';
-    List<BackupModel> bkps = _select(whereStmt: where);
-    return bkps.isNotEmpty ? bkps.first : null;
+    List<BackupModel> bkups = _select(whereStmt: "WHERE $columnPath = '$path'");
+    return bkups.isNotEmpty ? bkups.first : null;
   }
 
   List<BackupModel> _select({String? whereStmt}) {

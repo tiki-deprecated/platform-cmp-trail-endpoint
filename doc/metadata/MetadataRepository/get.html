@@ -65,11 +65,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">String get(MetadataKey key) =&gt; _db.select(&#39;&#39;&#39;
-  SELECT $columnValue
-  FROM $table
-  WHERE $columnKey = &quot;${key.value}&quot;;
-  &#39;&#39;&#39;)[0][columnValue];</code></pre>
+  <pre class="language-dart"><code class="language-dart">String get(MetadataKey key) {
+  return _db.select(&#39;&#39;&#39;SELECT $columnValue FROM $table
+    WHERE $columnKey = &quot;${key.value}&quot;&#39;&#39;&#39;)[0][columnValue];
+}</code></pre>
 </section>
 
 
@@ -133,7 +132,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

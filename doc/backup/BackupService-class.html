@@ -51,10 +51,7 @@
 
     
 <section class="desc markdown">
-  <p>A service to handle the backup requests to remote backup.</p>
-<p>The remote backup implementation should follow the key-value interface defined
-in <code>BackupStorageInterface</code>. This service does not do any security checks.
-It is up to the implementation of <code>BackupStorageInterface</code> to implement it.</p>
+  <p>A service to handle the backup requests to <a href="../wasabi/WasabiService-class.html">WasabiService</a>.</p>
 </section>
 
 
@@ -65,10 +62,11 @@ It is up to the implementation of <code>BackupStorageInterface</code> to impleme
 
     <dl class="constructor-summary-list">
         <dt id="BackupService" class="callable">
-          <span class="name"><a href="../backup/BackupService/BackupService.html">BackupService</a></span><span class="signature">(<span class="parameter" id="-param-_storage"><span class="type-annotation">BackupStorageInterface</span> <span class="parameter-name">_storage</span>, </span><span class="parameter" id="-param-database"><span class="type-annotation">Database</span> <span class="parameter-name">database</span>, </span><span class="parameter" id="-param-_key"><span class="type-annotation"><a href="../node/KeyModel-class.html">KeyModel</a></span> <span class="parameter-name">_key</span>, </span><span class="parameter" id="-param-_getBlock"><span class="type-annotation">Uint8List?</span> <span class="parameter-name">_getBlock</span>(<span class="parameter" id="param-"><span class="type-annotation">Uint8List</span></span>)</span>)</span>
+          <span class="name"><a href="../backup/BackupService/BackupService.html">BackupService</a></span><span class="signature">(<span class="parameter" id="-param-_address"><span class="type-annotation">String</span> <span class="parameter-name">_address</span>, </span><span class="parameter" id="-param-_keysService"><span class="type-annotation"><a href="../keys/KeysService-class.html">KeysService</a></span> <span class="parameter-name">_keysService</span>, </span><span class="parameter" id="-param-_blockService"><span class="type-annotation"><a href="../block/BlockService-class.html">BlockService</a></span> <span class="parameter-name">_blockService</span>, </span><span class="parameter" id="-param-_transactionService"><span class="type-annotation"><a href="../transaction/TransactionService-class.html">TransactionService</a></span> <span class="parameter-name">_transactionService</span>, </span><span class="parameter" id="-param-_wasabiService"><span class="type-annotation"><a href="../wasabi/WasabiService-class.html">WasabiService</a></span> <span class="parameter-name">_wasabiService</span>, </span><span class="parameter" id="-param-db"><span class="type-annotation">Database</span> <span class="parameter-name">db</span></span>)</span>
         </dt>
         <dd>
-          Initializes a <a href="../backup/BackupService-class.html">BackupService</a> and backs up the public key for the chain.
+          Creates a <a href="../backup/BackupService-class.html">BackupService</a> to handle backup requests to <code>_wasabiService</code> at
+the chain identified by <code>_address</code>.
         </dd>
     </dl>
   </section>
@@ -108,20 +106,6 @@ It is up to the implementation of <code>BackupStorageInterface</code> to impleme
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="block" class="callable">
-  <span class="name"><a href="../backup/BackupService/block.html">block</a></span><span class="signature">(<wbr><span class="parameter" id="block-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span></span>)
-    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates a backup request for a <a href="../block/BlockModel-class.html">BlockModel</a> by its <code>id</code> and process pending
-backups.
-  
-
-</dd>
-
         <dt id="noSuchMethod" class="callable inherited">
   <span class="name"><a href="../backup/BackupService/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation">Invocation</span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
@@ -145,6 +129,19 @@ backups.
 <dd class="inherited">
   A string representation of this object.
   <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="write" class="callable">
+  <span class="name"><a href="../backup/BackupService/write.html">write</a></span><span class="signature">(<wbr><span class="parameter" id="write-param-path"><span class="type-annotation">String</span> <span class="parameter-name">path</span></span>)
+    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Records a request to write the asset defined by the <code>path</code> to <code>_wasabiService</code>.
+  
 
 </dd>
 
@@ -224,9 +221,9 @@ backups.
     <li class="inherited"><a href="../backup/BackupService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../backup/BackupService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../backup/BackupService/block.html">block</a></li>
     <li class="inherited"><a href="../backup/BackupService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../backup/BackupService/toString.html">toString</a></li>
+    <li><a href="../backup/BackupService/write.html">write</a></li>
 
     <li class="section-title inherited"><a href="../backup/BackupService-class.html#operators">Operators</a></li>
     <li class="inherited"><a href="../backup/BackupService/operator_equals.html">operator ==</a></li>
@@ -243,7 +240,7 @@ backups.
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

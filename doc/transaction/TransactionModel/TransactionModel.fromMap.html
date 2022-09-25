@@ -56,8 +56,8 @@
 
     
 <section class="desc markdown">
-  <p>Builds a <a href="../../block/BlockModel-class.html">BlockModel</a> from a <code>map</code>.</p>
-<p>It is used mainly for retrieving data from <a href="../../block/BlockRepository-class.html">BlockRepository</a>.
+  <p>Builds a <code>BlockModel</code> from a <code>map</code>.</p>
+<p>It is used mainly for retrieving data from <code>BlockRepository</code>.
 The map strucure is</p>
 <pre class="language-dart"><code>  Map&lt;String, dynamic&gt; map = {
     TransactionRepository.columnId : String,
@@ -85,7 +85,7 @@ The map strucure is</p>
       merkelProof = map[TransactionRepository.columnMerkelProof],
       block = map[&#39;block&#39;],
       timestamp = DateTime.fromMillisecondsSinceEpoch(
-          map[TransactionRepository.columnTimestamp]),
+          map[TransactionRepository.columnTimestamp] * 1000),
       signature = map[TransactionRepository.columnSignature];</code></pre>
 </section>
 
@@ -126,7 +126,6 @@ The map strucure is</p>
     <li><a href="../../transaction/TransactionModel/hashCode.html">hashCode</a></li>
     <li><a href="../../transaction/TransactionModel/id.html">id</a></li>
     <li><a href="../../transaction/TransactionModel/merkelProof.html">merkelProof</a></li>
-    <li><a href="../../transaction/TransactionModel/path.html">path</a></li>
     <li class="inherited"><a href="../../transaction/TransactionModel/runtimeType.html">runtimeType</a></li>
     <li><a href="../../transaction/TransactionModel/signature.html">signature</a></li>
     <li><a href="../../transaction/TransactionModel/timestamp.html">timestamp</a></li>
@@ -142,6 +141,8 @@ The map strucure is</p>
 
 
 
+        <li class="section-title"><a href="../../transaction/TransactionModel-class.html#static-methods">Static methods</a></li>
+          <li><a href="../../transaction/TransactionModel/fromJson.html">fromJson</a></li>
 
 </ol>
 
@@ -155,7 +156,7 @@ The map strucure is</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   

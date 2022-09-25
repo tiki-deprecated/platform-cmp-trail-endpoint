@@ -67,7 +67,7 @@ Requires a <code>_privateKey</code> to sign all policy requests.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">L0StorageService(String  CryptoRSAPrivateKey privateKey)
+  <pre class="language-dart"><code class="language-dart">L0StorageService(String apiId, CryptoRSAPrivateKey privateKey)
     : _repository = L0StorageRepository(apiId),
       _privateKey = privateKey;</code></pre>
 </section>

@@ -61,9 +61,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">WasabiService(String  CryptoRSAPrivateKey privateKey)
+  <pre class="language-dart"><code class="language-dart">WasabiService(String apiId, CryptoRSAPrivateKey privateKey)
     : _repository = WasabiRepository(),
-      _l0storageService = L0StorageService( privateKey);</code></pre>
+      _l0storageService = L0StorageService(apiId, privateKey);</code></pre>
 </section>
 
 

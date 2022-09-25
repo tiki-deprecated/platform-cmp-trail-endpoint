@@ -47,13 +47,6 @@ class TransactionModel {
   /// The asymmetric digital signature (RSA) for the [serialize] transaction.
   Uint8List? signature;
 
-  /// The transaction path for asset reference.
-  ///
-  /// It is composed by base 64 url encoded ids:
-  /// [xchain public address]/[block id]/[transaction id]
-  String get path =>
-      "${base64Url.encode(address)}/${base64Url.encode(block!.id!)}/${base64Url.encode(id!)}";
-
   /// Builds a new [TransactionModel]
   ///
   /// If no [timestamp] is provided, the object creation time is used.
@@ -68,9 +61,7 @@ class TransactionModel {
       this.merkelProof,
       this.block,
       this.signature})
-      : timestamp = timestamp ??
-            DateTime.fromMillisecondsSinceEpoch(
-                (DateTime.now().millisecondsSinceEpoch ~/ 1000) * 1000);
+      : timestamp = timestamp ?? DateTime.now();
 
   /// Builds a [BlockModel] from a [map].
   ///
@@ -104,11 +95,11 @@ class TransactionModel {
   ///
   /// Check [serialize] for more information on how the [transaction] is built.
   TransactionModel.deserialize(Uint8List transaction) {
-    List<Uint8List> extractedBytes = UtilsCompactSize.decode(transaction);
-    version = UtilsBytes.decodeBigInt(extractedBytes[0]).toInt();
+    List<Uint8List> extractedBytes = CompactSize.decode(transaction);
+    version = Bytes.decodeBigInt(extractedBytes[0]).toInt();
     address = extractedBytes[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
-        UtilsBytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
+        Bytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
     assetRef = base64.encode(extractedBytes[3]);
     signature = extractedBytes[4];
     contents = extractedBytes[5];
@@ -118,7 +109,7 @@ class TransactionModel {
   /// Creates a [Uint8List] representation of this.
   ///
   /// The Uint8List is built by a list of the transaction properties, prepended
-  /// by its size obtained from [UtilsCompactSize.toSize].
+  /// by its size obtained from [CompactSize.toSize].
   /// Use with [includeSignature] to false, to sign and verify the signature.
   ///
   /// ```
@@ -138,28 +129,28 @@ class TransactionModel {
   /// ]);
   /// ```
   Uint8List serialize({includeSignature = true}) {
-    Uint8List versionBytes = UtilsBytes.encodeBigInt(BigInt.from(version));
+    Uint8List versionBytes = Bytes.encodeBigInt(BigInt.from(version));
     Uint8List serializedVersion = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(versionBytes))
+          ..add(CompactSize.toSize(versionBytes))
           ..add(versionBytes))
         .toBytes();
     Uint8List serializedAddress = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(address))
+          ..add(CompactSize.toSize(address))
           ..add(address))
         .toBytes();
-    Uint8List timestampBytes = UtilsBytes.encodeBigInt(
+    Uint8List timestampBytes = Bytes.encodeBigInt(
         BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000));
     Uint8List serializedTimestamp = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(timestampBytes))
+          ..add(CompactSize.toSize(timestampBytes))
           ..add(timestampBytes))
         .toBytes();
     Uint8List assetRefBytes = base64.decode(assetRef);
     Uint8List serializedAssetRef = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(assetRefBytes))
+          ..add(CompactSize.toSize(assetRefBytes))
           ..add(assetRefBytes))
         .toBytes();
     Uint8List serializedSignature = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(includeSignature && signature != null
+          ..add(CompactSize.toSize(includeSignature && signature != null
               ? signature!
               : Uint8List(0)))
           ..add(includeSignature && signature != null
@@ -167,7 +158,7 @@ class TransactionModel {
               : Uint8List(0)))
         .toBytes();
     Uint8List serializedContents = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(contents))
+          ..add(CompactSize.toSize(contents))
           ..add(contents))
         .toBytes();
     return (BytesBuilder()

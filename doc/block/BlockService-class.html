@@ -105,21 +105,21 @@
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="add" class="callable">
-  <span class="name"><a href="../block/BlockService/add.html">add</a></span><span class="signature">(<wbr><span class="parameter" id="add-param-blk"><span class="type-annotation"><a href="../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">blk</span>, </span><span class="parameter" id="add-param-xchainId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">xchainId</span></span>)
-    <span class="returntype parameter">&#8594; void</span>
+        <dt id="build" class="callable">
+  <span class="name"><a href="../block/BlockService/build.html">build</a></span><span class="signature">(<wbr><span class="parameter" id="build-param-transactions"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span> <span class="parameter-name">transactions</span>, </span><span class="parameter" id="build-param-transactionRoot"><span class="type-annotation">Uint8List</span> <span class="parameter-name">transactionRoot</span></span>)
+    <span class="returntype parameter">&#8594; BlockModel</span>
   </span>
   
 
 </dt>
 <dd>
-  Adds a <a href="../block/BlockModel-class.html">BlockModel</a> in the <a href="../block/BlockRepository-class.html">BlockRepository</a>.
+  Builds a new block from a <code>List</code> of <a href="../transaction/TransactionModel-class.html">TransactionModel</a> and a <code>transactionRoot</code>.
   
 
 </dd>
 
         <dt id="commit" class="callable">
-  <span class="name"><a href="../block/BlockService/commit.html">commit</a></span><span class="signature">(<wbr><span class="parameter" id="commit-param-block"><span class="type-annotation"><a href="../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span></span>)
+  <span class="name"><a href="../block/BlockService/commit.html">commit</a></span><span class="signature">(<wbr><span class="parameter" id="commit-param-block"><span class="type-annotation">BlockModel</span> <span class="parameter-name">block</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -131,41 +131,28 @@
 
 </dd>
 
-        <dt id="create" class="callable">
-  <span class="name"><a href="../block/BlockService/create.html">create</a></span><span class="signature">(<wbr><span class="parameter" id="create-param-transactionRoot"><span class="type-annotation">Uint8List</span> <span class="parameter-name">transactionRoot</span></span>)
-    <span class="returntype parameter">&#8594; <a href="../block/BlockModel-class.html">BlockModel</a></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Builds a new block from a <code>List</code> of <a href="../transaction/TransactionModel-class.html">TransactionModel</a> and a <code>transactionRoot</code>.
-  
-
-</dd>
-
         <dt id="get" class="callable">
-  <span class="name"><a href="../block/BlockService/get.html">get</a></span><span class="signature">(<wbr><span class="parameter" id="get-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span>, </span><span class="parameter" id="get-param-xchainAddress">{<span class="type-annotation">Uint8List?</span> <span class="parameter-name">xchainAddress</span>}</span>)
-    <span class="returntype parameter">&#8594; <a href="../block/BlockModel-class.html">BlockModel</a>?</span>
+  <span class="name"><a href="../block/BlockService/get.html">get</a></span><span class="signature">(<wbr><span class="parameter" id="get-param-id"><span class="type-annotation">String</span> <span class="parameter-name">id</span></span>)
+    <span class="returntype parameter">&#8594; BlockModel?</span>
   </span>
   
 
 </dt>
 <dd>
-  Gets a <a href="../block/BlockModel-class.html">BlockModel</a> by <a href="../block/BlockModel/id.html">BlockModel.id</a>
+  Gets a <code>BlockModel</code> by <code>BlockModel.id</code>
   
 
 </dd>
 
-        <dt id="last" class="callable">
-  <span class="name"><a href="../block/BlockService/last.html">last</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; <a href="../block/BlockModel-class.html">BlockModel</a>?</span>
+        <dt id="getLast" class="callable">
+  <span class="name"><a href="../block/BlockService/getLast.html">getLast</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; BlockModel?</span>
   </span>
   
 
 </dt>
 <dd>
-  Gets the last committed block from the <code>db</code>.
+  Gets the last commited block from the <code>db</code>.
   
 
 </dd>
@@ -264,8 +251,6 @@
     <h5>block library</h5>
     <ol>
   <li class="section-title"><a href="../block/block-library.html#classes">Classes</a></li>
-  <li><a href="../block/BlockModel-class.html">BlockModel</a></li>
-  <li><a href="../block/BlockRepository-class.html">BlockRepository</a></li>
   <li><a href="../block/BlockService-class.html">BlockService</a></li>
 
 
@@ -293,11 +278,10 @@
     <li class="inherited"><a href="../block/BlockService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../block/BlockService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../block/BlockService/add.html">add</a></li>
+    <li><a href="../block/BlockService/build.html">build</a></li>
     <li><a href="../block/BlockService/commit.html">commit</a></li>
-    <li><a href="../block/BlockService/create.html">create</a></li>
     <li><a href="../block/BlockService/get.html">get</a></li>
-    <li><a href="../block/BlockService/last.html">last</a></li>
+    <li><a href="../block/BlockService/getLast.html">getLast</a></li>
     <li class="inherited"><a href="../block/BlockService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../block/BlockService/toString.html">toString</a></li>
 
@@ -318,7 +302,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.3
+      0.0.2
   </span>
 
   
