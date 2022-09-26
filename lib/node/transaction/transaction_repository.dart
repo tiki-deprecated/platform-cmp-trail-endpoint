@@ -86,7 +86,7 @@ class TransactionRepository {
         transaction.signature,
       ]);
 
-  ///TODO if it doesn't update the whole model, only accept the fields it does.
+
   /// Commits the [transaction] by saving its [TransactionModel.merkelProof] and
   /// [TransactionModel.block]
   void commit(TransactionModel transaction) => _db.execute('''

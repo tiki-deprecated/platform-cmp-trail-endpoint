@@ -1,102 +1,73 @@
-main() {
-  //TODO FIX.
+import 'dart:convert';
+import 'dart:typed_data';
 
-  /*group('xchain tests', () {
+import 'package:sqlite3/sqlite3.dart';
+import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/node/l0_storage.dart';
+import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/xchain/xchain_service.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../in_mem_key.dart';
+import '../../in_mem_l0_storage.dart';
+
+main() {
+  group('xchain tests', () {
     Database db = sqlite3.openInMemory();
     InMemKeyStorage keyStorage = InMemKeyStorage();
     InMemL0Storage storage = InMemL0Storage();
     KeyService keysService = KeyService(keyStorage);
     TransactionService transactionService = TransactionService(db);
     BlockService blockService = BlockService(db);
+    List<String> contentList =
+        List.generate(2000, (index) => const Uuid().v4());
+    String xchainAddress = '';
 
-    Uint8List? getBlock(id) {
-      BlockModel? header = blockService.get(id);
-      if (header == null) return null;
+    Future<void> createChain(
+        BlockService blockService,
+        TransactionService transactionService,
+        KeyService keyService,
+        L0Storage storage,
+        Database database) async {
+      NodeService nodeService = await NodeService().init(
+          db, InMemKeyStorage(), storage,
+          blockInterval: const Duration(seconds: 1));
 
-      List<TransactionModel> transactions = transactionService.getByBlock(id);
-      if (transactions.isEmpty) return null;
-
-      BytesBuilder bytes = BytesBuilder();
-      bytes.add(header.serialize());
-      bytes.add(Bytes.encodeBigInt(BigInt.from(transactions.length)));
-      transactions.forEach((txn) => bytes.add(txn.serialize()));
-      return bytes.toBytes();
+      for (int i = 0; i < contentList.length; i++) {
+        nodeService.write(Uint8List.fromList(contentList[i].codeUnits));
+      }
+      xchainAddress = base64Url.encode(base64.decode(nodeService.address));
     }
 
-    test('create block, backup and retrieve', () async {
-      KeyModel key = await keysService.create();
-      BackupService backupService = BackupService(storage, db, key, getBlock);
-      List<TransactionModel> transactions = [];
-      for (int i = 0; i < 50; i++) {
-        TransactionModel txn =
-            transactionService.create(Uint8List.fromList([i]), key);
-        transactions.add(txn);
-      }
-      MerkelTree merkelTree =
-          MerkelTree.build(transactions.map((txn) => txn.id!).toList());
-      Uint8List transactionRoot = merkelTree.root!;
-      BlockModel blk = blockService.create(transactionRoot);
-      for (TransactionModel transaction in transactions) {
-        transaction.block = blk;
-        transaction.merkelProof = merkelTree.proofs[transaction.id];
-        transactionService.commit(transaction);
-      }
-      blockService.commit(blk);
-      backupService.block(blk.id!);
-
+    test('get all blocks and rebuild chain', () async {
+      await createChain(
+          blockService, transactionService, keysService, storage, db);
+      await shuffleBlocks(storage, xchainAddress);
       db = sqlite3.openInMemory();
-      NodeService nodeService =
-          await NodeService().init(db, InMemKeyStorage(), storage);
-      BlockModel? block =
-          await nodeService.getBlockById(blk.id!, xchainId: key.address);
-      expect(block != null, true);
-      expect(block!.id, blk.id);
-      expect(block.version, blk.version);
-      expect(Bytes.memEquals(block.previousHash, blk.previousHash), true);
-      expect(Bytes.memEquals(block.transactionRoot, blk.transactionRoot), true);
-      expect(block.timestamp.millisecondsSinceEpoch,
-          blk.timestamp.millisecondsSinceEpoch);
-    });
-    test('create transaction, backup and retrieve by path', () async {
-      KeyModel key = await keysService.create();
-      BackupService backupService = BackupService(storage, db, key, getBlock);
-      List<TransactionModel> transactions = [];
-      for (int i = 0; i < 50; i++) {
-        TransactionModel txn =
-            transactionService.create(Uint8List.fromList([i]), key);
-        transactions.add(txn);
+      NodeService nodeService = await NodeService()
+          .init(db, InMemKeyStorage(), storage, 
+          readOnly: []);
+      Map<String, Uint8List> allBlocks =
+          await storage.getAll(nodeService.address);
+      List<String> blockIds = allBlocks.keys.toList();
+      for (String id in blockIds) {
+        Uint8List blkId =
+            base64Url.decode(id.split('/').last.replaceFirst('.block', ''));
+        Uint8List? block = nodeService.getBlock(blkId);
+        expect(block != null, true);
       }
-      MerkelTree merkelTree =
-          MerkelTree.build(transactions.map((txn) => txn.id!).toList());
-      Uint8List transactionRoot = merkelTree.root!;
-      BlockModel blk = blockService.create(transactionRoot);
-      for (TransactionModel transaction in transactions) {
-        transaction.block = blk;
-        transaction.merkelProof = merkelTree.proofs[transaction.id];
-        transactionService.commit(transaction);
-      }
-      blockService.commit(blk);
-      backupService.block(blk.id!);
-
-      db = sqlite3.openInMemory();
-      TransactionModel originalTxn = transactions[Random().nextInt(49)];
-      NodeService nodeService =
-          await NodeService().init(db, InMemoryKey(), storage);
-
-      TransactionModel? transaction =
-          await nodeService.getTransactionByPath(originalTxn.path);
-      expect(transaction != null, true);
-      expect(Bytes.memEquals(transaction!.id!, originalTxn.id!), true);
-      expect(transaction.version, originalTxn.version);
-      expect(Bytes.memEquals(transaction.address, originalTxn.address), true);
-      expect(Bytes.memEquals(transaction.contents, originalTxn.contents), true);
-      expect(transaction.assetRef, originalTxn.assetRef);
-      expect(
-          Bytes.memEquals(transaction.merkelProof!, originalTxn.merkelProof!),
-          true);
-      expect(Bytes.memEquals(transaction.block!.id!, originalTxn.block!.id!),
-          true);
-      expect(transaction.timestamp, originalTxn.timestamp);
     });
-  });*/
+  });
+}
+
+Future<void> shuffleBlocks(InMemL0Storage storage, String address) async {
+  Map<String, Uint8List> allBlocks = {};
+  allBlocks = await storage.getAll(address);
+  List<String> blockIds = allBlocks.keys.toList();
+  blockIds.shuffle();
+  Map<String, Uint8List> newStorage = {};
+  for (String id in blockIds) {
+    newStorage[id] = allBlocks[id]!;
+  }
+  storage.storage[address] = newStorage;
 }

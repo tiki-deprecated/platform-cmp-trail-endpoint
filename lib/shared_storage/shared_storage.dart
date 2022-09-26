@@ -53,4 +53,10 @@ class SharedStorage implements L0Storage {
           fields: _policy!.fields!);
     }
   }
+  
+  @override
+  Future<Map<String, Uint8List>> getAll(String address) {
+    // TODO: implement getAll
+    throw UnimplementedError();
+  }
 }

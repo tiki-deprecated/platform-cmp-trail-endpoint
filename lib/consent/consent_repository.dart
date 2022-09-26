@@ -5,11 +5,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category SDK}
-import 'dart:convert';
-
 import 'package:sqlite3/sqlite3.dart';
 import '../ownership/ownership_model.dart';
-import '../tiki_sdk.dart';
 import 'cosent_model.dart';
 
 /// The repository for [ConsentModel] persistence.

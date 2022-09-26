@@ -9,4 +9,7 @@ abstract class L0Storage {
   Future<Uint8List?> read(String path);
 
   Future<void> write(String path, Uint8List obj);
+
+  Future<Map<String, Uint8List>> getAll(String address);
+
 }

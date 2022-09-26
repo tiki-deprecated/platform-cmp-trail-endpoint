@@ -34,6 +34,8 @@ class NodeService {
   late final Duration _blockInterval;
   late final int _maxTransactions;
 
+  String get address => base64.encode(_primaryKey.address);
+
   /// Initialize the service
   ///
   /// All the related chains addresses should be added to [addresses] list as
@@ -92,15 +94,7 @@ class NodeService {
 
     await _loadPrimaryKey(keyStorage, primary);
 
-    _backupService = BackupService(l0storage, database, _primaryKey, (id) {
-      BlockModel? header = _blockService.get(id);
-      if (header == null) return null;
-
-      List<TransactionModel> transactions = _transactionService.getByBlock(id);
-      if (transactions.isEmpty) return null;
-
-      return _serializeBlock(header, transactions);
-    });
+    _backupService = BackupService(l0storage, database, _primaryKey, getBlock);
 
     List<TransactionModel> transactions = _transactionService.getPending();
     if (transactions.isNotEmpty &&
@@ -108,6 +102,8 @@ class NodeService {
             .isBefore(DateTime.now().subtract(_blockInterval))) {
       await _createBlock(transactions);
     }
+
+    await _loadReadOnly();
 
     _startBlockTimer();
     return this;
@@ -130,7 +126,15 @@ class NodeService {
     return transaction;
   }
 
-  String get address => base64.encode(_primaryKey.address);
+  Uint8List? getBlock(Uint8List id) {
+    BlockModel? header = _blockService.get(id);
+    if (header == null) return null;
+
+    List<TransactionModel> transactions = _transactionService.getByBlock(id);
+    if (transactions.isEmpty) return null;
+
+    return _serializeBlock(header, transactions);
+  }
 
   Future<void> _loadPrimaryKey(KeyStorage keyStorage, String? address) async {
     KeyService keyService = KeyService(keyStorage);
@@ -176,4 +180,7 @@ class NodeService {
     }
     return bytes.toBytes();
   }
+  
+  _loadReadOnly() {}
+
 }

@@ -73,4 +73,29 @@ class TransactionService {
 
   /// Gets all the transactions that were not committed by [commit].
   List<TransactionModel> getPending() => _repository.getByBlockId(null);
+
+  /// Creates a List of [TransactionModel]] from a [Uint8List] of the serialized
+  /// block.
+  ///
+  /// This is the revert function for [serializeTransactions]. It should be used
+  /// when recovering a block body.
+  static List<TransactionModel> deserializeTransactions(
+      Uint8List serializedBlock) {
+    List<TransactionModel> txns = [];
+    List<Uint8List> extractedBlockBytes =
+        CompactSize.decode(serializedBlock);
+    int transactionCount =
+        Bytes.decodeBigInt(extractedBlockBytes[4]).toInt();
+    if (extractedBlockBytes.sublist(5).length == transactionCount) {
+      throw Exception(
+          'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
+    }
+    for (int i = 5; i < extractedBlockBytes.length; i++) {
+      TransactionModel txn =
+          TransactionModel.deserialize(extractedBlockBytes[i]);
+      if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
+      txns.add(txn);
+    }
+    return txns;
+  }
 }

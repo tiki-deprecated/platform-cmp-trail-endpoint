@@ -84,18 +84,14 @@ class BlockModel {
   /// Creates the [Uint8List] representation of the block header.
   ///
   /// The block header is represented by a [Uint8List] of the block properties.
-  /// Each item is prepended by its size calculate with [CompactSize.toSize].
+  /// Each item is prepended by its size calculate with [CompactSize.encode].
   /// The Uint8List structure is:
   /// ```
-  /// Uint8List<Uint8List> header = Uin8List.fromList([
-  ///   ...UtilsCompactSize.toSize(version),
-  ///   ...version,
-  ///   ...UtilsCompactSize.toSize(timestamp),
-  ///   ...timestamp,
-  ///   ...UtilsCompactSize.toSize(previousHash),
-  ///   ...previousHash,
-  ///   ...UtilsCompactSize.toSize(transactionRoot),
-  ///   ...transactionRoot,
+  /// Uint8List<Uint8List> header = (BytesBuilder()
+  ///   ..add(UtilsCompactSize.encode(version))),
+  ///   ..add(UtilsCompactSize.encode(timestamp)),
+  ///   ..add(UtilsCompactSize.encode(previousHash)),
+  ///   ..add(UtilsCompactSize.encode(transactionRoot)),
   /// ]);
   /// ```
   Uint8List serialize() {
@@ -106,16 +102,12 @@ class BlockModel {
         .toBytes();
     Uint8List serializedPreviousHash = previousHash;
     Uint8List serializedTransactionRoot = transactionRoot;
-    ;
+    
     return (BytesBuilder()
-          ..add(CompactSize.toSize(serializedVersion))
-          ..add(serializedVersion)
-          ..add(CompactSize.toSize(serializedTimestamp))
-          ..add(serializedTimestamp)
-          ..add(CompactSize.toSize(serializedPreviousHash))
-          ..add(serializedPreviousHash)
-          ..add(CompactSize.toSize(serializedTransactionRoot))
-          ..add(serializedTransactionRoot))
+          ..add(CompactSize.encode(serializedVersion))
+          ..add(CompactSize.encode(serializedTimestamp))
+          ..add(CompactSize.encode(serializedPreviousHash))
+          ..add(CompactSize.encode(serializedTransactionRoot)))
         .toBytes();
   }
 
