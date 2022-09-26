@@ -8,6 +8,7 @@
 import 'dart:convert';
 
 import 'package:sqlite3/sqlite3.dart';
+import '../tiki_sdk.dart';
 import 'ownership_model.dart';
 
 /// The repository for [OwnershipModel] persistence.
@@ -17,15 +18,13 @@ class OwnershipRepository {
 
   static const String columnSource = 'source';
 
-  static const String columnType = 'type';
+  static const String columnTypes = 'types';
 
   static const String columnOrigin = 'origin';
 
   static const String columnTransactionId = 'transaction_id';
 
   static const String columnAbout = 'about';
-
-  static const String columnPath = 'path';
 
   /// Builds a [OwnershipRepository] that will use [_db] for persistence.
   ///
@@ -38,25 +37,28 @@ class OwnershipRepository {
   void _createTable() => _db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
       $columnTransactionId TEXT PRIMARY KEY,
-      $columnSource TEXT
-      $columnType TEXT
-      $columnOrigin TEXT
+      $columnSource TEXT,
+      $columnTypes TEXT,
+      $columnOrigin TEXT,
       $columnAbout TEXT
-      $columnPath TEXT
+      );
     ''');
 
   /// Persists [ownership] in [_db].
-  void save(OwnershipModel ownership) => _db.execute('''
+  void save(OwnershipModel ownership) {
+    String typesJson = json
+        .encode(ownership.types.map((TikiSdkDataTypeEnum t) => t.val).toList());
+    _db.execute('''
     INSERT INTO $table 
-    VALUES ( ?, ?, ? );
+    VALUES ( ?, ?, ?, ?, ?);
     ''', [
-        ownership.transactionId,
-        ownership.source,
-        json.encode(ownership.type),
-        ownership.origin,
-        ownership.about,
-        ownership.path,
-      ]);
+      ownership.transactionId,
+      ownership.source,
+      typesJson,
+      ownership.origin,
+      ownership.about,
+    ]);
+  }
 
   /// Gets all [OwnerShipModel] stored in local database.
   List<OwnershipModel> getAll() => _select();
@@ -76,13 +78,14 @@ class OwnershipRepository {
       ''', params);
     List<OwnershipModel> ownerships = [];
     for (final Row row in results) {
+      List<TikiSdkDataTypeEnum> types = (json.decode(row[columnTypes]))
+          .map<TikiSdkDataTypeEnum>((s) => TikiSdkDataTypeEnum.fromValue(s)).toList();
       Map<String, dynamic> map = {
-        'transactionId': row[columnTransactionId],
-        'source': row[columnSource],
-        'type': json.decode(row[columnType]),
-        'origin': row[columnOrigin],
-        'about': row[columnAbout],
-        'path': row[columnPath],
+        columnTransactionId: row[columnTransactionId],
+        columnSource: row[columnSource],
+        columnTypes: types,
+        columnOrigin: row[columnOrigin],
+        columnAbout: row[columnAbout],
       };
       OwnershipModel ownershipModel = OwnershipModel.fromMap(map);
       ownerships.add(ownershipModel);

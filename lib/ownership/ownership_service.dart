@@ -5,7 +5,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category SDK}
-import '../node/backup/backup_storage_interface.dart';
+import '../node/l0_storage.dart';
 import '../tiki_sdk.dart';
 import 'ownership_model.dart';
 import 'ownership_repository.dart';
@@ -17,9 +17,9 @@ class OwnershipService {
 
   final OwnershipRepository ownershipRepository;
 
-  final BackupStorageInterface backupStorage;
+  final L0Storage l0storage;
 
-  OwnershipService(this._origin, db, this.backupStorage)
+  OwnershipService(this._origin, db, this.l0storage)
       : ownershipRepository = OwnershipRepository(db);
 
   /// Creates a ownership register in the blockchain.

@@ -4,6 +4,7 @@
  */
 /// {@category SDK}
 import '../tiki_sdk_data_type_enum.dart';
+import 'ownership_repository.dart';
 
 /// The registry of ownership to a given [source] point, pool, or stream.
 class OwnershipModel {
@@ -11,33 +12,29 @@ class OwnershipModel {
   String source;
 
   /// The list of types the source holds.
-  List<TikiSdkDataTypeEnum> type;
+  List<TikiSdkDataTypeEnum> types;
 
   /// The origin from which the data was generated.
   String origin;
 
   /// The transaction id of this registry.
-  late String transactionId;
+  String? transactionId;
 
   /// A description about the data.
   String? about;
 
-  /// The path to the ownership register in the chain
-  String? path;
-
   OwnershipModel({
-      required this.source,
-      required this.type,
-      required this.origin,
-      this.about,
-      this.path
-      });
+    this.transactionId,
+    required this.source,
+    required this.types,
+    required this.origin,
+    this.about,
+  });
 
-  OwnershipModel.fromMap(Map<String, dynamic> map) :
-    source = map['source'],
-    type = map['type'],
-    origin = map['origin'],
-    about = map['about'],
-    path = map['path'];
-  
+  OwnershipModel.fromMap(Map<String, dynamic> map)
+      : source = map[OwnershipRepository.columnSource],
+        types = map[OwnershipRepository.columnTypes],
+        origin = map[OwnershipRepository.columnOrigin],
+        about = map[OwnershipRepository.columnAbout],
+        transactionId = map[OwnershipRepository.columnTransactionId];
 }
