@@ -66,7 +66,8 @@ class XchainService {
         await _l0storage.getAll(base64Url.encode(xchain.address));
     Map<BlockModel, List<TransactionModel>> blocks = {};
     for (String blockId in serializedblocks.keys) {
-      // skip backedup blocks
+      // TODO skip backedup blocks
+      if (blockId == 'public.key') continue;
       Uint8List serializedBackup = serializedblocks[blockId]!;
       List<Uint8List> backupList = CompactSize.decode(serializedBackup);
       Uint8List signature = backupList[0];
@@ -76,7 +77,7 @@ class XchainService {
       }
       BlockModel block = BlockModel.deserialize(serializedBlock);
       if (!Bytes.memEquals(Digest('SHA3-256').process(block.serialize()),
-          base64Url.decode(blockId))) {
+          base64Url.decode(blockId.replaceAll('.block', '')))) {
         throw Exception('Corrupted Block ${block.toString()}');
       }
       List<TransactionModel> transactions =
@@ -94,6 +95,7 @@ class XchainService {
               'Transaction authorshhip could not be verified: ${transaction.toString()}');
         }
       }
+      block.transactionRoot = merkelTree.root!;
       blocks[block] = transactions;
     }
     return blocks;

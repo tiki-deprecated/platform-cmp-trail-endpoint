@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
+import 'xchain/xchain_service.dart';
 
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
@@ -31,6 +32,7 @@ class NodeService {
   late final BlockService _blockService;
   late final KeyModel _primaryKey;
   late final BackupService _backupService;
+  late final XchainService _xchainService;
   late final Duration _blockInterval;
   late final int _maxTransactions;
 
@@ -95,15 +97,10 @@ class NodeService {
     await _loadPrimaryKey(keyStorage, primary);
 
     _backupService = BackupService(l0storage, database, _primaryKey, getBlock);
+    _xchainService = XchainService(database, l0storage);
 
-    List<TransactionModel> transactions = _transactionService.getPending();
-    if (transactions.isNotEmpty &&
-        transactions.last.timestamp
-            .isBefore(DateTime.now().subtract(_blockInterval))) {
-      await _createBlock(transactions);
-    }
-
-    await _loadReadOnly();
+    await _commitPendingTransactions();
+    await _loadReadOnly(readOnly);
 
     _startBlockTimer();
     return this;
@@ -162,9 +159,7 @@ class NodeService {
     BlockModel header = _blockService.create(merkelTree.root!);
 
     for (TransactionModel transaction in transactions) {
-      transaction.block = header;
-      transaction.merkelProof = merkelTree.proofs[transaction.id];
-      _transactionService.commit(transaction);
+      _transactionService.commit(transaction.id!, header, merkelTree.proofs[transaction.id]!);
     }
     _blockService.commit(header);
     _backupService.block(header.id!);
@@ -174,13 +169,38 @@ class NodeService {
       BlockModel header, List<TransactionModel> transactions) {
     BytesBuilder bytes = BytesBuilder();
     bytes.add(header.serialize());
-    bytes.add(Bytes.encodeBigInt(BigInt.from(transactions.length)));
+    bytes.add(CompactSize.encode(
+        Bytes.encodeBigInt(BigInt.from(transactions.length))));
     for (TransactionModel transaction in transactions) {
       bytes.add(CompactSize.encode(transaction.serialize()));
     }
     return bytes.toBytes();
   }
-  
-  _loadReadOnly() {}
 
+  Future<void> _loadReadOnly(List<String> readOnly) async {
+    List<Future> loads = [];
+    for (String address in readOnly) {
+      XchainModel? xchain =
+          await _xchainService.loadKey(base64Url.decode(address));
+      loads.add(_xchainService.loadXchain(xchain).then((blocks) {
+        for (BlockModel block in blocks.keys) {
+          List<TransactionModel> txns = blocks[block]!;
+          for (TransactionModel txn in txns) {
+            _transactionService.add(txn);
+          }
+        _blockService.commit(block);
+        }
+      }));
+    }
+    await Future.wait(loads);
+  }
+
+  Future<void> _commitPendingTransactions() async {
+    List<TransactionModel> transactions = _transactionService.getPending();
+    if (transactions.isNotEmpty &&
+        transactions.last.timestamp
+            .isBefore(DateTime.now().subtract(_blockInterval))) {
+      await _createBlock(transactions);
+    }
+  }
 }

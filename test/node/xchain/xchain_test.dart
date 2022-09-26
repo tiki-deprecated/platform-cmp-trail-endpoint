@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/xchain/xchain_service.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../in_mem_key.dart';
@@ -20,7 +20,7 @@ main() {
     TransactionService transactionService = TransactionService(db);
     BlockService blockService = BlockService(db);
     List<String> contentList =
-        List.generate(2000, (index) => const Uuid().v4());
+        List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
     String xchainAddress = '';
 
     Future<void> createChain(
@@ -45,12 +45,12 @@ main() {
       await shuffleBlocks(storage, xchainAddress);
       db = sqlite3.openInMemory();
       NodeService nodeService = await NodeService()
-          .init(db, InMemKeyStorage(), storage, 
-          readOnly: []);
-      Map<String, Uint8List> allBlocks =
-          await storage.getAll(nodeService.address);
+          .init(db, InMemKeyStorage(), storage, readOnly: [xchainAddress]);
+      Map<String, Uint8List> allBlocks = await storage.getAll(xchainAddress);
+      expect(allBlocks.isEmpty, false);
       List<String> blockIds = allBlocks.keys.toList();
       for (String id in blockIds) {
+        if (id == 'public.key') continue;
         Uint8List blkId =
             base64Url.decode(id.split('/').last.replaceFirst('.block', ''));
         Uint8List? block = nodeService.getBlock(blkId);

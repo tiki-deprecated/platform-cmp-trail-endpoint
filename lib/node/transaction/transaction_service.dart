@@ -43,12 +43,12 @@ class TransactionService {
 
   /// Commits a [TransactionModel] by persisting its its [TransactionModel.block]
   /// and [TransactionModel.merkelProof] values.
-  void commit(TransactionModel transaction) {
-    if (transaction.block?.id == null || transaction.merkelProof == null) {
-      throw StateError('set merkelProof and block before commit.');
-    }
-    _repository.commit(transaction);
+  void commit(Uint8List transactionId, BlockModel block, Uint8List merkelProof) {
+    _repository.commit(transactionId, block, merkelProof);
   }
+
+  /// Adds a [TransactionModel] to local database.
+  void add(TransactionModel txn) => _repository.save(txn);
 
   /// Validates the [TransactionModel] inclusion in [TransactionModel.block] by
   /// checking validating its [TransactionModel.merkelProof] with [MerkelTree.validate].
@@ -82,18 +82,17 @@ class TransactionService {
   static List<TransactionModel> deserializeTransactions(
       Uint8List serializedBlock) {
     List<TransactionModel> txns = [];
-    List<Uint8List> extractedBlockBytes =
-        CompactSize.decode(serializedBlock);
-    int transactionCount =
-        Bytes.decodeBigInt(extractedBlockBytes[4]).toInt();
-    if (extractedBlockBytes.sublist(5).length == transactionCount) {
-      throw Exception(
-          'Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}');
+    List<Uint8List> extractedBlockBytes = CompactSize.decode(serializedBlock);
+    List<Uint8List> serializedTransactions = extractedBlockBytes.sublist(5);
+    int totalTxn = Bytes.decodeBigInt(extractedBlockBytes[4]).toInt();
+    if (serializedTransactions.length != totalTxn) {
+      throw 'Invalid transaction length. Expected ${serializedTransactions.length}, got $totalTxn';
     }
-    for (int i = 5; i < extractedBlockBytes.length; i++) {
+    for (int i = 0; i < serializedTransactions.length; i++) {
       TransactionModel txn =
-          TransactionModel.deserialize(extractedBlockBytes[i]);
-      if (validateIntegrity(txn)) throw Exception('Corrupted transaction $txn');
+          TransactionModel.deserialize(serializedTransactions[i]);
+      if (!validateIntegrity(txn)){
+        throw Exception('Corrupted transaction $txn');}
       txns.add(txn);
     }
     return txns;
