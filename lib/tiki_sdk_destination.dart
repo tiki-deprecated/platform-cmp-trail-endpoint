@@ -2,6 +2,8 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+import 'dart:convert';
+
 /// {@category SDK}
 /// The destination to which the data is consented to be used.
 class TikiSdkDestination {
@@ -14,7 +16,16 @@ class TikiSdkDestination {
   /// reverse FQDN. Keep list short and use wildcard (*)
   /// matching. Prefix with NOT to invert.
   /// _i.e. NOT mytiki.com/*
-  List<String> paths;
+  late List<String> paths;
 
   TikiSdkDestination(this.paths, {this.uses});
+
+  TikiSdkDestination.fromJson(String jsonString) {
+    Map map = jsonDecode(jsonString);
+    uses = uses == null ? null : map['uses'].cast<String>();
+    paths = map['paths'].cast<String>();
+  }
+
+  @override
+  String toString() => jsonEncode({'uses': uses, 'paths': paths});
 }
