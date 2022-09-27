@@ -5,7 +5,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category SDK}
-import '../node/l0_storage.dart';
+
+import '../node/node_service.dart';
 import '../tiki_sdk.dart';
 import 'ownership_model.dart';
 import 'ownership_repository.dart';
@@ -17,9 +18,9 @@ class OwnershipService {
 
   final OwnershipRepository ownershipRepository;
 
-  final L0Storage l0storage;
+  final NodeService nodeService;
 
-  OwnershipService(this._origin, db, this.l0storage)
+  OwnershipService(this._origin, this.nodeService, db)
       : ownershipRepository = OwnershipRepository(db);
 
   /// Creates a ownership register in the blockchain.
@@ -47,14 +48,24 @@ class OwnershipService {
     throw UnimplementedError();
   }
 
-  /// Gets a [OwnershipModel] by its [source] and [origin] from local database.
+  /// Updates the [OwnershipRepository] database with new transactions from other
+  /// chains.
   ///
-  /// If no [origin] is provided the default will be used
-  OwnershipModel? getLocalBySource(String source, {String? origin}) {
+  /// Queries the [NodeService] for new [TransactionModel] that was fetch from 
+  /// read only chains, check the ones that are related to [OwnershipModel] and 
+  /// saves them to local database.
+  void updateReadOnly() {
     throw UnimplementedError();
   }
 
-  /// Checks from [backupStorage] if an [address] has [OwnershipModel] over a [source] and [origin].
+  /// Gets a [OwnershipModel] by its [source] and [origin] from local database.
+  ///
+  /// If no [origin] is provided the default will be used
+  OwnershipModel? getBySource(String source, {String? origin}) {
+    throw UnimplementedError();
+  }
+
+  /// Checks if an [address] has [OwnershipModel] over a [source] and [origin].
   OwnershipModel? checkOwnership(String address, String source,
       {String? origin}) {
     throw UnimplementedError();

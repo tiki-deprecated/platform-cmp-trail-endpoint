@@ -16,14 +16,16 @@ main() {
       Database db = sqlite3.openInMemory();
       InMemKeyStorage keyStorage = InMemKeyStorage();
       InMemL0Storage storage = InMemL0Storage();
-      List<String> contentList = List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
+      List<String> contentList =
+          List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
       NodeService nodeService1 = await NodeService().init(
           db, keyStorage, storage,
           blockInterval: const Duration(seconds: 1));
       for (int i = 0; i < contentList.length; i++) {
         nodeService1.write(Uint8List.fromList(contentList[i].codeUnits));
       }
-      String xchainAddress = base64Url.encode(base64.decode(nodeService1.address));
+      String xchainAddress =
+          base64Url.encode(base64.decode(nodeService1.address));
       await shuffleBlocks(storage, xchainAddress);
       db = sqlite3.openInMemory();
       NodeService nodeService2 = await NodeService()
@@ -43,14 +45,16 @@ main() {
     test('update chain with new blocks, skip cached', () async {
       Database db = sqlite3.openInMemory();
       InMemL0Storage storage = InMemL0Storage();
-      List<String> contentList = List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
+      List<String> contentList =
+          List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
       NodeService nodeService1 = await NodeService().init(
           db, InMemKeyStorage(), storage,
           blockInterval: const Duration(seconds: 1));
       for (int i = 0; i < contentList.length; i++) {
         nodeService1.write(Uint8List.fromList(contentList[i].codeUnits));
       }
-      String xchainAddress = base64Url.encode(base64.decode(nodeService1.address));
+      String xchainAddress =
+          base64Url.encode(base64.decode(nodeService1.address));
       await shuffleBlocks(storage, xchainAddress);
 
       Database db2 = sqlite3.openInMemory();
@@ -69,7 +73,8 @@ main() {
       }
 
       for (int i = 0; i < contentList.length; i++) {
-        nodeService1.write(Uint8List.fromList(('1${contentList[i]}').codeUnits));
+        nodeService1
+            .write(Uint8List.fromList(('1${contentList[i]}').codeUnits));
       }
       await shuffleBlocks(storage, xchainAddress);
 
@@ -83,6 +88,58 @@ main() {
         Uint8List blkId =
             base64Url.decode(id.split('/').last.replaceFirst('.block', ''));
         Uint8List? block = nodeService2.getBlock(blkId);
+        expect(block != null, true);
+      }
+    });
+
+    test('rebuild 3 chains on node initialization', () async {
+      List<String> readOnly = [];
+      Database db = sqlite3.openInMemory();
+      InMemKeyStorage keyStorage = InMemKeyStorage();
+      InMemL0Storage storage = InMemL0Storage();
+      List<String> contentList =
+          List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
+      NodeService nodeService1 = await NodeService().init(
+          db, keyStorage, storage,
+          blockInterval: const Duration(seconds: 1));
+      for (int i = 0; i < contentList.length; i++) {
+        nodeService1.write(Uint8List.fromList('1${contentList[i]}'.codeUnits));
+      }
+      readOnly.add(base64Url.encode(base64.decode(nodeService1.address)));
+      db = sqlite3.openInMemory();
+      contentList =
+          List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
+      NodeService nodeService2 = await NodeService().init(
+          db, keyStorage, storage,
+          blockInterval: const Duration(seconds: 1));
+      for (int i = 0; i < contentList.length; i++) {
+        nodeService2.write(Uint8List.fromList('2${contentList[i]}'.codeUnits));
+      }
+      readOnly.add(base64Url.encode(base64.decode(nodeService1.address)));
+      db = sqlite3.openInMemory();
+      NodeService nodeService3 = await NodeService().init(
+          db, keyStorage, storage,
+          blockInterval: const Duration(seconds: 1));
+      contentList =
+          List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
+      for (int i = 0; i < contentList.length; i++) {
+        nodeService3.write(Uint8List.fromList('3${contentList[i]}'.codeUnits));
+      }
+      readOnly.add(base64Url.encode(base64.decode(nodeService1.address)));
+      db = sqlite3.openInMemory();
+      NodeService nodeService =
+          await NodeService().init(db, keyStorage, storage, readOnly: readOnly);
+      Map<String, Uint8List> allBlocks = {};
+      for (String address in readOnly) {
+        allBlocks.addEntries((await storage.getAll(address)).entries);
+      }
+      expect(allBlocks.isEmpty, false);
+      List<String> blockIds = allBlocks.keys.toList();
+      for (String id in blockIds) {
+        if (id == 'public.key') continue;
+        Uint8List blkId =
+            base64Url.decode(id.split('/').last.replaceFirst('.block', ''));
+        Uint8List? block = nodeService.getBlock(blkId);
         expect(block != null, true);
       }
     });
