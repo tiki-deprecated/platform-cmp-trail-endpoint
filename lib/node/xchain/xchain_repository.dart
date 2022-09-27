@@ -52,15 +52,15 @@ class XchainRepository {
 
   /// Updates the persisted [XchainModel.lastBlock].
   void update(Uint8List address, Uint8List lastBlock) {
-    _db.execute(
-        'UPDATE $table SET $columnLastBlock = ? WHERE $columnAddress = ?',
-        [lastBlock, address]);
+    _db.execute('''UPDATE $table 
+        SET $columnLastBlock = x'${Bytes.hexEncode(lastBlock)}'
+         WHERE $columnAddress = x'${Bytes.hexEncode(address)}'; ''');
   }
 
   /// Gets a xchain by its address.
   XchainModel? get(Uint8List address) {
     List<XchainModel> results =
-        _select(whereStmt: 'WHERE $columnAddress = "$address"');
+        _select(whereStmt: "WHERE $columnAddress = x'${Bytes.hexEncode(address)}'");
     return results.isNotEmpty ? results.single : null;
   }
 

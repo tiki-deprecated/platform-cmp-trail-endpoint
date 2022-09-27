@@ -159,7 +159,8 @@ class NodeService {
     BlockModel header = _blockService.create(merkelTree.root!);
 
     for (TransactionModel transaction in transactions) {
-      _transactionService.commit(transaction.id!, header, merkelTree.proofs[transaction.id]!);
+      _transactionService.commit(
+          transaction.id!, header, merkelTree.proofs[transaction.id]!);
     }
     _blockService.commit(header);
     _backupService.block(header.id!);
@@ -182,13 +183,15 @@ class NodeService {
     for (String address in readOnly) {
       XchainModel? xchain =
           await _xchainService.loadKey(base64Url.decode(address));
-      loads.add(_xchainService.loadXchain(xchain).then((blocks) {
+      List<String> cachedBlocks = _blockService.getCachedIds(xchain.address);
+      loads.add(
+          _xchainService.loadXchain(xchain, skip: cachedBlocks).then((blocks) {
         for (BlockModel block in blocks.keys) {
           List<TransactionModel> txns = blocks[block]!;
           for (TransactionModel txn in txns) {
             _transactionService.add(txn);
           }
-        _blockService.commit(block);
+          _blockService.commit(block, xchain: base64Url.decode(address));
         }
       }));
     }

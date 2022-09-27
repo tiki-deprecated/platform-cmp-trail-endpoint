@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
@@ -30,6 +31,9 @@ class BlockRepository {
   /// The [BlockModel.timestamp] column.
   static const columnTimestamp = 'timestamp';
 
+  /// The xchain address.
+  static const columnXchain = 'xchain';
+
   /// The [Database] used to persist [BlockModel].
   final Database _db;
 
@@ -49,18 +53,20 @@ class BlockRepository {
       $columnVersion INTEGER NOT NULL,
       $columnPreviousHash BLOB,
       $columnTransactionRoot BLOB,
+      $columnXchain BLOB,
       $columnTimestamp INTEGER);
     ''');
 
   /// Persists a [block] in the local [_db].
-  void save(BlockModel block) => _db.execute('''
+  void save(BlockModel block, {Uint8List? xchain}) => _db.execute('''
     INSERT INTO $table 
-    VALUES (?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?, ?);
     ''', [
         block.id,
         block.version,
         block.previousHash,
         block.transactionRoot,
+        xchain,
         block.timestamp.millisecondsSinceEpoch
       ]);
 
@@ -75,6 +81,13 @@ class BlockRepository {
   BlockModel? getLast() {
     List<BlockModel> blocks = _select(last: true, page: 0, pageSize: 1);
     return blocks.isNotEmpty ? blocks.first : null;
+  }
+
+  List<String> getAllIds(Uint8List address) {
+    ResultSet results = _db.select('''
+      SELECT $columnId from $table 
+      WHERE $columnXchain = x'${Bytes.hexEncode(address)}'; ''');
+    return results.map<String>((row) => base64Url.encode(row[columnId])).toList();
   }
 
   List<BlockModel> _select(

@@ -29,17 +29,6 @@ class XchainService {
   XchainService(Database db, this._l0storage)
       : _repository = XchainRepository(db);
 
-  /// Adds a new Xchain by [publicKey].
-  ///
-  /// The service will derive the [XchainModel.address].
-  /// If the address already exists, it will not be added.
-  /// method will be called.
-  XchainModel add(RsaPublicKey publicKey) {
-    XchainModel xchainModel = XchainModel(publicKey);
-    _repository.save(xchainModel);
-    return xchainModel;
-  }
-
   /// Updates the [XchainModel.lastBlock].
   void update(Uint8List address, Uint8List lastBlock) =>
       _repository.update(address, lastBlock);
@@ -47,7 +36,10 @@ class XchainService {
   /// Gets a xchain from local database.
   XchainModel? get(Uint8List address) => _repository.get(address);
 
-  /// Loads a xchain from remote backup storage.
+  /// Adds a new Xchain by its [address].
+  /// 
+  /// The service gets the [XchainModel.publicKey] from [L0Storage] and saves
+  /// it with [BackupRepository].
   Future<XchainModel> loadKey(Uint8List address) async {
     XchainModel? xchain = _repository.get(address);
     if (xchain == null) {
@@ -55,19 +47,19 @@ class XchainService {
           await _l0storage.read('${base64Url.encode(address)}/public.key');
       RsaPublicKey publicKey =
           RsaPublicKey.decode(base64Encode(bytesPublicKey!));
-      xchain = add(publicKey);
+      xchain = XchainModel(publicKey);
+      _repository.save(xchain);
     }
     return xchain;
   }
 
   Future<Map<BlockModel, List<TransactionModel>>> loadXchain(
-      XchainModel xchain) async {
+      XchainModel xchain, {List<String> skip = const []}) async {
     Map<String, Uint8List> serializedblocks =
         await _l0storage.getAll(base64Url.encode(xchain.address));
     Map<BlockModel, List<TransactionModel>> blocks = {};
     for (String blockId in serializedblocks.keys) {
-      // TODO skip backedup blocks
-      if (blockId == 'public.key') continue;
+      if (blockId == 'public.key' || skip.contains(blockId.replaceAll('.block', ''))) continue;
       Uint8List serializedBackup = serializedblocks[blockId]!;
       List<Uint8List> backupList = CompactSize.decode(serializedBackup);
       Uint8List signature = backupList[0];

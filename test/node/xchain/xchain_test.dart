@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,39 +12,22 @@ import '../../in_mem_l0_storage.dart';
 
 main() {
   group('xchain tests', () {
-    Database db = sqlite3.openInMemory();
-    InMemKeyStorage keyStorage = InMemKeyStorage();
-    InMemL0Storage storage = InMemL0Storage();
-    KeyService keysService = KeyService(keyStorage);
-    TransactionService transactionService = TransactionService(db);
-    BlockService blockService = BlockService(db);
-    List<String> contentList =
-        List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
-    String xchainAddress = '';
-
-    Future<void> createChain(
-        BlockService blockService,
-        TransactionService transactionService,
-        KeyService keyService,
-        L0Storage storage,
-        Database database) async {
-      NodeService nodeService = await NodeService().init(
-          db, InMemKeyStorage(), storage,
+    test('rebuild chain on node initialization', () async {
+      Database db = sqlite3.openInMemory();
+      InMemKeyStorage keyStorage = InMemKeyStorage();
+      InMemL0Storage storage = InMemL0Storage();
+      List<String> contentList = List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
+      NodeService nodeService1 = await NodeService().init(
+          db, keyStorage, storage,
           blockInterval: const Duration(seconds: 1));
-
       for (int i = 0; i < contentList.length; i++) {
-        nodeService.write(Uint8List.fromList(contentList[i].codeUnits));
+        nodeService1.write(Uint8List.fromList(contentList[i].codeUnits));
       }
-      xchainAddress = base64Url.encode(base64.decode(nodeService.address));
-    }
-
-    test('get all blocks and rebuild chain', () async {
-      await createChain(
-          blockService, transactionService, keysService, storage, db);
+      String xchainAddress = base64Url.encode(base64.decode(nodeService1.address));
       await shuffleBlocks(storage, xchainAddress);
       db = sqlite3.openInMemory();
-      NodeService nodeService = await NodeService()
-          .init(db, InMemKeyStorage(), storage, readOnly: [xchainAddress]);
+      NodeService nodeService2 = await NodeService()
+          .init(db, keyStorage, storage, readOnly: [xchainAddress]);
       Map<String, Uint8List> allBlocks = await storage.getAll(xchainAddress);
       expect(allBlocks.isEmpty, false);
       List<String> blockIds = allBlocks.keys.toList();
@@ -53,7 +35,54 @@ main() {
         if (id == 'public.key') continue;
         Uint8List blkId =
             base64Url.decode(id.split('/').last.replaceFirst('.block', ''));
-        Uint8List? block = nodeService.getBlock(blkId);
+        Uint8List? block = nodeService2.getBlock(blkId);
+        expect(block != null, true);
+      }
+    });
+
+    test('update chain with new blocks, skip cached', () async {
+      Database db = sqlite3.openInMemory();
+      InMemL0Storage storage = InMemL0Storage();
+      List<String> contentList = List.generate(Random().nextInt(2000), (index) => const Uuid().v4());
+      NodeService nodeService1 = await NodeService().init(
+          db, InMemKeyStorage(), storage,
+          blockInterval: const Duration(seconds: 1));
+      for (int i = 0; i < contentList.length; i++) {
+        nodeService1.write(Uint8List.fromList(contentList[i].codeUnits));
+      }
+      String xchainAddress = base64Url.encode(base64.decode(nodeService1.address));
+      await shuffleBlocks(storage, xchainAddress);
+
+      Database db2 = sqlite3.openInMemory();
+      KeyStorage ks2 = InMemKeyStorage();
+      NodeService nodeService2 = await NodeService()
+          .init(db2, ks2, storage, readOnly: [xchainAddress]);
+      Map<String, Uint8List> allBlocks = await storage.getAll(xchainAddress);
+      expect(allBlocks.isEmpty, false);
+      List<String> blockIds = allBlocks.keys.toList();
+      for (String id in blockIds) {
+        if (id == 'public.key') continue;
+        Uint8List blkId =
+            base64Url.decode(id.split('/').last.replaceFirst('.block', ''));
+        Uint8List? block = nodeService2.getBlock(blkId);
+        expect(block != null, true);
+      }
+
+      for (int i = 0; i < contentList.length; i++) {
+        nodeService1.write(Uint8List.fromList(('1${contentList[i]}').codeUnits));
+      }
+      await shuffleBlocks(storage, xchainAddress);
+
+      nodeService2 = await NodeService()
+          .init(db2, ks2, storage, readOnly: [xchainAddress]);
+      allBlocks = await storage.getAll(xchainAddress);
+      expect(allBlocks.isEmpty, false);
+      blockIds = allBlocks.keys.toList();
+      for (String id in blockIds) {
+        if (id == 'public.key') continue;
+        Uint8List blkId =
+            base64Url.decode(id.split('/').last.replaceFirst('.block', ''));
+        Uint8List? block = nodeService2.getBlock(blkId);
         expect(block != null, true);
       }
     });
