@@ -91,7 +91,7 @@ void main() {
       transaction.block = block;
       transaction.merkelProof = merkelProof;
 
-      repository.commit(transaction);
+      repository.commit(transaction.id!, block, merkelProof);
 
       List<TransactionModel> found = repository.getByBlockId(blockId);
 

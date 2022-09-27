@@ -44,9 +44,7 @@ void main() {
       BlockModel block = blockService
           .create(Uint8List.fromList(utf8.encode(const Uuid().v4())));
 
-      transaction.merkelProof = merkelProof;
-      transaction.block = block;
-      service.commit(transaction);
+      service.commit(transaction.id!, block, merkelProof);
       pending = service.getPending();
 
       expect(pending.length, 0);
@@ -68,7 +66,7 @@ void main() {
 
       transaction.merkelProof = merkelProof;
       transaction.block = block;
-      service.commit(transaction);
+      service.commit(transaction.id!, block, merkelProof);
       blockService.commit(block);
 
       List<TransactionModel> transactions = service.getByBlock(block.id!);

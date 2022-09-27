@@ -86,14 +86,13 @@ class TransactionRepository {
         transaction.signature,
       ]);
 
-
   /// Commits the [transaction] by saving its [TransactionModel.merkelProof] and
   /// [TransactionModel.block]
-  void commit(TransactionModel transaction) => _db.execute('''
+  void commit(Uint8List id, BlockModel block, Uint8List proof) => _db.execute('''
     UPDATE $table 
-    SET $columnMerkelProof = ?, $columnBlockId = ? 
-    WHERE $columnId = x'${Bytes.hexEncode(transaction.id!)}';
-    ''', [transaction.merkelProof, transaction.block!.id!]);
+    SET $columnMerkelProof = x'${Bytes.hexEncode(proof)}', 
+    $columnBlockId =  x'${Bytes.hexEncode(block.id!)}' 
+    WHERE $columnId = x'${Bytes.hexEncode(id)}'; ''');
 
   /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(

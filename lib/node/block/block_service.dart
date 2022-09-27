@@ -11,6 +11,7 @@ import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../node_service.dart';
+import '../xchain/xchain_model.dart';
 
 export 'block_model.dart';
 export 'block_repository.dart';
@@ -54,8 +55,11 @@ class BlockService {
   /// Persists the block into [db].
   ///
   /// This method should be called just after all the transactions are committed.
-  void commit(BlockModel block) => _repository.save(block);
+  void commit(BlockModel block, {Uint8List? xchain}) => _repository.save(block, xchain: xchain);
 
   /// Gets a [BlockModel] by [BlockModel.id]
   BlockModel? get(Uint8List id) => _repository.getById(id);
+
+  List<String> getCachedIds(Uint8List address) =>
+      _repository.getAllIds(address);
 }
