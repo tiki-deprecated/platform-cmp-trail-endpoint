@@ -6,9 +6,12 @@
  */
 /// {@category SDK}
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
+import '../node/transaction/transaction_service.dart';
 import '../tiki_sdk.dart';
+import '../utils/bytes.dart';
 import 'ownership_model.dart';
 
 /// The repository for [OwnershipModel] persistence.
@@ -32,7 +35,6 @@ class OwnershipRepository {
   OwnershipRepository(this._db) {
     _createTable();
   }
-  // TODO transaction id is foreign key
   /// Creates the [OwnershipRepository.table] if it does not exist.
   void _createTable() => _db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
@@ -40,7 +42,10 @@ class OwnershipRepository {
       $columnSource TEXT,
       $columnTypes TEXT,
       $columnOrigin TEXT,
-      $columnAbout TEXT
+      $columnAbout TEXT,
+      CONSTRAINT fk_transaction_id
+        FOREIGN KEY ($columnTransactionId)
+        REFERENCES ${TransactionRepository.table}(${TransactionRepository.columnId})
       );
     ''');
 
@@ -61,7 +66,12 @@ class OwnershipRepository {
   }
 
   /// Gets all [OwnerShipModel] stored in local database.
-  List<OwnershipModel> getAll() => _select();
+   List<OwnershipModel> getAll() => _select();
+
+  OwnershipModel? getById(Uint8List id) {
+    List<OwnershipModel> ownerships = _select(whereStmt: "WHERE $columnTransactionId = x'${Bytes.hexEncode(id)}'");
+    return ownerships.isNotEmpty ? ownerships.first : null;
+  }
 
   /// Gets the [OwnerShipModel] for [source] and [origin] in database.
   OwnershipModel? getBySource(String source, String origin) {
@@ -92,4 +102,5 @@ class OwnershipRepository {
     }
     return ownerships;
   }
+
 }
