@@ -112,5 +112,66 @@ void main() {
       expect(retrieved.source, 'create test');
       expect(retrieved.origin, 'com.tiki.test');
     });
+
+    test('Test ownership for existing NFT. Get By source.', () async {
+      Database database = sqlite3.openInMemory();
+      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
+      InMemL0Storage inMemL0Storage = InMemL0Storage();
+      NodeService nodeService =
+          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      OwnershipService ownershipService =
+          OwnershipService('com.tiki.test', nodeService, database);
+      Uint8List owneshipNftId = await ownershipService.create(
+          source: 'create test', types: [TikiSdkDataTypeEnum.emailAddress]);
+      OwnershipModel? ownershipModel =
+          ownershipService.getBySource('create test');
+      expect(ownershipModel != null, true);
+      expect(
+          Bytes.memEquals(ownershipModel!.transactionId!, owneshipNftId), true);
+      expect(ownershipModel.source, 'create test');
+    });
+    test('Test ownership for existing NFT. Get by id.', () async {
+      Database database = sqlite3.openInMemory();
+      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
+      InMemL0Storage inMemL0Storage = InMemL0Storage();
+      NodeService nodeService =
+          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      OwnershipService ownershipService =
+          OwnershipService('com.tiki.test', nodeService, database);
+      Uint8List owneshipNftId = await ownershipService.create(
+          source: 'create test', types: [TikiSdkDataTypeEnum.emailAddress]);
+      OwnershipModel? ownershipModel = ownershipService.getById(owneshipNftId);
+      expect(ownershipModel != null, true);
+      expect(
+          Bytes.memEquals(ownershipModel!.transactionId!, owneshipNftId), true);
+      expect(ownershipModel.source, 'create test');
+    });
+    test('Test ownership for non-existing NFT.', () async {
+      Database database = sqlite3.openInMemory();
+      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
+      InMemL0Storage inMemL0Storage = InMemL0Storage();
+      NodeService nodeService =
+          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      OwnershipService ownershipService =
+          OwnershipService('com.tiki.test', nodeService, database);
+      OwnershipModel? ownershipModel = ownershipService.getById(Uint8List(1));
+      expect(ownershipModel == null, true);
+    });
+    test('Test ownership for existing NFTs not related to the ownership',
+        () async {
+      Database database = sqlite3.openInMemory();
+      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
+      InMemL0Storage inMemL0Storage = InMemL0Storage();
+      NodeService nodeService =
+          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      OwnershipService ownershipService =
+          OwnershipService('com.tiki.test', nodeService, database);
+      Uint8List owneshipNftId = await ownershipService.create(
+          source: 'create test', types: [TikiSdkDataTypeEnum.emailAddress]);
+      await ownershipService.create(
+          source: 'other test', types: [TikiSdkDataTypeEnum.emailAddress]);
+      OwnershipModel? ownershipModel = ownershipService.getById(owneshipNftId);
+      expect(ownershipModel!.source == 'other test', false);
+    });
   });
 }

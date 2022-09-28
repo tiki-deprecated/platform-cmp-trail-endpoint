@@ -58,4 +58,7 @@ class OwnershipService {
   /// If no [origin] is provided the [_defaultOrigin] will be used
   OwnershipModel? getBySource(String source, {String? origin}) =>
       _repository.getBySource(source, origin ?? _defaultOrigin);
+
+  OwnershipModel? getById(Uint8List id) =>
+      _repository.getById(id);
 }
