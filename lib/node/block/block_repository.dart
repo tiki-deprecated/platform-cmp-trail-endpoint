@@ -99,6 +99,7 @@ class BlockRepository {
         $table.$columnVersion as '$table.$columnVersion',
         $table.$columnPreviousHash as '$table.$columnPreviousHash',
         $table.$columnTransactionRoot as '$table.$columnTransactionRoot',
+        $table.$columnXchain as '$table.$columnXchain',
         $table.$columnTimestamp as '$table.$columnTimestamp'
       FROM $table
       ${whereStmt ?? ''}
@@ -111,6 +112,7 @@ class BlockRepository {
         columnId: row['$table.$columnId'],
         columnVersion: row['$table.$columnVersion'],
         columnPreviousHash: row['$table.$columnPreviousHash'],
+        columnXchain: row['$table.$columnXchain'],
         columnTransactionRoot: row['$table.$columnTransactionRoot'],
         columnTimestamp: row['$table.$columnTimestamp'],
       };

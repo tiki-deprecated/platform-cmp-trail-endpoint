@@ -19,6 +19,7 @@ class ConsentRepository {
   static const columnDestination = 'destination';
   static const columnAbout = 'about';
   static const columnReward = 'reward';
+  static const columnTransactionId = 'transaction_id';
 
   /// Builds a [ConsentRepository] that will use [_db] for persistence.
   ///
@@ -34,6 +35,7 @@ class ConsentRepository {
      $columnDestination TEXT,
      $columnAbout TEXT,
      $columnReward TEXT
+     $columnTransactionId TEXT,
       );
     ''');
 
@@ -41,9 +43,13 @@ class ConsentRepository {
   void save(ConsentModel consent) {
     _db.execute('''
     INSERT INTO $table 
-    VALUES ( ?, ?, ?, ?);
+    VALUES ( ?, ?, ?, ?, ?);
     ''',
-        [consent.assetRef, consent.destination.toString(), consent.about, consent.reward]);
+        [consent.assetRef, 
+        consent.destination.toString(), 
+        consent.about, 
+        consent.reward, 
+        consent.transactionId]);
   }
 
   /// Gets the [OwnerShipModel] for [source] and [origin] in database.

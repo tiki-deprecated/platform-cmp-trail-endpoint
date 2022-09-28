@@ -32,11 +32,11 @@ class OwnershipRepository {
   OwnershipRepository(this._db) {
     _createTable();
   }
-
+  // TODO transaction id is foreign key
   /// Creates the [OwnershipRepository.table] if it does not exist.
   void _createTable() => _db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
-      $columnTransactionId TEXT PRIMARY KEY,
+      $columnTransactionId BLOB PRIMARY KEY,
       $columnSource TEXT,
       $columnTypes TEXT,
       $columnOrigin TEXT,

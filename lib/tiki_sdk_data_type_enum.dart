@@ -10,11 +10,12 @@ enum TikiSdkDataTypeEnum {
   const TikiSdkDataTypeEnum(this.val);
 
   factory TikiSdkDataTypeEnum.fromValue(String value) {
-    switch (value) {
-      case 'email_address':
-        return emailAddress;
+    for (TikiSdkDataTypeEnum type in TikiSdkDataTypeEnum.values) {
+      if (type.val == value) {
+        return type;
+      }
     }
-    throw StateError('invalid value: $value');
+    throw ArgumentError.value(value, 'value', 'Invaid TikiSdkDataTypeEnum value $value');
   }
 
   final String val;

@@ -32,6 +32,9 @@ class BlockModel {
   /// The [MerkelTree.root] of the [TransactionModel] hashes taht are part of this.
   late Uint8List transactionRoot;
 
+  /// The xchain address for blocks retrieved from other chains.
+  late Uint8List? xchain;
+
   /// The block creation timestamp.
   late final DateTime timestamp;
 
@@ -65,6 +68,7 @@ class BlockModel {
         version = map[BlockRepository.columnVersion],
         previousHash = map[BlockRepository.columnPreviousHash],
         transactionRoot = map[BlockRepository.columnTransactionRoot],
+        xchain = map[BlockRepository.columnXchain],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
             map[BlockRepository.columnTimestamp]);
 
