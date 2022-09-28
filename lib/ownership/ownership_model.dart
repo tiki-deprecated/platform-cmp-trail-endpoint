@@ -43,10 +43,11 @@ class OwnershipModel {
         transactionId = map[OwnershipRepository.columnTransactionId];
 
   Uint8List serialize() {
+    String jsonTypes = jsonEncode(
+        types.map<String>((TikiSdkDataTypeEnum t) => t.val).toList());
     return (BytesBuilder()
           ..add(CompactSize.encode(Uint8List.fromList(source.codeUnits)))
-          ..add(CompactSize.encode(
-              Uint8List.fromList(jsonEncode(types).codeUnits)))
+          ..add(CompactSize.encode(Uint8List.fromList(jsonTypes.codeUnits)))
           ..add(CompactSize.encode(Uint8List.fromList(origin.codeUnits)))
           ..add(CompactSize.encode(about == null
               ? Uint8List(1)
@@ -58,8 +59,10 @@ class OwnershipModel {
     List<Uint8List> unserialized = CompactSize.decode(serialized);
     return OwnershipModel(
         source: String.fromCharCodes(unserialized[0]),
-        types: jsonDecode(String.fromCharCodes(unserialized[1])),
+        types: jsonDecode(String.fromCharCodes(unserialized[1]))
+            .map<TikiSdkDataTypeEnum>((val) => TikiSdkDataTypeEnum.fromValue(val)).toList(),
         origin: String.fromCharCodes(unserialized[2]),
         about: String.fromCharCodes(unserialized[3]));
   }
+
 }

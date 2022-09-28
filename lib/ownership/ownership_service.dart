@@ -31,7 +31,7 @@ class OwnershipService {
   /// next block in the chain. The [OwnershipModel.path] will be null until
   /// the transaction is commited through [updatePending].
   /// If no [origin] is provided the default [_origin] will be used
-  void register(
+  Future<Uint8List> create(
       {required String source,
       required List<TikiSdkDataTypeEnum> types,
       String? origin,
@@ -50,6 +50,7 @@ class OwnershipService {
     TransactionModel transaction = await nodeService.write(contents);
     ownershipModel.transactionId = transaction.id;
     _repository.save(ownershipModel);
+    return ownershipModel.transactionId!;
   }
 
   /// Gets a [OwnershipModel] by its [source] and [origin] from local database.
