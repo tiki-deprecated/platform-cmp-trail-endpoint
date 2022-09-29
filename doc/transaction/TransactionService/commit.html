@@ -53,7 +53,9 @@
       
 
 <span class="returntype">void</span>
-<span class="name ">commit</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="commit-param-transaction"><span class="type-annotation"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span></li>
+<span class="name ">commit</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="commit-param-transactionId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">transactionId</span>, </span></li>
+<li><span class="parameter" id="commit-param-block"><span class="type-annotation"><a href="../../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span>, </span></li>
+<li><span class="parameter" id="commit-param-merkelProof"><span class="type-annotation">Uint8List</span> <span class="parameter-name">merkelProof</span></span></li>
 </ol>)
 
       
@@ -69,7 +71,10 @@ and <a href="../../transaction/TransactionModel/merkelProof.html">TransactionMod
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void commit(TransactionModel transaction) =&gt; _repository.commit(transaction);</code></pre>
+  <pre class="language-dart"><code class="language-dart">void commit(
+    Uint8List transactionId, BlockModel block, Uint8List merkelProof) {
+  _repository.commit(transactionId, block, merkelProof);
+}</code></pre>
 </section>
 
 
@@ -104,12 +109,12 @@ and <a href="../../transaction/TransactionModel/merkelProof.html">TransactionMod
     <li class="inherited"><a href="../../transaction/TransactionService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../transaction/TransactionService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../transaction/TransactionService/build.html">build</a></li>
+    <li><a href="../../transaction/TransactionService/add.html">add</a></li>
     <li><a href="../../transaction/TransactionService/commit.html">commit</a></li>
+    <li><a href="../../transaction/TransactionService/create.html">create</a></li>
     <li><a href="../../transaction/TransactionService/getByBlock.html">getByBlock</a></li>
     <li><a href="../../transaction/TransactionService/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../../transaction/TransactionService/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../../transaction/TransactionService/serializeTransactions.html">serializeTransactions</a></li>
     <li class="inherited"><a href="../../transaction/TransactionService/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../../transaction/TransactionService-class.html#operators">Operators</a></li>
@@ -135,7 +140,7 @@ and <a href="../../transaction/TransactionModel/merkelProof.html">TransactionMod
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.4
   </span>
 
   

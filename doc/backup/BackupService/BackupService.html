@@ -50,31 +50,43 @@
 </h1></div>
 
     <section class="multi-line-signature">
-      <span class="name ">BackupService</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-_address"><span class="type-annotation">String</span> <span class="parameter-name">_address</span>, </span></li>
-<li><span class="parameter" id="-param-_keysService"><span class="type-annotation"><a href="../../keys/KeysService-class.html">KeysService</a></span> <span class="parameter-name">_keysService</span>, </span></li>
-<li><span class="parameter" id="-param-_blockService"><span class="type-annotation"><a href="../../block/BlockService-class.html">BlockService</a></span> <span class="parameter-name">_blockService</span>, </span></li>
-<li><span class="parameter" id="-param-_transactionService"><span class="type-annotation"><a href="../../transaction/TransactionService-class.html">TransactionService</a></span> <span class="parameter-name">_transactionService</span>, </span></li>
-<li><span class="parameter" id="-param-_wasabiService"><span class="type-annotation"><a href="../../wasabi/WasabiService-class.html">WasabiService</a></span> <span class="parameter-name">_wasabiService</span>, </span></li>
-<li><span class="parameter" id="-param-db"><span class="type-annotation">Database</span> <span class="parameter-name">db</span></span></li>
+      <span class="name ">BackupService</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-_l0storage"><span class="type-annotation">L0Storage</span> <span class="parameter-name">_l0storage</span>, </span></li>
+<li><span class="parameter" id="-param-database"><span class="type-annotation">Database</span> <span class="parameter-name">database</span>, </span></li>
+<li><span class="parameter" id="-param-_key"><span class="type-annotation"><a href="../../node/KeyModel-class.html">KeyModel</a></span> <span class="parameter-name">_key</span>, </span></li>
+<li><span class="parameter" id="-param-_getBlock"><span class="type-annotation">Uint8List?</span> <span class="parameter-name">_getBlock</span>(<ol class="parameter-list"><li><span class="parameter" id="param-"><span class="type-annotation">Uint8List</span></span></li>
+</ol>
+)</span></li>
 </ol>)
     </section>
 
     
 <section class="desc markdown">
-  <p>Creates a <a href="../../backup/BackupService-class.html">BackupService</a> to handle backup requests to <code>_wasabiService</code> at
-the chain identified by <code>_address</code>.</p>
-<p>It uses <code>_blockService</code> and <code>_transactionService</code> to build the serialized
-<code>BlockModel</code> that will be uploaded, and <code>_keysService</code> for the the public key.</p>
+  <p>Creates a new BackupService</p>
+<p>It saves the public key in the initialization.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">BackupService(this._address, this._keysService, this._blockService,
-    this._transactionService, this._wasabiService, Database db)
-    : _repository = BackupRepository(db) {
-  _writePending();
+  <pre class="language-dart"><code class="language-dart">BackupService(this._l0storage, Database database, this._key, this._getBlock)
+    : _repository = BackupRepository(database) {
+  String keyBackupPath = &#39;${base64UrlEncode(_key.address)}&#47;public.key&#39;;
+  BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
+
+  if (keyBackup == null) {
+    keyBackup = BackupModel(path: keyBackupPath);
+    _repository.save(keyBackup);
+  }
+
+  if (keyBackup.timestamp == null) {
+    Uint8List obj = base64.decode(_key.privateKey.public.encode());
+    _l0storage.write(keyBackupPath, obj);
+    keyBackup.timestamp = DateTime.now();
+    _repository.update(keyBackup);
+  }
+
+  _pending();
 }</code></pre>
 </section>
 
@@ -110,9 +122,9 @@ the chain identified by <code>_address</code>.</p>
     <li class="inherited"><a href="../../backup/BackupService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../backup/BackupService-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../backup/BackupService/block.html">block</a></li>
     <li class="inherited"><a href="../../backup/BackupService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../backup/BackupService/toString.html">toString</a></li>
-    <li><a href="../../backup/BackupService/write.html">write</a></li>
 
     <li class="section-title inherited"><a href="../../backup/BackupService-class.html#operators">Operators</a></li>
     <li class="inherited"><a href="../../backup/BackupService/operator_equals.html">operator ==</a></li>
@@ -132,7 +144,7 @@ the chain identified by <code>_address</code>.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.4
   </span>
 
   

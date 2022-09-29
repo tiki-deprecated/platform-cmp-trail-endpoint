@@ -1,4 +1,8 @@
-## 0.0.2
+## 0.0.4
+
+* Add xchain
+* Add NFT layer (consent and ownership)
+## 0.0.3
 
 * Update lib structure
 * Add doc

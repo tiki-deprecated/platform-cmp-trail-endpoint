@@ -57,7 +57,7 @@ class MerkelTree {
           .toBytes());
     }
     if (proof.length > 33) return validate(hash, proof.sublist(33), root);
-    return UtilsBytes.memEquals(hash, root);
+    return Bytes.memEquals(hash, root);
   }
 
   Uint8List _calculate(List<Uint8List> inputHashes) {

@@ -62,7 +62,7 @@
 
     <dl class="constructor-summary-list">
         <dt id="ConsentService" class="callable">
-          <span class="name"><a href="../consent/ConsentService/ConsentService.html">ConsentService</a></span><span class="signature">(<span class="parameter" id="-param-db"><span class="type-annotation">dynamic</span> <span class="parameter-name">db</span></span>)</span>
+          <span class="name"><a href="../consent/ConsentService/ConsentService.html">ConsentService</a></span><span class="signature">(<span class="parameter" id="-param-db"><span class="type-annotation">dynamic</span> <span class="parameter-name">db</span>, </span><span class="parameter" id="-param-_nodeService"><span class="type-annotation"><a href="../node/NodeService-class.html">NodeService</a></span> <span class="parameter-name">_nodeService</span></span>)</span>
         </dt>
         <dd>
           
@@ -70,21 +70,10 @@
     </dl>
   </section>
 
-    <section class="summary offset-anchor" id="instance-properties">
+    <section class="summary offset-anchor inherited" id="instance-properties">
       <h2>Properties</h2>
 
       <dl class="properties">
-        <dt id="consentRepository" class="property">
-  <span class="name"><a href="../consent/ConsentService/consentRepository.html">consentRepository</a></span>
-  <span class="signature">&#8594; <a href="../consent/ConsentRepository-class.html">ConsentRepository</a></span> 
-
-</dt>
-<dd>
-  
-  <div class="features">final</div>
-
-</dd>
-
         <dt id="hashCode" class="property inherited">
   <span class="name"><a href="../consent/ConsentService/hashCode.html">hashCode</a></span>
   <span class="signature">&#8594; int</span> 
@@ -116,28 +105,28 @@
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="isGranted" class="callable">
-  <span class="name"><a href="../consent/ConsentService/isGranted.html">isGranted</a></span><span class="signature">(<wbr><span class="parameter" id="isGranted-param-source"><span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="isGranted-param-destination"><span class="type-annotation">TikiSdkDestination</span> <span class="parameter-name">destination</span></span>)
-    <span class="returntype parameter">&#8594; bool</span>
+        <dt id="create" class="callable">
+  <span class="name"><a href="../consent/ConsentService/create.html">create</a></span><span class="signature">(<wbr><span class="parameter" id="create-param-ownershipId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">ownershipId</span>, </span><span class="parameter" id="create-param-about">{<span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span><span class="parameter" id="create-param-reward"><span class="type-annotation">String?</span> <span class="parameter-name">reward</span>, </span><span class="parameter" id="create-param-destinations"><span class="type-annotation">TikiSdkDestination</span> <span class="parameter-name">destinations</span> = <span class="default-value">const TikiSdkDestination.all()</span>}</span>)
+    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">Uint8List</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  Check if consent for <code>source</code> given a specific <code>destination</code>.
+  Modify consent for a <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a> by its <code>ownershipId</code>.
   
 
 </dd>
 
-        <dt id="modifyConsent" class="callable">
-  <span class="name"><a href="../consent/ConsentService/modifyConsent.html">modifyConsent</a></span><span class="signature">(<wbr><span class="parameter" id="modifyConsent-param-source"><span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="modifyConsent-param-destinations"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDestination</span>&gt;</span></span> <span class="parameter-name">destinations</span></span>)
-    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span>
+        <dt id="getByOwnershipId" class="callable">
+  <span class="name"><a href="../consent/ConsentService/getByOwnershipId.html">getByOwnershipId</a></span><span class="signature">(<wbr><span class="parameter" id="getByOwnershipId-param-ownershipId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">ownershipId</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../consent/ConsentModel-class.html">ConsentModel</a>?</span>
   </span>
   
 
 </dt>
 <dd>
-  Modify consent for <code>source</code>.
+  Gets a consent by its <code>ownershipId</code>.
   
 
 </dd>
@@ -237,16 +226,15 @@
           <li><a href="../consent/ConsentService/ConsentService.html">ConsentService</a></li>
 
 
-    <li class="section-title">
+    <li class="section-title inherited">
       <a href="../consent/ConsentService-class.html#instance-properties">Properties</a>
     </li>
-    <li><a href="../consent/ConsentService/consentRepository.html">consentRepository</a></li>
     <li class="inherited"><a href="../consent/ConsentService/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../consent/ConsentService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../consent/ConsentService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../consent/ConsentService/isGranted.html">isGranted</a></li>
-    <li><a href="../consent/ConsentService/modifyConsent.html">modifyConsent</a></li>
+    <li><a href="../consent/ConsentService/create.html">create</a></li>
+    <li><a href="../consent/ConsentService/getByOwnershipId.html">getByOwnershipId</a></li>
     <li class="inherited"><a href="../consent/ConsentService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../consent/ConsentService/toString.html">toString</a></li>
 
@@ -265,7 +253,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

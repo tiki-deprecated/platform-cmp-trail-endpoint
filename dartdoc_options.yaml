@@ -3,10 +3,11 @@ dartdoc:
     backup,
     block,
     keys,
-    l0_storage,
     metadata,
     node,
+    ownership,
+    consent,
     transaction,
     utils,
-    wasabi,
+    xchain,
     ]

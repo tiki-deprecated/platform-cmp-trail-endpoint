@@ -65,7 +65,7 @@
           <span class="name"><a href="../ownership/OwnershipRepository/OwnershipRepository.html">OwnershipRepository</a></span><span class="signature">(<span class="parameter" id="-param-_db"><span class="type-annotation">Database</span> <span class="parameter-name">_db</span></span>)</span>
         </dt>
         <dd>
-          
+          Builds a <a href="../ownership/OwnershipRepository-class.html">OwnershipRepository</a> that will use <code>_db</code> for persistence.
         </dd>
     </dl>
   </section>
@@ -101,10 +101,49 @@
 
     
   <section
-      class="summary offset-anchor inherited"
+      class="summary offset-anchor"
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="getAll" class="callable">
+  <span class="name"><a href="../ownership/OwnershipRepository/getAll.html">getAll</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ownership/OwnershipModel-class.html">OwnershipModel</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Gets all <code>OwnerShipModel</code> stored in local database.
+  
+
+</dd>
+
+        <dt id="getById" class="callable">
+  <span class="name"><a href="../ownership/OwnershipRepository/getById.html">getById</a></span><span class="signature">(<wbr><span class="parameter" id="getById-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a>?</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="getBySource" class="callable">
+  <span class="name"><a href="../ownership/OwnershipRepository/getBySource.html">getBySource</a></span><span class="signature">(<wbr><span class="parameter" id="getBySource-param-source"><span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="getBySource-param-origin"><span class="type-annotation">String</span> <span class="parameter-name">origin</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a>?</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Gets the <code>OwnerShipModel</code> for <code>source</code> and <code>origin</code> in database.
+  
+
+</dd>
+
         <dt id="noSuchMethod" class="callable inherited">
   <span class="name"><a href="../ownership/OwnershipRepository/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation">Invocation</span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
@@ -115,6 +154,19 @@
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
   <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="save" class="callable">
+  <span class="name"><a href="../ownership/OwnershipRepository/save.html">save</a></span><span class="signature">(<wbr><span class="parameter" id="save-param-ownership"><span class="type-annotation"><a href="../ownership/OwnershipModel-class.html">OwnershipModel</a></span> <span class="parameter-name">ownership</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Persists <code>ownership</code> in <code>_db</code>.
+  
 
 </dd>
 
@@ -158,6 +210,102 @@
     
     
 
+  <section class="summary offset-anchor" id="constants">
+    <h2>Constants</h2>
+
+    <dl class="properties">
+        <dt id="columnAbout" class="constant">
+    <span class="name "><a href="../ownership/OwnershipRepository/columnAbout-constant.html">columnAbout</a></span>
+  <span class="signature">&#8594; const String</span>
+  
+
+</dt>
+<dd>
+  
+  
+
+  <div>
+    <span class="signature"><code>&#39;about&#39;</code></span>
+  </div>
+</dd>
+
+        <dt id="columnOrigin" class="constant">
+    <span class="name "><a href="../ownership/OwnershipRepository/columnOrigin-constant.html">columnOrigin</a></span>
+  <span class="signature">&#8594; const String</span>
+  
+
+</dt>
+<dd>
+  
+  
+
+  <div>
+    <span class="signature"><code>&#39;origin&#39;</code></span>
+  </div>
+</dd>
+
+        <dt id="columnSource" class="constant">
+    <span class="name "><a href="../ownership/OwnershipRepository/columnSource-constant.html">columnSource</a></span>
+  <span class="signature">&#8594; const String</span>
+  
+
+</dt>
+<dd>
+  
+  
+
+  <div>
+    <span class="signature"><code>&#39;source&#39;</code></span>
+  </div>
+</dd>
+
+        <dt id="columnTransactionId" class="constant">
+    <span class="name "><a href="../ownership/OwnershipRepository/columnTransactionId-constant.html">columnTransactionId</a></span>
+  <span class="signature">&#8594; const String</span>
+  
+
+</dt>
+<dd>
+  
+  
+
+  <div>
+    <span class="signature"><code>&#39;transaction_id&#39;</code></span>
+  </div>
+</dd>
+
+        <dt id="columnTypes" class="constant">
+    <span class="name "><a href="../ownership/OwnershipRepository/columnTypes-constant.html">columnTypes</a></span>
+  <span class="signature">&#8594; const String</span>
+  
+
+</dt>
+<dd>
+  
+  
+
+  <div>
+    <span class="signature"><code>&#39;types&#39;</code></span>
+  </div>
+</dd>
+
+        <dt id="table" class="constant">
+    <span class="name "><a href="../ownership/OwnershipRepository/table-constant.html">table</a></span>
+  <span class="signature">&#8594; const String</span>
+  
+
+</dt>
+<dd>
+  
+  
+
+  <div>
+    <span class="signature"><code>&#39;ownership&#39;</code></span>
+  </div>
+</dd>
+
+    </dl>
+  </section>
 
   </div> <!-- /.main-content -->
 
@@ -206,8 +354,12 @@
     <li class="inherited"><a href="../ownership/OwnershipRepository/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../ownership/OwnershipRepository/runtimeType.html">runtimeType</a></li>
 
-    <li class="section-title inherited"><a href="../ownership/OwnershipRepository-class.html#instance-methods">Methods</a></li>
+    <li class="section-title"><a href="../ownership/OwnershipRepository-class.html#instance-methods">Methods</a></li>
+    <li><a href="../ownership/OwnershipRepository/getAll.html">getAll</a></li>
+    <li><a href="../ownership/OwnershipRepository/getById.html">getById</a></li>
+    <li><a href="../ownership/OwnershipRepository/getBySource.html">getBySource</a></li>
     <li class="inherited"><a href="../ownership/OwnershipRepository/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../ownership/OwnershipRepository/save.html">save</a></li>
     <li class="inherited"><a href="../ownership/OwnershipRepository/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../ownership/OwnershipRepository-class.html#operators">Operators</a></li>
@@ -216,6 +368,13 @@
 
 
 
+        <li class="section-title"><a href="../ownership/OwnershipRepository-class.html#constants">Constants</a></li>
+          <li><a href="../ownership/OwnershipRepository/columnAbout-constant.html">columnAbout</a></li>
+          <li><a href="../ownership/OwnershipRepository/columnOrigin-constant.html">columnOrigin</a></li>
+          <li><a href="../ownership/OwnershipRepository/columnSource-constant.html">columnSource</a></li>
+          <li><a href="../ownership/OwnershipRepository/columnTransactionId-constant.html">columnTransactionId</a></li>
+          <li><a href="../ownership/OwnershipRepository/columnTypes-constant.html">columnTypes</a></li>
+          <li><a href="../ownership/OwnershipRepository/table-constant.html">table</a></li>
 </ol>
 
   </div><!--/.sidebar-offcanvas-->
@@ -225,7 +384,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

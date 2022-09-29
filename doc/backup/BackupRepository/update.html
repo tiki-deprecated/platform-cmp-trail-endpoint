@@ -70,13 +70,14 @@ and <a href="../../backup/BackupModel/timestamp.html">BackupModel.timestamp</a><
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void update(BackupModel backup) {
-  _db.execute(&#39;&#39;&#39;UPDATE $table SET
+  _db.execute(&#39;&#39;&#39;
+    UPDATE $table
+    SET
       $columnTimestamp = ?,
       $columnSignature = ?
-      WHERE
-      $columnPath = ?;
-    ;&#39;&#39;&#39;, [
-    backup.timestamp!.millisecondsSinceEpoch ~&#47; 1000,
+    WHERE $columnPath = ?;
+    &#39;&#39;&#39;, [
+    backup.timestamp!.millisecondsSinceEpoch,
     backup.signature,
     backup.path
   ]);
@@ -115,7 +116,7 @@ and <a href="../../backup/BackupModel/timestamp.html">BackupModel.timestamp</a><
     <li class="inherited"><a href="../../backup/BackupRepository/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../backup/BackupRepository-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../backup/BackupRepository/createTable.html">createTable</a></li>
+    <li><a href="../../backup/BackupRepository/getByPath.html">getByPath</a></li>
     <li><a href="../../backup/BackupRepository/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../../backup/BackupRepository/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../backup/BackupRepository/save.html">save</a></li>
@@ -145,7 +146,7 @@ and <a href="../../backup/BackupModel/timestamp.html">BackupModel.timestamp</a><
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.4
   </span>
 
   

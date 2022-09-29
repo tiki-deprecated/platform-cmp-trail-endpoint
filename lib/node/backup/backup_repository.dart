@@ -28,41 +28,40 @@ class BackupRepository {
   ///
   /// It calls [createTable] to make sure the table exists.
   BackupRepository(this._db) {
-    createTable();
+    _createTable();
   }
 
   /// Creates the [BackupRepository.table] if it does not exist.
-  void createTable() async {
-    _db.execute('''
-      CREATE TABLE IF NOT EXISTS $table (
-        $columnPath TEXT NOT NULL,
-        $columnSignature BLOB,
-        $columnTimestamp INTEGER
-      );
+  void _createTable() => _db.execute('''
+    CREATE TABLE IF NOT EXISTS $table (
+      $columnPath TEXT NOT NULL,
+      $columnSignature BLOB,
+      $columnTimestamp INTEGER);
     ''');
-  }
 
   /// Persists [backup] in [_db].
-  void save(BackupModel backup) {
-    _db.execute('INSERT INTO $table VALUES ( ?, ?, ? );', [
-      backup.path,
-      backup.signature,
-      backup.timestamp == null
-          ? null
-          : backup.timestamp!.millisecondsSinceEpoch ~/ 1000
-    ]);
-  }
+  void save(BackupModel backup) => _db.execute('''
+    INSERT INTO $table 
+    VALUES ( ?, ?, ? );
+    ''', [
+        backup.path,
+        backup.signature,
+        backup.timestamp == null
+            ? null
+            : backup.timestamp!.millisecondsSinceEpoch
+      ]);
 
   /// Updates the persisted [BackupModel] by adding [BackupModel.signature]
   /// and [BackupModel.timestamp]
   void update(BackupModel backup) {
-    _db.execute('''UPDATE $table SET 
+    _db.execute('''
+      UPDATE $table 
+      SET
         $columnTimestamp = ?, 
         $columnSignature = ?
-        WHERE 
-        $columnPath = ?;
-      ;''', [
-      backup.timestamp!.millisecondsSinceEpoch ~/ 1000,
+      WHERE $columnPath = ?;
+      ''', [
+      backup.timestamp!.millisecondsSinceEpoch,
       backup.signature,
       backup.path
     ]);
@@ -71,16 +70,24 @@ class BackupRepository {
   /// Gets all pending [BackupModel]
   ///
   /// A [BackupModel] is considered pending if [BackupModel.timestamp] is null.
-  List<BackupModel> getPending() {
-    String where = 'WHERE $columnTimestamp IS NULL';
-    return _select(whereStmt: where);
+  List<BackupModel> getPending() =>
+      _select(whereStmt: 'WHERE $columnTimestamp IS NULL');
+
+  /// Gets a backup registry by its path.
+  BackupModel? getByPath(String path) {
+    List<BackupModel> bkups = _select(whereStmt: "WHERE $columnPath = '$path'");
+    return bkups.isNotEmpty ? bkups.first : null;
   }
 
   List<BackupModel> _select({String? whereStmt}) {
     ResultSet results = _db.select('''
-        SELECT * FROM $table
-        ${whereStmt ?? 'WHERE 1=1'}
-        ''');
+      SELECT 
+        $table.$columnPath as '$columnPath',
+        $table.$columnSignature as '$columnSignature',
+        $table.$columnTimestamp as '$columnTimestamp'
+      FROM $table
+      ${whereStmt ?? ''};
+      ''');
     List<BackupModel> backups = [];
     for (final Row row in results) {
       Map<String, dynamic> bkpMap = {

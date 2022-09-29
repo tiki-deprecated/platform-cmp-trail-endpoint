@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the loadXchain method from the XchainService class, for the Dart programming language.">
+  <title>loadXchain method - XchainService class - xchain library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">tiki_sdk_dart</a></li>
+    <li><a href="../../xchain/xchain-library.html">xchain</a></li>
+    <li><a href="../../xchain/XchainService-class.html">XchainService</a></li>
+    <li class="self-crumb">loadXchain method</li>
+  </ol>
+  <div class="self-name">loadXchain</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">loadXchain</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter">Map<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../block/BlockModel-class.html">BlockModel</a></span>, <span class="type-parameter">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>&gt;</span></span>&gt;</span></span>
+<span class="name ">loadXchain</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="loadXchain-param-xchain"><span class="type-annotation"><a href="../../xchain/XchainModel-class.html">XchainModel</a></span> <span class="parameter-name">xchain</span>, </span></li>
+<li><span class="parameter" id="loadXchain-param-skip">{<span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">skip</span> = <span class="default-value">const []</span>}</span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Deserializes and persists all the blocks from the xchain into database.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;Map&lt;BlockModel, List&lt;TransactionModel&gt;&gt;&gt; loadXchain(XchainModel xchain,
+    {List&lt;String&gt; skip = const []}) async {
+  Map&lt;String, Uint8List&gt; serializedblocks =
+      await _l0storage.getAll(base64Url.encode(xchain.address));
+  Map&lt;BlockModel, List&lt;TransactionModel&gt;&gt; blocks = {};
+  for (String blockId in serializedblocks.keys) {
+    if (blockId == &#39;public.key&#39; ||
+        skip.contains(blockId.replaceAll(&#39;.block&#39;, &#39;&#39;))) continue;
+    Uint8List serializedBackup = serializedblocks[blockId]!;
+    List&lt;Uint8List&gt; backupList = CompactSize.decode(serializedBackup);
+    Uint8List signature = backupList[0];
+    Uint8List serializedBlock = backupList[1];
+    if (!Rsa.verify(xchain.publicKey, serializedBlock, signature)) {
+      throw StateError(&#39;Backup signature could not be verified for $blockId&#39;);
+    }
+    BlockModel block = BlockModel.deserialize(serializedBlock);
+    if (!Bytes.memEquals(Digest(&#39;SHA3-256&#39;).process(block.serialize()),
+        base64Url.decode(blockId.replaceAll(&#39;.block&#39;, &#39;&#39;)))) {
+      throw Exception(&#39;Corrupted Block ${block.toString()}&#39;);
+    }
+    List&lt;TransactionModel&gt; transactions =
+        TransactionService.deserializeTransactions(serializedBlock);
+    MerkelTree merkelTree = MerkelTree.build(
+        transactions.map((TransactionModel txn) =&gt; txn.id!).toList());
+    if (!Bytes.memEquals(block.transactionRoot, merkelTree.root!)) {
+      throw Exception(&#39;Invalid transaction root for ${block.toString()}&#39;);
+    }
+    for (TransactionModel transaction in transactions) {
+      transaction.block = block;
+      transaction.merkelProof = merkelTree.proofs[transaction.id!];
+      if (!TransactionService.validateAuthor(transaction, xchain.publicKey)) {
+        throw Exception(
+            &#39;Transaction authorshhip could not be verified: ${transaction.toString()}&#39;);
+      }
+    }
+    block.transactionRoot = merkelTree.root!;
+    blocks[block] = transactions;
+  }
+  return blocks;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">tiki_sdk_dart</a></li>
+  <li><a href="../../xchain/xchain-library.html">xchain</a></li>
+  <li><a href="../../xchain/XchainService-class.html">XchainService</a></li>
+  <li class="self-crumb">loadXchain method</li>
+</ol>
+
+
+    <h5>XchainService class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../xchain/XchainService-class.html#constructors">Constructors</a></li>
+          <li><a href="../../xchain/XchainService/XchainService.html">XchainService</a></li>
+
+
+    <li class="section-title inherited">
+      <a href="../../xchain/XchainService-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="../../xchain/XchainService/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="../../xchain/XchainService/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../../xchain/XchainService-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../xchain/XchainService/get.html">get</a></li>
+    <li><a href="../../xchain/XchainService/loadKey.html">loadKey</a></li>
+    <li><a href="../../xchain/XchainService/loadXchain.html">loadXchain</a></li>
+    <li class="inherited"><a href="../../xchain/XchainService/noSuchMethod.html">noSuchMethod</a></li>
+    <li class="inherited"><a href="../../xchain/XchainService/toString.html">toString</a></li>
+    <li><a href="../../xchain/XchainService/update.html">update</a></li>
+
+    <li class="section-title inherited"><a href="../../xchain/XchainService-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="../../xchain/XchainService/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.4
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

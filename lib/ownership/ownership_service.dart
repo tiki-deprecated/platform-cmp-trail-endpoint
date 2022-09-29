@@ -2,56 +2,66 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category SDK}
+///
+/// Handle Ownership NFTs.
+library ownership;
+
+import 'dart:typed_data';
+
+import '../node/node_service.dart';
 import '../tiki_sdk.dart';
 import 'ownership_model.dart';
 import 'ownership_repository.dart';
 
+export 'ownership_model.dart';
+export 'ownership_repository.dart';
+
 /// The service to manage ownership registries.
 class OwnershipService {
   /// The default origin for all ownerships.
-  final String _origin;
+  final String _defaultOrigin;
 
-  final OwnershipRepository ownershipRepository;
+  final OwnershipRepository _repository;
 
-  OwnershipService(this._origin, db)
-      : ownershipRepository = OwnershipRepository(db);
+  final NodeService nodeService;
+
+  OwnershipService(this._defaultOrigin, this.nodeService, db)
+      : _repository = OwnershipRepository(db);
 
   /// Creates a ownership register in the blockchain.
   ///
   /// This method creates a new transcation that will be commited in the
-  /// next block in the chain. The [OwnershipModel.path] will be null until
-  /// the transaction is commited through [updatePending].
-  /// If no [origin] is provided the default [_origin] will be used
-  void registerOwnership(
+  /// next block in the chain.
+  /// If no [origin] is provided the default [origin] will be used
+  Future<Uint8List> create(
       {required String source,
-      required List<TikiSdkDataTypeEnum> type,
+      required List<TikiSdkDataTypeEnum> types,
       String? origin,
-      String? about}) {
-    throw UnimplementedError();
+      String? about}) async {
+    OwnershipModel? ownershipModel = getBySource(source, origin: origin);
+    if (ownershipModel != null) {
+      throw 'Ownership already granted for $source and $origin. ${ownershipModel.toString()}';
+    }
+    ownershipModel = OwnershipModel(
+        source: source, types: types, origin: origin ?? _defaultOrigin);
+    Uint8List contents = (BytesBuilder()
+          ..addByte(1)
+          ..addByte(1)
+          ..add(ownershipModel.serialize()))
+        .toBytes();
+    TransactionModel transaction = await nodeService.write(contents);
+    ownershipModel.transactionId = transaction.id;
+    _repository.save(ownershipModel);
+    return ownershipModel.transactionId!;
   }
 
-  /// Updates the [OwnershipModel.path] of pending [OwnershipModel].
+  /// Gets a [OwnershipModel] by its [source] and [origin] from local database.
   ///
-  /// Queries the [NodeService] for each [OwnershipModel.transactionId] and check
-  /// if it was commited to update the [OwnershipModel.path].
-  /// It uses the FIFO order to update the [OwnershipModel] and stops in the first
-  /// one that was not updated yet, since the transactions are updated in FIFO order
-  /// too.
-  void updatePending() {
-    throw UnimplementedError();
-  }
+  /// If no [origin] is provided the [_defaultOrigin] will be used
+  OwnershipModel? getBySource(String source, {String? origin}) =>
+      _repository.getBySource(source, origin ?? _defaultOrigin);
 
-  /// Gets a [OwnershipModel] by its [source] and [origin].
-  ///
-  /// If no [origin] is provided the default will be used
-  OwnershipModel? getBySource(String source, {String? origin}) {
-    throw UnimplementedError();
-  }
+  OwnershipModel? getById(Uint8List id) => _repository.getById(id);
 
-  /// Checks if an [address] has [OwnershipModel] over a [source] and [origin].
-  OwnershipModel? checkOwnership(String address, String source,
-      {String? origin}) {
-    throw UnimplementedError();
-  }
+  List<OwnershipModel> getAll() => _repository.getAll();
 }

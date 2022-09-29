@@ -55,12 +55,18 @@
     </section>
 
     
+<section class="desc markdown">
+  <p>Builds a <a href="../../ownership/OwnershipRepository-class.html">OwnershipRepository</a> that will use <code>_db</code> for persistence.</p>
+<p>It calls <code>createTable</code> to make sure the table exists.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">OwnershipRepository(this._db);</code></pre>
+  <pre class="language-dart"><code class="language-dart">OwnershipRepository(this._db) {
+  _createTable();
+}</code></pre>
 </section>
 
 
@@ -94,8 +100,12 @@
     <li class="inherited"><a href="../../ownership/OwnershipRepository/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipRepository/runtimeType.html">runtimeType</a></li>
 
-    <li class="section-title inherited"><a href="../../ownership/OwnershipRepository-class.html#instance-methods">Methods</a></li>
+    <li class="section-title"><a href="../../ownership/OwnershipRepository-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../ownership/OwnershipRepository/getAll.html">getAll</a></li>
+    <li><a href="../../ownership/OwnershipRepository/getById.html">getById</a></li>
+    <li><a href="../../ownership/OwnershipRepository/getBySource.html">getBySource</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipRepository/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../ownership/OwnershipRepository/save.html">save</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipRepository/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../../ownership/OwnershipRepository-class.html#operators">Operators</a></li>
@@ -104,6 +114,13 @@
 
 
 
+        <li class="section-title"><a href="../../ownership/OwnershipRepository-class.html#constants">Constants</a></li>
+          <li><a href="../../ownership/OwnershipRepository/columnAbout-constant.html">columnAbout</a></li>
+          <li><a href="../../ownership/OwnershipRepository/columnOrigin-constant.html">columnOrigin</a></li>
+          <li><a href="../../ownership/OwnershipRepository/columnSource-constant.html">columnSource</a></li>
+          <li><a href="../../ownership/OwnershipRepository/columnTransactionId-constant.html">columnTransactionId</a></li>
+          <li><a href="../../ownership/OwnershipRepository/columnTypes-constant.html">columnTypes</a></li>
+          <li><a href="../../ownership/OwnershipRepository/table-constant.html">table</a></li>
 </ol>
 
   </div><!--/.sidebar-offcanvas-left-->
@@ -116,7 +133,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   
