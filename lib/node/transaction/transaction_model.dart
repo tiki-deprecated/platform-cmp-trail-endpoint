@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -57,13 +56,12 @@ class TransactionModel {
       this.version = 1,
       required this.address,
       required this.contents,
-      assetRef,
-      timestamp,
+      this.assetRef = "AA==",
+      DateTime? timestamp,
       this.merkelProof,
-      this.block}) {
-    this.timestamp = timestamp ?? DateTime.now();
-    this.assetRef = assetRef ?? "AA==";
-  }
+      this.block,
+      this.signature})
+      : timestamp = timestamp ?? DateTime.now();
 
   /// Builds a [BlockModel] from a [map].
   ///
@@ -90,21 +88,18 @@ class TransactionModel {
         merkelProof = map[TransactionRepository.columnMerkelProof],
         block = map['block'],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
-            map[TransactionRepository.columnTimestamp] * 1000),
+            map[TransactionRepository.columnTimestamp]),
         signature = map[TransactionRepository.columnSignature];
-
-  static TransactionModel fromJson(String json) =>
-      TransactionModel.fromMap(jsonDecode(json));
 
   /// Builds a [TransactionModel] from a [transaction] list of bytes.
   ///
   /// Check [serialize] for more information on how the [transaction] is built.
   TransactionModel.deserialize(Uint8List transaction) {
-    List<Uint8List> extractedBytes = UtilsCompactSize.decode(transaction);
-    version = UtilsBytes.decodeBigInt(extractedBytes[0]).toInt();
+    List<Uint8List> extractedBytes = CompactSize.decode(transaction);
+    version = Bytes.decodeBigInt(extractedBytes[0]).toInt();
     address = extractedBytes[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
-        UtilsBytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
+        Bytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
     assetRef = base64.encode(extractedBytes[3]);
     signature = extractedBytes[4];
     contents = extractedBytes[5];
@@ -114,7 +109,7 @@ class TransactionModel {
   /// Creates a [Uint8List] representation of this.
   ///
   /// The Uint8List is built by a list of the transaction properties, prepended
-  /// by its size obtained from [UtilsCompactSize.toSize].
+  /// by its size obtained from [CompactSize.toSize].
   /// Use with [includeSignature] to false, to sign and verify the signature.
   ///
   /// ```
@@ -134,28 +129,28 @@ class TransactionModel {
   /// ]);
   /// ```
   Uint8List serialize({includeSignature = true}) {
-    Uint8List versionBytes = UtilsBytes.encodeBigInt(BigInt.from(version));
+    Uint8List versionBytes = Bytes.encodeBigInt(BigInt.from(version));
     Uint8List serializedVersion = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(versionBytes))
+          ..add(CompactSize.toSize(versionBytes))
           ..add(versionBytes))
         .toBytes();
     Uint8List serializedAddress = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(address))
+          ..add(CompactSize.toSize(address))
           ..add(address))
         .toBytes();
-    Uint8List timestampBytes = UtilsBytes.encodeBigInt(
+    Uint8List timestampBytes = Bytes.encodeBigInt(
         BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000));
     Uint8List serializedTimestamp = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(timestampBytes))
+          ..add(CompactSize.toSize(timestampBytes))
           ..add(timestampBytes))
         .toBytes();
     Uint8List assetRefBytes = base64.decode(assetRef);
     Uint8List serializedAssetRef = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(assetRefBytes))
+          ..add(CompactSize.toSize(assetRefBytes))
           ..add(assetRefBytes))
         .toBytes();
     Uint8List serializedSignature = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(includeSignature && signature != null
+          ..add(CompactSize.toSize(includeSignature && signature != null
               ? signature!
               : Uint8List(0)))
           ..add(includeSignature && signature != null
@@ -163,7 +158,7 @@ class TransactionModel {
               : Uint8List(0)))
         .toBytes();
     Uint8List serializedContents = (BytesBuilder()
-          ..add(UtilsCompactSize.toSize(contents))
+          ..add(CompactSize.toSize(contents))
           ..add(contents))
         .toBytes();
     return (BytesBuilder()

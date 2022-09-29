@@ -3,11 +3,10 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// Helper functions handle data in [Uint8List].
-
 import 'dart:typed_data';
 
 /// Utility methods to work with raw bytes data.
-class UtilsBytes {
+class Bytes {
   /// Encode a BigInt into bytes using big-endian encoding.
   /// It encodes the integer to a minimal twos-compliment integer as defined by
   /// ASN.1
@@ -92,4 +91,7 @@ class UtilsBytes {
 
     return true;
   }
+
+  static String hexEncode(Uint8List bytes) =>
+      bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
 }

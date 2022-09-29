@@ -9,5 +9,15 @@ enum TikiSdkDataTypeEnum {
 
   const TikiSdkDataTypeEnum(this.val);
 
+  factory TikiSdkDataTypeEnum.fromValue(String value) {
+    for (TikiSdkDataTypeEnum type in TikiSdkDataTypeEnum.values) {
+      if (type.val == value) {
+        return type;
+      }
+    }
+    throw ArgumentError.value(
+        value, 'value', 'Invaid TikiSdkDataTypeEnum value $value');
+  }
+
   final String val;
 }

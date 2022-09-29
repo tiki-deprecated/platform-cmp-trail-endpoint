@@ -50,7 +50,8 @@
 </h1></div>
 
     <section class="multi-line-signature">
-      <span class="name ">OwnershipService</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-_origin"><span class="type-annotation">String</span> <span class="parameter-name">_origin</span>, </span></li>
+      <span class="name ">OwnershipService</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-_defaultOrigin"><span class="type-annotation">String</span> <span class="parameter-name">_defaultOrigin</span>, </span></li>
+<li><span class="parameter" id="-param-nodeService"><span class="type-annotation"><a href="../../node/NodeService-class.html">NodeService</a></span> <span class="parameter-name">nodeService</span>, </span></li>
 <li><span class="parameter" id="-param-db"><span class="type-annotation">dynamic</span> <span class="parameter-name">db</span></span></li>
 </ol>)
     </section>
@@ -61,8 +62,8 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">OwnershipService(this._origin, db)
-    : ownershipRepository = OwnershipRepository(db);</code></pre>
+  <pre class="language-dart"><code class="language-dart">OwnershipService(this._defaultOrigin, this.nodeService, db)
+    : _repository = OwnershipRepository(db);</code></pre>
 </section>
 
 
@@ -94,16 +95,16 @@
       <a href="../../ownership/OwnershipService-class.html#instance-properties">Properties</a>
     </li>
     <li class="inherited"><a href="../../ownership/OwnershipService/hashCode.html">hashCode</a></li>
-    <li><a href="../../ownership/OwnershipService/ownershipRepository.html">ownershipRepository</a></li>
+    <li><a href="../../ownership/OwnershipService/nodeService.html">nodeService</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../ownership/OwnershipService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../ownership/OwnershipService/checkOwnership.html">checkOwnership</a></li>
+    <li><a href="../../ownership/OwnershipService/create.html">create</a></li>
+    <li><a href="../../ownership/OwnershipService/getAll.html">getAll</a></li>
+    <li><a href="../../ownership/OwnershipService/getById.html">getById</a></li>
     <li><a href="../../ownership/OwnershipService/getBySource.html">getBySource</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipService/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../../ownership/OwnershipService/registerOwnership.html">registerOwnership</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipService/toString.html">toString</a></li>
-    <li><a href="../../ownership/OwnershipService/updatePending.html">updatePending</a></li>
 
     <li class="section-title inherited"><a href="../../ownership/OwnershipService-class.html#operators">Operators</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipService/operator_equals.html">operator ==</a></li>
@@ -123,7 +124,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

@@ -51,7 +51,7 @@
 
     
 <section class="desc markdown">
-  <p>The registry of consent to use a data asset identified by <a href="../consent/ConsentModel/assetRef.html">assetRef</a>.</p>
+  <p>The Consent NFT data structure</p>
 </section>
 
 
@@ -62,10 +62,16 @@
 
     <dl class="constructor-summary-list">
         <dt id="ConsentModel" class="callable">
-          <span class="name"><a href="../consent/ConsentModel/ConsentModel.html">ConsentModel</a></span><span class="signature">(<span class="parameter" id="-param-assetRef"><span class="type-annotation">String</span> <span class="parameter-name">assetRef</span>, </span><span class="parameter" id="-param-destination"><span class="type-annotation">TikiSdkDestination</span> <span class="parameter-name">destination</span>, </span><span class="parameter" id="-param-about">{<span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span><span class="parameter" id="-param-reward"><span class="type-annotation">String?</span> <span class="parameter-name">reward</span>}</span>)</span>
+          <span class="name"><a href="../consent/ConsentModel/ConsentModel.html">ConsentModel</a></span><span class="signature">(<span class="parameter" id="-param-ownershipId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">ownershipId</span>, </span><span class="parameter" id="-param-destination"><span class="type-annotation">TikiSdkDestination</span> <span class="parameter-name">destination</span>, </span><span class="parameter" id="-param-about">{<span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span><span class="parameter" id="-param-reward"><span class="type-annotation">String?</span> <span class="parameter-name">reward</span>}</span>)</span>
         </dt>
         <dd>
-          Builds a new <a href="../consent/ConsentModel-class.html">ConsentModel</a>
+          Builds a <a href="../consent/ConsentModel-class.html">ConsentModel</a> using the <code>assetRef</code> for the
+        </dd>
+        <dt id="ConsentModel.fromMap" class="callable">
+          <span class="name"><a href="../consent/ConsentModel/ConsentModel.fromMap.html">ConsentModel.fromMap</a></span><span class="signature">(<span class="parameter" id="fromMap-param-map"><span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">map</span></span>)</span>
+        </dt>
+        <dd>
+          
         </dd>
     </dl>
   </section>
@@ -80,18 +86,7 @@
 
 </dt>
 <dd>
-  The optional description of the consent.
-  <div class="features">read / write</div>
-
-</dd>
-
-        <dt id="assetRef" class="property">
-  <span class="name"><a href="../consent/ConsentModel/assetRef.html">assetRef</a></span>
-  <span class="signature">&#8596; String</span> 
-
-</dt>
-<dd>
-  The asset reference of the transaction that identifies the ownership of it.
+  Optional description of the consent.
   <div class="features">read / write</div>
 
 </dd>
@@ -102,7 +97,7 @@
 
 </dt>
 <dd>
-  The <code>TikiSdkDestination</code> that identifies the usage of this data.
+  The ideintifier of where the
   <div class="features">read / write</div>
 
 </dd>
@@ -118,13 +113,24 @@
 
 </dd>
 
+        <dt id="ownershipId" class="property">
+  <span class="name"><a href="../consent/ConsentModel/ownershipId.html">ownershipId</a></span>
+  <span class="signature">&#8596; Uint8List</span> 
+
+</dt>
+<dd>
+  Transaction ID corresponding to the ownership mint for the data source.
+  <div class="features">read / write</div>
+
+</dd>
+
         <dt id="reward" class="property">
   <span class="name"><a href="../consent/ConsentModel/reward.html">reward</a></span>
   <span class="signature">&#8596; String?</span> 
 
 </dt>
 <dd>
-  The optional reward that the user will receive for giving consent.
+  Optional reward description the user will receive for this consent.
   <div class="features">read / write</div>
 
 </dd>
@@ -140,12 +146,23 @@
 
 </dd>
 
+        <dt id="transactionId" class="property">
+  <span class="name"><a href="../consent/ConsentModel/transactionId.html">transactionId</a></span>
+  <span class="signature">&#8596; Uint8List?</span> 
+
+</dt>
+<dd>
+  The transaction id of this registry.
+  <div class="features">read / write</div>
+
+</dd>
+
       </dl>
     </section>
 
     
   <section
-      class="summary offset-anchor inherited"
+      class="summary offset-anchor"
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
@@ -159,6 +176,19 @@
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
   <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="serialize" class="callable">
+  <span class="name"><a href="../consent/ConsentModel/serialize.html">serialize</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; Uint8List</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Serializes the contents to be recorded in the blockchain.
+  
 
 </dd>
 
@@ -200,6 +230,24 @@
   </section>
     
     
+  <section class="summary offset-anchor" id="static-methods">
+    <h2>Static Methods</h2>
+    <dl class="callables">
+        <dt id="deserialize" class="callable">
+  <span class="name"><a href="../consent/ConsentModel/deserialize.html">deserialize</a></span><span class="signature">(<wbr><span class="parameter" id="deserialize-param-serialized"><span class="type-annotation">Uint8List</span> <span class="parameter-name">serialized</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../consent/ConsentModel-class.html">ConsentModel</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Deserializes the contents that was loaded from the blockchain.
+  
+
+</dd>
+
+    </dl>
+  </section>
     
 
 
@@ -242,20 +290,23 @@
 
         <li class="section-title"><a href="../consent/ConsentModel-class.html#constructors">Constructors</a></li>
           <li><a href="../consent/ConsentModel/ConsentModel.html">ConsentModel</a></li>
+          <li><a href="../consent/ConsentModel/ConsentModel.fromMap.html">fromMap</a></li>
 
 
     <li class="section-title">
       <a href="../consent/ConsentModel-class.html#instance-properties">Properties</a>
     </li>
     <li><a href="../consent/ConsentModel/about.html">about</a></li>
-    <li><a href="../consent/ConsentModel/assetRef.html">assetRef</a></li>
     <li><a href="../consent/ConsentModel/destination.html">destination</a></li>
     <li class="inherited"><a href="../consent/ConsentModel/hashCode.html">hashCode</a></li>
+    <li><a href="../consent/ConsentModel/ownershipId.html">ownershipId</a></li>
     <li><a href="../consent/ConsentModel/reward.html">reward</a></li>
     <li class="inherited"><a href="../consent/ConsentModel/runtimeType.html">runtimeType</a></li>
+    <li><a href="../consent/ConsentModel/transactionId.html">transactionId</a></li>
 
-    <li class="section-title inherited"><a href="../consent/ConsentModel-class.html#instance-methods">Methods</a></li>
+    <li class="section-title"><a href="../consent/ConsentModel-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="../consent/ConsentModel/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../consent/ConsentModel/serialize.html">serialize</a></li>
     <li class="inherited"><a href="../consent/ConsentModel/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../consent/ConsentModel-class.html#operators">Operators</a></li>
@@ -263,6 +314,8 @@
 
 
 
+        <li class="section-title"><a href="../consent/ConsentModel-class.html#static-methods">Static methods</a></li>
+          <li><a href="../consent/ConsentModel/deserialize.html">deserialize</a></li>
 
 </ol>
 
@@ -273,7 +326,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

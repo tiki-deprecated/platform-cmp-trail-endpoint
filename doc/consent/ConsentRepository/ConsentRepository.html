@@ -55,12 +55,18 @@
     </section>
 
     
+<section class="desc markdown">
+  <p>Builds a <a href="../../consent/ConsentRepository-class.html">ConsentRepository</a> that will use <code>_db</code> for persistence.</p>
+<p>It calls <code>createTable</code> to make sure the table exists.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ConsentRepository(this._db);</code></pre>
+  <pre class="language-dart"><code class="language-dart">ConsentRepository(this._db) {
+  _createTable();
+}</code></pre>
 </section>
 
 
@@ -94,8 +100,10 @@
     <li class="inherited"><a href="../../consent/ConsentRepository/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../../consent/ConsentRepository/runtimeType.html">runtimeType</a></li>
 
-    <li class="section-title inherited"><a href="../../consent/ConsentRepository-class.html#instance-methods">Methods</a></li>
+    <li class="section-title"><a href="../../consent/ConsentRepository-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../consent/ConsentRepository/getByOwnershipId.html">getByOwnershipId</a></li>
     <li class="inherited"><a href="../../consent/ConsentRepository/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../consent/ConsentRepository/save.html">save</a></li>
     <li class="inherited"><a href="../../consent/ConsentRepository/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../../consent/ConsentRepository-class.html#operators">Operators</a></li>
@@ -104,6 +112,13 @@
 
 
 
+        <li class="section-title"><a href="../../consent/ConsentRepository-class.html#constants">Constants</a></li>
+          <li><a href="../../consent/ConsentRepository/columnAbout-constant.html">columnAbout</a></li>
+          <li><a href="../../consent/ConsentRepository/columnDestination-constant.html">columnDestination</a></li>
+          <li><a href="../../consent/ConsentRepository/columnOwnershipId-constant.html">columnOwnershipId</a></li>
+          <li><a href="../../consent/ConsentRepository/columnReward-constant.html">columnReward</a></li>
+          <li><a href="../../consent/ConsentRepository/columnTransactionId-constant.html">columnTransactionId</a></li>
+          <li><a href="../../consent/ConsentRepository/table-constant.html">table</a></li>
 </ol>
 
   </div><!--/.sidebar-offcanvas-left-->
@@ -116,7 +131,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

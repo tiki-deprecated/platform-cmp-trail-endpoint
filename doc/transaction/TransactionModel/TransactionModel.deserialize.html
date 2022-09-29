@@ -65,11 +65,11 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">TransactionModel.deserialize(Uint8List transaction) {
-  List&lt;Uint8List&gt; extractedBytes = UtilsCompactSize.decode(transaction);
-  version = UtilsBytes.decodeBigInt(extractedBytes[0]).toInt();
+  List&lt;Uint8List&gt; extractedBytes = CompactSize.decode(transaction);
+  version = Bytes.decodeBigInt(extractedBytes[0]).toInt();
   address = extractedBytes[1];
   timestamp = DateTime.fromMillisecondsSinceEpoch(
-      UtilsBytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
+      Bytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
   assetRef = base64.encode(extractedBytes[3]);
   signature = extractedBytes[4];
   contents = extractedBytes[5];
@@ -129,8 +129,6 @@
 
 
 
-        <li class="section-title"><a href="../../transaction/TransactionModel-class.html#static-methods">Static methods</a></li>
-          <li><a href="../../transaction/TransactionModel/fromJson.html">fromJson</a></li>
 
 </ol>
 
@@ -144,7 +142,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.4
   </span>
 
   

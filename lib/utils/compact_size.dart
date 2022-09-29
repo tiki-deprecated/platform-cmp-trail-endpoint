@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// From https://developer.bitcoin.org/reference/transactions.html#compactsize-unsigned-integers
-
 import 'dart:typed_data';
 
 /// Compact Size operations.
@@ -13,7 +12,7 @@ import 'dart:typed_data';
 /// prefixed to the number to indicate its length—but otherwise the numbers look
 /// like regular unsigned integers in little-endian order.
 ///
-class UtilsCompactSize {
+class CompactSize {
   /// Encodes a [Uint8List] into a compact size prepended Uint8List.
   static Uint8List encode(Uint8List uint8list) {
     Uint8List cSize = toSize(uint8list);

@@ -50,11 +50,11 @@
 </h1></div>
 
     <section class="multi-line-signature">
-      <span class="name ">OwnershipModel</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-source">{<span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span></li>
-<li><span class="parameter" id="-param-type"><span>required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> <span class="parameter-name">type</span>, </span></li>
+      <span class="name ">OwnershipModel</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-transactionId">{<span class="type-annotation">Uint8List?</span> <span class="parameter-name">transactionId</span>, </span></li>
+<li><span class="parameter" id="-param-source"><span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span></li>
+<li><span class="parameter" id="-param-types"><span>required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> <span class="parameter-name">types</span>, </span></li>
 <li><span class="parameter" id="-param-origin"><span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">origin</span>, </span></li>
-<li><span class="parameter" id="-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span></li>
-<li><span class="parameter" id="-param-path"><span class="type-annotation">String?</span> <span class="parameter-name">path</span>}</span></li>
+<li><span class="parameter" id="-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>}</span></li>
 </ol>)
     </section>
 
@@ -64,12 +64,13 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">OwnershipModel(
-    {required this.source,
-    required this.type,
-    required this.origin,
-    this.about,
-    this.path});</code></pre>
+  <pre class="language-dart"><code class="language-dart">OwnershipModel({
+  this.transactionId,
+  required this.source,
+  required this.types,
+  required this.origin,
+  this.about,
+});</code></pre>
 </section>
 
 
@@ -95,6 +96,7 @@
 
         <li class="section-title"><a href="../../ownership/OwnershipModel-class.html#constructors">Constructors</a></li>
           <li><a href="../../ownership/OwnershipModel/OwnershipModel.html">OwnershipModel</a></li>
+          <li><a href="../../ownership/OwnershipModel/OwnershipModel.fromMap.html">fromMap</a></li>
 
 
     <li class="section-title">
@@ -103,14 +105,14 @@
     <li><a href="../../ownership/OwnershipModel/about.html">about</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipModel/hashCode.html">hashCode</a></li>
     <li><a href="../../ownership/OwnershipModel/origin.html">origin</a></li>
-    <li><a href="../../ownership/OwnershipModel/path.html">path</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipModel/runtimeType.html">runtimeType</a></li>
     <li><a href="../../ownership/OwnershipModel/source.html">source</a></li>
     <li><a href="../../ownership/OwnershipModel/transactionId.html">transactionId</a></li>
-    <li><a href="../../ownership/OwnershipModel/type.html">type</a></li>
+    <li><a href="../../ownership/OwnershipModel/types.html">types</a></li>
 
-    <li class="section-title inherited"><a href="../../ownership/OwnershipModel-class.html#instance-methods">Methods</a></li>
+    <li class="section-title"><a href="../../ownership/OwnershipModel-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipModel/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../ownership/OwnershipModel/serialize.html">serialize</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipModel/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../../ownership/OwnershipModel-class.html#operators">Operators</a></li>
@@ -118,6 +120,8 @@
 
 
 
+        <li class="section-title"><a href="../../ownership/OwnershipModel-class.html#static-methods">Static methods</a></li>
+          <li><a href="../../ownership/OwnershipModel/deserialize.html">deserialize</a></li>
 
 </ol>
 
@@ -131,7 +135,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   
