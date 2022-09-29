@@ -26,7 +26,7 @@ class BackupService {
   final Uint8List? Function(Uint8List) _getBlock;
 
   /// Creates a new BackupService
-  /// 
+  ///
   /// It saves the public key in the initialization.
   BackupService(this._l0storage, Database database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {

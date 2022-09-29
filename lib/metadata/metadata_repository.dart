@@ -9,10 +9,9 @@ import 'metadata_key.dart';
 
 /// The repository for metadata database operations.
 class MetadataRepository {
-  
   /// The database table for metadata
   static const table = 'metadata';
-  
+
   static const columnKey = 'key';
   static const columnValue = 'value';
 

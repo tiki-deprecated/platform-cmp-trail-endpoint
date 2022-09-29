@@ -2,11 +2,8 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/consent/consent_repository.dart';
 import 'package:tiki_sdk_dart/consent/consent_service.dart';
-import 'package:tiki_sdk_dart/consent/consent_model.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/ownership/ownership_model.dart';
 import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
@@ -77,7 +74,8 @@ void main() {
       ConsentModel? consentModel =
           consentService.getByOwnershipId(ownershipModelId);
       expect(consentModel == null, false);
-      expect(Bytes.memEquals(consentModel!.ownershipId, ownershipModelId), true);
+      expect(
+          Bytes.memEquals(consentModel!.ownershipId, ownershipModelId), true);
       expect(consentModel.destination.uses.contains('*'), true);
       expect(consentModel.destination.paths.contains('*'), true);
     });
@@ -100,7 +98,8 @@ void main() {
       ConsentModel? consentModel =
           consentService.getByOwnershipId(ownershipModelId);
       expect(consentModel == null, false);
-      expect(Bytes.memEquals(consentModel!.ownershipId, ownershipModelId), true);
+      expect(
+          Bytes.memEquals(consentModel!.ownershipId, ownershipModelId), true);
       expect(consentModel.destination.uses.contains('*'), false);
       expect(consentModel.destination.paths.contains('*'), false);
     });

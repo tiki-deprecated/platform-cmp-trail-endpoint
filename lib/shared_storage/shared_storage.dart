@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// 
+///
 import 'dart:io';
 import 'dart:typed_data';
 

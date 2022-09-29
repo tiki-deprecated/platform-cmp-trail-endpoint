@@ -10,7 +10,6 @@ import 'consent_repository.dart';
 
 /// The Consent NFT data structure
 class ConsentModel {
-
   /// Transaction ID corresponding to the ownership mint for the data source.
   Uint8List ownershipId;
 
@@ -50,7 +49,6 @@ class ConsentModel {
               : Uint8List.fromList(reward!.codeUnits))))
         .toBytes();
   }
-
 
   /// Deserializes the contents that was loaded from the blockchain.
   static ConsentModel deserialize(Uint8List serialized) {

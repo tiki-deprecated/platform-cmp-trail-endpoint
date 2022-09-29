@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// 
+///
 /// Handle Ownership NFTs.
 library ownership;
 

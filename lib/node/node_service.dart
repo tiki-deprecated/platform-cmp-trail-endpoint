@@ -44,7 +44,7 @@ class NodeService {
   ///
   /// The private key used for operations should be provided encoded in [primary].
   /// If no [primary] is provided, the service will create a new private key.
-  /// 
+  ///
   /// All the related chains addresses should be added to [readOnly] list as
   /// [base64Url] representation of the address. Those will be loaded during
   /// initialization.

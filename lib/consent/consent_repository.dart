@@ -17,12 +17,16 @@ class ConsentRepository {
 
   /// The table column for [ConsentModel.ownershipId]
   static const columnOwnershipId = 'ownershipId';
+
   /// The table column for [ConsentModel.destination]
   static const columnDestination = 'destination';
+
   /// The table column for [ConsentModel.about]
   static const columnAbout = 'about';
+
   /// The table column for [ConsentModel.reward]
   static const columnReward = 'reward';
+
   /// The table column for [ConsentModel.transactionId]
   static const columnTransactionId = 'transaction_id';
 
