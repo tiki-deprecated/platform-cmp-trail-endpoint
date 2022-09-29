@@ -15,7 +15,8 @@ enum TikiSdkDataTypeEnum {
         return type;
       }
     }
-    throw ArgumentError.value(value, 'value', 'Invaid TikiSdkDataTypeEnum value $value');
+    throw ArgumentError.value(
+        value, 'value', 'Invaid TikiSdkDataTypeEnum value $value');
   }
 
   final String val;

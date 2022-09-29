@@ -2,6 +2,8 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+
+/// The core of the Blockchain.
 library node;
 
 import 'dart:async';
@@ -40,18 +42,12 @@ class NodeService {
 
   /// Initialize the service
   ///
-  /// All the related chains addresses should be added to [addresses] list as
-  /// [base64Url] representation of the address.
-  ///
-  /// The first address in the [addresses] list for which [keyStorage] has a private
-  /// key is the one that will be used for read and write operations.
-  /// All the other ones are used in read-only mode, even if [keyStorage]
-  /// has its private key stored.
-  ///
-  /// The [apiKey] is used for remote backup connection. Please visit mytiki.com
-  /// to get yours. If no [apiKey] is provided or if the key is invalid, the node
-  /// will work in local mode only and will be not able to save the chain remotely
-  /// nor synchronize with other chains.
+  /// The private key used for operations should be provided encoded in [primary].
+  /// If no [primary] is provided, the service will create a new private key.
+  /// 
+  /// All the related chains addresses should be added to [readOnly] list as
+  /// [base64Url] representation of the address. Those will be loaded during
+  /// initialization.
   ///
   /// The [database] should be a [Database] instance, implemented in the host OS
   /// appropriate library. If no [database] is provided the SDK will use the OS
@@ -59,7 +55,7 @@ class NodeService {
   /// used for tests or thin clients with read-only operations. It is NOT RECOMMENDED
   /// for writing to the chain.
   ///
-  /// The [keyStorage] should be a [KeysInterface] implementation
+  /// The [keyStorage] should be a [KeyStorage] implementation
   /// using encrypted key-value storage, specifically for each host OS.
   /// It should not be accessed by other applications or users because it will
   /// store the private keys of the user, which is required for write operations
@@ -78,7 +74,7 @@ class NodeService {
   /// In other environments, use equivalent implementations of the recommended ones.
   ///
   /// The [NodeService] uses a internal [Timer] to build a new [BlockModel] every
-  /// [blkInterval]. The default value is 1 minute. If there are any [TransactionModel]
+  /// [blockInterval]. The default value is 1 minute. If there are any [TransactionModel]
   /// in the [database] that was not added to a [BlockModel] yet, it creates a new
   /// [BlockModel] if the last [TransactionModel] was created before 1 minute ago
   /// or if the total size of the serialized transactions is greater than 100kb.
@@ -106,7 +102,7 @@ class NodeService {
     return this;
   }
 
-  /// Creates a [TransactionModel] with the [contents] and save to local [database].
+  /// Creates a [TransactionModel] with the [contents] and save to local database.
   ///
   /// When a [TransactionModel] is created it is not added to the next block
   /// immediately. It needs to wait until the [_blkTimer] runs again to check if
@@ -123,6 +119,7 @@ class NodeService {
     return transaction;
   }
 
+  /// Gets a serialized block by its [id].
   Uint8List? getBlock(Uint8List id) {
     BlockModel? header = _blockService.get(id);
     if (header == null) return null;

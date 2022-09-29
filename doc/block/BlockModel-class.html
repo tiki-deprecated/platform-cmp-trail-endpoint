@@ -64,13 +64,13 @@ serialized version of it is used.</p>
 
     <dl class="constructor-summary-list">
         <dt id="BlockModel" class="callable">
-          <span class="name"><a href="../block/BlockModel/BlockModel.html">BlockModel</a></span><span class="signature">(<span class="parameter" id="-param-version">{<span class="type-annotation">int</span> <span class="parameter-name">version</span> = <span class="default-value">1</span>, </span><span class="parameter" id="-param-previousHash"><span>required</span> <span class="type-annotation">Uint8List</span> <span class="parameter-name">previousHash</span>, </span><span class="parameter" id="-param-transactionRoot"><span>required</span> <span class="type-annotation">Uint8List</span> <span class="parameter-name">transactionRoot</span>, </span><span class="parameter" id="-param-transactionCount"><span>required</span> <span class="type-annotation">int</span> <span class="parameter-name">transactionCount</span>, </span><span class="parameter" id="-param-timestamp"><span class="type-annotation">dynamic</span> <span class="parameter-name">timestamp</span>}</span>)</span>
+          <span class="name"><a href="../block/BlockModel/BlockModel.html">BlockModel</a></span><span class="signature">(<span class="parameter" id="-param-id">{<span class="type-annotation">Uint8List?</span> <span class="parameter-name">id</span>, </span><span class="parameter" id="-param-version"><span class="type-annotation">int</span> <span class="parameter-name">version</span> = <span class="default-value">1</span>, </span><span class="parameter" id="-param-previousHash"><span>required</span> <span class="type-annotation">Uint8List</span> <span class="parameter-name">previousHash</span>, </span><span class="parameter" id="-param-transactionRoot"><span>required</span> <span class="type-annotation">Uint8List</span> <span class="parameter-name">transactionRoot</span>, </span><span class="parameter" id="-param-timestamp"><span class="type-annotation">DateTime?</span> <span class="parameter-name">timestamp</span>}</span>)</span>
         </dt>
         <dd>
           Buils a new <a href="../block/BlockModel-class.html">BlockModel</a>.
         </dd>
         <dt id="BlockModel.deserialize" class="callable">
-          <span class="name"><a href="../block/BlockModel/BlockModel.deserialize.html">BlockModel.deserialize</a></span><span class="signature">(<span class="parameter" id="deserialize-param-serialized"><span class="type-annotation">Uint8List</span> <span class="parameter-name">serialized</span></span>)</span>
+          <span class="name"><a href="../block/BlockModel/BlockModel.deserialize.html">BlockModel.deserialize</a></span><span class="signature">(<span class="parameter" id="deserialize-param-block"><span class="type-annotation">Uint8List</span> <span class="parameter-name">block</span></span>)</span>
         </dt>
         <dd>
           Builds a <a href="../block/BlockModel-class.html">BlockModel</a> from a <code>serialized</code> list of bytes.
@@ -143,24 +143,13 @@ serialized version of it is used.</p>
 
 </dd>
 
-        <dt id="transactionCount" class="property">
-  <span class="name"><a href="../block/BlockModel/transactionCount.html">transactionCount</a></span>
-  <span class="signature">&#8596; int</span> 
-
-</dt>
-<dd>
-  The total number of <a href="../transaction/TransactionModel-class.html">TransactionModel</a> that are part of this.
-  <div class="features">read / write</div>
-
-</dd>
-
         <dt id="transactionRoot" class="property">
   <span class="name"><a href="../block/BlockModel/transactionRoot.html">transactionRoot</a></span>
   <span class="signature">&#8596; Uint8List</span> 
 
 </dt>
 <dd>
-  The <a href="../merkel_tree/MerkelTree/root.html">MerkelTree.root</a> of the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> hashes taht are part of this.
+  The <a href="../utils/MerkelTree/root.html">MerkelTree.root</a> of the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> hashes taht are part of this.
   <div class="features">read / write</div>
 
 </dd>
@@ -176,6 +165,17 @@ serialized version of it is used.</p>
 
 </dd>
 
+        <dt id="xchain" class="property">
+  <span class="name"><a href="../block/BlockModel/xchain.html">xchain</a></span>
+  <span class="signature">&#8596; Uint8List?</span> 
+
+</dt>
+<dd>
+  The xchain address for blocks retrieved from other chains.
+  <div class="features">read / write</div>
+
+</dd>
+
       </dl>
     </section>
 
@@ -185,19 +185,6 @@ serialized version of it is used.</p>
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="header" class="callable">
-  <span class="name"><a href="../block/BlockModel/header.html">header</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; Uint8List</span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates the <code>Uint8List</code> representation of the block header.
-  
-
-</dd>
-
         <dt id="noSuchMethod" class="callable inherited">
   <span class="name"><a href="../block/BlockModel/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation">Invocation</span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
@@ -212,14 +199,14 @@ serialized version of it is used.</p>
 </dd>
 
         <dt id="serialize" class="callable">
-  <span class="name"><a href="../block/BlockModel/serialize.html">serialize</a></span><span class="signature">(<wbr><span class="parameter" id="serialize-param-body"><span class="type-annotation">Uint8List</span> <span class="parameter-name">body</span></span>)
+  <span class="name"><a href="../block/BlockModel/serialize.html">serialize</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; Uint8List</span>
   </span>
   
 
 </dt>
 <dd>
-  Creates a <code>Uint8List</code> representation of the block.
+  Creates the <code>Uint8List</code> representation of the block header.
   
 
 </dd>
@@ -316,12 +303,11 @@ serialized version of it is used.</p>
     <li><a href="../block/BlockModel/previousHash.html">previousHash</a></li>
     <li class="inherited"><a href="../block/BlockModel/runtimeType.html">runtimeType</a></li>
     <li><a href="../block/BlockModel/timestamp.html">timestamp</a></li>
-    <li><a href="../block/BlockModel/transactionCount.html">transactionCount</a></li>
     <li><a href="../block/BlockModel/transactionRoot.html">transactionRoot</a></li>
     <li><a href="../block/BlockModel/version.html">version</a></li>
+    <li><a href="../block/BlockModel/xchain.html">xchain</a></li>
 
     <li class="section-title"><a href="../block/BlockModel-class.html#instance-methods">Methods</a></li>
-    <li><a href="../block/BlockModel/header.html">header</a></li>
     <li class="inherited"><a href="../block/BlockModel/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../block/BlockModel/serialize.html">serialize</a></li>
     <li><a href="../block/BlockModel/toString.html">toString</a></li>
@@ -341,7 +327,7 @@ serialized version of it is used.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

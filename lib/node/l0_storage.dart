@@ -4,12 +4,11 @@
  */
 import 'dart:typed_data';
 
-/// The service to use Wasabi object storage.
+/// The interface to implement L0 backup object storage.
 abstract class L0Storage {
   Future<Uint8List?> read(String path);
 
   Future<void> write(String path, Uint8List obj);
 
   Future<Map<String, Uint8List>> getAll(String address);
-
 }

@@ -62,7 +62,13 @@
 
     <dl class="constructor-summary-list">
         <dt id="OwnershipModel" class="callable">
-          <span class="name"><a href="../ownership/OwnershipModel/OwnershipModel.html">OwnershipModel</a></span><span class="signature">(<span class="parameter" id="-param-source">{<span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="-param-type"><span>required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> <span class="parameter-name">type</span>, </span><span class="parameter" id="-param-origin"><span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">origin</span>, </span><span class="parameter" id="-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span><span class="parameter" id="-param-path"><span class="type-annotation">String?</span> <span class="parameter-name">path</span>}</span>)</span>
+          <span class="name"><a href="../ownership/OwnershipModel/OwnershipModel.html">OwnershipModel</a></span><span class="signature">(<span class="parameter" id="-param-transactionId">{<span class="type-annotation">Uint8List?</span> <span class="parameter-name">transactionId</span>, </span><span class="parameter" id="-param-source"><span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="-param-types"><span>required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> <span class="parameter-name">types</span>, </span><span class="parameter" id="-param-origin"><span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">origin</span>, </span><span class="parameter" id="-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>}</span>)</span>
+        </dt>
+        <dd>
+          
+        </dd>
+        <dt id="OwnershipModel.fromMap" class="callable">
+          <span class="name"><a href="../ownership/OwnershipModel/OwnershipModel.fromMap.html">OwnershipModel.fromMap</a></span><span class="signature">(<span class="parameter" id="fromMap-param-map"><span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">map</span></span>)</span>
         </dt>
         <dd>
           
@@ -107,17 +113,6 @@
 
 </dd>
 
-        <dt id="path" class="property">
-  <span class="name"><a href="../ownership/OwnershipModel/path.html">path</a></span>
-  <span class="signature">&#8596; String?</span> 
-
-</dt>
-<dd>
-  The path to the ownership register in the chain
-  <div class="features">read / write</div>
-
-</dd>
-
         <dt id="runtimeType" class="property inherited">
   <span class="name"><a href="../ownership/OwnershipModel/runtimeType.html">runtimeType</a></span>
   <span class="signature">&#8594; Type</span> 
@@ -135,14 +130,14 @@
 
 </dt>
 <dd>
-  The identification of the data potin, pool or stream.
+  The identification of the data point, pool or stream.
   <div class="features">read / write</div>
 
 </dd>
 
         <dt id="transactionId" class="property">
   <span class="name"><a href="../ownership/OwnershipModel/transactionId.html">transactionId</a></span>
-  <span class="signature">&#8596; String</span> 
+  <span class="signature">&#8596; Uint8List?</span> 
 
 </dt>
 <dd>
@@ -151,8 +146,8 @@
 
 </dd>
 
-        <dt id="type" class="property">
-  <span class="name"><a href="../ownership/OwnershipModel/type.html">type</a></span>
+        <dt id="types" class="property">
+  <span class="name"><a href="../ownership/OwnershipModel/types.html">types</a></span>
   <span class="signature">&#8596; List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> 
 
 </dt>
@@ -167,7 +162,7 @@
 
     
   <section
-      class="summary offset-anchor inherited"
+      class="summary offset-anchor"
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
@@ -181,6 +176,19 @@
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
   <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="serialize" class="callable">
+  <span class="name"><a href="../ownership/OwnershipModel/serialize.html">serialize</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; Uint8List</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Serializes the contents to be recorded in the blockchain.
+  
 
 </dd>
 
@@ -222,6 +230,24 @@
   </section>
     
     
+  <section class="summary offset-anchor" id="static-methods">
+    <h2>Static Methods</h2>
+    <dl class="callables">
+        <dt id="deserialize" class="callable">
+  <span class="name"><a href="../ownership/OwnershipModel/deserialize.html">deserialize</a></span><span class="signature">(<wbr><span class="parameter" id="deserialize-param-serialized"><span class="type-annotation">Uint8List</span> <span class="parameter-name">serialized</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Deserializes the contents that was loaded from the blockchain.
+  
+
+</dd>
+
+    </dl>
+  </section>
     
 
 
@@ -264,6 +290,7 @@
 
         <li class="section-title"><a href="../ownership/OwnershipModel-class.html#constructors">Constructors</a></li>
           <li><a href="../ownership/OwnershipModel/OwnershipModel.html">OwnershipModel</a></li>
+          <li><a href="../ownership/OwnershipModel/OwnershipModel.fromMap.html">fromMap</a></li>
 
 
     <li class="section-title">
@@ -272,14 +299,14 @@
     <li><a href="../ownership/OwnershipModel/about.html">about</a></li>
     <li class="inherited"><a href="../ownership/OwnershipModel/hashCode.html">hashCode</a></li>
     <li><a href="../ownership/OwnershipModel/origin.html">origin</a></li>
-    <li><a href="../ownership/OwnershipModel/path.html">path</a></li>
     <li class="inherited"><a href="../ownership/OwnershipModel/runtimeType.html">runtimeType</a></li>
     <li><a href="../ownership/OwnershipModel/source.html">source</a></li>
     <li><a href="../ownership/OwnershipModel/transactionId.html">transactionId</a></li>
-    <li><a href="../ownership/OwnershipModel/type.html">type</a></li>
+    <li><a href="../ownership/OwnershipModel/types.html">types</a></li>
 
-    <li class="section-title inherited"><a href="../ownership/OwnershipModel-class.html#instance-methods">Methods</a></li>
+    <li class="section-title"><a href="../ownership/OwnershipModel-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="../ownership/OwnershipModel/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../ownership/OwnershipModel/serialize.html">serialize</a></li>
     <li class="inherited"><a href="../ownership/OwnershipModel/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../ownership/OwnershipModel-class.html#operators">Operators</a></li>
@@ -287,6 +314,8 @@
 
 
 
+        <li class="section-title"><a href="../ownership/OwnershipModel-class.html#static-methods">Static methods</a></li>
+          <li><a href="../ownership/OwnershipModel/deserialize.html">deserialize</a></li>
 
 </ol>
 
@@ -297,7 +326,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

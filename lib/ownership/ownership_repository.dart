@@ -35,6 +35,7 @@ class OwnershipRepository {
   OwnershipRepository(this._db) {
     _createTable();
   }
+
   /// Creates the [OwnershipRepository.table] if it does not exist.
   void _createTable() => _db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
@@ -66,10 +67,11 @@ class OwnershipRepository {
   }
 
   /// Gets all [OwnerShipModel] stored in local database.
-   List<OwnershipModel> getAll() => _select();
+  List<OwnershipModel> getAll() => _select();
 
   OwnershipModel? getById(Uint8List id) {
-    List<OwnershipModel> ownerships = _select(whereStmt: "WHERE $columnTransactionId = x'${Bytes.hexEncode(id)}'");
+    List<OwnershipModel> ownerships = _select(
+        whereStmt: "WHERE $columnTransactionId = x'${Bytes.hexEncode(id)}'");
     return ownerships.isNotEmpty ? ownerships.first : null;
   }
 
@@ -89,7 +91,8 @@ class OwnershipRepository {
     List<OwnershipModel> ownerships = [];
     for (final Row row in results) {
       List<TikiSdkDataTypeEnum> types = (json.decode(row[columnTypes]))
-          .map<TikiSdkDataTypeEnum>((s) => TikiSdkDataTypeEnum.fromValue(s)).toList();
+          .map<TikiSdkDataTypeEnum>((s) => TikiSdkDataTypeEnum.fromValue(s))
+          .toList();
       Map<String, dynamic> map = {
         columnTransactionId: row[columnTransactionId],
         columnSource: row[columnSource],
@@ -102,5 +105,4 @@ class OwnershipRepository {
     }
     return ownerships;
   }
-
 }

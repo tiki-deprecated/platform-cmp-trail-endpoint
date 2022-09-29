@@ -50,8 +50,8 @@
 </h1></div>
 
     <section class="multi-line-signature">
-      <span class="name ">XchainModel</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-publicKey"><span class="type-annotation">Uint8List</span> <span class="parameter-name">publicKey</span>, </span></li>
-<li><span class="parameter" id="-param-lastBlock">{<span class="type-annotation">Uint8List?</span> <span class="parameter-name">lastBlock</span>}</span></li>
+      <span class="name ">XchainModel</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-publicKey"><span class="type-annotation"><a href="../../utils/RsaPublicKey-class.html">RsaPublicKey</a></span> <span class="parameter-name">publicKey</span>, </span></li>
+<li><span class="parameter" id="-param-lastBlock">{<span class="type-annotation">dynamic</span> <span class="parameter-name">lastBlock</span>}</span></li>
 </ol>)
     </section>
 
@@ -59,15 +59,16 @@
 <section class="desc markdown">
   <p>Builds a <a href="../../xchain/XchainModel-class.html">XchainModel</a> from its <a href="../../xchain/XchainModel/publicKey.html">publicKey</a>.</p>
 <p>The <a href="../../xchain/XchainModel/address.html">address</a> is derived from the <a href="../../xchain/XchainModel/publicKey.html">publicKey</a> using the SHA3-256 hash.
-If the chain was not synced yet, <a href="../../xchain/XchainModel/lastBlock.html">lastBlock</a> should be null.</p>
+If the chain was not synced yet, <code>lastBlock</code> should be null.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">XchainModel(this.publicKey, {this.lastBlock})
-    : address = base64.encode(Digest(&quot;SHA3-256&quot;).process(publicKey));</code></pre>
+  <pre class="language-dart"><code class="language-dart">XchainModel(this.publicKey, {lastBlock})
+    : address = Digest(&quot;SHA3-256&quot;).process(base64.decode(publicKey.encode())),
+      lastBlock = lastBlock ?? Uint8List(1);</code></pre>
 </section>
 
 
@@ -127,7 +128,7 @@ If the chain was not synced yet, <a href="../../xchain/XchainModel/lastBlock.htm
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

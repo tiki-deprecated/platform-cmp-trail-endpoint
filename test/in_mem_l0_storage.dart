@@ -20,11 +20,11 @@ class InMemL0Storage implements L0Storage {
 
   @override
   Future<void> write(String path, Uint8List obj) async {
-      List<String> paths = path.split('/');
-      String address = paths[0];
-      String id = paths[1];
-      if (storage[address] == null) storage[address] = {};
-      storage[address]![id] = obj;
+    List<String> paths = path.split('/');
+    String address = paths[0];
+    String id = paths[1];
+    if (storage[address] == null) storage[address] = {};
+    storage[address]![id] = obj;
   }
 
   @override

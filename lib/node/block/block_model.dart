@@ -106,7 +106,7 @@ class BlockModel {
         .toBytes();
     Uint8List serializedPreviousHash = previousHash;
     Uint8List serializedTransactionRoot = transactionRoot;
-    
+
     return (BytesBuilder()
           ..add(CompactSize.encode(serializedVersion))
           ..add(CompactSize.encode(serializedTimestamp))

@@ -43,7 +43,8 @@ class TransactionService {
 
   /// Commits a [TransactionModel] by persisting its its [TransactionModel.block]
   /// and [TransactionModel.merkelProof] values.
-  void commit(Uint8List transactionId, BlockModel block, Uint8List merkelProof) {
+  void commit(
+      Uint8List transactionId, BlockModel block, Uint8List merkelProof) {
     _repository.commit(transactionId, block, merkelProof);
   }
 
@@ -91,8 +92,9 @@ class TransactionService {
     for (int i = 0; i < serializedTransactions.length; i++) {
       TransactionModel txn =
           TransactionModel.deserialize(serializedTransactions[i]);
-      if (!validateIntegrity(txn)){
-        throw Exception('Corrupted transaction $txn');}
+      if (!validateIntegrity(txn)) {
+        throw Exception('Corrupted transaction $txn');
+      }
       txns.add(txn);
     }
     return txns;

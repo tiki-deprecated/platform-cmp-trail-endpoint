@@ -50,7 +50,8 @@
 </h1></div>
 
     <section class="multi-line-signature">
-      <span class="name ">ConsentService</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-db"><span class="type-annotation">dynamic</span> <span class="parameter-name">db</span></span></li>
+      <span class="name ">ConsentService</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-db"><span class="type-annotation">dynamic</span> <span class="parameter-name">db</span>, </span></li>
+<li><span class="parameter" id="-param-_nodeService"><span class="type-annotation"><a href="../../node/NodeService-class.html">NodeService</a></span> <span class="parameter-name">_nodeService</span></span></li>
 </ol>)
     </section>
 
@@ -60,7 +61,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ConsentService(db) : consentRepository = ConsentRepository(db);</code></pre>
+  <pre class="language-dart"><code class="language-dart">ConsentService(db, this._nodeService) : _repository = ConsentRepository(db);</code></pre>
 </section>
 
 
@@ -88,16 +89,15 @@
           <li><a href="../../consent/ConsentService/ConsentService.html">ConsentService</a></li>
 
 
-    <li class="section-title">
+    <li class="section-title inherited">
       <a href="../../consent/ConsentService-class.html#instance-properties">Properties</a>
     </li>
-    <li><a href="../../consent/ConsentService/consentRepository.html">consentRepository</a></li>
     <li class="inherited"><a href="../../consent/ConsentService/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../../consent/ConsentService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../consent/ConsentService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../consent/ConsentService/isGranted.html">isGranted</a></li>
-    <li><a href="../../consent/ConsentService/modifyConsent.html">modifyConsent</a></li>
+    <li><a href="../../consent/ConsentService/create.html">create</a></li>
+    <li><a href="../../consent/ConsentService/getByOwnershipId.html">getByOwnershipId</a></li>
     <li class="inherited"><a href="../../consent/ConsentService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../consent/ConsentService/toString.html">toString</a></li>
 
@@ -119,7 +119,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

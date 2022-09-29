@@ -51,7 +51,7 @@
 
     
 <section class="desc markdown">
-  <p>The service to handle <a href="../xchain/XchainModel-class.html">XchainModel</a> references and updates.</p>
+  <p>The service to handle cross chain references and updates.</p>
 </section>
 
 
@@ -62,7 +62,7 @@
 
     <dl class="constructor-summary-list">
         <dt id="XchainService" class="callable">
-          <span class="name"><a href="../xchain/XchainService/XchainService.html">XchainService</a></span><span class="signature">(<span class="parameter" id="-param-db"><span class="type-annotation">Database</span> <span class="parameter-name">db</span></span>)</span>
+          <span class="name"><a href="../xchain/XchainService/XchainService.html">XchainService</a></span><span class="signature">(<span class="parameter" id="-param-db"><span class="type-annotation">Database</span> <span class="parameter-name">db</span>, </span><span class="parameter" id="-param-_l0storage"><span class="type-annotation">L0Storage</span> <span class="parameter-name">_l0storage</span></span>)</span>
         </dt>
         <dd>
           
@@ -105,15 +105,41 @@
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="add" class="callable">
-  <span class="name"><a href="../xchain/XchainService/add.html">add</a></span><span class="signature">(<wbr><span class="parameter" id="add-param-publicKey"><span class="type-annotation">String</span> <span class="parameter-name">publicKey</span></span>)
-    <span class="returntype parameter">&#8594; void</span>
+        <dt id="get" class="callable">
+  <span class="name"><a href="../xchain/XchainService/get.html">get</a></span><span class="signature">(<wbr><span class="parameter" id="get-param-address"><span class="type-annotation">Uint8List</span> <span class="parameter-name">address</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../xchain/XchainModel-class.html">XchainModel</a>?</span>
   </span>
   
 
 </dt>
 <dd>
-  Adds a new Xchain by <code>publicKey</code> base64 representation.
+  Gets a xchain from local database.
+  
+
+</dd>
+
+        <dt id="loadKey" class="callable">
+  <span class="name"><a href="../xchain/XchainService/loadKey.html">loadKey</a></span><span class="signature">(<wbr><span class="parameter" id="loadKey-param-address"><span class="type-annotation">Uint8List</span> <span class="parameter-name">address</span></span>)
+    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../xchain/XchainModel-class.html">XchainModel</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds a new Xchain by its <code>address</code>.
+  
+
+</dd>
+
+        <dt id="loadXchain" class="callable">
+  <span class="name"><a href="../xchain/XchainService/loadXchain.html">loadXchain</a></span><span class="signature">(<wbr><span class="parameter" id="loadXchain-param-xchain"><span class="type-annotation"><a href="../xchain/XchainModel-class.html">XchainModel</a></span> <span class="parameter-name">xchain</span>, </span><span class="parameter" id="loadXchain-param-skip">{<span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">skip</span> = <span class="default-value">const []</span>}</span>)
+    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">Map<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../block/BlockModel-class.html">BlockModel</a></span>, <span class="type-parameter">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Deserializes and persists all the blocks from the xchain into database.
   
 
 </dd>
@@ -145,7 +171,7 @@
 </dd>
 
         <dt id="update" class="callable">
-  <span class="name"><a href="../xchain/XchainService/update.html">update</a></span><span class="signature">(<wbr><span class="parameter" id="update-param-address"><span class="type-annotation">String</span> <span class="parameter-name">address</span>, </span><span class="parameter" id="update-param-lastBlock"><span class="type-annotation">Uint8List</span> <span class="parameter-name">lastBlock</span></span>)
+  <span class="name"><a href="../xchain/XchainService/update.html">update</a></span><span class="signature">(<wbr><span class="parameter" id="update-param-address"><span class="type-annotation">Uint8List</span> <span class="parameter-name">address</span>, </span><span class="parameter" id="update-param-lastBlock"><span class="type-annotation">Uint8List</span> <span class="parameter-name">lastBlock</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -233,7 +259,9 @@
     <li class="inherited"><a href="../xchain/XchainService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../xchain/XchainService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../xchain/XchainService/add.html">add</a></li>
+    <li><a href="../xchain/XchainService/get.html">get</a></li>
+    <li><a href="../xchain/XchainService/loadKey.html">loadKey</a></li>
+    <li><a href="../xchain/XchainService/loadXchain.html">loadXchain</a></li>
     <li class="inherited"><a href="../xchain/XchainService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../xchain/XchainService/toString.html">toString</a></li>
     <li><a href="../xchain/XchainService/update.html">update</a></li>
@@ -253,7 +281,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

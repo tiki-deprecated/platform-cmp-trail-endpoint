@@ -76,8 +76,8 @@
 String toString() {
   return &#39;&#39;&#39;XchainModel
     address : $address,
-    publicKey : ${base64.encode(publicKey)},
-    lastBlock : ${lastBlock == null ? &#39;null&#39; : base64.encode(lastBlock!)},
+    publicKey : $publicKey,
+    lastBlock : $lastBlock,
   &#39;&#39;&#39;;
 }</code></pre>
 </section>
@@ -139,7 +139,7 @@ String toString() {
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   
