@@ -34,7 +34,7 @@ class ConsentService {
     TransactionModel transaction = await _nodeService.write(contents);
     consentModel.transactionId = transaction.id!;
     _repository.save(consentModel);
-    return _repository.getByOwnershipId(ownershipId)!.transactionId!;
+    return consentModel.transactionId!;
   }
 
   /// Gets a consent by its [ownershipId].
