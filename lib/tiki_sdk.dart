@@ -7,8 +7,8 @@ library tiki_sdk_dart;
 export 'tiki_sdk_data_type_enum.dart';
 export 'tiki_sdk_destination.dart';
 
-import 'tiki_sdk_data_type_enum.dart' as type_enum;
-import 'tiki_sdk_destination.dart' as destination;
+import 'tiki_sdk_data_type_enum.dart';
+import 'tiki_sdk_destination.dart';
 
 class TikiSdk {
   /// The origin that will be used as default origin for all ownership
@@ -44,7 +44,7 @@ class TikiSdk {
   /// the referenced data. Optionally, the [origin] can be overridden
   /// for the specific ownership grant.
   Future<String> grantOwnership(
-      String data, List<type_enum.TikiSdkDataTypeEnum> types,
+      String data, List<TikiSdkDataTypeEnum> types,
       {String? origin}) {
     throw UnimplementedError();
   }
@@ -54,7 +54,7 @@ class TikiSdk {
   /// Meaning all requests will be denied by default unless the
   /// destination is explicitly defined in [destinations].
   Future<String> modifyConsent(
-      String data, List<destination.TikiSdkDestination> destinations) {
+      String data, List<TikiSdkDestination> destinations) {
     throw UnimplementedError();
   }
 
@@ -62,7 +62,7 @@ class TikiSdk {
   /// If consent exists for the destination, [request] will be
   /// executed. Else [onBlocked] is called.
   Future<void> applyConsent(
-      String data, destination.TikiSdkDestination destination, Function request,
+      String data, TikiSdkDestination destination, Function request,
       {void Function(String)? onBlocked}) {
     throw UnimplementedError();
   }
