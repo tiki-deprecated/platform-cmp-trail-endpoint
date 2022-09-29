@@ -5,8 +5,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category SDK}
+import 'dart:typed_data';
+
 import 'package:sqlite3/sqlite3.dart';
 import '../ownership/ownership_model.dart';
+import '../utils/bytes.dart';
 import 'cosent_model.dart';
 
 /// The repository for [ConsentModel] persistence.
@@ -34,8 +37,8 @@ class ConsentRepository {
      $columnAssetRef TEXT,
      $columnDestination TEXT,
      $columnAbout TEXT,
-     $columnReward TEXT
-     $columnTransactionId TEXT,
+     $columnReward TEXT,
+     $columnTransactionId TEXT
       );
     ''');
 
@@ -53,11 +56,11 @@ class ConsentRepository {
   }
 
   /// Gets the [OwnerShipModel] for [source] and [origin] in database.
-  List<ConsentModel> getByOwnership(OwnershipModel ownership) {
-    String where = "WHERE $columnAssetRef = ?";
+  ConsentModel? getByOwnershipId(Uint8List ownershipId) {
+    String where = "WHERE $columnAssetRef = x'${Bytes.hexEncode(ownershipId)}' ORDER BY $table.oid DESC LIMIT 1";
     List<ConsentModel> consents =
-        _select(whereStmt: where, params: [ownership.transactionId]);
-    return consents;
+        _select(whereStmt: where, params: []);
+    return consents.isNotEmpty ? consents.first : null;
   }
 
   List<ConsentModel> _select({String? whereStmt, List params = const []}) {
