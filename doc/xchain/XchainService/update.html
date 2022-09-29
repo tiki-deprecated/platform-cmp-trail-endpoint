@@ -53,7 +53,7 @@
       
 
 <span class="returntype">void</span>
-<span class="name ">update</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="update-param-address"><span class="type-annotation">String</span> <span class="parameter-name">address</span>, </span></li>
+<span class="name ">update</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="update-param-address"><span class="type-annotation">Uint8List</span> <span class="parameter-name">address</span>, </span></li>
 <li><span class="parameter" id="update-param-lastBlock"><span class="type-annotation">Uint8List</span> <span class="parameter-name">lastBlock</span></span></li>
 </ol>)
 
@@ -69,9 +69,8 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void update(String address, Uint8List lastBlock) {
-  throw UnimplementedError();
-}</code></pre>
+  <pre class="language-dart"><code class="language-dart">void update(Uint8List address, Uint8List lastBlock) =&gt;
+    _repository.update(address, lastBlock);</code></pre>
 </section>
 
 
@@ -106,7 +105,9 @@
     <li class="inherited"><a href="../../xchain/XchainService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../xchain/XchainService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../xchain/XchainService/add.html">add</a></li>
+    <li><a href="../../xchain/XchainService/get.html">get</a></li>
+    <li><a href="../../xchain/XchainService/loadKey.html">loadKey</a></li>
+    <li><a href="../../xchain/XchainService/loadXchain.html">loadXchain</a></li>
     <li class="inherited"><a href="../../xchain/XchainService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../xchain/XchainService/toString.html">toString</a></li>
     <li><a href="../../xchain/XchainService/update.html">update</a></li>
@@ -129,7 +130,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

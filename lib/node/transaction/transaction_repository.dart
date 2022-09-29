@@ -88,7 +88,8 @@ class TransactionRepository {
 
   /// Commits the [transaction] by saving its [TransactionModel.merkelProof] and
   /// [TransactionModel.block]
-  void commit(Uint8List id, BlockModel block, Uint8List proof) => _db.execute('''
+  void commit(Uint8List id, BlockModel block, Uint8List proof) =>
+      _db.execute('''
     UPDATE $table 
     SET $columnMerkelProof = x'${Bytes.hexEncode(proof)}', 
     $columnBlockId =  x'${Bytes.hexEncode(block.id!)}' 
@@ -100,6 +101,7 @@ class TransactionRepository {
           ? 'WHERE $columnBlockId IS NULL'
           : "WHERE $columnBlockId = x'${Bytes.hexEncode(id)}'");
 
+  /// Gets a [TransactionModel] by its [id]
   TransactionModel? getById(Uint8List id) {
     List<TransactionModel> txns = _select(
         whereStmt: "WHERE $table.$columnId = x'${Bytes.hexEncode(id)}'");

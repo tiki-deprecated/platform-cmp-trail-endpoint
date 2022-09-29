@@ -59,8 +59,8 @@ class XchainRepository {
 
   /// Gets a xchain by its address.
   XchainModel? get(Uint8List address) {
-    List<XchainModel> results =
-        _select(whereStmt: "WHERE $columnAddress = x'${Bytes.hexEncode(address)}'");
+    List<XchainModel> results = _select(
+        whereStmt: "WHERE $columnAddress = x'${Bytes.hexEncode(address)}'");
     return results.isNotEmpty ? results.single : null;
   }
 

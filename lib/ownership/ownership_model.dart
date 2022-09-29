@@ -42,6 +42,7 @@ class OwnershipModel {
         about = map[OwnershipRepository.columnAbout],
         transactionId = map[OwnershipRepository.columnTransactionId];
 
+  /// Serializes the contents to be recorded in the blockchain.
   Uint8List serialize() {
     String jsonTypes = jsonEncode(
         types.map<String>((TikiSdkDataTypeEnum t) => t.val).toList());
@@ -55,14 +56,16 @@ class OwnershipModel {
         .toBytes();
   }
 
+  /// Deserializes the contents that was loaded from the blockchain.
   static OwnershipModel deserialize(Uint8List serialized) {
     List<Uint8List> unserialized = CompactSize.decode(serialized);
     return OwnershipModel(
         source: String.fromCharCodes(unserialized[0]),
         types: jsonDecode(String.fromCharCodes(unserialized[1]))
-            .map<TikiSdkDataTypeEnum>((val) => TikiSdkDataTypeEnum.fromValue(val)).toList(),
+            .map<TikiSdkDataTypeEnum>(
+                (val) => TikiSdkDataTypeEnum.fromValue(val))
+            .toList(),
         origin: String.fromCharCodes(unserialized[2]),
         about: String.fromCharCodes(unserialized[3]));
   }
-
 }

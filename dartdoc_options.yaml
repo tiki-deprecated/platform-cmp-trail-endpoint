@@ -5,6 +5,8 @@ dartdoc:
     keys,
     metadata,
     node,
+    ownership,
+    consent,
     transaction,
     utils,
     xchain,

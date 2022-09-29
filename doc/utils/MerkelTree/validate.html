@@ -85,7 +85,7 @@
         .toBytes());
   }
   if (proof.length &gt; 33) return validate(hash, proof.sublist(33), root);
-  return UtilsBytes.memEquals(hash, root);
+  return Bytes.memEquals(hash, root);
 }</code></pre>
 </section>
 
@@ -148,7 +148,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.4
   </span>
 
   

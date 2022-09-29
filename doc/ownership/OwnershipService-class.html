@@ -62,7 +62,7 @@
 
     <dl class="constructor-summary-list">
         <dt id="OwnershipService" class="callable">
-          <span class="name"><a href="../ownership/OwnershipService/OwnershipService.html">OwnershipService</a></span><span class="signature">(<span class="parameter" id="-param-_origin"><span class="type-annotation">String</span> <span class="parameter-name">_origin</span>, </span><span class="parameter" id="-param-db"><span class="type-annotation">dynamic</span> <span class="parameter-name">db</span></span>)</span>
+          <span class="name"><a href="../ownership/OwnershipService/OwnershipService.html">OwnershipService</a></span><span class="signature">(<span class="parameter" id="-param-_defaultOrigin"><span class="type-annotation">String</span> <span class="parameter-name">_defaultOrigin</span>, </span><span class="parameter" id="-param-nodeService"><span class="type-annotation"><a href="../node/NodeService-class.html">NodeService</a></span> <span class="parameter-name">nodeService</span>, </span><span class="parameter" id="-param-db"><span class="type-annotation">dynamic</span> <span class="parameter-name">db</span></span>)</span>
         </dt>
         <dd>
           
@@ -85,9 +85,9 @@
 
 </dd>
 
-        <dt id="ownershipRepository" class="property">
-  <span class="name"><a href="../ownership/OwnershipService/ownershipRepository.html">ownershipRepository</a></span>
-  <span class="signature">&#8594; <a href="../ownership/OwnershipRepository-class.html">OwnershipRepository</a></span> 
+        <dt id="nodeService" class="property">
+  <span class="name"><a href="../ownership/OwnershipService/nodeService.html">nodeService</a></span>
+  <span class="signature">&#8594; <a href="../node/NodeService-class.html">NodeService</a></span> 
 
 </dt>
 <dd>
@@ -116,15 +116,41 @@
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="checkOwnership" class="callable">
-  <span class="name"><a href="../ownership/OwnershipService/checkOwnership.html">checkOwnership</a></span><span class="signature">(<wbr><span class="parameter" id="checkOwnership-param-address"><span class="type-annotation">String</span> <span class="parameter-name">address</span>, </span><span class="parameter" id="checkOwnership-param-source"><span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="checkOwnership-param-origin">{<span class="type-annotation">String?</span> <span class="parameter-name">origin</span>}</span>)
+        <dt id="create" class="callable">
+  <span class="name"><a href="../ownership/OwnershipService/create.html">create</a></span><span class="signature">(<wbr><span class="parameter" id="create-param-source">{<span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="create-param-types"><span>required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> <span class="parameter-name">types</span>, </span><span class="parameter" id="create-param-origin"><span class="type-annotation">String?</span> <span class="parameter-name">origin</span>, </span><span class="parameter" id="create-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>}</span>)
+    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">Uint8List</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a ownership register in the blockchain.
+  
+
+</dd>
+
+        <dt id="getAll" class="callable">
+  <span class="name"><a href="../ownership/OwnershipService/getAll.html">getAll</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ownership/OwnershipModel-class.html">OwnershipModel</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="getById" class="callable">
+  <span class="name"><a href="../ownership/OwnershipService/getById.html">getById</a></span><span class="signature">(<wbr><span class="parameter" id="getById-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span></span>)
     <span class="returntype parameter">&#8594; <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a>?</span>
   </span>
   
 
 </dt>
 <dd>
-  Checks if an <code>address</code> has <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a> over a <code>source</code> and <code>origin</code>.
+  
   
 
 </dd>
@@ -137,7 +163,7 @@
 
 </dt>
 <dd>
-  Gets a <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a> by its <code>source</code> and <code>origin</code>.
+  Gets a <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a> by its <code>source</code> and <code>origin</code> from local database.
   
 
 </dd>
@@ -155,19 +181,6 @@
 
 </dd>
 
-        <dt id="registerOwnership" class="callable">
-  <span class="name"><a href="../ownership/OwnershipService/registerOwnership.html">registerOwnership</a></span><span class="signature">(<wbr><span class="parameter" id="registerOwnership-param-source">{<span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="registerOwnership-param-type"><span>required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> <span class="parameter-name">type</span>, </span><span class="parameter" id="registerOwnership-param-origin"><span class="type-annotation">String?</span> <span class="parameter-name">origin</span>, </span><span class="parameter" id="registerOwnership-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>}</span>)
-    <span class="returntype parameter">&#8594; void</span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates a ownership register in the blockchain.
-  
-
-</dd>
-
         <dt id="toString" class="callable inherited">
   <span class="name"><a href="../ownership/OwnershipService/toString.html">toString</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; String</span>
@@ -178,19 +191,6 @@
 <dd class="inherited">
   A string representation of this object.
   <div class="features">inherited</div>
-
-</dd>
-
-        <dt id="updatePending" class="callable">
-  <span class="name"><a href="../ownership/OwnershipService/updatePending.html">updatePending</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; void</span>
-  </span>
-  
-
-</dt>
-<dd>
-  Updates the <a href="../ownership/OwnershipModel/path.html">OwnershipModel.path</a> of pending <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a>.
-  
 
 </dd>
 
@@ -267,16 +267,16 @@
       <a href="../ownership/OwnershipService-class.html#instance-properties">Properties</a>
     </li>
     <li class="inherited"><a href="../ownership/OwnershipService/hashCode.html">hashCode</a></li>
-    <li><a href="../ownership/OwnershipService/ownershipRepository.html">ownershipRepository</a></li>
+    <li><a href="../ownership/OwnershipService/nodeService.html">nodeService</a></li>
     <li class="inherited"><a href="../ownership/OwnershipService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../ownership/OwnershipService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../ownership/OwnershipService/checkOwnership.html">checkOwnership</a></li>
+    <li><a href="../ownership/OwnershipService/create.html">create</a></li>
+    <li><a href="../ownership/OwnershipService/getAll.html">getAll</a></li>
+    <li><a href="../ownership/OwnershipService/getById.html">getById</a></li>
     <li><a href="../ownership/OwnershipService/getBySource.html">getBySource</a></li>
     <li class="inherited"><a href="../ownership/OwnershipService/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../ownership/OwnershipService/registerOwnership.html">registerOwnership</a></li>
     <li class="inherited"><a href="../ownership/OwnershipService/toString.html">toString</a></li>
-    <li><a href="../ownership/OwnershipService/updatePending.html">updatePending</a></li>
 
     <li class="section-title inherited"><a href="../ownership/OwnershipService-class.html#operators">Operators</a></li>
     <li class="inherited"><a href="../ownership/OwnershipService/operator_equals.html">operator ==</a></li>
@@ -293,7 +293,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

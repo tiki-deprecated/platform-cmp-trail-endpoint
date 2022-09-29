@@ -73,6 +73,7 @@ class BackupRepository {
   List<BackupModel> getPending() =>
       _select(whereStmt: 'WHERE $columnTimestamp IS NULL');
 
+  /// Gets a backup registry by its path.
   BackupModel? getByPath(String path) {
     List<BackupModel> bkups = _select(whereStmt: "WHERE $columnPath = '$path'");
     return bkups.isNotEmpty ? bkups.first : null;

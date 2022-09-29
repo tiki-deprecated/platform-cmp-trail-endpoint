@@ -1,10 +1,10 @@
-// ignore_for_file: unused_field
-
 /*
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category SDK}
+///
+/// Handle Ownership NFTs.
+library ownership;
 
 import 'dart:typed_data';
 
@@ -12,6 +12,9 @@ import '../node/node_service.dart';
 import '../tiki_sdk.dart';
 import 'ownership_model.dart';
 import 'ownership_repository.dart';
+
+export 'ownership_model.dart';
+export 'ownership_repository.dart';
 
 /// The service to manage ownership registries.
 class OwnershipService {
@@ -28,9 +31,8 @@ class OwnershipService {
   /// Creates a ownership register in the blockchain.
   ///
   /// This method creates a new transcation that will be commited in the
-  /// next block in the chain. The [OwnershipModel.path] will be null until
-  /// the transaction is commited through [updatePending].
-  /// If no [origin] is provided the default [_origin] will be used
+  /// next block in the chain.
+  /// If no [origin] is provided the default [origin] will be used
   Future<Uint8List> create(
       {required String source,
       required List<TikiSdkDataTypeEnum> types,
@@ -59,6 +61,7 @@ class OwnershipService {
   OwnershipModel? getBySource(String source, {String? origin}) =>
       _repository.getBySource(source, origin ?? _defaultOrigin);
 
-  OwnershipModel? getById(Uint8List id) =>
-      _repository.getById(id);
+  OwnershipModel? getById(Uint8List id) => _repository.getById(id);
+
+  List<OwnershipModel> getAll() => _repository.getAll();
 }

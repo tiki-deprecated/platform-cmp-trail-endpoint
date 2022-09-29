@@ -50,7 +50,7 @@
 </h1></div>
 
     <section class="multi-line-signature">
-      <span class="name ">BlockModel.deserialize</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="deserialize-param-serialized"><span class="type-annotation">Uint8List</span> <span class="parameter-name">serialized</span></span></li>
+      <span class="name ">BlockModel.deserialize</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="deserialize-param-block"><span class="type-annotation">Uint8List</span> <span class="parameter-name">block</span></span></li>
 </ol>)
     </section>
 
@@ -64,19 +64,14 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">BlockModel.deserialize(Uint8List serialized) {
-  List&lt;Uint8List&gt; extractedBlockBytes = compact_size.decode(serialized);
-  version = decodeBigInt(extractedBlockBytes[0]).toInt();
+  <pre class="language-dart"><code class="language-dart">BlockModel.deserialize(Uint8List block) {
+  List&lt;Uint8List&gt; extractedBlockBytes = CompactSize.decode(block);
+  version = Bytes.decodeBigInt(extractedBlockBytes[0]).toInt();
   timestamp = DateTime.fromMillisecondsSinceEpoch(
-      decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
+      Bytes.decodeBigInt(extractedBlockBytes[1]).toInt() * 1000);
   previousHash = extractedBlockBytes[2];
   transactionRoot = extractedBlockBytes[3];
-  transactionCount = decodeBigInt(extractedBlockBytes[4]).toInt();
-  if (extractedBlockBytes.sublist(5).length != transactionCount) {
-    throw Exception(
-        &#39;Invalid transaction count. Expected $transactionCount. Got ${extractedBlockBytes.sublist(5).length}&#39;);
-  }
-  id = Digest(&quot;SHA3-256&quot;).process(header());
+  id = Digest(&quot;SHA3-256&quot;).process(serialize());
 }</code></pre>
 </section>
 
@@ -115,12 +110,11 @@
     <li><a href="../../block/BlockModel/previousHash.html">previousHash</a></li>
     <li class="inherited"><a href="../../block/BlockModel/runtimeType.html">runtimeType</a></li>
     <li><a href="../../block/BlockModel/timestamp.html">timestamp</a></li>
-    <li><a href="../../block/BlockModel/transactionCount.html">transactionCount</a></li>
     <li><a href="../../block/BlockModel/transactionRoot.html">transactionRoot</a></li>
     <li><a href="../../block/BlockModel/version.html">version</a></li>
+    <li><a href="../../block/BlockModel/xchain.html">xchain</a></li>
 
     <li class="section-title"><a href="../../block/BlockModel-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../block/BlockModel/header.html">header</a></li>
     <li class="inherited"><a href="../../block/BlockModel/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../block/BlockModel/serialize.html">serialize</a></li>
     <li><a href="../../block/BlockModel/toString.html">toString</a></li>
@@ -143,7 +137,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.1
+      0.0.4
   </span>
 
   

@@ -24,8 +24,8 @@ void main() {
           blockInterval: const Duration(seconds: 1));
 
       Uint8List address = base64Decode(node.address);
-      Uint8List? publicKey = await l0storage.read('${base64Url.encode(address)}/public.key');
-
+      Uint8List? publicKey =
+          await l0storage.read('${base64Url.encode(address)}/public.key');
 
       expect(publicKey != null, true);
       expect(Digest("SHA3-256").process(publicKey!), address);

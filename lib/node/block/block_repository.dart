@@ -87,7 +87,9 @@ class BlockRepository {
     ResultSet results = _db.select('''
       SELECT $columnId from $table 
       WHERE $columnXchain = x'${Bytes.hexEncode(address)}'; ''');
-    return results.map<String>((row) => base64Url.encode(row[columnId])).toList();
+    return results
+        .map<String>((row) => base64Url.encode(row[columnId]))
+        .toList();
   }
 
   List<BlockModel> _select(

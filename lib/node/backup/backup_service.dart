@@ -18,13 +18,16 @@ import '../node_service.dart';
 export 'backup_model.dart';
 export 'backup_repository.dart';
 
-/// A service to handle the backup requests to [WasabiService].
+/// A service to handle the backup requests to [L0Storage].
 class BackupService {
   final BackupRepository _repository;
   final L0Storage _l0storage;
   final KeyModel _key;
   final Uint8List? Function(Uint8List) _getBlock;
 
+  /// Creates a new BackupService
+  ///
+  /// It saves the public key in the initialization.
   BackupService(this._l0storage, Database database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
     String keyBackupPath = '${base64UrlEncode(_key.address)}/public.key';
@@ -45,6 +48,7 @@ class BackupService {
     _pending();
   }
 
+  /// Serializes a block and sends to the l0 storage
   Future<void> block(Uint8List id) async {
     String b64address = base64UrlEncode(_key.address);
     BackupModel bkpModel =
@@ -65,8 +69,9 @@ class BackupService {
           if (block != null) {
             Uint8List signature = Rsa.sign(_key.privateKey, block);
             Uint8List signedBlock = (BytesBuilder()
-              ..add(CompactSize.encode(signature))
-              ..add(CompactSize.encode(block))).toBytes();
+                  ..add(CompactSize.encode(signature))
+                  ..add(CompactSize.encode(block)))
+                .toBytes();
             await _l0storage.write(backup.path, signedBlock);
             backup.timestamp = DateTime.now();
             _repository.update(backup);

@@ -21,7 +21,7 @@ import 'xchain_repository.dart';
 export 'xchain_model.dart';
 export 'xchain_repository.dart';
 
-/// The service to handle [XchainModel] references and updates.
+/// The service to handle cross chain references and updates.
 class XchainService {
   final XchainRepository _repository;
   final L0Storage _l0storage;
@@ -37,7 +37,7 @@ class XchainService {
   XchainModel? get(Uint8List address) => _repository.get(address);
 
   /// Adds a new Xchain by its [address].
-  /// 
+  ///
   /// The service gets the [XchainModel.publicKey] from [L0Storage] and saves
   /// it with [BackupRepository].
   Future<XchainModel> loadKey(Uint8List address) async {
@@ -53,13 +53,15 @@ class XchainService {
     return xchain;
   }
 
-  Future<Map<BlockModel, List<TransactionModel>>> loadXchain(
-      XchainModel xchain, {List<String> skip = const []}) async {
+  /// Deserializes and persists all the blocks from the xchain into database.
+  Future<Map<BlockModel, List<TransactionModel>>> loadXchain(XchainModel xchain,
+      {List<String> skip = const []}) async {
     Map<String, Uint8List> serializedblocks =
         await _l0storage.getAll(base64Url.encode(xchain.address));
     Map<BlockModel, List<TransactionModel>> blocks = {};
     for (String blockId in serializedblocks.keys) {
-      if (blockId == 'public.key' || skip.contains(blockId.replaceAll('.block', ''))) continue;
+      if (blockId == 'public.key' ||
+          skip.contains(blockId.replaceAll('.block', ''))) continue;
       Uint8List serializedBackup = serializedblocks[blockId]!;
       List<Uint8List> backupList = CompactSize.decode(serializedBackup);
       Uint8List signature = backupList[0];

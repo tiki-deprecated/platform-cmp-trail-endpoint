@@ -2,13 +2,18 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category SDK}
+/// Handle Consent NFTs.
+library consent;
+
 import 'dart:typed_data';
 
 import '../node/node_service.dart';
 import '../tiki_sdk_destination.dart';
 import 'consent_repository.dart';
-import 'cosent_model.dart';
+import 'consent_model.dart';
+
+export 'consent_repository.dart';
+export 'consent_model.dart';
 
 /// The service to manage consent registries.
 class ConsentService {
@@ -18,10 +23,8 @@ class ConsentService {
 
   ConsentService(db, this._nodeService) : _repository = ConsentRepository(db);
 
-  /// Modify consent for [source].
-  ///
-  /// Ownership must be granted before modifying consent.
-  Future<ConsentModel> create(Uint8List ownershipId,
+  /// Modify consent for a [OwnershipModel] by its [ownershipId].
+  Future<Uint8List> create(Uint8List ownershipId,
       {String? about,
       String? reward,
       TikiSdkDestination destinations = const TikiSdkDestination.all()}) async {
@@ -31,9 +34,10 @@ class ConsentService {
     TransactionModel transaction = await _nodeService.write(contents);
     consentModel.transactionId = transaction.id!;
     _repository.save(consentModel);
-    return _repository.getByOwnershipId(ownershipId)!;
+    return consentModel.transactionId!;
   }
 
+  /// Gets a consent by its [ownershipId].
   ConsentModel? getByOwnershipId(Uint8List ownershipId) =>
       _repository.getByOwnershipId(ownershipId);
 }

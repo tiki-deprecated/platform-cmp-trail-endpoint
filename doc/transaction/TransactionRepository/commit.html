@@ -52,8 +52,10 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span>
-<span class="name ">commit</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="commit-param-transaction"><span class="type-annotation"><a href="../../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span></span></li>
+<span class="returntype">void</span>
+<span class="name ">commit</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="commit-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span>, </span></li>
+<li><span class="parameter" id="commit-param-block"><span class="type-annotation"><a href="../../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span>, </span></li>
+<li><span class="parameter" id="commit-param-proof"><span class="type-annotation">Uint8List</span> <span class="parameter-name">proof</span></span></li>
 </ol>)
 
       
@@ -69,17 +71,12 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">TransactionModel commit(TransactionModel transaction) {
-  _db.execute(
-      &#39;&#39;&#39;UPDATE $table SET $columnMerkelProof = ?,  $columnBlockId = ?
-    WHERE $columnId = ? &#39;&#39;&#39;,
-      [
-        transaction.merkelProof,
-        base64.encode(transaction.block!.id!),
-        base64.encode(transaction.id!)
-      ]);
-  return getById(base64.encode(transaction.id!))!;
-}</code></pre>
+  <pre class="language-dart"><code class="language-dart">void commit(Uint8List id, BlockModel block, Uint8List proof) =&gt;
+    _db.execute(&#39;&#39;&#39;
+  UPDATE $table
+  SET $columnMerkelProof = x&#39;${Bytes.hexEncode(proof)}&#39;,
+  $columnBlockId =  x&#39;${Bytes.hexEncode(block.id!)}&#39;
+  WHERE $columnId = x&#39;${Bytes.hexEncode(id)}&#39;; &#39;&#39;&#39;);</code></pre>
 </section>
 
 
@@ -115,10 +112,8 @@
 
     <li class="section-title"><a href="../../transaction/TransactionRepository-class.html#instance-methods">Methods</a></li>
     <li><a href="../../transaction/TransactionRepository/commit.html">commit</a></li>
-    <li><a href="../../transaction/TransactionRepository/createTable.html">createTable</a></li>
     <li><a href="../../transaction/TransactionRepository/getByBlockId.html">getByBlockId</a></li>
     <li><a href="../../transaction/TransactionRepository/getById.html">getById</a></li>
-    <li><a href="../../transaction/TransactionRepository/getPending.html">getPending</a></li>
     <li class="inherited"><a href="../../transaction/TransactionRepository/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../transaction/TransactionRepository/save.html">save</a></li>
     <li class="inherited"><a href="../../transaction/TransactionRepository/toString.html">toString</a></li>
@@ -152,7 +147,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.4
   </span>
 
   
