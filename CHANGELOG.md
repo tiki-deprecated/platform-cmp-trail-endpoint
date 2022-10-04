@@ -1,3 +1,6 @@
+## 0.0.5
+
+* TIKI SDK methods implementation
 ## 0.0.4
 
 * Add xchain

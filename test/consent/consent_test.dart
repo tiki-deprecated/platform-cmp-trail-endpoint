@@ -16,17 +16,17 @@ void main() {
     OwnershipModel ownershipModel = OwnershipModel(
         transactionId: Uint8List.fromList('random1'.codeUnits),
         source: 'tiki app',
-        types: [TikiSdkDataTypeEnum.emailAddress],
+        type: TikiSdkDataTypeEnum.point,
         origin: 'com.mytiki.test');
     OwnershipModel ownershipModel2 = OwnershipModel(
         transactionId: Uint8List.fromList('random2'.codeUnits),
         source: 'tiki desktop',
-        types: [TikiSdkDataTypeEnum.emailAddress],
+        type: TikiSdkDataTypeEnum.pool,
         origin: 'com.mytiki.test');
     OwnershipModel ownershipModel3 = OwnershipModel(
         transactionId: Uint8List.fromList('random3'.codeUnits),
         source: 'tiki sdk',
-        types: [TikiSdkDataTypeEnum.emailAddress],
+        type: TikiSdkDataTypeEnum.point,
         origin: 'com.mytiki.test');
     TikiSdkDestination destination = const TikiSdkDestination(['com.mytiki/*']);
     test('Repository tests. Save and get by assetRef', () {
@@ -67,8 +67,9 @@ void main() {
       OwnershipService ownershipService =
           OwnershipService('com.mytiki', nodeService, db);
       ConsentService consentService = ConsentService(db, nodeService);
-      Uint8List ownershipModelId = await ownershipService
-          .create(source: 'test', types: [TikiSdkDataTypeEnum.emailAddress]);
+      Uint8List ownershipModelId = (await ownershipService.create(
+              source: 'test', type: TikiSdkDataTypeEnum.pool))
+          .transactionId!;
       await consentService.create(ownershipModelId,
           destinations: const TikiSdkDestination.all());
       ConsentModel? consentModel =
@@ -89,8 +90,9 @@ void main() {
       OwnershipService ownershipService =
           OwnershipService('com.mytiki', nodeService, db);
       ConsentService consentService = ConsentService(db, nodeService);
-      Uint8List ownershipModelId = await ownershipService
-          .create(source: 'test', types: [TikiSdkDataTypeEnum.emailAddress]);
+      Uint8List ownershipModelId = (await ownershipService.create(
+              source: 'test', type: TikiSdkDataTypeEnum.pool))
+          .transactionId!;
       await consentService.create(ownershipModelId,
           destinations: const TikiSdkDestination.all());
       await consentService.create(ownershipModelId,

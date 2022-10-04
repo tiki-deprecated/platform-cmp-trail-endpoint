@@ -33,17 +33,21 @@ class OwnershipService {
   /// This method creates a new transcation that will be commited in the
   /// next block in the chain.
   /// If no [origin] is provided the default [origin] will be used
-  Future<Uint8List> create(
+  Future<OwnershipModel> create(
       {required String source,
-      required List<TikiSdkDataTypeEnum> types,
+      required TikiSdkDataTypeEnum type,
       String? origin,
-      String? about}) async {
+      String? about,
+      List<String> contains = const []}) async {
     OwnershipModel? ownershipModel = getBySource(source, origin: origin);
     if (ownershipModel != null) {
       throw 'Ownership already granted for $source and $origin. ${ownershipModel.toString()}';
     }
     ownershipModel = OwnershipModel(
-        source: source, types: types, origin: origin ?? _defaultOrigin);
+        source: source,
+        type: type,
+        origin: origin ?? _defaultOrigin,
+        contains: contains);
     Uint8List contents = (BytesBuilder()
           ..addByte(1)
           ..addByte(1)
@@ -52,7 +56,7 @@ class OwnershipService {
     TransactionModel transaction = await nodeService.write(contents);
     ownershipModel.transactionId = transaction.id;
     _repository.save(ownershipModel);
-    return ownershipModel.transactionId!;
+    return ownershipModel;
   }
 
   /// Gets a [OwnershipModel] by its [source] and [origin] from local database.
@@ -60,8 +64,4 @@ class OwnershipService {
   /// If no [origin] is provided the [_defaultOrigin] will be used
   OwnershipModel? getBySource(String source, {String? origin}) =>
       _repository.getBySource(source, origin ?? _defaultOrigin);
-
-  OwnershipModel? getById(Uint8List id) => _repository.getById(id);
-
-  List<OwnershipModel> getAll() => _repository.getAll();
 }

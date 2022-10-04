@@ -24,7 +24,7 @@ class ConsentService {
   ConsentService(db, this._nodeService) : _repository = ConsentRepository(db);
 
   /// Modify consent for a [OwnershipModel] by its [ownershipId].
-  Future<Uint8List> create(Uint8List ownershipId,
+  Future<ConsentModel> create(Uint8List ownershipId,
       {String? about,
       String? reward,
       TikiSdkDestination destinations = const TikiSdkDestination.all()}) async {
@@ -34,7 +34,7 @@ class ConsentService {
     TransactionModel transaction = await _nodeService.write(contents);
     consentModel.transactionId = transaction.id!;
     _repository.save(consentModel);
-    return consentModel.transactionId!;
+    return consentModel;
   }
 
   /// Gets a consent by its [ownershipId].

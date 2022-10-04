@@ -5,6 +5,7 @@
 import 'dart:typed_data';
 
 import '../tiki_sdk_destination.dart';
+import '../utils/bytes.dart';
 import '../utils/compact_size.dart';
 import 'consent_repository.dart';
 
@@ -25,8 +26,12 @@ class ConsentModel {
   /// The transaction id of this registry.
   Uint8List? transactionId;
 
+  // The Consent expiration date. Null for no expiration.
+  DateTime? expiry;
+
   /// Builds a [ConsentModel] using the [assetRef] for the
-  ConsentModel(this.ownershipId, this.destination, {this.about, this.reward});
+  ConsentModel(this.ownershipId, this.destination,
+      {this.about, this.reward, this.expiry});
 
   ConsentModel.fromMap(Map<String, dynamic> map)
       : ownershipId = map[ConsentRepository.columnOwnershipId],
@@ -34,7 +39,8 @@ class ConsentModel {
             map[ConsentRepository.columnDestination]),
         about = map[ConsentRepository.columnAbout],
         reward = map[ConsentRepository.columnReward],
-        transactionId = map[ConsentRepository.columnTransactionId];
+        transactionId = map[ConsentRepository.columnTransactionId],
+        expiry = map[ConsentRepository.columnExpiry];
 
   /// Serializes the contents to be recorded in the blockchain.
   Uint8List serialize() {
@@ -46,7 +52,11 @@ class ConsentModel {
               : Uint8List.fromList(about!.codeUnits)))
           ..add(CompactSize.encode(reward == null
               ? Uint8List(1)
-              : Uint8List.fromList(reward!.codeUnits))))
+              : Uint8List.fromList(reward!.codeUnits)))
+          ..add(CompactSize.encode(expiry == null
+              ? Uint8List(1)
+              : Bytes.encodeBigInt(
+                  BigInt.from(expiry!.millisecondsSinceEpoch ~/ 1000)))))
         .toBytes();
   }
 
@@ -58,6 +68,8 @@ class ConsentModel {
       TikiSdkDestination.deserialize(unserialized[1]),
       about: String.fromCharCodes(unserialized[2]),
       reward: String.fromCharCodes(unserialized[3]),
+      expiry: DateTime.fromMillisecondsSinceEpoch(
+          Bytes.decodeBigInt(unserialized[4]).toInt() * 1000),
     );
   }
 }

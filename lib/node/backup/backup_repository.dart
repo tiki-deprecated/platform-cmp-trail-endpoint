@@ -36,7 +36,8 @@ class BackupRepository {
     CREATE TABLE IF NOT EXISTS $table (
       $columnPath TEXT NOT NULL,
       $columnSignature BLOB,
-      $columnTimestamp INTEGER);
+      $columnTimestamp INTEGER
+      );
     ''');
 
   /// Persists [backup] in [_db].
