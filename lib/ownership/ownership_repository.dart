@@ -21,13 +21,15 @@ class OwnershipRepository {
 
   static const String columnSource = 'source';
 
-  static const String columnTypes = 'types';
+  static const String columnType = 'type';
 
   static const String columnOrigin = 'origin';
 
   static const String columnTransactionId = 'transaction_id';
 
   static const String columnAbout = 'about';
+
+  static const String columnContains = 'contains';
 
   /// Builds a [OwnershipRepository] that will use [_db] for persistence.
   ///
@@ -41,9 +43,10 @@ class OwnershipRepository {
     CREATE TABLE IF NOT EXISTS $table (
       $columnTransactionId BLOB PRIMARY KEY,
       $columnSource TEXT,
-      $columnTypes TEXT,
+      $columnType TEXT,
       $columnOrigin TEXT,
       $columnAbout TEXT,
+      $columnContains TEXT,
       CONSTRAINT fk_transaction_id
         FOREIGN KEY ($columnTransactionId)
         REFERENCES ${TransactionRepository.table}(${TransactionRepository.columnId})
@@ -52,17 +55,16 @@ class OwnershipRepository {
 
   /// Persists [ownership] in [_db].
   void save(OwnershipModel ownership) {
-    String typesJson = json
-        .encode(ownership.types.map((TikiSdkDataTypeEnum t) => t.val).toList());
     _db.execute('''
     INSERT INTO $table 
-    VALUES ( ?, ?, ?, ?, ?);
+    VALUES ( ?, ?, ?, ?, ?, ?);
     ''', [
       ownership.transactionId,
       ownership.source,
-      typesJson,
+      ownership.type.val,
       ownership.origin,
       ownership.about,
+      jsonEncode(ownership.contains)
     ]);
   }
 
@@ -90,15 +92,15 @@ class OwnershipRepository {
       ''', params);
     List<OwnershipModel> ownerships = [];
     for (final Row row in results) {
-      List<TikiSdkDataTypeEnum> types = (json.decode(row[columnTypes]))
-          .map<TikiSdkDataTypeEnum>((s) => TikiSdkDataTypeEnum.fromValue(s))
-          .toList();
       Map<String, dynamic> map = {
         columnTransactionId: row[columnTransactionId],
         columnSource: row[columnSource],
-        columnTypes: types,
+        columnType: TikiSdkDataTypeEnum.fromValue(row[columnType]),
         columnOrigin: row[columnOrigin],
         columnAbout: row[columnAbout],
+        columnContains: jsonDecode(row[columnContains])
+            .map<String>((e) => e.toString())
+            .toList()
       };
       OwnershipModel ownershipModel = OwnershipModel.fromMap(map);
       ownerships.add(ownershipModel);
