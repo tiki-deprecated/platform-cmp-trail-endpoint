@@ -67,7 +67,10 @@ class TransactionRepository {
       $columnAssetRef TEXT NOT NULL,
       $columnBlockId BLOB, 
       $columnTimestamp INTEGER NOT NULL,
-      $columnSignature BlOB NOT NULL); 
+      $columnSignature BlOB NOT NULL,
+      FOREIGN KEY($columnBlockId) 
+        REFERENCES ${BlockRepository.table}(${BlockRepository.columnId})
+     ); 
     ''');
 
   /// Persists a [transaction] in [_db].

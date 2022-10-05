@@ -24,17 +24,18 @@ class ConsentService {
   ConsentService(db, this._nodeService) : _repository = ConsentRepository(db);
 
   /// Modify consent for a [OwnershipModel] by its [ownershipId].
-  Future<Uint8List> create(Uint8List ownershipId,
+  Future<ConsentModel> modify(Uint8List ownershipId,
       {String? about,
       String? reward,
+      DateTime? expiry,
       TikiSdkDestination destinations = const TikiSdkDestination.all()}) async {
-    ConsentModel consentModel =
-        ConsentModel(ownershipId, destinations, about: about, reward: reward);
+    ConsentModel consentModel = ConsentModel(ownershipId, destinations,
+        about: about, reward: reward, expiry: expiry);
     Uint8List contents = consentModel.serialize();
     TransactionModel transaction = await _nodeService.write(contents);
     consentModel.transactionId = transaction.id!;
     _repository.save(consentModel);
-    return consentModel.transactionId!;
+    return consentModel;
   }
 
   /// Gets a consent by its [ownershipId].

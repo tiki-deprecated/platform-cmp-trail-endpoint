@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/consent/consent_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
@@ -18,17 +19,17 @@ void main() {
       OwnershipModel ownershipModel = OwnershipModel(
           transactionId: Uint8List.fromList('random1'.codeUnits),
           source: 'tiki app',
-          types: [TikiSdkDataTypeEnum.emailAddress],
+          type: TikiSdkDataTypeEnum.point,
           origin: 'com.mytiki.test');
       OwnershipModel ownershipModel2 = OwnershipModel(
           transactionId: Uint8List.fromList('random2'.codeUnits),
           source: 'tiki desktop',
-          types: [TikiSdkDataTypeEnum.emailAddress],
+          type: TikiSdkDataTypeEnum.point,
           origin: 'com.mytiki.test');
       OwnershipModel ownershipModel3 = OwnershipModel(
           transactionId: Uint8List.fromList('random3'.codeUnits),
           source: 'tiki sdk',
-          types: [TikiSdkDataTypeEnum.emailAddress],
+          type: TikiSdkDataTypeEnum.point,
           origin: 'com.mytiki.test');
       repository.save(ownershipModel);
       repository.save(ownershipModel2);
@@ -43,17 +44,17 @@ void main() {
       OwnershipModel ownershipModel = OwnershipModel(
           transactionId: Uint8List.fromList('random1'.codeUnits),
           source: 'tiki app',
-          types: [TikiSdkDataTypeEnum.emailAddress],
+          type: TikiSdkDataTypeEnum.point,
           origin: 'com.mytiki.test');
       OwnershipModel ownershipModel2 = OwnershipModel(
           transactionId: Uint8List.fromList('random2'.codeUnits),
           source: 'tiki desktop',
-          types: [TikiSdkDataTypeEnum.emailAddress],
+          type: TikiSdkDataTypeEnum.point,
           origin: 'com.mytiki.test');
       OwnershipModel ownershipModel3 = OwnershipModel(
           transactionId: Uint8List.fromList('random3'.codeUnits),
           source: 'tiki sdk',
-          types: [TikiSdkDataTypeEnum.emailAddress],
+          type: TikiSdkDataTypeEnum.point,
           origin: 'com.mytiki.test');
       repository.save(ownershipModel);
       repository.save(ownershipModel2);
@@ -87,8 +88,9 @@ void main() {
           await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
       OwnershipService ownershipService =
           OwnershipService('com.tiki.test', nodeService, database);
-      Uint8List ownershipId = await ownershipService.create(
-          source: 'create test', types: [TikiSdkDataTypeEnum.emailAddress]);
+      Uint8List ownershipId = (await ownershipService.create(
+              source: 'create test', type: TikiSdkDataTypeEnum.point))
+          .transactionId!;
       expect(ownershipId.lengthInBytes == 32, true);
     });
 
@@ -101,7 +103,7 @@ void main() {
       OwnershipService ownershipService =
           OwnershipService('com.tiki.test', nodeService, database);
       await ownershipService.create(
-          source: 'create test', types: [TikiSdkDataTypeEnum.emailAddress]);
+          source: 'create test', type: TikiSdkDataTypeEnum.point);
       TransactionModel transaction = TransactionModel.fromMap(
           database.select("SELECT * FROM txn LIMIT 1").first);
       expect(transaction.contents[1], 1);
@@ -119,8 +121,9 @@ void main() {
           await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
       OwnershipService ownershipService =
           OwnershipService('com.tiki.test', nodeService, database);
-      Uint8List owneshipNftId = await ownershipService.create(
-          source: 'create test', types: [TikiSdkDataTypeEnum.emailAddress]);
+      Uint8List owneshipNftId = (await ownershipService.create(
+              source: 'create test', type: TikiSdkDataTypeEnum.point))
+          .transactionId!;
       OwnershipModel? ownershipModel =
           ownershipService.getBySource('create test');
       expect(ownershipModel != null, true);
@@ -136,9 +139,11 @@ void main() {
           await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
       OwnershipService ownershipService =
           OwnershipService('com.tiki.test', nodeService, database);
-      Uint8List owneshipNftId = await ownershipService.create(
-          source: 'create test', types: [TikiSdkDataTypeEnum.emailAddress]);
-      OwnershipModel? ownershipModel = ownershipService.getById(owneshipNftId);
+      Uint8List owneshipNftId = (await ownershipService.create(
+              source: 'create test', type: TikiSdkDataTypeEnum.point))
+          .transactionId!;
+      OwnershipModel? ownershipModel =
+          ownershipService.getBySource('create test');
       expect(ownershipModel != null, true);
       expect(
           Bytes.memEquals(ownershipModel!.transactionId!, owneshipNftId), true);
@@ -152,24 +157,8 @@ void main() {
           await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
       OwnershipService ownershipService =
           OwnershipService('com.tiki.test', nodeService, database);
-      OwnershipModel? ownershipModel = ownershipService.getById(Uint8List(1));
+      OwnershipModel? ownershipModel = ownershipService.getBySource('NOT');
       expect(ownershipModel == null, true);
-    });
-    test('Test ownership for existing NFTs not related to the ownership',
-        () async {
-      Database database = sqlite3.openInMemory();
-      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
-      OwnershipService ownershipService =
-          OwnershipService('com.tiki.test', nodeService, database);
-      Uint8List owneshipNftId = await ownershipService.create(
-          source: 'create test', types: [TikiSdkDataTypeEnum.emailAddress]);
-      await ownershipService.create(
-          source: 'other test', types: [TikiSdkDataTypeEnum.emailAddress]);
-      OwnershipModel? ownershipModel = ownershipService.getById(owneshipNftId);
-      expect(ownershipModel!.source == 'other test', false);
     });
   });
 }
