@@ -21,8 +21,7 @@
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -55,6 +54,9 @@
     </section>
 
     
+<section class="desc markdown">
+  <p>Builds a <a href="../../consent/ConsentModel-class.html">ConsentModel</a> based in a Map. Used mostly for database operations.</p>
+</section>
 
 
     
@@ -66,7 +68,8 @@
           map[ConsentRepository.columnDestination]),
       about = map[ConsentRepository.columnAbout],
       reward = map[ConsentRepository.columnReward],
-      transactionId = map[ConsentRepository.columnTransactionId];</code></pre>
+      transactionId = map[ConsentRepository.columnTransactionId],
+      expiry = map[ConsentRepository.columnExpiry];</code></pre>
 </section>
 
 
@@ -100,6 +103,7 @@
     </li>
     <li><a href="../../consent/ConsentModel/about.html">about</a></li>
     <li><a href="../../consent/ConsentModel/destination.html">destination</a></li>
+    <li><a href="../../consent/ConsentModel/expiry.html">expiry</a></li>
     <li class="inherited"><a href="../../consent/ConsentModel/hashCode.html">hashCode</a></li>
     <li><a href="../../consent/ConsentModel/ownershipId.html">ownershipId</a></li>
     <li><a href="../../consent/ConsentModel/reward.html">reward</a></li>
@@ -131,7 +135,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.4
+      0.0.5
   </span>
 
   
@@ -140,7 +144,7 @@
 
 
 <script src="../../static-assets/highlight.pack.js?v1"></script>
-<script src="../../static-assets/script.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

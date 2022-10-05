@@ -21,8 +21,7 @@
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -53,7 +52,8 @@
       <span class="name ">ConsentModel</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-ownershipId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">ownershipId</span>, </span></li>
 <li><span class="parameter" id="-param-destination"><span class="type-annotation">TikiSdkDestination</span> <span class="parameter-name">destination</span>, </span></li>
 <li><span class="parameter" id="-param-about">{<span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span></li>
-<li><span class="parameter" id="-param-reward"><span class="type-annotation">String?</span> <span class="parameter-name">reward</span>}</span></li>
+<li><span class="parameter" id="-param-reward"><span class="type-annotation">String?</span> <span class="parameter-name">reward</span>, </span></li>
+<li><span class="parameter" id="-param-expiry"><span class="type-annotation">DateTime?</span> <span class="parameter-name">expiry</span>}</span></li>
 </ol>)
     </section>
 
@@ -66,7 +66,8 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ConsentModel(this.ownershipId, this.destination, {this.about, this.reward});</code></pre>
+  <pre class="language-dart"><code class="language-dart">ConsentModel(this.ownershipId, this.destination,
+    {this.about, this.reward, this.expiry});</code></pre>
 </section>
 
 
@@ -100,6 +101,7 @@
     </li>
     <li><a href="../../consent/ConsentModel/about.html">about</a></li>
     <li><a href="../../consent/ConsentModel/destination.html">destination</a></li>
+    <li><a href="../../consent/ConsentModel/expiry.html">expiry</a></li>
     <li class="inherited"><a href="../../consent/ConsentModel/hashCode.html">hashCode</a></li>
     <li><a href="../../consent/ConsentModel/ownershipId.html">ownershipId</a></li>
     <li><a href="../../consent/ConsentModel/reward.html">reward</a></li>
@@ -131,7 +133,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.4
+      0.0.5
   </span>
 
   
@@ -140,7 +142,7 @@
 
 
 <script src="../../static-assets/highlight.pack.js?v1"></script>
-<script src="../../static-assets/script.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

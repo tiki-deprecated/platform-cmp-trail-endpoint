@@ -70,7 +70,7 @@ void main() {
       Uint8List ownershipModelId = (await ownershipService.create(
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
-      await consentService.create(ownershipModelId,
+      await consentService.modify(ownershipModelId,
           destinations: const TikiSdkDestination.all());
       ConsentModel? consentModel =
           consentService.getByOwnershipId(ownershipModelId);
@@ -93,9 +93,9 @@ void main() {
       Uint8List ownershipModelId = (await ownershipService.create(
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
-      await consentService.create(ownershipModelId,
+      await consentService.modify(ownershipModelId,
           destinations: const TikiSdkDestination.all());
-      await consentService.create(ownershipModelId,
+      await consentService.modify(ownershipModelId,
           destinations: const TikiSdkDestination.none());
       ConsentModel? consentModel =
           consentService.getByOwnershipId(ownershipModelId);
