@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/consent/consent_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
@@ -158,24 +159,6 @@ void main() {
           OwnershipService('com.tiki.test', nodeService, database);
       OwnershipModel? ownershipModel = ownershipService.getBySource('NOT');
       expect(ownershipModel == null, true);
-    });
-    test('Test ownership for existing NFTs not related to the ownership',
-        () async {
-      Database database = sqlite3.openInMemory();
-      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
-      OwnershipService ownershipService =
-          OwnershipService('com.tiki.test', nodeService, database);
-      (await ownershipService.create(
-              source: 'create test', type: TikiSdkDataTypeEnum.point))
-          .transactionId!;
-      await ownershipService.create(
-          source: 'other test', type: TikiSdkDataTypeEnum.point);
-      OwnershipModel? ownershipModel =
-          ownershipService.getBySource('other test');
-      expect(ownershipModel!.source == 'other test', false);
     });
   });
 }

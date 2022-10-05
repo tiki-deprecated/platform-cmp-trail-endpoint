@@ -14,7 +14,7 @@ class ConsentModel {
   /// Transaction ID corresponding to the ownership mint for the data source.
   Uint8List ownershipId;
 
-  /// The ideintifier of where the
+  /// The identifier of the paths and use cases for this consent.
   TikiSdkDestination destination;
 
   /// Optional description of the consent.
@@ -33,6 +33,7 @@ class ConsentModel {
   ConsentModel(this.ownershipId, this.destination,
       {this.about, this.reward, this.expiry});
 
+  /// Builds a [ConsentModel] based in a Map. Used mostly for database operations.
   ConsentModel.fromMap(Map<String, dynamic> map)
       : ownershipId = map[ConsentRepository.columnOwnershipId],
         destination = TikiSdkDestination.fromJson(

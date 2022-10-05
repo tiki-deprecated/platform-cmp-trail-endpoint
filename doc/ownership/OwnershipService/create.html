@@ -21,8 +21,7 @@
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -52,11 +51,12 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter">Uint8List</span>&gt;</span></span>
+<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../ownership/OwnershipModel-class.html">OwnershipModel</a></span>&gt;</span></span>
 <span class="name ">create</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="create-param-source">{<span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span></li>
-<li><span class="parameter" id="create-param-types"><span>required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> <span class="parameter-name">types</span>, </span></li>
+<li><span class="parameter" id="create-param-type"><span>required</span> <span class="type-annotation">TikiSdkDataTypeEnum</span> <span class="parameter-name">type</span>, </span></li>
 <li><span class="parameter" id="create-param-origin"><span class="type-annotation">String?</span> <span class="parameter-name">origin</span>, </span></li>
-<li><span class="parameter" id="create-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>}</span></li>
+<li><span class="parameter" id="create-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span></li>
+<li><span class="parameter" id="create-param-contains"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">contains</span> = <span class="default-value">const []</span>}</span></li>
 </ol>)
 
       
@@ -74,17 +74,21 @@ If no <code>origin</code> is provided the default <code>origin</code> will be us
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;Uint8List&gt; create(
+  <pre class="language-dart"><code class="language-dart">Future&lt;OwnershipModel&gt; create(
     {required String source,
-    required List&lt;TikiSdkDataTypeEnum&gt; types,
+    required TikiSdkDataTypeEnum type,
     String? origin,
-    String? about}) async {
+    String? about,
+    List&lt;String&gt; contains = const []}) async {
   OwnershipModel? ownershipModel = getBySource(source, origin: origin);
   if (ownershipModel != null) {
     throw &#39;Ownership already granted for $source and $origin. ${ownershipModel.toString()}&#39;;
   }
   ownershipModel = OwnershipModel(
-      source: source, types: types, origin: origin ?? _defaultOrigin);
+      source: source,
+      type: type,
+      origin: origin ?? _defaultOrigin,
+      contains: contains);
   Uint8List contents = (BytesBuilder()
         ..addByte(1)
         ..addByte(1)
@@ -93,7 +97,7 @@ If no <code>origin</code> is provided the default <code>origin</code> will be us
   TransactionModel transaction = await nodeService.write(contents);
   ownershipModel.transactionId = transaction.id;
   _repository.save(ownershipModel);
-  return ownershipModel.transactionId!;
+  return ownershipModel;
 }</code></pre>
 </section>
 
@@ -131,8 +135,6 @@ If no <code>origin</code> is provided the default <code>origin</code> will be us
 
     <li class="section-title"><a href="../../ownership/OwnershipService-class.html#instance-methods">Methods</a></li>
     <li><a href="../../ownership/OwnershipService/create.html">create</a></li>
-    <li><a href="../../ownership/OwnershipService/getAll.html">getAll</a></li>
-    <li><a href="../../ownership/OwnershipService/getById.html">getById</a></li>
     <li><a href="../../ownership/OwnershipService/getBySource.html">getBySource</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipService/toString.html">toString</a></li>
@@ -155,7 +157,7 @@ If no <code>origin</code> is provided the default <code>origin</code> will be us
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.4
+      0.0.5
   </span>
 
   
@@ -164,7 +166,7 @@ If no <code>origin</code> is provided the default <code>origin</code> will be us
 
 
 <script src="../../static-assets/highlight.pack.js?v1"></script>
-<script src="../../static-assets/script.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

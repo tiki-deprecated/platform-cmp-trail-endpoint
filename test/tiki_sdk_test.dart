@@ -44,6 +44,25 @@ void main() {
       expect(consentGiven!.destination.uses.isEmpty, true);
       expect(consentGiven.destination.paths.isEmpty, true);
     });
+    test('expire consent', () async {
+      bool ok = false;
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      Database database = sqlite3.openInMemory();
+      TikiSdk tikiSdk = await TikiSdk()
+          .init('com.mytiki.test', database, keyStorage, l0storage);
+      String ownershipId = await tikiSdk
+          .assignOwnership('test', TikiSdkDataTypeEnum.point, ['email']);
+      await tikiSdk.modifyConsent(ownershipId, const TikiSdkDestination.all());
+      await tikiSdk.applyConsent(
+          'test', const TikiSdkDestination.all(), () => ok = true);
+      expect(ok, true);
+      await tikiSdk.modifyConsent(ownershipId, const TikiSdkDestination.all(),
+          expiry: DateTime.now());
+      await tikiSdk.applyConsent(
+          'test', const TikiSdkDestination.all(), () => ok = false);
+      expect(ok, false);
+    });
     test('run a function based on user consent', () async {
       bool ok = false;
       L0Storage l0storage = InMemL0Storage();

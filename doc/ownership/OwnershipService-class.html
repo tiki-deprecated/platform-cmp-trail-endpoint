@@ -21,8 +21,7 @@
 </head>
 
 
-<body data-base-href="../"
-      data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -117,40 +116,14 @@
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="create" class="callable">
-  <span class="name"><a href="../ownership/OwnershipService/create.html">create</a></span><span class="signature">(<wbr><span class="parameter" id="create-param-source">{<span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="create-param-types"><span>required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">TikiSdkDataTypeEnum</span>&gt;</span></span> <span class="parameter-name">types</span>, </span><span class="parameter" id="create-param-origin"><span class="type-annotation">String?</span> <span class="parameter-name">origin</span>, </span><span class="parameter" id="create-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>}</span>)
-    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">Uint8List</span>&gt;</span></span>
+  <span class="name"><a href="../ownership/OwnershipService/create.html">create</a></span><span class="signature">(<wbr><span class="parameter" id="create-param-source">{<span>required</span> <span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="create-param-type"><span>required</span> <span class="type-annotation">TikiSdkDataTypeEnum</span> <span class="parameter-name">type</span>, </span><span class="parameter" id="create-param-origin"><span class="type-annotation">String?</span> <span class="parameter-name">origin</span>, </span><span class="parameter" id="create-param-about"><span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span><span class="parameter" id="create-param-contains"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">contains</span> = <span class="default-value">const []</span>}</span>)
+    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ownership/OwnershipModel-class.html">OwnershipModel</a></span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
   Creates a ownership register in the blockchain.
-  
-
-</dd>
-
-        <dt id="getAll" class="callable">
-  <span class="name"><a href="../ownership/OwnershipService/getAll.html">getAll</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ownership/OwnershipModel-class.html">OwnershipModel</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  
-  
-
-</dd>
-
-        <dt id="getById" class="callable">
-  <span class="name"><a href="../ownership/OwnershipService/getById.html">getById</a></span><span class="signature">(<wbr><span class="parameter" id="getById-param-id"><span class="type-annotation">Uint8List</span> <span class="parameter-name">id</span></span>)
-    <span class="returntype parameter">&#8594; <a href="../ownership/OwnershipModel-class.html">OwnershipModel</a>?</span>
-  </span>
-  
-
-</dt>
-<dd>
-  
   
 
 </dd>
@@ -272,8 +245,6 @@
 
     <li class="section-title"><a href="../ownership/OwnershipService-class.html#instance-methods">Methods</a></li>
     <li><a href="../ownership/OwnershipService/create.html">create</a></li>
-    <li><a href="../ownership/OwnershipService/getAll.html">getAll</a></li>
-    <li><a href="../ownership/OwnershipService/getById.html">getById</a></li>
     <li><a href="../ownership/OwnershipService/getBySource.html">getBySource</a></li>
     <li class="inherited"><a href="../ownership/OwnershipService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../ownership/OwnershipService/toString.html">toString</a></li>
@@ -293,7 +264,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.4
+      0.0.5
   </span>
 
   
@@ -302,7 +273,7 @@
 
 
 <script src="../static-assets/highlight.pack.js?v1"></script>
-<script src="../static-assets/script.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
 
 
 

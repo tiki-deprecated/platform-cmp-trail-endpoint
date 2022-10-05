@@ -77,11 +77,12 @@ class TikiSdk {
   /// means revoked consent.
   Future<ConsentModel> modifyConsent(
       String ownershipId, TikiSdkDestination destination,
-      {String? about, String? reward}) async {
-    ConsentModel consentModel = await _consentService.create(
+      {String? about, String? reward, DateTime? expiry}) async {
+    ConsentModel consentModel = await _consentService.modify(
         base64Url.decode(ownershipId),
         about: about,
         reward: reward,
+        expiry: expiry,
         destinations: destination);
     return consentModel;
   }
@@ -117,6 +118,10 @@ class TikiSdk {
 
   bool _checkConsent(
       ConsentModel consentModel, TikiSdkDestination destination) {
+    if (consentModel.expiry != null &&
+        consentModel.expiry!.isBefore(DateTime.now())) {
+      return false;
+    }
     bool pathConsent = false;
     bool useConsent = false;
     List<String> destinationPaths = destination.paths;

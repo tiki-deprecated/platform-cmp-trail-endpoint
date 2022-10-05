@@ -67,9 +67,11 @@ class OwnershipModel {
     return OwnershipModel(
         source: String.fromCharCodes(unserialized[0]),
         type: TikiSdkDataTypeEnum.fromValue(
-            String.fromCharCodes(unserialized[0])),
+            String.fromCharCodes(unserialized[1])),
         origin: String.fromCharCodes(unserialized[2]),
         about: String.fromCharCodes(unserialized[3]),
-        contains: jsonDecode(String.fromCharCodes(unserialized[4])));
+        contains: jsonDecode(String.fromCharCodes(unserialized[4]))
+            .map<String>((e) => e.toString())
+            .toList());
   }
 }

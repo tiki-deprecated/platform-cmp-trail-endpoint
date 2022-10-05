@@ -21,8 +21,7 @@
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -76,7 +75,11 @@
             : Uint8List.fromList(about!.codeUnits)))
         ..add(CompactSize.encode(reward == null
             ? Uint8List(1)
-            : Uint8List.fromList(reward!.codeUnits))))
+            : Uint8List.fromList(reward!.codeUnits)))
+        ..add(CompactSize.encode(expiry == null
+            ? Uint8List(1)
+            : Bytes.encodeBigInt(
+                BigInt.from(expiry!.millisecondsSinceEpoch ~&#47; 1000)))))
       .toBytes();
 }</code></pre>
 </section>
@@ -112,6 +115,7 @@
     </li>
     <li><a href="../../consent/ConsentModel/about.html">about</a></li>
     <li><a href="../../consent/ConsentModel/destination.html">destination</a></li>
+    <li><a href="../../consent/ConsentModel/expiry.html">expiry</a></li>
     <li class="inherited"><a href="../../consent/ConsentModel/hashCode.html">hashCode</a></li>
     <li><a href="../../consent/ConsentModel/ownershipId.html">ownershipId</a></li>
     <li><a href="../../consent/ConsentModel/reward.html">reward</a></li>
@@ -143,7 +147,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.4
+      0.0.5
   </span>
 
   
@@ -152,7 +156,7 @@
 
 
 <script src="../../static-assets/highlight.pack.js?v1"></script>
-<script src="../../static-assets/script.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 
