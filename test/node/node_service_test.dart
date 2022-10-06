@@ -6,6 +6,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/node_service_builder_storage.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,11 +19,12 @@ void main() {
       L0Storage l0storage = InMemL0Storage();
       KeyStorage keyStorage = InMemKeyStorage();
       Database database = sqlite3.openInMemory();
-
-      NodeService node = await NodeService().init(
-          database, keyStorage, l0storage,
-          blockInterval: const Duration(seconds: 1));
-
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = database;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      NodeService node = await builder.build();
       Uint8List address = base64Decode(node.address);
       Uint8List? publicKey =
           await l0storage.read('${base64Url.encode(address)}/public.key');
@@ -51,12 +53,16 @@ void main() {
     });
 
     test('Write - Success ', () async {
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
       Database database = sqlite3.openInMemory();
-
-      NodeService node = await NodeService().init(
-          database, InMemKeyStorage(), InMemL0Storage(),
-          blockInterval: const Duration(seconds: 1));
-
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = database;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      builder.blockInterval = const Duration(seconds: 1);
+      NodeService node = await builder.build();
       TransactionModel tx =
           await node.write(Uint8List.fromList(utf8.encode(const Uuid().v4())));
 
@@ -85,32 +91,36 @@ void main() {
     });
 
     test('Re-init - With Primary - Success ', () async {
-      Database database = sqlite3.openInMemory();
-      KeyStorage keyStorage = InMemKeyStorage();
       L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      Database database = sqlite3.openInMemory();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = database;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      builder.blockInterval = const Duration(seconds: 1);
+      NodeService node = await builder.build();
 
-      String address = (await NodeService().init(
-              database, keyStorage, l0storage,
-              blockInterval: const Duration(seconds: 1)))
-          .address;
-
-      NodeService node = await NodeService().init(
-          database, keyStorage, l0storage,
-          primary: address, blockInterval: const Duration(seconds: 1));
-
+      String address = node.address;
       expect(node.address, address);
     });
 
     test('Re-init - Invalid Address - Success ', () async {
-      Database database = sqlite3.openInMemory();
-      KeyStorage keyStorage = InMemKeyStorage();
       L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      Database database = sqlite3.openInMemory();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = database;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      builder.blockInterval = const Duration(seconds: 1);
+      NodeService node = await builder.build();
 
       String address = const Uuid().v4();
-      String address2 = (await NodeService().init(
-              database, keyStorage, l0storage,
-              primary: address, blockInterval: const Duration(seconds: 1)))
-          .address;
+
+      String address2 = node.address;
 
       expect(address != address2, true);
     });
