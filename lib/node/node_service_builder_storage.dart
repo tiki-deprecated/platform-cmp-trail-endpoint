@@ -20,7 +20,7 @@ export './transaction/transaction_service.dart';
 export '../shared_storage/wasabi/wasabi_service.dart';
 
 class NodeServiceBuilderStorage extends NodeServiceBuilderBase {
-  KeyModel? _primaryKey;
+  KeyModel? primaryKey;
   L0Storage? _l0Storage;
   Database? _database;
   KeyStorage? _keyStorage;
@@ -39,7 +39,7 @@ class NodeServiceBuilderStorage extends NodeServiceBuilderBase {
   @override
   Future<NodeService> build() async {
     if (_l0Storage == null) throw Exception('L0Storage must be set');
-    if (_primaryKey == null) throw Exception('Primary key should be loaded');
+    if (primaryKey == null) throw Exception('Primary key should be loaded');
     _database ??= sqlite3.openInMemory();
     nodeService = NodeService();
     nodeService.blockInterval = _blockInterval;
@@ -48,18 +48,18 @@ class NodeServiceBuilderStorage extends NodeServiceBuilderBase {
     nodeService.blockService = BlockService(_database!);
     nodeService.xchainService = XchainService(_l0Storage!, _database!);
     nodeService.backupService = BackupService(
-        _l0Storage!, _database!, _primaryKey!, nodeService.getBlock);
+        _l0Storage!, _database!, primaryKey!, nodeService.getBlock);
     nodeService.readOnly = _readOnly;
-    nodeService.primaryKey = _primaryKey!;
+    nodeService.primaryKey = primaryKey!;
     await nodeService.init();
     return nodeService;
   }
 
   Future<void> loadStorage(String apiId) async {
-    if (_primaryKey == null) {
+    if (primaryKey == null) {
       throw Exception('Load primary Key before loading Storage');
     }
-    _l0Storage = SharedStorage(apiId, _primaryKey!.privateKey);
+    _l0Storage = SharedStorage(apiId, primaryKey!.privateKey);
   }
 
   @override
@@ -71,11 +71,11 @@ class NodeServiceBuilderStorage extends NodeServiceBuilderBase {
     if (address != null) {
       KeyModel? key = await keyService.get(address);
       if (key != null) {
-        _primaryKey = key;
+        primaryKey = key;
         return;
       }
     }
-    _primaryKey = await keyService.create();
+    primaryKey = await keyService.create();
     return;
   }
 }

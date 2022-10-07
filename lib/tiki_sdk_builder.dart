@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:sqlite3/sqlite3.dart';
 
 import 'consent/consent_service.dart';
@@ -6,10 +8,9 @@ import 'node/node_service.dart';
 import 'node/node_service_builder_storage.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk.dart';
-import 'utils/in_mem_key.dart';
-
 class TikiSdkBuilderStorage {
   late final TikiSdk tikiSdk;
+  final NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
   final String _origin;
 
   Database? _database;
@@ -29,16 +30,8 @@ class TikiSdkBuilderStorage {
   set address(String val) => _address = val;
 
   Future<void> buildSdk() async {
-    if (_l0Storage == null && _apiKey == null) {
-      throw Exception(
-          'Please provide an apiKey or a L0Storage for chain backup');
-    }
-    _database ??= sqlite3.openInMemory();
-    _keyStorage ??= InMemKeyStorage();
-    NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+    _buildChecks();
     builder.database = _database!;
-    builder.keyStorage = _keyStorage!;
-    await builder.loadPrimaryKey(_address);
     if (_apiKey != null) {
       builder.loadStorage(_apiKey!);
     } else {
@@ -52,5 +45,26 @@ class TikiSdkBuilderStorage {
     tikiSdk.nodeService = nodeService;
     tikiSdk.ownershipService = ownershipService;
     tikiSdk.consentService = consentService;
+  }
+
+  Future<String> loadPrimaryKey() async {
+    builder.keyStorage = _keyStorage!;
+    await builder.loadPrimaryKey(_address);
+    return base64.encode(builder.primaryKey!.address);
+  }
+
+  void _buildChecks(){
+    if (_l0Storage == null && _apiKey == null) {
+      throw Exception(
+          'Please provide an apiKey or a L0Storage for chain backup.');
+    }
+    if (_database == null){
+      throw Exception(
+          'Database not set!.');
+    }
+    if (_keyStorage == null){
+      throw Exception(
+          'Keystorage not set!');
+    }
   }
 }
