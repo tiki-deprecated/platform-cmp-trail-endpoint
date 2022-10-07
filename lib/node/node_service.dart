@@ -40,7 +40,7 @@ class NodeService {
 
   List<String> _readOnly = [];
 
-  String get address => base64.encode(_primaryKey.address);
+  String get address => base64Url.encode(_primaryKey.address);
 
   set blockInterval(Duration val) => _blockInterval = val;
   set maxTransactions(int val) => _maxTransactions = val;
