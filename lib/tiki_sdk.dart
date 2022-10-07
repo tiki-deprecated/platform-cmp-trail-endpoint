@@ -9,10 +9,7 @@ export 'tiki_sdk_destination.dart';
 
 import 'dart:convert';
 
-import 'package:sqlite3/sqlite3.dart';
-
 import 'consent/consent_service.dart';
-import 'node/l0_storage.dart';
 import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk_data_type_enum.dart';
@@ -33,21 +30,29 @@ class TikiSdk {
   ///  /// The API Key for the TIKI public backup. If null, blocks will not
   /// be backed up. Register your application at mytiki.com to get your
   /// application’s API key.
-  Future<TikiSdk> init(String origin, Database database, KeyStorage keyStorage,
-      L0Storage l0storage,
-      {String? id}) async {
-    _nodeService = await NodeService().init(
-      database,
-      keyStorage,
-      l0storage,
-      primary: id,
-    );
-    _ownershipService = OwnershipService(origin, _nodeService, database);
-    _consentService = ConsentService(database, _nodeService);
-    return this;
-  }
+  // Future<TikiSdk> init(String origin, Database database, KeyStorage keyStorage,
+  //     L0Storage l0storage,
+  //     {String? id}) async {
+  //   _nodeService = await NodeService().init(
+  //     database,
+  //     keyStorage,
+  //     l0storage,
+  //     primary: id,
+  //   );
+  //   _ownershipService = OwnershipService(origin, _nodeService, database);
+  //   _consentService = ConsentService(database, _nodeService);
+  //   return this;
+  // }
+
+  TikiSdk(this._defaultOrigin);
 
   String get id => _nodeService.address;
+
+  set ownershipService(OwnershipService ownershipService) =>
+      _ownershipService = ownershipService;
+  set consentService(ConsentService consentService) =>
+      _consentService = consentService;
+  set nodeService(NodeService nodeService) => _nodeService = nodeService;
 
   /// Assign ownership to a given [source] : data point, pool, or stream.
   /// [types] describe the various types of data represented by

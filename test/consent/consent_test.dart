@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/consent/consent_service.dart';
+import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/node_service_builder_storage.dart';
 import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
@@ -59,14 +61,18 @@ void main() {
     });
 
     test('Give consent', () async {
-      Database db = sqlite3.openInMemory();
-      KeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(db, inMemKeyStorage, inMemL0Storage);
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      Database database = sqlite3.openInMemory();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = database;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
-          OwnershipService('com.mytiki', nodeService, db);
-      ConsentService consentService = ConsentService(db, nodeService);
+          OwnershipService('com.mytiki', nodeService, database);
+      ConsentService consentService = ConsentService(database, nodeService);
       Uint8List ownershipModelId = (await ownershipService.create(
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
@@ -83,10 +89,14 @@ void main() {
 
     test('Revoke consent', () async {
       Database db = sqlite3.openInMemory();
-      KeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(db, inMemKeyStorage, inMemL0Storage);
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = db;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
           OwnershipService('com.mytiki', nodeService, db);
       ConsentService consentService = ConsentService(db, nodeService);

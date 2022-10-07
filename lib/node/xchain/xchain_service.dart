@@ -26,7 +26,7 @@ class XchainService {
   final XchainRepository _repository;
   final L0Storage _l0storage;
 
-  XchainService(Database db, this._l0storage)
+  XchainService(this._l0storage, Database db)
       : _repository = XchainRepository(db);
 
   /// Updates the [XchainModel.lastBlock].
