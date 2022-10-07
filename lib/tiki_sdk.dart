@@ -50,7 +50,7 @@ class TikiSdk {
 
   set ownershipService(OwnershipService ownershipService) =>
       _ownershipService = ownershipService;
-  set consentService(ConsentService consentService) => 
+  set consentService(ConsentService consentService) =>
       _consentService = consentService;
   set nodeService(NodeService nodeService) => _nodeService = nodeService;
 
