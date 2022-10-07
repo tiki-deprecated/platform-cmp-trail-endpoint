@@ -16,7 +16,7 @@ class OwnershipModel {
   String source;
 
   /// The list of types the source holds.
-  List<TikiSdkDataTypeEnum> types;
+  TikiSdkDataTypeEnum type;
 
   /// The origin from which the data was generated.
   String origin;
@@ -27,32 +27,37 @@ class OwnershipModel {
   /// A description about the data.
   String? about;
 
+  /// Which kind of data this contains
+  List<String> contains;
+
   OwnershipModel({
     this.transactionId,
     required this.source,
-    required this.types,
+    required this.type,
     required this.origin,
+    this.contains = const [],
     this.about,
   });
 
   OwnershipModel.fromMap(Map<String, dynamic> map)
       : source = map[OwnershipRepository.columnSource],
-        types = map[OwnershipRepository.columnTypes],
+        type = map[OwnershipRepository.columnType],
         origin = map[OwnershipRepository.columnOrigin],
         about = map[OwnershipRepository.columnAbout],
+        contains = map[OwnershipRepository.columnContains],
         transactionId = map[OwnershipRepository.columnTransactionId];
 
   /// Serializes the contents to be recorded in the blockchain.
   Uint8List serialize() {
-    String jsonTypes = jsonEncode(
-        types.map<String>((TikiSdkDataTypeEnum t) => t.val).toList());
+    String jsonContains = jsonEncode(contains);
     return (BytesBuilder()
           ..add(CompactSize.encode(Uint8List.fromList(source.codeUnits)))
-          ..add(CompactSize.encode(Uint8List.fromList(jsonTypes.codeUnits)))
+          ..add(CompactSize.encode(Uint8List.fromList(type.val.codeUnits)))
           ..add(CompactSize.encode(Uint8List.fromList(origin.codeUnits)))
           ..add(CompactSize.encode(about == null
               ? Uint8List(1)
-              : Uint8List.fromList(about!.codeUnits))))
+              : Uint8List.fromList(about!.codeUnits)))
+          ..add(CompactSize.encode(Uint8List.fromList(jsonContains.codeUnits))))
         .toBytes();
   }
 
@@ -61,11 +66,12 @@ class OwnershipModel {
     List<Uint8List> unserialized = CompactSize.decode(serialized);
     return OwnershipModel(
         source: String.fromCharCodes(unserialized[0]),
-        types: jsonDecode(String.fromCharCodes(unserialized[1]))
-            .map<TikiSdkDataTypeEnum>(
-                (val) => TikiSdkDataTypeEnum.fromValue(val))
-            .toList(),
+        type: TikiSdkDataTypeEnum.fromValue(
+            String.fromCharCodes(unserialized[1])),
         origin: String.fromCharCodes(unserialized[2]),
-        about: String.fromCharCodes(unserialized[3]));
+        about: String.fromCharCodes(unserialized[3]),
+        contains: jsonDecode(String.fromCharCodes(unserialized[4]))
+            .map<String>((e) => e.toString())
+            .toList());
   }
 }

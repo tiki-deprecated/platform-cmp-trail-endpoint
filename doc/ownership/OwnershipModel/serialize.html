@@ -21,8 +21,7 @@
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -68,15 +67,15 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Uint8List serialize() {
-  String jsonTypes = jsonEncode(
-      types.map&lt;String&gt;((TikiSdkDataTypeEnum t) =&gt; t.val).toList());
+  String jsonContains = jsonEncode(contains);
   return (BytesBuilder()
         ..add(CompactSize.encode(Uint8List.fromList(source.codeUnits)))
-        ..add(CompactSize.encode(Uint8List.fromList(jsonTypes.codeUnits)))
+        ..add(CompactSize.encode(Uint8List.fromList(type.val.codeUnits)))
         ..add(CompactSize.encode(Uint8List.fromList(origin.codeUnits)))
         ..add(CompactSize.encode(about == null
             ? Uint8List(1)
-            : Uint8List.fromList(about!.codeUnits))))
+            : Uint8List.fromList(about!.codeUnits)))
+        ..add(CompactSize.encode(Uint8List.fromList(jsonContains.codeUnits))))
       .toBytes();
 }</code></pre>
 </section>
@@ -111,12 +110,13 @@
       <a href="../../ownership/OwnershipModel-class.html#instance-properties">Properties</a>
     </li>
     <li><a href="../../ownership/OwnershipModel/about.html">about</a></li>
+    <li><a href="../../ownership/OwnershipModel/contains.html">contains</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipModel/hashCode.html">hashCode</a></li>
     <li><a href="../../ownership/OwnershipModel/origin.html">origin</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipModel/runtimeType.html">runtimeType</a></li>
     <li><a href="../../ownership/OwnershipModel/source.html">source</a></li>
     <li><a href="../../ownership/OwnershipModel/transactionId.html">transactionId</a></li>
-    <li><a href="../../ownership/OwnershipModel/types.html">types</a></li>
+    <li><a href="../../ownership/OwnershipModel/type.html">type</a></li>
 
     <li class="section-title"><a href="../../ownership/OwnershipModel-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="../../ownership/OwnershipModel/noSuchMethod.html">noSuchMethod</a></li>
@@ -143,7 +143,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.4
+      0.0.5
   </span>
 
   
@@ -152,7 +152,7 @@
 
 
 <script src="../../static-assets/highlight.pack.js?v1"></script>
-<script src="../../static-assets/script.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

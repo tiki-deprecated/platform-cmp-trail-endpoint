@@ -5,6 +5,8 @@
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
+import '../node/node_service.dart';
+import '../ownership/ownership_repository.dart';
 import '../utils/bytes.dart';
 import 'consent_model.dart';
 
@@ -30,6 +32,9 @@ class ConsentRepository {
   /// The table column for [ConsentModel.transactionId]
   static const columnTransactionId = 'transaction_id';
 
+  /// The tabl column for [ConsentModel.expiry]
+  static const columnExpiry = 'expiry';
+
   /// Builds a [ConsentRepository] that will use [_db] for persistence.
   ///
   /// It calls [createTable] to make sure the table exists.
@@ -44,7 +49,11 @@ class ConsentRepository {
      $columnDestination TEXT,
      $columnAbout TEXT,
      $columnReward TEXT,
-     $columnTransactionId TEXT
+     $columnTransactionId TEXT,
+     FOREIGN KEY($columnOwnershipId) 
+      REFERENCES ${OwnershipRepository.table}(${OwnershipRepository.columnTransactionId}),
+     FOREIGN KEY($columnTransactionId) 
+      REFERENCES ${TransactionRepository.table}(${TransactionRepository.columnId})
       );
     ''');
 

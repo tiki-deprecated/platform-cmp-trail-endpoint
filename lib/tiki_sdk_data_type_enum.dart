@@ -5,7 +5,9 @@
 /// {@category SDK}
 /// The type of data a stream, point or pool holds.
 enum TikiSdkDataTypeEnum {
-  emailAddress('email_address');
+  point('data_point'),
+  pool('data_pool'),
+  stream('data_stream');
 
   const TikiSdkDataTypeEnum(this.val);
 
