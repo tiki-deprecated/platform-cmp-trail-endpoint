@@ -21,16 +21,22 @@ class TikiSdkDestination {
   /// _i.e. NOT mytiki.com/*
   final List<String> paths;
 
+  /// Builds a destination with [paths] and [uses].
   const TikiSdkDestination(this.paths, {this.uses = const []});
 
+  /// Builds a destination for all [paths] and [uses]
   const TikiSdkDestination.all()
       : paths = const ['*'],
         uses = const ['*'];
 
+  /// Builds a destination with no [paths] nor [uses].
+  /// 
+  /// This should be use to revoke all destinations for a specific origin.
   const TikiSdkDestination.none()
       : paths = const [],
         uses = const [];
 
+  /// Converts the json representation of the destination into its object.
   static TikiSdkDestination fromJson(String jsonString) =>
       TikiSdkDestination.fromMap(jsonDecode(jsonString));
 
@@ -41,6 +47,7 @@ class TikiSdkDestination {
   @override
   String toString() => jsonEncode({'uses': uses, 'paths': paths});
 
+  /// Serializes the destination as a byte array to be used in the blockchain.
   Uint8List serialize() {
     return (BytesBuilder()
           ..add(CompactSize.encode(
@@ -50,6 +57,7 @@ class TikiSdkDestination {
         .toBytes();
   }
 
+  /// Deserializes a byte array into a destination.
   static TikiSdkDestination deserialize(Uint8List serialized) {
     List<Uint8List> unserialized = CompactSize.decode(serialized);
     return TikiSdkDestination(jsonDecode(String.fromCharCodes(unserialized[0])),

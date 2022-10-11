@@ -22,6 +22,8 @@ class BlockService {
 
   BlockService(Database db) : _repository = BlockRepository(db);
 
+  Database get database => _repository.db;
+
   /// Creates a new block to be commited later.
   ///
   /// It gets the last created block from the [db] to extract [BlockModel.previousHash]

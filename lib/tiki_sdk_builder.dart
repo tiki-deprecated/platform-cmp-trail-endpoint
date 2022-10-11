@@ -1,46 +1,53 @@
-import 'package:sqlite3/sqlite3.dart';
-
+/// The SDK to handle data ownership and consent NFTs with TIKI.
+/// {@category SDK}
 import 'consent/consent_service.dart';
 import 'node/l0_storage.dart';
 import 'node/node_service.dart';
-import 'node/node_service_builder.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk.dart';
 
+/// The Builder for the TikiSdk object
 class TikiSdkBuilder {
-  late final String _origin;
-  late final KeyStorage _keyStorage;
-  late final String _databaseDir;
-
+  String? _origin;
+  KeyStorage? _keyStorage;
+  String? _databaseDir;
   L0Storage? _l0Storage;
   String? _apiKey;
   String? _address;
 
-  TikiSdkBuilder();
+  /// Sets the default origin for all registries.
+  /// 
+  /// The defalt origin is the one that will be used as origin for all ownership
+  /// assignments that doesn't define different origins. It should follow a 
+  /// reversed FQDN syntax. _i.e. com.mycompany.myproduct_
+  void origin(String origin) => _origin = origin;
+  /// Sets the secure key storage to be used
+  void keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
+  /// Sets the directory to be used for the database files.
+  void databaseDir(String databaseDir) => _databaseDir = databaseDir;
+  /// Sets the L0 storage for data backup
+  void l0Storage(L0Storage l0Storage) => _l0Storage = l0Storage;
+  /// Sets the apiKey to connect to TIKI cloud.
+  void apiKey(String? apiKey) => _apiKey = apiKey;
+  /// Sets the blockchain address for the private key used in the SDK object.
+  void address(String? address) => _address = address;
 
-  set origin(String val) => _origin = val;
-  set keyStorage(KeyStorage val) => _keyStorage = val;
-  set databaseDir(String val) => _databaseDir = val;
-
-  set l0Storage(L0Storage val) => _l0Storage = val;
-  set apiKey(String val) => _apiKey = val;
-  set address(String val) => _address = val;
-
-  Future<void> build() async {
-    NodeServiceBuilder builder = NodeServiceBuilder();
-    builder.keyStorage = _keyStorage;
-    builder.databaseDir = _databaseDir;
-    builder.l0Storage = _l0Storage;
-    builder.apiKey = _apiKey;
-    builder.address = _address;
+  Future<TikiSdk> build() async {
+    NodeServiceBuilder builder = NodeServiceBuilder()
+      ..keyStorage = _keyStorage!
+      ..databaseDir = _databaseDir!
+      ..l0Storage = _l0Storage
+      ..apiKey = _apiKey
+      ..address = _address;
     NodeService nodeService = await builder.build();
     OwnershipService ownershipService =
-        OwnershipService(_origin, nodeService, builder.database);
+        OwnershipService(_origin!, nodeService, nodeService.database);
     ConsentService consentService =
-        ConsentService(builder.database, nodeService);
-    TikiSdk tikiSdk = TikiSdk(_origin);
-    tikiSdk.nodeService = nodeService;
-    tikiSdk.ownershipService = ownershipService;
-    tikiSdk.consentService = consentService;
+        ConsentService(nodeService.database, nodeService);
+    TikiSdk tikiSdk = TikiSdk()
+      ..nodeService = nodeService
+      ..ownershipService = ownershipService
+      ..consentService = consentService;
+    return tikiSdk;
   }
 }

@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/node_service_builder_storage.dart';
+import 'package:tiki_sdk_dart/node/node_service_builder.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../in_mem_key.dart';

@@ -10,6 +10,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:sqlite3/sqlite3.dart';
+
 import 'xchain/xchain_service.dart';
 
 import '../utils/utils.dart';
@@ -23,6 +25,7 @@ export './block/block_service.dart';
 export './key/key_service.dart';
 export './transaction/transaction_service.dart';
 export '../shared_storage/wasabi/wasabi_service.dart';
+export 'node_service_builder.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
@@ -41,6 +44,7 @@ class NodeService {
   List<String> _readOnly = [];
 
   String get address => base64Url.encode(_primaryKey.address);
+  Database get database => _blockService.database;
 
   set blockInterval(Duration val) => _blockInterval = val;
   set maxTransactions(int val) => _maxTransactions = val;

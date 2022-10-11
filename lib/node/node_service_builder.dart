@@ -19,10 +19,9 @@ export './key/key_service.dart';
 export './transaction/transaction_service.dart';
 export '../shared_storage/wasabi/wasabi_service.dart';
 
+/// The Builder for the blockchain Node.
 class NodeServiceBuilder {
-  KeyModel? _primaryKey;
   L0Storage? _l0Storage;
-  Database? database;
   KeyStorage? _keyStorage;
   String? _apiKey;
   List<String> _readOnly = [];
@@ -41,24 +40,30 @@ class NodeServiceBuilder {
   set address(String? val) => _address = val;
 
   Future<NodeService> build() async {
-    _loadStorage();
-    await _loadPrimaryKey();
-    sqlite3.open("$_databaseDir/${base64Url.encode(_primaryKey!.address)}.db");
-    NodeService nodeService = NodeService();
-    nodeService.blockInterval = _blockInterval;
-    nodeService.maxTransactions = _maxTransactions;
-    nodeService.transactionService = TransactionService(database!);
-    nodeService.blockService = BlockService(database!);
-    nodeService.xchainService = XchainService(_l0Storage!, database!);
-    nodeService.backupService = BackupService(
-        _l0Storage!, database!, _primaryKey!, nodeService.getBlock);
-    nodeService.readOnly = _readOnly;
-    nodeService.primaryKey = _primaryKey!;
+    KeyModel primaryKey = await _loadPrimaryKey();
+    if (_l0Storage == null && _apiKey == null) {
+      throw Exception(
+          'Please provide an apiKey or a L0Storage implementation for chain backup.');
+    } else if (_apiKey != null) {
+      _l0Storage = SharedStorage(_apiKey!, primaryKey.privateKey);
+    }
+    Database database = sqlite3
+        .open("$_databaseDir/${base64Url.encode(primaryKey.address)}.db");
+    NodeService nodeService = NodeService()
+      ..blockInterval = _blockInterval
+      ..maxTransactions = _maxTransactions
+      ..transactionService = TransactionService(database)
+      ..blockService = BlockService(database)
+      ..xchainService = XchainService(_l0Storage!, database)
+      ..readOnly = _readOnly
+      ..primaryKey = primaryKey;
+    nodeService.backupService =
+        BackupService(_l0Storage!, database, primaryKey, nodeService.getBlock);
     await nodeService.init();
     return nodeService;
   }
 
-  Future<void> _loadPrimaryKey() async {
+  Future<KeyModel> _loadPrimaryKey() async {
     if (_keyStorage == null) {
       throw Exception('Keystore must be set to build NodeService');
     }
@@ -66,20 +71,9 @@ class NodeServiceBuilder {
     if (_address != null) {
       KeyModel? key = await keyService.get(_address!);
       if (key != null) {
-        _primaryKey = key;
-        return;
+        return key;
       }
     }
-    _primaryKey = await keyService.create();
-    return;
-  }
-
-  void _loadStorage() {
-    if (_l0Storage == null && _apiKey == null) {
-      throw Exception(
-          'Please provide an apiKey or a L0Storage implementation for chain backup.');
-    } else if (_apiKey != null) {
-      _l0Storage = SharedStorage(_apiKey!, _primaryKey!.privateKey);
-    }
+    return await keyService.create();
   }
 }
