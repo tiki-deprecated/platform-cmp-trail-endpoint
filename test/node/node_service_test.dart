@@ -6,7 +6,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/node_service_builder_storage.dart';
+import 'package:tiki_sdk_dart/node/node_service_builder.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
 import 'package:uuid/uuid.dart';
 

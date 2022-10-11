@@ -1,70 +1,53 @@
-import 'dart:convert';
-
-import 'package:sqlite3/sqlite3.dart';
-
+/// The SDK to handle data ownership and consent NFTs with TIKI.
+/// {@category SDK}
 import 'consent/consent_service.dart';
 import 'node/l0_storage.dart';
 import 'node/node_service.dart';
-import 'node/node_service_builder_storage.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk.dart';
-class TikiSdkBuilderStorage {
-  late final TikiSdk tikiSdk;
-  final NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
-  final String _origin;
 
-  Database? _database;
+/// The Builder for the TikiSdk object
+class TikiSdkBuilder {
+  String? _origin;
   KeyStorage? _keyStorage;
+  String? _databaseDir;
   L0Storage? _l0Storage;
   String? _apiKey;
   String? _address;
 
-  TikiSdkBuilderStorage(this._origin) {
-    tikiSdk = TikiSdk(_origin);
-  }
+  /// Sets the default origin for all registries.
+  /// 
+  /// The defalt origin is the one that will be used as origin for all ownership
+  /// assignments that doesn't define different origins. It should follow a 
+  /// reversed FQDN syntax. _i.e. com.mycompany.myproduct_
+  void origin(String origin) => _origin = origin;
+  /// Sets the secure key storage to be used
+  void keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
+  /// Sets the directory to be used for the database files.
+  void databaseDir(String databaseDir) => _databaseDir = databaseDir;
+  /// Sets the L0 storage for data backup
+  void l0Storage(L0Storage l0Storage) => _l0Storage = l0Storage;
+  /// Sets the apiKey to connect to TIKI cloud.
+  void apiKey(String? apiKey) => _apiKey = apiKey;
+  /// Sets the blockchain address for the private key used in the SDK object.
+  void address(String? address) => _address = address;
 
-  set database(Database val) => _database = val;
-  set keyStorage(KeyStorage val) => _keyStorage = val;
-  set l0Storage(L0Storage val) => _l0Storage = val;
-  set apiKey(String val) => _apiKey = val;
-  set address(String val) => _address = val;
-
-  Future<void> buildSdk() async {
-    _buildChecks();
-    builder.database = _database!;
-    if (_apiKey != null) {
-      builder.loadStorage(_apiKey!);
-    } else {
-      builder.l0Storage = _l0Storage!;
-    }
+  Future<TikiSdk> build() async {
+    NodeServiceBuilder builder = NodeServiceBuilder()
+      ..keyStorage = _keyStorage!
+      ..databaseDir = _databaseDir!
+      ..l0Storage = _l0Storage
+      ..apiKey = _apiKey
+      ..address = _address;
     NodeService nodeService = await builder.build();
-    await nodeService.init();
     OwnershipService ownershipService =
-        OwnershipService(_origin, nodeService, _database);
-    ConsentService consentService = ConsentService(_database, nodeService);
-    tikiSdk.nodeService = nodeService;
-    tikiSdk.ownershipService = ownershipService;
-    tikiSdk.consentService = consentService;
-  }
-
-  Future<String> loadPrimaryKey() async {
-    builder.keyStorage = _keyStorage!;
-    await builder.loadPrimaryKey(_address);
-    return base64.encode(builder.primaryKey!.address);
-  }
-
-  void _buildChecks(){
-    if (_l0Storage == null && _apiKey == null) {
-      throw Exception(
-          'Please provide an apiKey or a L0Storage for chain backup.');
-    }
-    if (_database == null){
-      throw Exception(
-          'Database not set!.');
-    }
-    if (_keyStorage == null){
-      throw Exception(
-          'Keystorage not set!');
-    }
+        OwnershipService(_origin!, nodeService, nodeService.database);
+    ConsentService consentService =
+        ConsentService(nodeService.database, nodeService);
+    TikiSdk tikiSdk = TikiSdk()
+      ..nodeService = nodeService
+      ..ownershipService = ownershipService
+      ..consentService = consentService;
+    return tikiSdk;
   }
 }

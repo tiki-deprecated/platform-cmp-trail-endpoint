@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/consent/consent_service.dart';
 import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/node_service_builder_storage.dart';
+import 'package:tiki_sdk_dart/node/node_service_builder.dart';
 import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
@@ -63,16 +63,14 @@ void main() {
     test('Give consent', () async {
       L0Storage l0storage = InMemL0Storage();
       KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
-      builder.database = database;
+      NodeServiceBuilder builder = NodeServiceBuilder();
+      builder.databaseDir = ;
       builder.keyStorage = keyStorage;
-      await builder.loadPrimaryKey();
       builder.l0Storage = l0storage;
       NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
-          OwnershipService('com.mytiki', nodeService, database);
-      ConsentService consentService = ConsentService(database, nodeService);
+          OwnershipService('com.mytiki', nodeService, nodeService.database);
+      ConsentService consentService = ConsentService(nodeService.database, nodeService);
       Uint8List ownershipModelId = (await ownershipService.create(
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
@@ -88,18 +86,16 @@ void main() {
     });
 
     test('Revoke consent', () async {
-      Database db = sqlite3.openInMemory();
       L0Storage l0storage = InMemL0Storage();
       KeyStorage keyStorage = InMemKeyStorage();
-      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      NodeServiceBuilder builder = NodeServiceBuilder();
       builder.database = db;
       builder.keyStorage = keyStorage;
-      await builder.loadPrimaryKey();
       builder.l0Storage = l0storage;
       NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
-          OwnershipService('com.mytiki', nodeService, db);
-      ConsentService consentService = ConsentService(db, nodeService);
+          OwnershipService('com.mytiki', nodeService, nodeService.database);
+      ConsentService consentService = ConsentService(nodeService.database, nodeService);
       Uint8List ownershipModelId = (await ownershipService.create(
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
