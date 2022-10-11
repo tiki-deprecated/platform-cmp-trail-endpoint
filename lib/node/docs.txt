@@ -1,0 +1,48 @@
+
+  /// Initialize the service
+  ///
+  /// The private key used for operations should be provided encoded in [primary].
+  /// If no [primary] is provided, the service will create a new private key.
+  ///
+  /// All the related chains addresses should be added to [readOnly] list as
+  /// [base64Url] representation of the address. Those will be loaded during
+  /// initialization.
+  ///
+  /// The [database] should be a [Database] instance, implemented in the host OS
+  /// appropriate library. If no [database] is provided the SDK will use the OS
+  /// memory for persistence what could cause inconsistencies. It should only be
+  /// used for tests or thin clients with read-only operations. It is NOT RECOMMENDED
+  /// for writing to the chain.
+  ///
+  /// The [keyStorage] should be a [KeyStorage] implementation
+  /// using encrypted key-value storage, specifically for each host OS.
+  /// It should not be accessed by other applications or users because it will
+  /// store the private keys of the user, which is required for write operations
+  /// in the chain.
+  ///
+  /// EncryptedSharedPreferences should be used for Android. AES encryption is
+  /// another option with AES secret key encrypted with RSA and RSA key is stored
+  /// in KeyStore.
+  ///
+  /// Keychain is recommended for iOS and MacOS.
+  ///
+  /// For Linux libsecret is a reliable option.
+  ///
+  /// In JavaScript web environments the recommendation is WebCrypto with HTST enabled.
+  ///
+  /// In other environments, use equivalent implementations of the recommended ones.
+  ///
+  /// The [NodeService] uses a internal [Timer] to build a new [BlockModel] every
+  /// [blockInterval]. The default value is 1 minute. If there are any [TransactionModel]
+  /// in the [database] that was not added to a [BlockModel] yet, it creates a new
+  /// [BlockModel] if the last [TransactionModel] was created before 1 minute ago
+  /// or if the total size of the serialized transactions is greater than 100kb.
+  ///
+  // Future<NodeService> init(
+  //     Database database, KeyStorage keyStorage, L0Storage l0storage,
+  //     {String? primary,
+  //     List<String> readOnly = const [],
+  //     int maxTransactions = 200,
+  //     Duration blockInterval = const Duration(minutes: 1)}) async {
+  //   return this;
+  // }

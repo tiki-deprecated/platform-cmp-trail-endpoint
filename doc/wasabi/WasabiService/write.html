@@ -21,8 +21,7 @@
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -55,7 +54,8 @@
 <span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
 <span class="name ">write</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="write-param-path"><span class="type-annotation">String</span> <span class="parameter-name">path</span>, </span></li>
 <li><span class="parameter" id="write-param-obj"><span class="type-annotation">Uint8List</span> <span class="parameter-name">obj</span>, </span></li>
-<li><span class="parameter" id="write-param-retries">{<span class="type-annotation">int</span> <span class="parameter-name">retries</span> = <span class="default-value">3</span>}</span></li>
+<li><span class="parameter" id="write-param-fields">{<span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">String</span>&gt;</span>?</span> <span class="parameter-name">fields</span>, </span></li>
+<li><span class="parameter" id="write-param-retries"><span class="type-annotation">int</span> <span class="parameter-name">retries</span> = <span class="default-value">3</span>}</span></li>
 </ol>)
 
       
@@ -67,18 +67,13 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; write(String path, Uint8List obj, {int retries = 3}) async {
-  policy ??= await _l0storageService.policy();
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; write(String path, Uint8List obj,
+    {Map&lt;String, String&gt;? fields, int retries = 3}) async {
   try {
-    await _repository.upload(
-        &#39;${policy!.keyPrefix}$path&#39;, policy!.fields!, obj);
-  } on WasabiExceptionExpired catch (_) {
-    policy = await _l0storageService.policy();
-    await _repository.upload(
-        &#39;${policy!.keyPrefix}$path&#39;, policy!.fields!, obj);
+    await _repository.upload(path, obj, fields: fields);
   } on SocketException catch (_) {
     if (retries &gt; 0) {
-      return write(path, obj, retries: retries - 1);
+      return write(path, obj, fields: fields, retries: retries - 1);
     } else {
       rethrow;
     }
@@ -111,11 +106,10 @@
           <li><a href="../../wasabi/WasabiService/WasabiService.html">WasabiService</a></li>
 
 
-    <li class="section-title">
+    <li class="section-title inherited">
       <a href="../../wasabi/WasabiService-class.html#instance-properties">Properties</a>
     </li>
     <li class="inherited"><a href="../../wasabi/WasabiService/hashCode.html">hashCode</a></li>
-    <li><a href="../../wasabi/WasabiService/policy.html">policy</a></li>
     <li class="inherited"><a href="../../wasabi/WasabiService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../wasabi/WasabiService-class.html#instance-methods">Methods</a></li>
@@ -142,7 +136,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.2
+      0.0.5
   </span>
 
   
@@ -151,7 +145,7 @@
 
 
 <script src="../../static-assets/highlight.pack.js?v1"></script>
-<script src="../../static-assets/script.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

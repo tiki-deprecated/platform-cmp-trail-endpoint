@@ -2,8 +2,9 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/consent/consent_service.dart';
+import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/node_service_builder.dart';
 import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 import 'package:tiki_sdk_dart/utils/utils.dart';
@@ -81,13 +82,17 @@ void main() {
     });
 
     test('Create ownership NFT', () async {
-      Database database = sqlite3.openInMemory();
-      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      Database db = sqlite3.openInMemory();
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = db;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
-          OwnershipService('com.tiki.test', nodeService, database);
+          OwnershipService('com.tiki.test', nodeService, db);
       Uint8List ownershipId = (await ownershipService.create(
               source: 'create test', type: TikiSdkDataTypeEnum.point))
           .transactionId!;
@@ -95,17 +100,21 @@ void main() {
     });
 
     test('Create and retrieve ownership NFT', () async {
-      Database database = sqlite3.openInMemory();
-      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      Database db = sqlite3.openInMemory();
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = db;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
-          OwnershipService('com.tiki.test', nodeService, database);
+          OwnershipService('com.tiki.test', nodeService, db);
       await ownershipService.create(
           source: 'create test', type: TikiSdkDataTypeEnum.point);
       TransactionModel transaction = TransactionModel.fromMap(
-          database.select("SELECT * FROM txn LIMIT 1").first);
+          db.select("SELECT * FROM txn LIMIT 1").first);
       expect(transaction.contents[1], 1);
       OwnershipModel retrieved =
           OwnershipModel.deserialize(transaction.contents.sublist(2));
@@ -115,10 +124,14 @@ void main() {
 
     test('Test ownership for existing NFT. Get By source.', () async {
       Database database = sqlite3.openInMemory();
-      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = database;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
           OwnershipService('com.tiki.test', nodeService, database);
       Uint8List owneshipNftId = (await ownershipService.create(
@@ -133,10 +146,14 @@ void main() {
     });
     test('Test ownership for existing NFT. Get by id.', () async {
       Database database = sqlite3.openInMemory();
-      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = database;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
           OwnershipService('com.tiki.test', nodeService, database);
       Uint8List owneshipNftId = (await ownershipService.create(
@@ -151,10 +168,14 @@ void main() {
     });
     test('Test ownership for non-existing NFT.', () async {
       Database database = sqlite3.openInMemory();
-      InMemKeyStorage inMemKeyStorage = InMemKeyStorage();
-      InMemL0Storage inMemL0Storage = InMemL0Storage();
-      NodeService nodeService =
-          await NodeService().init(database, inMemKeyStorage, inMemL0Storage);
+      L0Storage l0storage = InMemL0Storage();
+      KeyStorage keyStorage = InMemKeyStorage();
+      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
+      builder.database = database;
+      builder.keyStorage = keyStorage;
+      await builder.loadPrimaryKey();
+      builder.l0Storage = l0storage;
+      NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
           OwnershipService('com.tiki.test', nodeService, database);
       OwnershipModel? ownershipModel = ownershipService.getBySource('NOT');

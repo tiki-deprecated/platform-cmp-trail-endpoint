@@ -86,6 +86,50 @@ blockchains in the network.</p>
 
 </dd>
 
+        <dt id="backupService" class="property">
+  <span class="name"><a href="../node/NodeService/backupService.html">backupService</a></span>
+  <span class="signature">&#8592; <a href="../backup/BackupService-class.html">BackupService</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="blockInterval" class="property">
+  <span class="name"><a href="../node/NodeService/blockInterval.html">blockInterval</a></span>
+  <span class="signature">&#8592; Duration</span> 
+
+</dt>
+<dd>
+  
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="blockService" class="property">
+  <span class="name"><a href="../node/NodeService/blockService.html">blockService</a></span>
+  <span class="signature">&#8592; <a href="../block/BlockService-class.html">BlockService</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="database" class="property">
+  <span class="name"><a href="../node/NodeService/database.html">database</a></span>
+  <span class="signature">&#8594; Database</span> 
+
+</dt>
+<dd>
+  
+  <div class="features">read-only</div>
+
+</dd>
+
         <dt id="hashCode" class="property inherited">
   <span class="name"><a href="../node/NodeService/hashCode.html">hashCode</a></span>
   <span class="signature">&#8594; int</span> 
@@ -97,6 +141,39 @@ blockchains in the network.</p>
 
 </dd>
 
+        <dt id="maxTransactions" class="property">
+  <span class="name"><a href="../node/NodeService/maxTransactions.html">maxTransactions</a></span>
+  <span class="signature">&#8592; int</span> 
+
+</dt>
+<dd>
+  
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="primaryKey" class="property">
+  <span class="name"><a href="../node/NodeService/primaryKey.html">primaryKey</a></span>
+  <span class="signature">&#8592; <a href="../node/KeyModel-class.html">KeyModel</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="readOnly" class="property">
+  <span class="name"><a href="../node/NodeService/readOnly.html">readOnly</a></span>
+  <span class="signature">&#8592; List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">write-only</div>
+
+</dd>
+
         <dt id="runtimeType" class="property inherited">
   <span class="name"><a href="../node/NodeService/runtimeType.html">runtimeType</a></span>
   <span class="signature">&#8594; Type</span> 
@@ -105,6 +182,28 @@ blockchains in the network.</p>
 <dd class="inherited">
   A representation of the runtime type of the object.
   <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="transactionService" class="property">
+  <span class="name"><a href="../node/NodeService/transactionService.html">transactionService</a></span>
+  <span class="signature">&#8592; <a href="../transaction/TransactionService-class.html">TransactionService</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="xchainService" class="property">
+  <span class="name"><a href="../node/NodeService/xchainService.html">xchainService</a></span>
+  <span class="signature">&#8592; <a href="../xchain/XchainService-class.html">XchainService</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">write-only</div>
 
 </dd>
 
@@ -131,14 +230,14 @@ blockchains in the network.</p>
 </dd>
 
         <dt id="init" class="callable">
-  <span class="name"><a href="../node/NodeService/init.html">init</a></span><span class="signature">(<wbr><span class="parameter" id="init-param-database"><span class="type-annotation">Database</span> <span class="parameter-name">database</span>, </span><span class="parameter" id="init-param-keyStorage"><span class="type-annotation"><a href="../node/KeyStorage-class.html">KeyStorage</a></span> <span class="parameter-name">keyStorage</span>, </span><span class="parameter" id="init-param-l0storage"><span class="type-annotation">L0Storage</span> <span class="parameter-name">l0storage</span>, </span><span class="parameter" id="init-param-primary">{<span class="type-annotation">String?</span> <span class="parameter-name">primary</span>, </span><span class="parameter" id="init-param-readOnly"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">readOnly</span> = <span class="default-value">const []</span>, </span><span class="parameter" id="init-param-maxTransactions"><span class="type-annotation">int</span> <span class="parameter-name">maxTransactions</span> = <span class="default-value">200</span>, </span><span class="parameter" id="init-param-blockInterval"><span class="type-annotation">Duration</span> <span class="parameter-name">blockInterval</span> = <span class="default-value">const Duration(minutes: 1)</span>}</span>)
-    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../node/NodeService-class.html">NodeService</a></span>&gt;</span></span>
+  <span class="name"><a href="../node/NodeService/init.html">init</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  Initialize the service
+  
   
 
 </dd>
@@ -153,6 +252,19 @@ blockchains in the network.</p>
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
   <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="startBlockTimer" class="callable">
+  <span class="name"><a href="../node/NodeService/startBlockTimer.html">startBlockTimer</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
 
 </dd>
 
@@ -240,10 +352,11 @@ blockchains in the network.</p>
   <li><a href="../keys/KeyService-class.html">KeyService</a></li>
   <li><a href="../node/KeyStorage-class.html">KeyStorage</a></li>
   <li><a href="../node/NodeService-class.html">NodeService</a></li>
+  <li><a href="../node/NodeServiceBuilder-class.html">NodeServiceBuilder</a></li>
   <li><a href="../transaction/TransactionModel-class.html">TransactionModel</a></li>
   <li><a href="../transaction/TransactionRepository-class.html">TransactionRepository</a></li>
   <li><a href="../transaction/TransactionService-class.html">TransactionService</a></li>
-  <li><a href="../node/WasabiService-class.html">WasabiService</a></li>
+  <li><a href="../wasabi/WasabiService-class.html">WasabiService</a></li>
 
 
 
@@ -267,13 +380,23 @@ blockchains in the network.</p>
       <a href="../node/NodeService-class.html#instance-properties">Properties</a>
     </li>
     <li><a href="../node/NodeService/address.html">address</a></li>
+    <li><a href="../node/NodeService/backupService.html">backupService</a></li>
+    <li><a href="../node/NodeService/blockInterval.html">blockInterval</a></li>
+    <li><a href="../node/NodeService/blockService.html">blockService</a></li>
+    <li><a href="../node/NodeService/database.html">database</a></li>
     <li class="inherited"><a href="../node/NodeService/hashCode.html">hashCode</a></li>
+    <li><a href="../node/NodeService/maxTransactions.html">maxTransactions</a></li>
+    <li><a href="../node/NodeService/primaryKey.html">primaryKey</a></li>
+    <li><a href="../node/NodeService/readOnly.html">readOnly</a></li>
     <li class="inherited"><a href="../node/NodeService/runtimeType.html">runtimeType</a></li>
+    <li><a href="../node/NodeService/transactionService.html">transactionService</a></li>
+    <li><a href="../node/NodeService/xchainService.html">xchainService</a></li>
 
     <li class="section-title"><a href="../node/NodeService-class.html#instance-methods">Methods</a></li>
     <li><a href="../node/NodeService/getBlock.html">getBlock</a></li>
     <li><a href="../node/NodeService/init.html">init</a></li>
     <li class="inherited"><a href="../node/NodeService/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../node/NodeService/startBlockTimer.html">startBlockTimer</a></li>
     <li class="inherited"><a href="../node/NodeService/toString.html">toString</a></li>
     <li><a href="../node/NodeService/write.html">write</a></li>
 

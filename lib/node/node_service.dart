@@ -11,13 +11,13 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
+
 import 'xchain/xchain_service.dart';
 
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
 import 'block/block_service.dart';
 import 'key/key_service.dart';
-import 'l0_storage.dart';
 import 'transaction/transaction_service.dart';
 
 export './backup/backup_service.dart';
@@ -25,6 +25,7 @@ export './block/block_service.dart';
 export './key/key_service.dart';
 export './transaction/transaction_service.dart';
 export '../shared_storage/wasabi/wasabi_service.dart';
+export 'node_service_builder.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
@@ -38,68 +39,27 @@ class NodeService {
   late final Duration _blockInterval;
   late final int _maxTransactions;
 
-  String get address => base64.encode(_primaryKey.address);
+  Timer? _blockTimer;
 
-  /// Initialize the service
-  ///
-  /// The private key used for operations should be provided encoded in [primary].
-  /// If no [primary] is provided, the service will create a new private key.
-  ///
-  /// All the related chains addresses should be added to [readOnly] list as
-  /// [base64Url] representation of the address. Those will be loaded during
-  /// initialization.
-  ///
-  /// The [database] should be a [Database] instance, implemented in the host OS
-  /// appropriate library. If no [database] is provided the SDK will use the OS
-  /// memory for persistence what could cause inconsistencies. It should only be
-  /// used for tests or thin clients with read-only operations. It is NOT RECOMMENDED
-  /// for writing to the chain.
-  ///
-  /// The [keyStorage] should be a [KeyStorage] implementation
-  /// using encrypted key-value storage, specifically for each host OS.
-  /// It should not be accessed by other applications or users because it will
-  /// store the private keys of the user, which is required for write operations
-  /// in the chain.
-  ///
-  /// EncryptedSharedPreferences should be used for Android. AES encryption is
-  /// another option with AES secret key encrypted with RSA and RSA key is stored
-  /// in KeyStore.
-  ///
-  /// Keychain is recommended for iOS and MacOS.
-  ///
-  /// For Linux libsecret is a reliable option.
-  ///
-  /// In JavaScript web environments the recommendation is WebCrypto with HTST enabled.
-  ///
-  /// In other environments, use equivalent implementations of the recommended ones.
-  ///
-  /// The [NodeService] uses a internal [Timer] to build a new [BlockModel] every
-  /// [blockInterval]. The default value is 1 minute. If there are any [TransactionModel]
-  /// in the [database] that was not added to a [BlockModel] yet, it creates a new
-  /// [BlockModel] if the last [TransactionModel] was created before 1 minute ago
-  /// or if the total size of the serialized transactions is greater than 100kb.
-  ///
-  Future<NodeService> init(
-      Database database, KeyStorage keyStorage, L0Storage l0storage,
-      {String? primary,
-      List<String> readOnly = const [],
-      int maxTransactions = 200,
-      Duration blockInterval = const Duration(minutes: 1)}) async {
-    _transactionService = TransactionService(database);
-    _blockService = BlockService(database);
-    _blockInterval = blockInterval;
-    _maxTransactions = maxTransactions;
+  List<String> _readOnly = [];
 
-    await _loadPrimaryKey(keyStorage, primary);
+  String get address => base64Url.encode(_primaryKey.address);
+  Database get database => _blockService.database;
 
-    _backupService = BackupService(l0storage, database, _primaryKey, getBlock);
-    _xchainService = XchainService(database, l0storage);
+  set blockInterval(Duration val) => _blockInterval = val;
+  set maxTransactions(int val) => _maxTransactions = val;
+  set transactionService(TransactionService val) => _transactionService = val;
+  set blockService(BlockService val) => _blockService = val;
+  set backupService(BackupService val) => _backupService = val;
+  set xchainService(XchainService val) => _xchainService = val;
+  set readOnly(List<String> val) => _readOnly = val;
+  set primaryKey(KeyModel val) => _primaryKey = val;
 
-    await _commitPendingTransactions();
-    await _loadReadOnly(readOnly);
+  startBlockTimer() => _blockTimer == null ? _startBlockTimer() : null;
 
+  Future<void> init() async {
+    await _loadReadOnly();
     _startBlockTimer();
-    return this;
   }
 
   /// Creates a [TransactionModel] with the [contents] and save to local database.
@@ -130,25 +90,16 @@ class NodeService {
     return _serializeBlock(header, transactions);
   }
 
-  Future<void> _loadPrimaryKey(KeyStorage keyStorage, String? address) async {
-    KeyService keyService = KeyService(keyStorage);
-    if (address != null) {
-      KeyModel? key = await keyService.get(address);
-      if (key != null) {
-        _primaryKey = key;
-        return;
-      }
-    }
-    _primaryKey = await keyService.create();
-  }
-
-  void _startBlockTimer() => Timer.periodic(_blockInterval, (_) async {
+  void _startBlockTimer() {
+    if (_blockTimer == null || !_blockTimer!.isActive) {
+      _blockTimer = Timer.periodic(_blockInterval, (_) async {
         List<TransactionModel> transactions = _transactionService.getPending();
         if (transactions.isNotEmpty) {
           await _createBlock(transactions);
         }
-        _startBlockTimer();
       });
+    }
+  }
 
   Future<void> _createBlock(List<TransactionModel> transactions) async {
     List<Uint8List> hashes = transactions.map((e) => e.id!).toList();
@@ -175,9 +126,9 @@ class NodeService {
     return bytes.toBytes();
   }
 
-  Future<void> _loadReadOnly(List<String> readOnly) async {
+  Future<void> _loadReadOnly() async {
     List<Future> loads = [];
-    for (String address in readOnly) {
+    for (String address in _readOnly) {
       XchainModel? xchain =
           await _xchainService.loadKey(base64Url.decode(address));
       List<String> cachedBlocks = _blockService.getCachedIds(xchain.address);
@@ -193,14 +144,5 @@ class NodeService {
       }));
     }
     await Future.wait(loads);
-  }
-
-  Future<void> _commitPendingTransactions() async {
-    List<TransactionModel> transactions = _transactionService.getPending();
-    if (transactions.isNotEmpty &&
-        transactions.last.timestamp
-            .isBefore(DateTime.now().subtract(_blockInterval))) {
-      await _createBlock(transactions);
-    }
   }
 }
