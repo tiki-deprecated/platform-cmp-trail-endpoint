@@ -51,76 +51,21 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../node/NodeService-class.html">NodeService</a></span>&gt;</span></span>
-<span class="name ">init</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="init-param-database"><span class="type-annotation">Database</span> <span class="parameter-name">database</span>, </span></li>
-<li><span class="parameter" id="init-param-keyStorage"><span class="type-annotation"><a href="../../node/KeyStorage-class.html">KeyStorage</a></span> <span class="parameter-name">keyStorage</span>, </span></li>
-<li><span class="parameter" id="init-param-l0storage"><span class="type-annotation">L0Storage</span> <span class="parameter-name">l0storage</span>, </span></li>
-<li><span class="parameter" id="init-param-primary">{<span class="type-annotation">String?</span> <span class="parameter-name">primary</span>, </span></li>
-<li><span class="parameter" id="init-param-readOnly"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">readOnly</span> = <span class="default-value">const []</span>, </span></li>
-<li><span class="parameter" id="init-param-maxTransactions"><span class="type-annotation">int</span> <span class="parameter-name">maxTransactions</span> = <span class="default-value">200</span>, </span></li>
-<li><span class="parameter" id="init-param-blockInterval"><span class="type-annotation">Duration</span> <span class="parameter-name">blockInterval</span> = <span class="default-value">const Duration(minutes: 1)</span>}</span></li>
-</ol>)
+<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">init</span>(<wbr>)
 
       
 
     </section>
     
-<section class="desc markdown">
-  <p>Initialize the service</p>
-<p>The private key used for operations should be provided encoded in <code>primary</code>.
-If no <code>primary</code> is provided, the service will create a new private key.</p>
-<p>All the related chains addresses should be added to <code>readOnly</code> list as
-<code>base64Url</code> representation of the address. Those will be loaded during
-initialization.</p>
-<p>The <code>database</code> should be a <code>Database</code> instance, implemented in the host OS
-appropriate library. If no <code>database</code> is provided the SDK will use the OS
-memory for persistence what could cause inconsistencies. It should only be
-used for tests or thin clients with read-only operations. It is NOT RECOMMENDED
-for writing to the chain.</p>
-<p>The <code>keyStorage</code> should be a <a href="../../node/KeyStorage-class.html">KeyStorage</a> implementation
-using encrypted key-value storage, specifically for each host OS.
-It should not be accessed by other applications or users because it will
-store the private keys of the user, which is required for write operations
-in the chain.</p>
-<p>EncryptedSharedPreferences should be used for Android. AES encryption is
-another option with AES secret key encrypted with RSA and RSA key is stored
-in KeyStore.</p>
-<p>Keychain is recommended for iOS and MacOS.</p>
-<p>For Linux libsecret is a reliable option.</p>
-<p>In JavaScript web environments the recommendation is WebCrypto with HTST enabled.</p>
-<p>In other environments, use equivalent implementations of the recommended ones.</p>
-<p>The <code>NodeService</code> uses a internal <code>Timer</code> to build a new <a href="../../block/BlockModel-class.html">BlockModel</a> every
-<code>blockInterval</code>. The default value is 1 minute. If there are any <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>
-in the <code>database</code> that was not added to a <a href="../../block/BlockModel-class.html">BlockModel</a> yet, it creates a new
-<a href="../../block/BlockModel-class.html">BlockModel</a> if the last <a href="../../transaction/TransactionModel-class.html">TransactionModel</a> was created before 1 minute ago
-or if the total size of the serialized transactions is greater than 100kb.</p>
-</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;NodeService&gt; init(
-    Database database, KeyStorage keyStorage, L0Storage l0storage,
-    {String? primary,
-    List&lt;String&gt; readOnly = const [],
-    int maxTransactions = 200,
-    Duration blockInterval = const Duration(minutes: 1)}) async {
-  _transactionService = TransactionService(database);
-  _blockService = BlockService(database);
-  _blockInterval = blockInterval;
-  _maxTransactions = maxTransactions;
-
-  await _loadPrimaryKey(keyStorage, primary);
-
-  _backupService = BackupService(l0storage, database, _primaryKey, getBlock);
-  _xchainService = XchainService(database, l0storage);
-
-  await _commitPendingTransactions();
-  await _loadReadOnly(readOnly);
-
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; init() async {
+  await _loadReadOnly();
   _startBlockTimer();
-  return this;
 }</code></pre>
 </section>
 
@@ -153,13 +98,23 @@ or if the total size of the serialized transactions is greater than 100kb.</p>
       <a href="../../node/NodeService-class.html#instance-properties">Properties</a>
     </li>
     <li><a href="../../node/NodeService/address.html">address</a></li>
+    <li><a href="../../node/NodeService/backupService.html">backupService</a></li>
+    <li><a href="../../node/NodeService/blockInterval.html">blockInterval</a></li>
+    <li><a href="../../node/NodeService/blockService.html">blockService</a></li>
+    <li><a href="../../node/NodeService/database.html">database</a></li>
     <li class="inherited"><a href="../../node/NodeService/hashCode.html">hashCode</a></li>
+    <li><a href="../../node/NodeService/maxTransactions.html">maxTransactions</a></li>
+    <li><a href="../../node/NodeService/primaryKey.html">primaryKey</a></li>
+    <li><a href="../../node/NodeService/readOnly.html">readOnly</a></li>
     <li class="inherited"><a href="../../node/NodeService/runtimeType.html">runtimeType</a></li>
+    <li><a href="../../node/NodeService/transactionService.html">transactionService</a></li>
+    <li><a href="../../node/NodeService/xchainService.html">xchainService</a></li>
 
     <li class="section-title"><a href="../../node/NodeService-class.html#instance-methods">Methods</a></li>
     <li><a href="../../node/NodeService/getBlock.html">getBlock</a></li>
     <li><a href="../../node/NodeService/init.html">init</a></li>
     <li class="inherited"><a href="../../node/NodeService/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../node/NodeService/startBlockTimer.html">startBlockTimer</a></li>
     <li class="inherited"><a href="../../node/NodeService/toString.html">toString</a></li>
     <li><a href="../../node/NodeService/write.html">write</a></li>
 

@@ -6,7 +6,6 @@ dartdoc:
     metadata,
     node,
     ownership,
-    policy,
     wasabi,
     consent,
     transaction,

@@ -61,18 +61,29 @@
 
     <dl class="constructor-summary-list">
         <dt id="BlockRepository" class="callable">
-          <span class="name"><a href="../block/BlockRepository/BlockRepository.html">BlockRepository</a></span><span class="signature">(<span class="parameter" id="-param-_db"><span class="type-annotation">Database</span> <span class="parameter-name">_db</span></span>)</span>
+          <span class="name"><a href="../block/BlockRepository/BlockRepository.html">BlockRepository</a></span><span class="signature">(<span class="parameter" id="-param-db"><span class="type-annotation">Database</span> <span class="parameter-name">db</span></span>)</span>
         </dt>
         <dd>
-          Builds a <a href="../block/BlockRepository-class.html">BlockRepository</a> that will use <code>_db</code> for persistence.
+          Builds a <a href="../block/BlockRepository-class.html">BlockRepository</a> that will use <a href="../block/BlockRepository/db.html">db</a> for persistence.
         </dd>
     </dl>
   </section>
 
-    <section class="summary offset-anchor inherited" id="instance-properties">
+    <section class="summary offset-anchor" id="instance-properties">
       <h2>Properties</h2>
 
       <dl class="properties">
+        <dt id="db" class="property">
+  <span class="name"><a href="../block/BlockRepository/db.html">db</a></span>
+  <span class="signature">&#8594; Database</span> 
+
+</dt>
+<dd>
+  The <code>Database</code> used to persist <a href="../block/BlockModel-class.html">BlockModel</a>.
+  <div class="features">final</div>
+
+</dd>
+
         <dt id="hashCode" class="property inherited">
   <span class="name"><a href="../block/BlockRepository/hashCode.html">hashCode</a></span>
   <span class="signature">&#8594; int</span> 
@@ -112,7 +123,7 @@
 
 </dt>
 <dd>
-  Builds a <a href="../block/BlockRepository-class.html">BlockRepository</a> that will use <code>_db</code> for persistence.
+  Builds a <a href="../block/BlockRepository-class.html">BlockRepository</a> that will use <a href="../block/BlockRepository/db.html">db</a> for persistence.
   
 
 </dd>
@@ -177,7 +188,7 @@
 
 </dt>
 <dd>
-  Persists a <code>block</code> in the local <code>_db</code>.
+  Persists a <code>block</code> in the local <a href="../block/BlockRepository/db.html">db</a>.
   
 
 </dd>
@@ -323,7 +334,7 @@
 
 </dt>
 <dd>
-  The <a href="../block/BlockModel-class.html">BlockModel</a> table name in <code>_db</code>.
+  The <a href="../block/BlockModel-class.html">BlockModel</a> table name in <a href="../block/BlockRepository/db.html">db</a>.
   
 
   <div>
@@ -375,9 +386,10 @@
           <li><a href="../block/BlockRepository/BlockRepository.html">BlockRepository</a></li>
 
 
-    <li class="section-title inherited">
+    <li class="section-title">
       <a href="../block/BlockRepository-class.html#instance-properties">Properties</a>
     </li>
+    <li><a href="../block/BlockRepository/db.html">db</a></li>
     <li class="inherited"><a href="../block/BlockRepository/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../block/BlockRepository/runtimeType.html">runtimeType</a></li>
 
