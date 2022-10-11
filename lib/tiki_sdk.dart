@@ -1,5 +1,4 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
-/// {@category SDK}
 library tiki_sdk_dart;
 
 export 'tiki_sdk_data_type_enum.dart';
