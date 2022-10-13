@@ -13,9 +13,7 @@ import 'ownership/ownership_service.dart';
 import 'tiki_sdk_data_type_enum.dart';
 import 'tiki_sdk_destination.dart';
 
-
 class TikiSdk {
-
   late final OwnershipService _ownershipService;
   late final ConsentService _consentService;
   late final NodeService _nodeService;

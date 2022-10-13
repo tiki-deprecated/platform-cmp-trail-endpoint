@@ -16,19 +16,24 @@ class TikiSdkBuilder {
   String? _address;
 
   /// Sets the default origin for all registries.
-  /// 
+  ///
   /// The defalt origin is the one that will be used as origin for all ownership
-  /// assignments that doesn't define different origins. It should follow a 
+  /// assignments that doesn't define different origins. It should follow a
   /// reversed FQDN syntax. _i.e. com.mycompany.myproduct_
   void origin(String origin) => _origin = origin;
+
   /// Sets the secure key storage to be used
   void keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
+
   /// Sets the directory to be used for the database files.
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
+
   /// Sets the L0 storage for data backup
   void l0Storage(L0Storage l0Storage) => _l0Storage = l0Storage;
+
   /// Sets the apiKey to connect to TIKI cloud.
   void apiKey(String? apiKey) => _apiKey = apiKey;
+
   /// Sets the blockchain address for the private key used in the SDK object.
   void address(String? address) => _address = address;
 

@@ -64,13 +64,14 @@ void main() {
       L0Storage l0storage = InMemL0Storage();
       KeyStorage keyStorage = InMemKeyStorage();
       NodeServiceBuilder builder = NodeServiceBuilder();
-      builder.databaseDir = ;
+      builder.databaseDir = '';
       builder.keyStorage = keyStorage;
       builder.l0Storage = l0storage;
       NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
           OwnershipService('com.mytiki', nodeService, nodeService.database);
-      ConsentService consentService = ConsentService(nodeService.database, nodeService);
+      ConsentService consentService =
+          ConsentService(nodeService.database, nodeService);
       Uint8List ownershipModelId = (await ownershipService.create(
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
@@ -95,7 +96,8 @@ void main() {
       NodeService nodeService = await builder.build();
       OwnershipService ownershipService =
           OwnershipService('com.mytiki', nodeService, nodeService.database);
-      ConsentService consentService = ConsentService(nodeService.database, nodeService);
+      ConsentService consentService =
+          ConsentService(nodeService.database, nodeService);
       Uint8List ownershipModelId = (await ownershipService.create(
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
