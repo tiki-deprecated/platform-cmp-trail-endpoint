@@ -1,53 +1,33 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
-/// {@category SDK}
-// ignore_for_file: unused_field
-
 library tiki_sdk_dart;
 
 export 'tiki_sdk_data_type_enum.dart';
 export 'tiki_sdk_destination.dart';
+export 'tiki_sdk_builder.dart';
 
 import 'dart:convert';
 
-import 'package:sqlite3/sqlite3.dart';
-
 import 'consent/consent_service.dart';
-import 'node/l0_storage.dart';
 import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk_data_type_enum.dart';
 import 'tiki_sdk_destination.dart';
 
 class TikiSdk {
-  late final String _defaultOrigin;
   late final OwnershipService _ownershipService;
   late final ConsentService _consentService;
   late final NodeService _nodeService;
 
-  /// The origin that will be used as default origin for all ownership
-  /// assignments. It should follow a reversed FQDN syntax.
-  /// _i.e. com.mycompany.myproduct_
-  /// List of ids (wallet addresses) for the current user. The first
-  /// id in the list with a known private key will become the primary
-  /// chain, with all others operating in a read-only capacity.
-  ///  /// The API Key for the TIKI public backup. If null, blocks will not
-  /// be backed up. Register your application at mytiki.com to get your
-  /// application’s API key.
-  Future<TikiSdk> init(String origin, Database database, KeyStorage keyStorage,
-      L0Storage l0storage,
-      {String? id}) async {
-    _nodeService = await NodeService().init(
-      database,
-      keyStorage,
-      l0storage,
-      primary: id,
-    );
-    _ownershipService = OwnershipService(origin, _nodeService, database);
-    _consentService = ConsentService(database, _nodeService);
-    return this;
-  }
+  TikiSdk();
 
-  String get id => _nodeService.address;
+  /// The blockchain address that is in use by this TikiSdk.
+  String get address => _nodeService.address;
+
+  set ownershipService(OwnershipService ownershipService) =>
+      _ownershipService = ownershipService;
+  set consentService(ConsentService consentService) =>
+      _consentService = consentService;
+  set nodeService(NodeService nodeService) => _nodeService = nodeService;
 
   /// Assign ownership to a given [source] : data point, pool, or stream.
   /// [types] describe the various types of data represented by

@@ -13,7 +13,7 @@ import 'block_model.dart';
 
 /// The repository for [BlockModel] persistance in [Database].
 class BlockRepository {
-  /// The [BlockModel] table name in [_db].
+  /// The [BlockModel] table name in [db].
   static const table = 'block';
 
   /// The [BlockModel.id] column.
@@ -35,19 +35,19 @@ class BlockRepository {
   static const columnXchain = 'xchain';
 
   /// The [Database] used to persist [BlockModel].
-  final Database _db;
+  final Database db;
 
-  /// Builds a [BlockRepository] that will use [_db] for persistence.
+  /// Builds a [BlockRepository] that will use [db] for persistence.
   ///
   /// It calls [createTable] to make sure the table exists.
-  BlockRepository(this._db) {
+  BlockRepository(this.db) {
     createTable();
   }
 
-  /// Builds a [BlockRepository] that will use [_db] for persistence.
+  /// Builds a [BlockRepository] that will use [db] for persistence.
   ///
   /// It calls [createTable] to make sure the table exists.
-  void createTable() => _db.execute('''
+  void createTable() => db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
       $columnId BLOB PRIMARY KEY NOT NULL,
       $columnVersion INTEGER NOT NULL,
@@ -57,8 +57,8 @@ class BlockRepository {
       $columnTimestamp INTEGER);
     ''');
 
-  /// Persists a [block] in the local [_db].
-  void save(BlockModel block, {Uint8List? xchain}) => _db.execute('''
+  /// Persists a [block] in the local [db].
+  void save(BlockModel block, {Uint8List? xchain}) => db.execute('''
     INSERT INTO $table 
     VALUES (?, ?, ?, ?, ?, ?);
     ''', [
@@ -84,7 +84,7 @@ class BlockRepository {
   }
 
   List<String> getAllIds(Uint8List address) {
-    ResultSet results = _db.select('''
+    ResultSet results = db.select('''
       SELECT $columnId from $table 
       WHERE $columnXchain = x'${Bytes.hexEncode(address)}'; ''');
     return results
@@ -95,7 +95,7 @@ class BlockRepository {
   List<BlockModel> _select(
       {int? page, int pageSize = 100, String? whereStmt, bool last = false}) {
     String limit = page != null ? 'LIMIT ${page * pageSize},$pageSize' : '';
-    ResultSet results = _db.select('''
+    ResultSet results = db.select('''
       SELECT 
         $table.$columnId as '$table.$columnId',
         $table.$columnVersion as '$table.$columnVersion',

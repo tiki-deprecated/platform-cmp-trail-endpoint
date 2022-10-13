@@ -59,7 +59,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Builds a <a href="../../block/BlockRepository-class.html">BlockRepository</a> that will use <code>_db</code> for persistence.</p>
+  <p>Builds a <a href="../../block/BlockRepository-class.html">BlockRepository</a> that will use <a href="../../block/BlockRepository/db.html">db</a> for persistence.</p>
 <p>It calls <a href="../../block/BlockRepository/createTable.html">createTable</a> to make sure the table exists.</p>
 </section>
 
@@ -67,7 +67,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void createTable() =&gt; _db.execute(&#39;&#39;&#39;
+  <pre class="language-dart"><code class="language-dart">void createTable() =&gt; db.execute(&#39;&#39;&#39;
   CREATE TABLE IF NOT EXISTS $table (
     $columnId BLOB PRIMARY KEY NOT NULL,
     $columnVersion INTEGER NOT NULL,
@@ -103,9 +103,10 @@
           <li><a href="../../block/BlockRepository/BlockRepository.html">BlockRepository</a></li>
 
 
-    <li class="section-title inherited">
+    <li class="section-title">
       <a href="../../block/BlockRepository-class.html#instance-properties">Properties</a>
     </li>
+    <li><a href="../../block/BlockRepository/db.html">db</a></li>
     <li class="inherited"><a href="../../block/BlockRepository/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../../block/BlockRepository/runtimeType.html">runtimeType</a></li>
 

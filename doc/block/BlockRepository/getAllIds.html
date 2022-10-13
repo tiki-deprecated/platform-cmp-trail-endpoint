@@ -65,7 +65,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">List&lt;String&gt; getAllIds(Uint8List address) {
-  ResultSet results = _db.select(&#39;&#39;&#39;
+  ResultSet results = db.select(&#39;&#39;&#39;
     SELECT $columnId from $table
     WHERE $columnXchain = x&#39;${Bytes.hexEncode(address)}&#39;; &#39;&#39;&#39;);
   return results
@@ -99,9 +99,10 @@
           <li><a href="../../block/BlockRepository/BlockRepository.html">BlockRepository</a></li>
 
 
-    <li class="section-title inherited">
+    <li class="section-title">
       <a href="../../block/BlockRepository-class.html#instance-properties">Properties</a>
     </li>
+    <li><a href="../../block/BlockRepository/db.html">db</a></li>
     <li class="inherited"><a href="../../block/BlockRepository/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../../block/BlockRepository/runtimeType.html">runtimeType</a></li>
 

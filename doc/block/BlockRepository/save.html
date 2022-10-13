@@ -61,14 +61,14 @@
     </section>
     
 <section class="desc markdown">
-  <p>Persists a <code>block</code> in the local <code>_db</code>.</p>
+  <p>Persists a <code>block</code> in the local <a href="../../block/BlockRepository/db.html">db</a>.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void save(BlockModel block, {Uint8List? xchain}) =&gt; _db.execute(&#39;&#39;&#39;
+  <pre class="language-dart"><code class="language-dart">void save(BlockModel block, {Uint8List? xchain}) =&gt; db.execute(&#39;&#39;&#39;
   INSERT INTO $table
   VALUES (?, ?, ?, ?, ?, ?);
   &#39;&#39;&#39;, [
@@ -106,9 +106,10 @@
           <li><a href="../../block/BlockRepository/BlockRepository.html">BlockRepository</a></li>
 
 
-    <li class="section-title inherited">
+    <li class="section-title">
       <a href="../../block/BlockRepository-class.html#instance-properties">Properties</a>
     </li>
+    <li><a href="../../block/BlockRepository/db.html">db</a></li>
     <li class="inherited"><a href="../../block/BlockRepository/hashCode.html">hashCode</a></li>
     <li class="inherited"><a href="../../block/BlockRepository/runtimeType.html">runtimeType</a></li>
 

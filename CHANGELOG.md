@@ -1,3 +1,7 @@
+## 0.0.6
+
+* update to builder pattern
+
 ## 0.0.5
 
 * TIKI SDK methods implementation
