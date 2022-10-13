@@ -30,7 +30,7 @@ class TikiSdkDestination {
         uses = const ['*'];
 
   /// Builds a destination with no [paths] nor [uses].
-  /// 
+  ///
   /// This should be use to revoke all destinations for a specific origin.
   const TikiSdkDestination.none()
       : paths = const [],
