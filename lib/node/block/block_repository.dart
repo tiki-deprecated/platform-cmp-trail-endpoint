@@ -44,7 +44,6 @@ class BlockRepository {
     createTable();
   }
 
-
   /// Builds a [BlockRepository] that will use [db] for persistence.
   ///
   /// It calls [createTable] to make sure the table exists.
