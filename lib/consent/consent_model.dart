@@ -2,6 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+import 'dart:convert';
 import 'dart:typed_data';
 
 import '../tiki_sdk_destination.dart';
@@ -73,4 +74,13 @@ class ConsentModel {
           Bytes.decodeBigInt(unserialized[4]).toInt() * 1000),
     );
   }
+
+  String toJson() => jsonEncode(<String,String?>{
+      "ownershipId" : String.fromCharCodes(ownershipId),
+      "destination" : destination.toJson(),
+      "about" : about,
+      "reward" : reward,
+      "transactionId" : String.fromCharCodes(transactionId!),
+      "expiry" : expiry?.millisecondsSinceEpoch.toString()
+    });
 }
