@@ -63,4 +63,6 @@ class TikiSdkDestination {
     return TikiSdkDestination(jsonDecode(String.fromCharCodes(unserialized[0])),
         uses: jsonDecode(String.fromCharCodes(unserialized[0])));
   }
+
+  String toJson() => toString();
 }

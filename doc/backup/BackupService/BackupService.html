@@ -70,7 +70,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">BackupService(this._l0storage, Database database, this._key, this._getBlock)
     : _repository = BackupRepository(database) {
-  String keyBackupPath = &#39;${base64UrlEncode(_key.address)}&#47;public.key&#39;;
+  String keyBackupPath = &#39;${base64UrlEncode(_key.address)}&#47;key&#39;;
   BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
 
   if (keyBackup == null) {
@@ -143,7 +143,7 @@
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      0.0.5
+      0.0.7
   </span>
 
   
