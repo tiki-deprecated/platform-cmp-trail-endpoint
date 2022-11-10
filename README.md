@@ -76,21 +76,79 @@ builder.keyStorage = InMemKeyStorage();
 
 **DO NOT USE InMemKeyStorage in production.**
 ### 5 - Set the API key for connection with TIKI Cloud
+Create your API key in [mytiki.com](mytiki.com)
+```
+builder.apiKey = "api_key_from_mytiki.com";
+```
 
-#### Optional: l0 storage
 ### 6 - address
+Set the user address. If it is not set, a new private key will be created for the user.
+```
+builder.apiKey = "api_key_from_mytiki.com";
+```
 ### 7 - Build it!
+After setting all the properties for the builder, build it to use.
+```
+TikiSdk sdk = builder.build();
+```
 
 ## API Reference
+### TikiSdkDataTypeEnum
+The type of data to which the ownership refers.
+* data_point
+  A specific and single ocurrence of a data.
+* data_pool
+  A pool of data from different ocurrences.
+* data_stream
+  A continuous stream of data.
+### TikiSdkDestination
+The destination to which the data is consented to be used.
+It is composed by `uses` and `paths`.<br/>
+To allow all the constant is `TikiSdkDestination.all()`. <br/>To block all use `TikiSdkDestination.none()`.
+#### uses
+ An optional list of application specific uses cases applicable to the given destination.<br />
+
+ Prefix with NOT to invert. _i.e. NOT ads_. </br >
+
+#### paths
+A list of paths, preferably URL without the scheme or reverse FQDN. Keep list short and use wildcard (*) matching. Prefix with NOT to invert. _i.e. NOT mytiki.com/*
+#### WildCards
+
+ Wildcards are allowed in paths and uses using `*`. <br/> To allow all uses, use a single item list with `*`. <br/> To block all uses, create an empty list.
 ### Assign Ownership
+```
+String ownershipId = sdk.assignOwnership(source, type, contains, origin: origin);
+```
+Assign ownership to a given `source` : data point, pool, or stream.<br />
+The `types` describe the various types of data represented by the referenced data. <br />
+Optionally, the `origin` can be overridden for the specific ownership grant.
 
+### Consent
 ### Give Consent
-
+```
+ConsentModel consent = sdk.modifyConsent(ownershipId, destination, about: about, reward: reward, expiry: expiry);
+```
+The consent is always given by overriding the previous consent. It is up to the implementer to verify the prior consent and modify it if necessary.
+### Get Consent
+```
+ConsentModel consent = sdk. getConsent(source, origin: origin);
+```
+Get the latest consent given for the source. The origin is optional and defaults to the one used in SDK builder.
 ### Revoke Consent
-
-### Modify Consent
-
+```
+ConsentModel consent = sdk.modifyConsent(ownershipId, TikiSdkDestination.none());
+```
+To revoke a given consent, use the constant TikiSdkDestition.none().
 ### Apply Consent
+```
+Function request = () => print('ok');
+Function onBlocked = () => print('blocked');
+sdk.applyConsent(source, destination, request,
+      onBlocked: onBlocked);
+```
+Runs a request if the consent was given for a specific source and destination. If the consent was not given, onBlocked is executed.
+
+
 
 
 
