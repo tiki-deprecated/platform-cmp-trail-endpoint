@@ -6,7 +6,7 @@
 ![Image](https://img.shields.io/pub/points/tiki_sdk_dart?logo=dart)
 ![Image](https://img.shields.io/github/license/tiki/tiki-sdk-dart)
 
-## What it is?
+## What is TIKI SDK?
 TIKI is a decentralized data exchange (DEX) built on ⛓ blockchain tech, enabling direct people-to-business data trade —meeting privacy requirements while maximizing the flow of data.
 
 Our SDK enables business to seamlessly implement it into their tech projects. No significant compute, network, or storage overhead. No change to existing backend systems required. Anonymous to TIKI.
