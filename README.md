@@ -16,15 +16,13 @@ This is the core implementation of the SDK, including blockchain (assembler, val
 We recommend to use this SDK just for pure **Dart** implementations. For other platforms, use one of the following:
 
 - ### Android 
-  tiki-sdk-android - Dart SDK wrapped in Flutter Platform Channels and compiled to machine code, combined with platform-specific storage and a native Kotlin API. Use as a maven dependency.
+  [tiki-sdk-android](https://github.com/tiki/tiki-sdk-android) - Dart SDK wrapped in Flutter Platform Channels and compiled to machine code, combined with platform-specific storage and a native Kotlin API. Use as a maven dependency.
 
 - ### iOS
-  tiki-sdk-ios - Dart SDK wrapped in Flutter Platform Channels and compiled to machine code, combined with platform-specific storage and a native Swift API. Use in your project as a Swift Package.
+  [tiki-sdk-ios](https://github.com/tiki/tiki-sdk-ios) - Dart SDK wrapped in Flutter Platform Channels and compiled to machine code, combined with platform-specific storage and a native Swift API. Use in your project as a Swift Package.
 
 - ### Flutter
-  tiki-sdk-flutter - Combines Dart SDK with Flutter-specific storage libs. Just add the package to your pubspec.
-
-
+  [tiki-sdk-flutter](https://github.com/tiki/tiki-sdk-flutter) - Combines Dart SDK with Flutter-specific storage libs. Just add the package to your pubspec.
 
 ## Getting started
 
@@ -143,8 +141,7 @@ To revoke a given consent, use the constant TikiSdkDestition.none().
 ```
 Function request = () => print('ok');
 Function onBlocked = () => print('blocked');
-sdk.applyConsent(source, destination, request,
-      onBlocked: onBlocked);
+sdk.applyConsent(source, destination, request, onBlocked: onBlocked);
 ```
 Runs a request if the consent was given for a specific source and destination. If the consent was not given, onBlocked is executed.
 
