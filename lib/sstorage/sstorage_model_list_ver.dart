@@ -6,20 +6,20 @@
 import 'package:html/dom.dart';
 
 import '../../utils/utils.dart';
-import 'wasabi_model_list_ver_owner.dart';
+import 'sstorage_model_list_ver_owner.dart';
 
 /// The Wasabi object data model versions.
-class WasabiModelListVer {
+class SStorageModelListVer {
   String? key;
   String? versionId;
   bool? isLatest;
   DateTime? lastModified;
   String? eTag;
   int? size;
-  WasabiModelListVerOwner? owner;
+  SStorageModelListVerOwner? owner;
   String? storageClass;
 
-  WasabiModelListVer(
+  SStorageModelListVer(
       {this.key,
       this.versionId,
       this.isLatest,
@@ -29,7 +29,7 @@ class WasabiModelListVer {
       this.owner,
       this.storageClass});
 
-  WasabiModelListVer.fromElement(Element? element) {
+  SStorageModelListVer.fromElement(Element? element) {
     if (element != null) {
       key = XmlParse.element(element, 'Key')?.text;
       versionId = XmlParse.element(element, 'VersionId')?.text;
@@ -41,7 +41,7 @@ class WasabiModelListVer {
       }
       eTag = XmlParse.element(element, 'ETag')?.text;
       size = int.tryParse(XmlParse.element(element, 'Size')?.text ?? '');
-      owner = WasabiModelListVerOwner.fromElement(
+      owner = SStorageModelListVerOwner.fromElement(
           XmlParse.element(element, 'Owner'));
       storageClass = XmlParse.element(element, 'StorageClass')?.text;
     }
@@ -50,6 +50,6 @@ class WasabiModelListVer {
   /// Overrides toString() method for useful error messages
   @override
   String toString() {
-    return 'WasabiModelListVer{key: $key, versionId: $versionId, isLatest: $isLatest, lastModified: $lastModified, eTag: $eTag, size: $size, owner: $owner, storageClass: $storageClass}';
+    return 'SStorageModelListVer{key: $key, versionId: $versionId, isLatest: $isLatest, lastModified: $lastModified, eTag: $eTag, size: $size, owner: $owner, storageClass: $storageClass}';
   }
 }

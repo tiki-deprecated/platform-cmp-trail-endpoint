@@ -12,19 +12,18 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import 'xchain/xchain_service.dart';
-
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
 import 'block/block_service.dart';
 import 'key/key_service.dart';
 import 'transaction/transaction_service.dart';
+import 'xchain/xchain_service.dart';
 
 export './backup/backup_service.dart';
 export './block/block_service.dart';
 export './key/key_service.dart';
 export './transaction/transaction_service.dart';
-export '../shared_storage/wasabi/wasabi_service.dart';
+export '../sstorage/sstorage_service.dart';
 export 'node_service_builder.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the

@@ -2,37 +2,28 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
-import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/node/node_service_builder.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
 import 'package:uuid/uuid.dart';
 
-import '../in_mem_key.dart';
-import '../in_mem_l0_storage.dart';
+import '../in_mem_node_service_builder.dart';
 
 void main() {
   group('Node tests', () {
     test('Init - No Primary - Success ', () async {
-      L0Storage l0storage = InMemL0Storage();
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
-      builder.database = database;
-      builder.keyStorage = keyStorage;
-      await builder.loadPrimaryKey();
-      builder.l0Storage = l0storage;
-      NodeService node = await builder.build();
+      InMemNodeServiceBuilder inMemNodeServiceBuilder =
+          InMemNodeServiceBuilder();
+      NodeService node = await inMemNodeServiceBuilder.build();
       Uint8List address = base64Decode(node.address);
-      Uint8List? publicKey =
-          await l0storage.read('${base64Url.encode(address)}/public.key');
+      Uint8List? publicKey = await inMemNodeServiceBuilder.l0Storage
+          .read('${base64Url.encode(address)}/public.key');
 
       expect(publicKey != null, true);
       expect(Digest("SHA3-256").process(publicKey!), address);
 
-      KeyService keyService = KeyService(keyStorage);
+      KeyService keyService = KeyService(inMemNodeServiceBuilder.keyStorage);
       KeyModel? key = await keyService.get(node.address);
       RsaPublicKey rsaPublicKey = RsaPublicKey.decode(base64.encode(publicKey));
 
@@ -41,9 +32,10 @@ void main() {
 
       await Future.delayed(const Duration(seconds: 3));
 
-      BlockRepository blockRepository = BlockRepository(database);
+      BlockRepository blockRepository =
+          BlockRepository(inMemNodeServiceBuilder.database);
       TransactionRepository transactionRepository =
-          TransactionRepository(database);
+          TransactionRepository(inMemNodeServiceBuilder.database);
 
       BlockModel? last = blockRepository.getLast();
       List<TransactionModel> pending = transactionRepository.getByBlockId(null);
@@ -53,16 +45,10 @@ void main() {
     });
 
     test('Write - Success ', () async {
-      L0Storage l0storage = InMemL0Storage();
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
-      builder.database = database;
-      builder.keyStorage = keyStorage;
-      await builder.loadPrimaryKey();
-      builder.l0Storage = l0storage;
-      builder.blockInterval = const Duration(seconds: 1);
-      NodeService node = await builder.build();
+      InMemNodeServiceBuilder inMemNodeServiceBuilder =
+          InMemNodeServiceBuilder();
+      inMemNodeServiceBuilder.blockInterval = const Duration(seconds: 1);
+      NodeService node = await inMemNodeServiceBuilder.build();
       TransactionModel tx =
           await node.write(Uint8List.fromList(utf8.encode(const Uuid().v4())));
 
@@ -70,13 +56,14 @@ void main() {
       expect(tx.signature != null, true);
 
       TransactionRepository transactionRepository =
-          TransactionRepository(database);
+          TransactionRepository(inMemNodeServiceBuilder.database);
       List<TransactionModel> pending = transactionRepository.getByBlockId(null);
       expect(pending.length, 1);
 
       await Future.delayed(const Duration(seconds: 3));
 
-      BlockRepository blockRepository = BlockRepository(database);
+      BlockRepository blockRepository =
+          BlockRepository(inMemNodeServiceBuilder.database);
       BlockModel? last = blockRepository.getLast();
       expect(last != null, true);
       expect(last?.id != null, true);
@@ -91,32 +78,20 @@ void main() {
     });
 
     test('Re-init - With Primary - Success ', () async {
-      L0Storage l0storage = InMemL0Storage();
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
-      builder.database = database;
-      builder.keyStorage = keyStorage;
-      await builder.loadPrimaryKey();
-      builder.l0Storage = l0storage;
-      builder.blockInterval = const Duration(seconds: 1);
-      NodeService node = await builder.build();
+      InMemNodeServiceBuilder inMemNodeServiceBuilder =
+          InMemNodeServiceBuilder();
+      inMemNodeServiceBuilder.blockInterval = const Duration(seconds: 1);
+      NodeService node = await inMemNodeServiceBuilder.build();
 
       String address = node.address;
       expect(node.address, address);
     });
 
     test('Re-init - Invalid Address - Success ', () async {
-      L0Storage l0storage = InMemL0Storage();
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      NodeServiceBuilderStorage builder = NodeServiceBuilderStorage();
-      builder.database = database;
-      builder.keyStorage = keyStorage;
-      await builder.loadPrimaryKey();
-      builder.l0Storage = l0storage;
-      builder.blockInterval = const Duration(seconds: 1);
-      NodeService node = await builder.build();
+      InMemNodeServiceBuilder inMemNodeServiceBuilder =
+          InMemNodeServiceBuilder();
+      inMemNodeServiceBuilder.blockInterval = const Duration(seconds: 1);
+      NodeService node = await inMemNodeServiceBuilder.build();
 
       String address = const Uuid().v4();
 
