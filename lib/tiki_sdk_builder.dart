@@ -1,7 +1,6 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
 /// {@category SDK}
 import 'consent/consent_service.dart';
-import 'node/l0_storage.dart';
 import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk.dart';
@@ -11,7 +10,6 @@ class TikiSdkBuilder {
   String? _origin;
   KeyStorage? _keyStorage;
   String? _databaseDir;
-  L0Storage? _l0Storage;
   String? _apiKey;
   String? _address;
 
@@ -28,9 +26,6 @@ class TikiSdkBuilder {
   /// Sets the directory to be used for the database files.
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
 
-  /// Sets the L0 storage for data backup
-  void l0Storage(L0Storage l0Storage) => _l0Storage = l0Storage;
-
   /// Sets the apiKey to connect to TIKI cloud.
   void apiKey(String? apiKey) => _apiKey = apiKey;
 
@@ -41,7 +36,6 @@ class TikiSdkBuilder {
     NodeServiceBuilder builder = NodeServiceBuilder()
       ..keyStorage = _keyStorage!
       ..databaseDir = _databaseDir!
-      ..l0Storage = _l0Storage
       ..apiKey = _apiKey
       ..address = _address;
     NodeService nodeService = await builder.build();

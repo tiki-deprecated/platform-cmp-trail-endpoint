@@ -3,15 +3,12 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/consent/consent_service.dart';
-import 'package:tiki_sdk_dart/node/l0_storage.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/node_service_builder.dart';
 import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
 
-import '../in_mem_key.dart';
-import '../in_mem_l0_storage.dart';
+import '../in_mem_node_service_builder.dart';
 
 void main() {
   group('Consent Tests', () {
@@ -61,13 +58,7 @@ void main() {
     });
 
     test('Give consent', () async {
-      L0Storage l0storage = InMemL0Storage();
-      KeyStorage keyStorage = InMemKeyStorage();
-      NodeServiceBuilder builder = NodeServiceBuilder();
-      builder.databaseDir = '';
-      builder.keyStorage = keyStorage;
-      builder.l0Storage = l0storage;
-      NodeService nodeService = await builder.build();
+      NodeService nodeService = await InMemNodeServiceBuilder().build();
       OwnershipService ownershipService =
           OwnershipService('com.mytiki', nodeService, nodeService.database);
       ConsentService consentService =
@@ -87,13 +78,7 @@ void main() {
     });
 
     test('Revoke consent', () async {
-      L0Storage l0storage = InMemL0Storage();
-      KeyStorage keyStorage = InMemKeyStorage();
-      NodeServiceBuilder builder = NodeServiceBuilder();
-      builder.database = db;
-      builder.keyStorage = keyStorage;
-      builder.l0Storage = l0storage;
-      NodeService nodeService = await builder.build();
+      NodeService nodeService = await InMemNodeServiceBuilder().build();
       OwnershipService ownershipService =
           OwnershipService('com.mytiki', nodeService, nodeService.database);
       ConsentService consentService =
