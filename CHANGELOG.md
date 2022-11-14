@@ -1,3 +1,8 @@
+## 0.0.7
+
+* add toJson to consent and destination models
+* change backup key path
+
 ## 0.0.6
 
 * update to builder pattern
