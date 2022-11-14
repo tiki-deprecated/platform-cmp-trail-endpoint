@@ -8,7 +8,6 @@ import 'dart:convert';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import '../shared_storage/shared_storage.dart';
 import 'l0_storage.dart';
 import 'node_service.dart';
 import 'xchain/xchain_service.dart';
@@ -17,7 +16,6 @@ export './backup/backup_service.dart';
 export './block/block_service.dart';
 export './key/key_service.dart';
 export './transaction/transaction_service.dart';
-export '../shared_storage/wasabi/wasabi_service.dart';
 
 /// The Builder for the blockchain Node.
 class NodeServiceBuilder {
@@ -40,7 +38,7 @@ class NodeServiceBuilder {
 
   Future<NodeService> build() async {
     KeyModel primaryKey = await _loadPrimaryKey();
-    L0Storage l0Storage = SharedStorage(_apiKey!, primaryKey.privateKey);
+    L0Storage l0Storage = SStorageService(_apiKey!, primaryKey.privateKey);
     Database database = sqlite3
         .open("$_databaseDir/${base64Url.encode(primaryKey.address)}.db");
 

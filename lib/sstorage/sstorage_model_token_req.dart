@@ -2,16 +2,15 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// @nodoc
-/// A L0 Storage Policy Request Model
-class PolicyModelReq {
+
+class SStorageModelTokenReq {
   String? pubKey;
   String? signature;
   String? stringToSign;
 
-  PolicyModelReq({this.pubKey, this.signature, this.stringToSign});
+  SStorageModelTokenReq({this.pubKey, this.signature, this.stringToSign});
 
-  PolicyModelReq.fromMap(Map<String, dynamic>? map) {
+  SStorageModelTokenReq.fromMap(Map<String, dynamic>? map) {
     if (map != null) {
       pubKey = map['pubKey'];
       signature = map['signature'];
@@ -22,9 +21,8 @@ class PolicyModelReq {
   Map<String, dynamic> toMap() =>
       {'pubKey': pubKey, 'signature': signature, 'stringToSign': stringToSign};
 
-  /// Overrides toString() method for useful error messages
   @override
   String toString() {
-    return 'PolicyModelReq{pubKey: $pubKey, signature: $signature, stringToSign: $stringToSign}';
+    return 'SStorageModelTokenReq{pubKey: $pubKey, signature: $signature, stringToSign: $stringToSign}';
   }
 }
