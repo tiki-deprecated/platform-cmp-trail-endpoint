@@ -28,8 +28,8 @@ class ConsentService {
       {String? about,
       String? reward,
       DateTime? expiry,
-      TikiSdkDestination destinations = const TikiSdkDestination.all()}) async {
-    ConsentModel consentModel = ConsentModel(ownershipId, destinations,
+      TikiSdkDestination destination = const TikiSdkDestination.all()}) async {
+    ConsentModel consentModel = ConsentModel(ownershipId, destination,
         about: about, reward: reward, expiry: expiry);
     Uint8List contents = consentModel.serialize();
     TransactionModel transaction = await _nodeService.write(contents);
