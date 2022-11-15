@@ -84,5 +84,13 @@ void main() {
       String hex = Bytes.hexEncode(bytes);
       expect(hex, '00196803');
     });
+
+    test('Base64Url no padding encode and decode', () {
+      String str = "original string";
+      Uint8List bytes = Uint8List.fromList(str.codeUnits);
+      String b64 = Bytes.base64UrlEncode(bytes);
+      Uint8List decodedBytes = Bytes.base64UrlDecode(b64);
+      expect(str, String.fromCharCodes(decodedBytes));
+    });
   });
 }
