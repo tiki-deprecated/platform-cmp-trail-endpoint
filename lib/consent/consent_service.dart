@@ -9,11 +9,11 @@ import 'dart:typed_data';
 
 import '../node/node_service.dart';
 import '../tiki_sdk_destination.dart';
-import 'consent_repository.dart';
 import 'consent_model.dart';
+import 'consent_repository.dart';
 
-export 'consent_repository.dart';
 export 'consent_model.dart';
+export 'consent_repository.dart';
 
 /// The service to manage consent registries.
 class ConsentService {

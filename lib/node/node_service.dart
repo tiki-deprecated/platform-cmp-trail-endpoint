@@ -7,7 +7,6 @@
 library node;
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
@@ -17,7 +16,6 @@ import 'backup/backup_service.dart';
 import 'block/block_service.dart';
 import 'key/key_service.dart';
 import 'transaction/transaction_service.dart';
-import 'xchain/xchain_service.dart';
 
 export './backup/backup_service.dart';
 export './block/block_service.dart';
@@ -34,13 +32,10 @@ class NodeService {
   late final BlockService _blockService;
   late final KeyModel _primaryKey;
   late final BackupService _backupService;
-  late final XchainService _xchainService;
   late final Duration _blockInterval;
   late final int _maxTransactions;
 
   Timer? _blockTimer;
-
-  List<String> _readOnly = [];
 
   String get address => Bytes.base64UrlEncode(_primaryKey.address);
   Database get database => _blockService.database;
@@ -50,14 +45,11 @@ class NodeService {
   set transactionService(TransactionService val) => _transactionService = val;
   set blockService(BlockService val) => _blockService = val;
   set backupService(BackupService val) => _backupService = val;
-  set xchainService(XchainService val) => _xchainService = val;
-  set readOnly(List<String> val) => _readOnly = val;
   set primaryKey(KeyModel val) => _primaryKey = val;
 
   startBlockTimer() => _blockTimer == null ? _startBlockTimer() : null;
 
   Future<void> init() async {
-    await _loadReadOnly();
     _startBlockTimer();
   }
 
@@ -123,25 +115,5 @@ class NodeService {
       bytes.add(CompactSize.encode(transaction.serialize()));
     }
     return bytes.toBytes();
-  }
-
-  Future<void> _loadReadOnly() async {
-    List<Future> loads = [];
-    for (String address in _readOnly) {
-      XchainModel? xchain =
-          await _xchainService.loadKey(Bytes.base64UrlDecode(address));
-      List<String> cachedBlocks = _blockService.getCachedIds(xchain.address);
-      loads.add(
-          _xchainService.loadXchain(xchain, skip: cachedBlocks).then((blocks) {
-        for (BlockModel block in blocks.keys) {
-          List<TransactionModel> txns = blocks[block]!;
-          for (TransactionModel txn in txns) {
-            _transactionService.add(txn);
-          }
-          _blockService.commit(block, xchain: Bytes.base64UrlDecode(address));
-        }
-      }));
-    }
-    await Future.wait(loads);
   }
 }

@@ -1,18 +1,16 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
 library tiki_sdk_dart;
 
-export 'tiki_sdk_data_type_enum.dart';
-export 'tiki_sdk_destination.dart';
-export 'tiki_sdk_builder.dart';
-
-import 'dart:convert';
-
 import 'consent/consent_service.dart';
 import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk_data_type_enum.dart';
 import 'tiki_sdk_destination.dart';
 import 'utils/bytes.dart';
+
+export 'tiki_sdk_builder.dart';
+export 'tiki_sdk_data_type_enum.dart';
+export 'tiki_sdk_destination.dart';
 
 class TikiSdk {
   late final OwnershipService _ownershipService;
