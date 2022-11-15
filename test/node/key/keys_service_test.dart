@@ -15,7 +15,7 @@ void main() {
       expect(keys.address.isEmpty, false);
       expect(keys.privateKey.encode().isEmpty, false);
       KeyModel? retrieveKeys =
-          await keysService.get(base64.encode(keys.address));
+          await keysService.get(base64Url.encode(keys.address));
       expect(retrieveKeys == null, false);
       expect(retrieveKeys!.address, keys.address);
       expect(retrieveKeys.privateKey.encode(), keys.privateKey.encode());

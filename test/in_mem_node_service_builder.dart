@@ -3,46 +3,34 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:sqlite3/sqlite3.dart';
+import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/xchain/xchain_service.dart';
 
-import 'l0_storage.dart';
-import '../utils/bytes.dart';
-import 'node_service.dart';
-import 'xchain/xchain_service.dart';
+import 'in_mem_key.dart';
+import 'in_mem_l0_storage.dart';
 
-export './backup/backup_service.dart';
-export './block/block_service.dart';
-export './key/key_service.dart';
-export './transaction/transaction_service.dart';
+class InMemNodeServiceBuilder {
+  late final InMemL0Storage l0Storage;
+  late final InMemKeyStorage keyStorage;
+  late final Database database;
 
-/// The Builder for the blockchain Node.
-class NodeServiceBuilder {
-  KeyStorage? _keyStorage;
-  String? _apiKey;
   List<String> _readOnly = [];
   Duration _blockInterval = const Duration(minutes: 1);
   int _maxTransactions = 200;
-  String? _databaseDir;
   String? _address;
 
-  set apiKey(String? apiKey) => _apiKey = apiKey;
   set readOnly(List<String> addresses) => _readOnly = addresses;
-  set keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
   set blockInterval(Duration duration) => _blockInterval = duration;
   set maxTransactions(int maxTransactions) =>
       _maxTransactions = maxTransactions;
-  set databaseDir(String databaseDir) => _databaseDir = databaseDir;
   set address(String? address) => _address = address;
 
   Future<NodeService> build() async {
+    l0Storage = InMemL0Storage();
+    keyStorage = InMemKeyStorage();
+    database = sqlite3.openInMemory();
     KeyModel primaryKey = await _loadPrimaryKey();
-    L0Storage l0Storage = SStorageService(_apiKey!, primaryKey.privateKey);
-    Database database = sqlite3
-        .open("$_databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
-
     NodeService nodeService = NodeService()
       ..blockInterval = _blockInterval
       ..maxTransactions = _maxTransactions
@@ -58,10 +46,7 @@ class NodeServiceBuilder {
   }
 
   Future<KeyModel> _loadPrimaryKey() async {
-    if (_keyStorage == null) {
-      throw Exception('Keystore must be set to build NodeService');
-    }
-    KeyService keyService = KeyService(_keyStorage!);
+    KeyService keyService = KeyService(keyStorage);
     if (_address != null) {
       KeyModel? key = await keyService.get(_address!);
       if (key != null) {
