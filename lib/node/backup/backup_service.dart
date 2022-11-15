@@ -30,7 +30,7 @@ class BackupService {
   /// It saves the public key in the initialization.
   BackupService(this._l0storage, Database database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
-    String keyBackupPath = '${base64UrlEncode(_key.address)}/public.key';
+    String keyBackupPath = '${Bytes.base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
 
     if (keyBackup == null) {
@@ -50,15 +50,15 @@ class BackupService {
 
   /// Serializes a block and sends to the l0 storage
   Future<void> block(Uint8List id) async {
-    String b64address = base64UrlEncode(_key.address);
+    String b64address = Bytes.base64UrlEncode(_key.address);
     BackupModel bkpModel =
-        BackupModel(path: '$b64address/${base64UrlEncode(id)}.block');
+        BackupModel(path: '$b64address/${Bytes.base64UrlEncode(id)}.block');
     _repository.save(bkpModel);
     return _pending();
   }
 
   Future<void> _pending() async {
-    String b64address = base64UrlEncode(_key.address);
+    String b64address = Bytes.base64UrlEncode(_key.address);
     List<BackupModel> pending = _repository.getPending();
     if (pending.isNotEmpty) {
       for (BackupModel backup in pending) {

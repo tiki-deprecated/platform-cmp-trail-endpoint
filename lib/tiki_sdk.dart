@@ -12,6 +12,7 @@ import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk_data_type_enum.dart';
 import 'tiki_sdk_destination.dart';
+import 'utils/bytes.dart';
 
 class TikiSdk {
   late final OwnershipService _ownershipService;
@@ -38,7 +39,7 @@ class TikiSdk {
       {String? origin}) async {
     OwnershipModel ownershipModel = await _ownershipService.create(
         source: source, type: type, origin: origin);
-    return base64Url.encode(ownershipModel.transactionId!);
+    return Bytes.base64UrlEncode(ownershipModel.transactionId!);
   }
 
   /// Gets latest consent
@@ -59,7 +60,7 @@ class TikiSdk {
       String ownershipId, TikiSdkDestination destination,
       {String? about, String? reward, DateTime? expiry}) async {
     ConsentModel consentModel = await _consentService.modify(
-        base64Url.decode(ownershipId),
+        Bytes.base64UrlDecode(ownershipId),
         about: about,
         reward: reward,
         expiry: expiry,

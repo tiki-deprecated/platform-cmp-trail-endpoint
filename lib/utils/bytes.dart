@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// Helper functions handle data in [Uint8List].
+import 'dart:convert';
 import 'dart:typed_data';
 
 /// Utility methods to work with raw bytes data.
@@ -94,4 +95,17 @@ class Bytes {
 
   static String hexEncode(Uint8List bytes) =>
       bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
+
+  /// Encodes bytes to url-safe base64 string without padding
+  static String base64UrlEncode(Uint8List bytes) {
+    String b64 = base64Url.encode(bytes);
+    return b64.replaceAll("=", '');
+  }
+
+  /// Decodes url-safe base64 string without padding into bytes
+  static Uint8List base64UrlDecode(String b64String) {
+    int padding = b64String.length % 4;
+    int length = b64String.length + padding;
+    return base64Url.decode(b64String.padRight(length, "="));
+  }
 }
