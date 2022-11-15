@@ -9,11 +9,11 @@ import 'dart:typed_data';
 
 import '../node/node_service.dart';
 import '../tiki_sdk_destination.dart';
-import 'consent_repository.dart';
 import 'consent_model.dart';
+import 'consent_repository.dart';
 
-export 'consent_repository.dart';
 export 'consent_model.dart';
+export 'consent_repository.dart';
 
 /// The service to manage consent registries.
 class ConsentService {
@@ -28,8 +28,8 @@ class ConsentService {
       {String? about,
       String? reward,
       DateTime? expiry,
-      TikiSdkDestination destinations = const TikiSdkDestination.all()}) async {
-    ConsentModel consentModel = ConsentModel(ownershipId, destinations,
+      TikiSdkDestination destination = const TikiSdkDestination.all()}) async {
+    ConsentModel consentModel = ConsentModel(ownershipId, destination,
         about: about, reward: reward, expiry: expiry);
     Uint8List contents = consentModel.serialize();
     TransactionModel transaction = await _nodeService.write(contents);

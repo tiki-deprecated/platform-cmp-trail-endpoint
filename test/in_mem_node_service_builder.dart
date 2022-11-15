@@ -5,7 +5,6 @@
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/xchain/xchain_service.dart';
 
 import 'in_mem_key.dart';
 import 'in_mem_l0_storage.dart';
@@ -15,12 +14,10 @@ class InMemNodeServiceBuilder {
   late final InMemKeyStorage keyStorage;
   late final Database database;
 
-  List<String> _readOnly = [];
   Duration _blockInterval = const Duration(minutes: 1);
   int _maxTransactions = 200;
   String? _address;
 
-  set readOnly(List<String> addresses) => _readOnly = addresses;
   set blockInterval(Duration duration) => _blockInterval = duration;
   set maxTransactions(int maxTransactions) =>
       _maxTransactions = maxTransactions;
@@ -36,8 +33,6 @@ class InMemNodeServiceBuilder {
       ..maxTransactions = _maxTransactions
       ..transactionService = TransactionService(database)
       ..blockService = BlockService(database)
-      ..xchainService = XchainService(l0Storage, database)
-      ..readOnly = _readOnly
       ..primaryKey = primaryKey;
     nodeService.backupService =
         BackupService(l0Storage, database, primaryKey, nodeService.getBlock);

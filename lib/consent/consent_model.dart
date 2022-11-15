@@ -75,12 +75,12 @@ class ConsentModel {
     );
   }
 
-  String toJson() => jsonEncode(<String,String?>{
-      "ownershipId" : String.fromCharCodes(ownershipId),
-      "destination" : destination.toJson(),
-      "about" : about,
-      "reward" : reward,
-      "transactionId" : String.fromCharCodes(transactionId!),
-      "expiry" : expiry?.millisecondsSinceEpoch.toString()
-    });
+  String toJson() => jsonEncode(<String, String?>{
+        "ownershipId": String.fromCharCodes(ownershipId),
+        "destination": destination.toJson(),
+        "about": about,
+        "reward": reward,
+        "transactionId": String.fromCharCodes(transactionId!),
+        "expiry": expiry?.millisecondsSinceEpoch.toString()
+      });
 }

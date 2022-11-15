@@ -1,18 +1,16 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
 library tiki_sdk_dart;
 
-export 'tiki_sdk_data_type_enum.dart';
-export 'tiki_sdk_destination.dart';
-export 'tiki_sdk_builder.dart';
-
-import 'dart:convert';
-
 import 'consent/consent_service.dart';
 import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk_data_type_enum.dart';
 import 'tiki_sdk_destination.dart';
 import 'utils/bytes.dart';
+
+export 'tiki_sdk_builder.dart';
+export 'tiki_sdk_data_type_enum.dart';
+export 'tiki_sdk_destination.dart';
 
 class TikiSdk {
   late final OwnershipService _ownershipService;
@@ -31,14 +29,15 @@ class TikiSdk {
   set nodeService(NodeService nodeService) => _nodeService = nodeService;
 
   /// Assign ownership to a given [source] : data point, pool, or stream.
-  /// [types] describe the various types of data represented by
+  /// [type] describe the various types of data represented by
   /// the referenced data. Optionally, the [origin] can be overridden
   /// for the specific ownership grant.
   Future<String> assignOwnership(
-      String source, TikiSdkDataTypeEnum type, List<String> contains,
-      {String? origin}) async {
+      String source, TikiSdkDataTypeEnum type, List<String> contains, 
+      {String? about, String? origin}) async {
     OwnershipModel ownershipModel = await _ownershipService.create(
-        source: source, type: type, origin: origin);
+        source: source, type: type, origin: origin, about:about, 
+        contains: contains);
     return Bytes.base64UrlEncode(ownershipModel.transactionId!);
   }
 
@@ -50,7 +49,7 @@ class TikiSdk {
     return _consentService.getByOwnershipId(ownershipModel.transactionId!);
   }
 
-  /// Modify consent for [data]. Ownership must be granted before
+  /// Modify consent for [ownership]. Ownership must be granted before
   /// modifying consent. Consent is applied on an explicit only basis.
   /// Meaning all requests will be denied by default unless the
   /// destination is explicitly defined in [destinations].
@@ -61,10 +60,10 @@ class TikiSdk {
       {String? about, String? reward, DateTime? expiry}) async {
     ConsentModel consentModel = await _consentService.modify(
         Bytes.base64UrlDecode(ownershipId),
+        destination: destination,
         about: about,
         reward: reward,
-        expiry: expiry,
-        destinations: destination);
+        expiry: expiry);
     return consentModel;
   }
 
