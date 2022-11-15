@@ -88,7 +88,7 @@ class BlockRepository {
       SELECT $columnId from $table 
       WHERE $columnXchain = x'${Bytes.hexEncode(address)}'; ''');
     return results
-        .map<String>((row) => base64Url.encode(row[columnId]))
+        .map<String>((row) => Bytes.base64UrlEncode(row[columnId]))
         .toList();
   }
 

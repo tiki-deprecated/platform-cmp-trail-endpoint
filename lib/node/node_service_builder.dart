@@ -8,6 +8,7 @@ import 'dart:convert';
 
 import 'package:sqlite3/sqlite3.dart';
 import '../shared_storage/shared_storage.dart';
+import '../utils/bytes.dart';
 import 'node_service.dart';
 import 'xchain/xchain_service.dart';
 
@@ -48,7 +49,7 @@ class NodeServiceBuilder {
       _l0Storage = SharedStorage(_apiKey!, primaryKey.privateKey);
     }
     Database database = sqlite3
-        .open("$_databaseDir/${base64Url.encode(primaryKey.address)}.db");
+        .open("$_databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
     NodeService nodeService = NodeService()
       ..blockInterval = _blockInterval
       ..maxTransactions = _maxTransactions

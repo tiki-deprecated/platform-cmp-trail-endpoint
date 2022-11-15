@@ -43,7 +43,7 @@ class NodeService {
 
   List<String> _readOnly = [];
 
-  String get address => base64Url.encode(_primaryKey.address);
+  String get address => Bytes.base64UrlEncode(_primaryKey.address);
   Database get database => _blockService.database;
 
   set blockInterval(Duration val) => _blockInterval = val;
@@ -130,7 +130,7 @@ class NodeService {
     List<Future> loads = [];
     for (String address in _readOnly) {
       XchainModel? xchain =
-          await _xchainService.loadKey(base64Url.decode(address));
+          await _xchainService.loadKey(Bytes.base64UrlDecode(address));
       List<String> cachedBlocks = _blockService.getCachedIds(xchain.address);
       loads.add(
           _xchainService.loadXchain(xchain, skip: cachedBlocks).then((blocks) {
@@ -139,7 +139,7 @@ class NodeService {
           for (TransactionModel txn in txns) {
             _transactionService.add(txn);
           }
-          _blockService.commit(block, xchain: base64Url.decode(address));
+          _blockService.commit(block, xchain: Bytes.base64UrlDecode(address));
         }
       }));
     }
