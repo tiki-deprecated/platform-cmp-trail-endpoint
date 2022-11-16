@@ -23,5 +23,8 @@ jobs:
           mkdir $XDG_CONFIG_HOME/dart
           echo '${{ secrets.PUB_DEV_CREDENTIALS }}' > "$XDG_CONFIG_HOME/dart/pub-credentials.json"
 
+      - name: Run tests
+        run: dart test
+        
       - name: 'Publish'
         run: pub publish -f

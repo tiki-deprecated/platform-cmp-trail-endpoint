@@ -3,8 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-import 'dart:convert';
-
+import '../../utils/bytes.dart';
 import 'key_model.dart';
 import 'key_storage.dart';
 
@@ -16,7 +15,7 @@ class KeyRepository {
   KeyRepository(this._keyStorage);
 
   Future<void> save(KeyModel model) => _keyStorage.write(
-      key: _keyPrefix + base64.encode(model.address), value: model.toJson());
+      key: _keyPrefix + Bytes.base64UrlEncode(model.address), value: model.toJson());
 
   Future<KeyModel?> get(String address) async {
     String? raw = await _keyStorage.read(key: _keyPrefix + address);

@@ -68,8 +68,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;KeyModel&gt; create() async {
   RsaKeyPair rsaKeyPair = await Rsa.generateAsync();
-  Uint8List address = Digest(&quot;SHA3-256&quot;)
-      .process(base64.decode(rsaKeyPair.publicKey.encode()));
+  Uint8List address = Digest(&quot;SHA3-256&quot;).process(rsaKeyPair.publicKey.bytes);
   KeyModel keys = KeyModel(
     address,
     rsaKeyPair.privateKey,

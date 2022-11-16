@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/key/key_service.dart';
+import 'package:tiki_sdk_dart/utils/utils.dart';
 
 import '../../in_mem_key.dart';
 
@@ -15,7 +14,7 @@ void main() {
       expect(keys.address.isEmpty, false);
       expect(keys.privateKey.encode().isEmpty, false);
       KeyModel? retrieveKeys =
-          await keysService.get(base64.encode(keys.address));
+          await keysService.get(Bytes.base64UrlEncode(keys.address));
       expect(retrieveKeys == null, false);
       expect(retrieveKeys!.address, keys.address);
       expect(retrieveKeys.privateKey.encode(), keys.privateKey.encode());

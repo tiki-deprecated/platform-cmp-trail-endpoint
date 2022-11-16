@@ -3,9 +3,9 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+/// RSA keys creation and persistance.
 library keys;
 
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
@@ -28,8 +28,7 @@ class KeyService {
   /// Create a new [RsaKeyPair] and save its public key in object storage.
   Future<KeyModel> create() async {
     RsaKeyPair rsaKeyPair = await Rsa.generateAsync();
-    Uint8List address = Digest("SHA3-256")
-        .process(base64.decode(rsaKeyPair.publicKey.encode()));
+    Uint8List address = Digest("SHA3-256").process(rsaKeyPair.publicKey.bytes);
     KeyModel keys = KeyModel(
       address,
       rsaKeyPair.privateKey,

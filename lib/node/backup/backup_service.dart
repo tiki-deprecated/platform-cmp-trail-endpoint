@@ -12,7 +12,6 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
-import '../l0_storage.dart';
 import '../node_service.dart';
 
 export 'backup_model.dart';
@@ -27,10 +26,10 @@ class BackupService {
 
   /// Creates a new BackupService
   ///
-  /// It saves the public key in the initialization.
+  /// Saves the public key in the initialization.
   BackupService(this._l0storage, Database database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
-    String keyBackupPath = '${base64UrlEncode(_key.address)}/key';
+    String keyBackupPath = '${Bytes.base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
 
     if (keyBackup == null) {
@@ -50,22 +49,22 @@ class BackupService {
 
   /// Serializes a block and sends to the l0 storage
   Future<void> block(Uint8List id) async {
-    String b64address = base64UrlEncode(_key.address);
+    String b64address = Bytes.base64UrlEncode(_key.address);
     BackupModel bkpModel =
-        BackupModel(path: '$b64address/${base64UrlEncode(id)}.block');
+        BackupModel(path: '$b64address/${Bytes.base64UrlEncode(id)}.block');
     _repository.save(bkpModel);
     return _pending();
   }
 
   Future<void> _pending() async {
-    String b64address = base64UrlEncode(_key.address);
+    String b64address = Bytes.base64UrlEncode(_key.address);
     List<BackupModel> pending = _repository.getPending();
     if (pending.isNotEmpty) {
       for (BackupModel backup in pending) {
         if (backup.path.startsWith(b64address)) {
           String noAddress = backup.path.replaceFirst('$b64address/', '');
           String id = noAddress.substring(0, noAddress.length - 6);
-          Uint8List? block = _getBlock(base64Decode(id));
+          Uint8List? block = _getBlock(Bytes.base64UrlDecode(id));
           if (block != null) {
             Uint8List signature = Rsa.sign(_key.privateKey, block);
             Uint8List signedBlock = (BytesBuilder()

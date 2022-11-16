@@ -5,6 +5,7 @@
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
+
 import '../node/node_service.dart';
 import '../ownership/ownership_repository.dart';
 import '../utils/bytes.dart';
@@ -37,7 +38,7 @@ class ConsentRepository {
 
   /// Builds a [ConsentRepository] that will use [_db] for persistence.
   ///
-  /// It calls [createTable] to make sure the table exists.
+  /// It calls [_createTable] to make sure the table exists.
   ConsentRepository(this._db) {
     _createTable();
   }
@@ -71,7 +72,7 @@ class ConsentRepository {
     ]);
   }
 
-  /// Gets the [OwnerShipModel] for [source] and [origin] in database.
+  /// Gets the latest [ConsentModel] for an [ownershipId].
   ConsentModel? getByOwnershipId(Uint8List ownershipId) {
     String where = '''WHERE $columnOwnershipId = 
       x'${Bytes.hexEncode(ownershipId)}' ORDER BY $table.oid DESC LIMIT 1''';

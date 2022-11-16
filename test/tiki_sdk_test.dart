@@ -1,58 +1,32 @@
-import 'package:sqlite3/sqlite3.dart';
+import 'dart:io';
+
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/consent/consent_model.dart';
-import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
-import 'package:tiki_sdk_dart/tiki_sdk_builder.dart';
 
 import 'in_mem_key.dart';
-import 'in_mem_l0_storage.dart';
+import 'in_mem_tiki_sdk_builder.dart';
 
 void main() {
   group('TIKI SDK tests', () {
-    test('SDK initialization with api key', () async {
-      String apiId = '';
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      TikiSdkBuilderStorage sdkBuilder = TikiSdkBuilderStorage('com.mytiki');
-      sdkBuilder.database = database;
-      sdkBuilder.apiKey = apiId;
-      sdkBuilder.keyStorage = keyStorage;
-      await sdkBuilder.buildSdk();
-      expect(1, 1);
-    });
-    test('SDK initialization with L0Storage injection', () async {
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      TikiSdkBuilderStorage sdkBuilder = TikiSdkBuilderStorage('com.mytiki');
-      sdkBuilder.database = database;
-      sdkBuilder.l0Storage = InMemL0Storage();
-      sdkBuilder.keyStorage = keyStorage;
-      await sdkBuilder.buildSdk();
+    test('SDK initialization', () async {
+      InMemTikiSdkBuilder sdkBuilder = InMemTikiSdkBuilder();
+      sdkBuilder.origin('com.mytiki.sdk.dart.test');
+      await sdkBuilder.build();
       expect(1, 1);
     });
     test('create ownership', () async {
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      TikiSdkBuilderStorage sdkBuilder = TikiSdkBuilderStorage('com.mytiki');
-      sdkBuilder.database = database;
-      sdkBuilder.l0Storage = InMemL0Storage();
-      sdkBuilder.keyStorage = keyStorage;
-      await sdkBuilder.buildSdk();
-      TikiSdk tikiSdk = sdkBuilder.tikiSdk;
+      InMemTikiSdkBuilder sdkBuilder = InMemTikiSdkBuilder();
+      sdkBuilder.origin('com.mytiki.sdk.dart.test');
+      TikiSdk tikiSdk = await sdkBuilder.build();
       await tikiSdk
           .assignOwnership('test', TikiSdkDataTypeEnum.point, ['email']);
       expect(1, 1);
     });
     test('give and revoke consent', () async {
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      TikiSdkBuilderStorage sdkBuilder = TikiSdkBuilderStorage('com.mytiki');
-      sdkBuilder.database = database;
-      sdkBuilder.l0Storage = InMemL0Storage();
-      sdkBuilder.keyStorage = keyStorage;
-      await sdkBuilder.buildSdk();
-      TikiSdk tikiSdk = sdkBuilder.tikiSdk;
+      InMemTikiSdkBuilder sdkBuilder = InMemTikiSdkBuilder();
+      sdkBuilder.origin('com.mytiki.sdk.dart.test');
+      TikiSdk tikiSdk = await sdkBuilder.build();
       String ownershipId = await tikiSdk
           .assignOwnership('test', TikiSdkDataTypeEnum.point, ['email']);
       await tikiSdk.modifyConsent(ownershipId, const TikiSdkDestination.all());
@@ -66,14 +40,9 @@ void main() {
     });
     test('expire consent', () async {
       bool ok = false;
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      TikiSdkBuilderStorage sdkBuilder = TikiSdkBuilderStorage('com.mytiki');
-      sdkBuilder.database = database;
-      sdkBuilder.l0Storage = InMemL0Storage();
-      sdkBuilder.keyStorage = keyStorage;
-      await sdkBuilder.buildSdk();
-      TikiSdk tikiSdk = sdkBuilder.tikiSdk;
+      InMemTikiSdkBuilder sdkBuilder = InMemTikiSdkBuilder();
+      sdkBuilder.origin('com.mytiki.sdk.dart.test');
+      TikiSdk tikiSdk = await sdkBuilder.build();
       String ownershipId = await tikiSdk
           .assignOwnership('test', TikiSdkDataTypeEnum.point, ['email']);
       await tikiSdk.modifyConsent(ownershipId, const TikiSdkDestination.all());
@@ -88,14 +57,9 @@ void main() {
     });
     test('run a function based on user consent', () async {
       bool ok = false;
-      KeyStorage keyStorage = InMemKeyStorage();
-      Database database = sqlite3.openInMemory();
-      TikiSdkBuilderStorage sdkBuilder = TikiSdkBuilderStorage('com.mytiki');
-      sdkBuilder.database = database;
-      sdkBuilder.l0Storage = InMemL0Storage();
-      sdkBuilder.keyStorage = keyStorage;
-      await sdkBuilder.buildSdk();
-      TikiSdk tikiSdk = sdkBuilder.tikiSdk;
+      InMemTikiSdkBuilder sdkBuilder = InMemTikiSdkBuilder();
+      sdkBuilder.origin('com.mytiki.sdk.dart.test');
+      TikiSdk tikiSdk = await sdkBuilder.build();
       String ownershipId = await tikiSdk
           .assignOwnership('test', TikiSdkDataTypeEnum.point, ['email']);
       await tikiSdk.modifyConsent(ownershipId, const TikiSdkDestination.all());

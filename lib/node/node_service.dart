@@ -7,12 +7,9 @@
 library node;
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
-
-import 'xchain/xchain_service.dart';
 
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
@@ -24,8 +21,9 @@ export './backup/backup_service.dart';
 export './block/block_service.dart';
 export './key/key_service.dart';
 export './transaction/transaction_service.dart';
-export '../shared_storage/wasabi/wasabi_service.dart';
+export '../sstorage/sstorage_service.dart';
 export 'node_service_builder.dart';
+export 'l0_storage.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
@@ -35,15 +33,12 @@ class NodeService {
   late final BlockService _blockService;
   late final KeyModel _primaryKey;
   late final BackupService _backupService;
-  late final XchainService _xchainService;
   late final Duration _blockInterval;
   late final int _maxTransactions;
 
   Timer? _blockTimer;
 
-  List<String> _readOnly = [];
-
-  String get address => base64Url.encode(_primaryKey.address);
+  String get address => Bytes.base64UrlEncode(_primaryKey.address);
   Database get database => _blockService.database;
 
   set blockInterval(Duration val) => _blockInterval = val;
@@ -51,23 +46,20 @@ class NodeService {
   set transactionService(TransactionService val) => _transactionService = val;
   set blockService(BlockService val) => _blockService = val;
   set backupService(BackupService val) => _backupService = val;
-  set xchainService(XchainService val) => _xchainService = val;
-  set readOnly(List<String> val) => _readOnly = val;
   set primaryKey(KeyModel val) => _primaryKey = val;
 
   startBlockTimer() => _blockTimer == null ? _startBlockTimer() : null;
 
   Future<void> init() async {
-    await _loadReadOnly();
     _startBlockTimer();
   }
 
   /// Creates a [TransactionModel] with the [contents] and save to local database.
   ///
   /// When a [TransactionModel] is created it is not added to the next block
-  /// immediately. It needs to wait until the [_blkTimer] runs again to check if
-  /// the oldest transaction was created more than [_blkInterval] duration or
-  /// if there are more than 200 [TransactionModel] waiting to be added to a
+  /// immediately. It needs to wait until the [_blockTimer] runs again to check if
+  /// the oldest transaction was created more than [_blockInterval] duration or
+  /// if there are more than [_maxTransactions] waiting to be added to a
   /// [BlockModel].
   Future<TransactionModel> write(Uint8List contents) async {
     TransactionModel transaction =
@@ -81,13 +73,13 @@ class NodeService {
 
   /// Gets a serialized block by its [id].
   Uint8List? getBlock(Uint8List id) {
-    BlockModel? header = _blockService.get(id);
-    if (header == null) return null;
+    BlockModel? block = _blockService.get(id);
+    if (block == null) return null;
 
     List<TransactionModel> transactions = _transactionService.getByBlock(id);
     if (transactions.isEmpty) return null;
 
-    return _serializeBlock(header, transactions);
+    return _serializeBlock(block, transactions);
   }
 
   void _startBlockTimer() {
@@ -115,34 +107,14 @@ class NodeService {
   }
 
   Uint8List? _serializeBlock(
-      BlockModel header, List<TransactionModel> transactions) {
+      BlockModel block, List<TransactionModel> transactions) {
     BytesBuilder bytes = BytesBuilder();
-    bytes.add(header.serialize());
+    bytes.add(block.serialize());
     bytes.add(CompactSize.encode(
         Bytes.encodeBigInt(BigInt.from(transactions.length))));
     for (TransactionModel transaction in transactions) {
       bytes.add(CompactSize.encode(transaction.serialize()));
     }
     return bytes.toBytes();
-  }
-
-  Future<void> _loadReadOnly() async {
-    List<Future> loads = [];
-    for (String address in _readOnly) {
-      XchainModel? xchain =
-          await _xchainService.loadKey(base64Url.decode(address));
-      List<String> cachedBlocks = _blockService.getCachedIds(xchain.address);
-      loads.add(
-          _xchainService.loadXchain(xchain, skip: cachedBlocks).then((blocks) {
-        for (BlockModel block in blocks.keys) {
-          List<TransactionModel> txns = blocks[block]!;
-          for (TransactionModel txn in txns) {
-            _transactionService.add(txn);
-          }
-          _blockService.commit(block, xchain: base64Url.decode(address));
-        }
-      }));
-    }
-    await Future.wait(loads);
   }
 }

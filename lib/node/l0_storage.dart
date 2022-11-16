@@ -2,6 +2,9 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+/// The definition of L0 backup object storage.
+library l0_storage;
+
 import 'dart:typed_data';
 
 /// The interface to implement L0 backup object storage.

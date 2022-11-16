@@ -1,6 +1,6 @@
 name: tiki_sdk_dart
 description: TIKI SDK - Dart
-version: 0.0.7
+version: 0.0.8
 homepage: https://github.com/tiki/tiki-sdk-dart
 
 environment:
@@ -16,4 +16,5 @@ dependencies:
 dev_dependencies:
   test: ^1.21.4
   flutter_lints: ^2.0.1
+
 

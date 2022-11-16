@@ -7,7 +7,6 @@ import 'dart:typed_data';
 
 import 'utils/compact_size.dart';
 
-/// {@category SDK}
 /// The destination to which the data is consented to be used.
 class TikiSdkDestination {
   /// An optional list of application specific uses cases
