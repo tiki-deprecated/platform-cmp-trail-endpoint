@@ -12,7 +12,6 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
-import '../l0_storage.dart';
 import '../node_service.dart';
 
 export 'backup_model.dart';
@@ -65,7 +64,7 @@ class BackupService {
         if (backup.path.startsWith(b64address)) {
           String noAddress = backup.path.replaceFirst('$b64address/', '');
           String id = noAddress.substring(0, noAddress.length - 6);
-          Uint8List? block = _getBlock(base64Decode(id));
+          Uint8List? block = _getBlock(Bytes.base64UrlDecode(id));
           if (block != null) {
             Uint8List signature = Rsa.sign(_key.privateKey, block);
             Uint8List signedBlock = (BytesBuilder()
