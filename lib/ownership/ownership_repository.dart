@@ -4,7 +4,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category SDK}
+
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -20,10 +20,10 @@ class OwnershipRepository {
   final Database _db;
   static const table = 'ownership';
 
-  /// The identification of the source.     
+  /// The identification of the source.
   static const String columnSource = 'source';
 
-  /// The type of the data source: data point, pool or stream.  
+  /// The type of the data source: data point, pool or stream.
   static const String columnType = 'type';
 
   /// The origin from which the data was generated.

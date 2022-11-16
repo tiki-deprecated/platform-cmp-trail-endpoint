@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category SDK}
+
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -13,7 +13,7 @@ import 'ownership_repository.dart';
 /// The Ownership NFT. The registry of ownership to a given data point, pool, or
 /// stream.
 class OwnershipModel {
-  /// The identification of the source. 
+  /// The identification of the source.
   String source;
 
   /// The type of the data source: data point, pool or stream.
@@ -39,7 +39,6 @@ class OwnershipModel {
     this.contains = const [],
     this.about,
   });
-
 
   /// Builds a [OwnershipModel] from a [map].
   ///

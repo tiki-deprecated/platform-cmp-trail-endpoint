@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category SDK}
+
 /// The type of data a stream, point or pool holds.
 enum TikiSdkDataTypeEnum {
   point('data_point'),
@@ -11,6 +11,9 @@ enum TikiSdkDataTypeEnum {
 
   const TikiSdkDataTypeEnum(this.val);
 
+  /// Builds a TikiSdkDataTypeEnum from [value]
+  ///
+  /// Valid values are: data_point, data_pool, data_stream.
   factory TikiSdkDataTypeEnum.fromValue(String value) {
     for (TikiSdkDataTypeEnum type in TikiSdkDataTypeEnum.values) {
       if (type.val == value) {
