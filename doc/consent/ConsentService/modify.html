@@ -56,7 +56,7 @@
 <li><span class="parameter" id="modify-param-about">{<span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span></li>
 <li><span class="parameter" id="modify-param-reward"><span class="type-annotation">String?</span> <span class="parameter-name">reward</span>, </span></li>
 <li><span class="parameter" id="modify-param-expiry"><span class="type-annotation">DateTime?</span> <span class="parameter-name">expiry</span>, </span></li>
-<li><span class="parameter" id="modify-param-destinations"><span class="type-annotation"><a href="../../tiki_sdk_dart/TikiSdkDestination-class.html">TikiSdkDestination</a></span> <span class="parameter-name">destinations</span> = <span class="default-value">const TikiSdkDestination.all()</span>}</span></li>
+<li><span class="parameter" id="modify-param-destination"><span class="type-annotation"><a href="../../tiki_sdk_dart/TikiSdkDestination-class.html">TikiSdkDestination</a></span> <span class="parameter-name">destination</span> = <span class="default-value">const TikiSdkDestination.all()</span>}</span></li>
 </ol>)
 
       
@@ -64,7 +64,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Modify consent for a <a href="../../ownership/OwnershipModel-class.html">OwnershipModel</a> by its <code>ownershipId</code>.</p>
+  <p>Modify consent by its <code>ownershipId</code>.</p>
 </section>
 
 
@@ -75,8 +75,8 @@
     {String? about,
     String? reward,
     DateTime? expiry,
-    TikiSdkDestination destinations = const TikiSdkDestination.all()}) async {
-  ConsentModel consentModel = ConsentModel(ownershipId, destinations,
+    TikiSdkDestination destination = const TikiSdkDestination.all()}) async {
+  ConsentModel consentModel = ConsentModel(ownershipId, destination,
       about: about, reward: reward, expiry: expiry);
   Uint8List contents = consentModel.serialize();
   TransactionModel transaction = await _nodeService.write(contents);

@@ -50,12 +50,12 @@
 
     
 <section class="desc markdown">
-  <p>The interface for <code>KeysModel</code> persistance class.</p>
+  <p>The interface for KeyModel persistance class.</p>
 <p>The implementation should use OS level encrypted storage. It should not be
 accessible to other applications or users because it will store the private
 keys of the user, which is required for write operations in the chain.</p>
 <p>EncryptedSharedPreferences should be used for Android. AES encryption is
-another option with AES secret key encrypted with RSA and RSA key is stored
+another option with AES secret key encrypted with RSA and RSA key stored
 in KeyStore.
 See <a href="https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences">https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences</a></p>
 <p>Keychain is recommended for iOS and MacOS.
@@ -227,12 +227,13 @@ See <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Web_Crypto_API">ht
   <li><a href="../node/KeyRepository-class.html">KeyRepository</a></li>
   <li><a href="../keys/KeyService-class.html">KeyService</a></li>
   <li><a href="../node/KeyStorage-class.html">KeyStorage</a></li>
+  <li><a href="../l0_storage/L0Storage-class.html">L0Storage</a></li>
   <li><a href="../node/NodeService-class.html">NodeService</a></li>
   <li><a href="../node/NodeServiceBuilder-class.html">NodeServiceBuilder</a></li>
+  <li><a href="../sstorage/SStorageService-class.html">SStorageService</a></li>
   <li><a href="../transaction/TransactionModel-class.html">TransactionModel</a></li>
   <li><a href="../transaction/TransactionRepository-class.html">TransactionRepository</a></li>
   <li><a href="../transaction/TransactionService-class.html">TransactionService</a></li>
-  <li><a href="../wasabi/WasabiService-class.html">WasabiService</a></li>
 
 
 

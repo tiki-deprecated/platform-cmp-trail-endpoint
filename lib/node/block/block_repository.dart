@@ -30,9 +30,6 @@ class BlockRepository {
   /// The [BlockModel.timestamp] column.
   static const columnTimestamp = 'timestamp';
 
-  /// The xchain address.
-  static const columnXchain = 'xchain';
-
   /// The [Database] used to persist [BlockModel].
   final Database db;
 
@@ -52,12 +49,11 @@ class BlockRepository {
       $columnVersion INTEGER NOT NULL,
       $columnPreviousHash BLOB,
       $columnTransactionRoot BLOB,
-      $columnXchain BLOB,
       $columnTimestamp INTEGER);
     ''');
 
   /// Persists a [block] in the local [db].
-  void save(BlockModel block, {Uint8List? xchain}) => db.execute('''
+  void save(BlockModel block) => db.execute('''
     INSERT INTO $table 
     VALUES (?, ?, ?, ?, ?, ?);
     ''', [
@@ -65,7 +61,6 @@ class BlockRepository {
         block.version,
         block.previousHash,
         block.transactionRoot,
-        xchain,
         block.timestamp.millisecondsSinceEpoch
       ]);
 
@@ -82,15 +77,6 @@ class BlockRepository {
     return blocks.isNotEmpty ? blocks.first : null;
   }
 
-  List<String> getAllIds(Uint8List address) {
-    ResultSet results = db.select('''
-      SELECT $columnId from $table 
-      WHERE $columnXchain = x'${Bytes.hexEncode(address)}'; ''');
-    return results
-        .map<String>((row) => Bytes.base64UrlEncode(row[columnId]))
-        .toList();
-  }
-
   List<BlockModel> _select(
       {int? page, int pageSize = 100, String? whereStmt, bool last = false}) {
     String limit = page != null ? 'LIMIT ${page * pageSize},$pageSize' : '';
@@ -100,7 +86,6 @@ class BlockRepository {
         $table.$columnVersion as '$table.$columnVersion',
         $table.$columnPreviousHash as '$table.$columnPreviousHash',
         $table.$columnTransactionRoot as '$table.$columnTransactionRoot',
-        $table.$columnXchain as '$table.$columnXchain',
         $table.$columnTimestamp as '$table.$columnTimestamp'
       FROM $table
       ${whereStmt ?? ''}
@@ -113,7 +98,6 @@ class BlockRepository {
         columnId: row['$table.$columnId'],
         columnVersion: row['$table.$columnVersion'],
         columnPreviousHash: row['$table.$columnPreviousHash'],
-        columnXchain: row['$table.$columnXchain'],
         columnTransactionRoot: row['$table.$columnTransactionRoot'],
         columnTimestamp: row['$table.$columnTimestamp'],
       };

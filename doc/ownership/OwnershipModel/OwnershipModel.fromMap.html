@@ -54,6 +54,20 @@
     </section>
 
     
+<section class="desc markdown">
+  <p>Builds a <a href="../../ownership/OwnershipModel-class.html">OwnershipModel</a> from a <code>map</code>.</p>
+<p>It is used mainly for retrieving data from <a href="../../ownership/OwnershipRepository-class.html">OwnershipRepository</a>.
+The map strucure is</p>
+<pre class="language-dart"><code>  Map&lt;String, dynamic&gt; map = {
+    OwnershipRepository.columnSource : String,
+    OwnershipRepository.columnType : TikiSdkTypeEnum,
+    OwnershipRepository.columnOrigin : String,
+    OwnershipRepository.columnAbout : String,
+    OwnershipRepository.columnContains : List&lt;String&gt;,
+    OwnershipRepository.columnTransactionId : Uint8List,
+   }
+</code></pre>
+</section>
 
 
     

@@ -17,7 +17,7 @@ import 'block_repository.dart';
 class BlockModel {
   /// The unique identifier of this block.
   ///
-  /// It is the SHA3-256 hash of the [header].
+  /// It is the SHA3-256 hash of the Block header.
   Uint8List? id;
 
   /// The version number indicating the set of block validation rules to follow.
@@ -25,15 +25,12 @@ class BlockModel {
 
   /// The previous [BlockModel.id].
   ///
-  /// It is SHA-3 hash of the previous block’s [header]. If this is the genesis
-  /// block, the value is Uint8List(1);
+  /// It is SHA-3 hash of the previous block’s header. For the genesis
+  /// block the value is Uint8List(1);
   late Uint8List previousHash;
 
-  /// The [MerkelTree.root] of the [TransactionModel] hashes taht are part of this.
+  /// The [MerkelTree.root] of the transaction hashes that are part of this.
   late Uint8List transactionRoot;
-
-  /// The xchain address for blocks retrieved from other chains.
-  late Uint8List? xchain;
 
   /// The block creation timestamp.
   late final DateTime timestamp;
@@ -60,7 +57,7 @@ class BlockModel {
   ///     BlockRepository.columnVersion : int
   ///     BlockRepository.columnPreviousHash : Uint8List
   ///     BlockRepository.columnTransactionRoot : Uint8List
-  ///     BlockRepository.columnTransactionCount : int
+  ///     BlockRepository.columnTimestamp : int // Milliseconds since epoch
   ///    }
   /// ```
   BlockModel.fromMap(Map<String, dynamic> map)
@@ -68,13 +65,12 @@ class BlockModel {
         version = map[BlockRepository.columnVersion],
         previousHash = map[BlockRepository.columnPreviousHash],
         transactionRoot = map[BlockRepository.columnTransactionRoot],
-        xchain = map[BlockRepository.columnXchain],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
             map[BlockRepository.columnTimestamp]);
 
-  /// Builds a [BlockModel] from a [serialized] list of bytes.
+  /// Builds a [BlockModel] from a [block] list of bytes.
   ///
-  /// Check [serialize] for more information on how the [serialized] is built.
+  /// Check [serialize] for more information on how the [block] is built.
   BlockModel.deserialize(Uint8List block) {
     List<Uint8List> extractedBlockBytes = CompactSize.decode(block);
     version = Bytes.decodeBigInt(extractedBlockBytes[0]).toInt();

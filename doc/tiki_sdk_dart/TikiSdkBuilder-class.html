@@ -50,7 +50,36 @@
 
     
 <section class="desc markdown">
-  <p>The Builder for the TikiSdk object</p>
+  <h1 id="the-builder-for-the-tikisdk-object">The Builder for the TikiSdk object</h1>
+<h2 id="how-to-use">How to use</h2>
+<h3 id="1---initialize-the-builder">1 - Initialize the builder</h3>
+<pre class="language-dart"><code>  TikiSdkBuilder builder = TikiSdkBuilder();
+</code></pre>
+<h3 id="2---set-the-default-origin">2 - Set the default Origin</h3>
+<p>The default origin is the one that will be used as origin for all ownership assignments that doesn't define different origins. It should follow a reversed FQDN syntax. <em>i.e. com.mycompany.myproduct</em></p>
+<pre class="language-dart"><code>builder.origin('com.mycompany.myproduct');
+</code></pre>
+<h3 id="3---set-the-database-directory">3 - Set the Database Directory</h3>
+<p>TIKI SDK uses SQLite for local database caching. This directory defines where the database files will be stored.</p>
+<pre class="language-dart"><code>builder.databaseDir('path/to/database')
+</code></pre>
+<h3 id="4---set-the-storage-for-users-private-key">4 - Set the storage for user`s private key</h3>
+<p>The user private key is sensitive information and should be kept in a secure and encrypted key-value storage. It should use an implementation of the <code>KeyStorage</code> interface,</p>
+<pre class="language-dart"><code>builder.keyStorage = InMemKeyStorage();
+</code></pre>
+<p><strong>DO NOT USE InMemKeyStorage in production.</strong></p>
+<h3 id="5---set-the-api-key-for-connection-with-tiki-cloud">5 - Set the API key for connection with TIKI Cloud</h3>
+<p>Create your API key in <a href="mytiki.com">mytiki.com</a></p>
+<pre class="language-dart"><code>builder.apiKey = "api_key_from_mytiki.com";
+</code></pre>
+<h3 id="6---address">6 - address</h3>
+<p>Set the user address. If it is not set, a new private key will be created for the user.</p>
+<pre class="language-dart"><code>builder.apiKey = "api_key_from_mytiki.com";
+</code></pre>
+<h3 id="7---build-it">7 - Build it!</h3>
+<p>After setting all the properties for the builder, build it to use.</p>
+<pre class="language-dart"><code>TikiSdk sdk = builder.build();
+</code></pre>
 </section>
 
 
@@ -138,7 +167,7 @@
 
 </dt>
 <dd>
-  
+  Builds the <code>TikiSdk</code> object.
   
 
 </dd>
@@ -165,19 +194,6 @@
 </dt>
 <dd>
   Sets the secure key storage to be used
-  
-
-</dd>
-
-        <dt id="l0Storage" class="callable">
-  <span class="name"><a href="../tiki_sdk_dart/TikiSdkBuilder/l0Storage.html">l0Storage</a></span><span class="signature">(<wbr><span class="parameter" id="l0Storage-param-l0Storage"><span class="type-annotation">L0Storage</span> <span class="parameter-name">l0Storage</span></span>)
-    <span class="returntype parameter">&#8594; void</span>
-  </span>
-  
-
-</dt>
-<dd>
-  Sets the L0 storage for data backup
   
 
 </dd>
@@ -304,7 +320,6 @@
     <li><a href="../tiki_sdk_dart/TikiSdkBuilder/build.html">build</a></li>
     <li><a href="../tiki_sdk_dart/TikiSdkBuilder/databaseDir.html">databaseDir</a></li>
     <li><a href="../tiki_sdk_dart/TikiSdkBuilder/keyStorage.html">keyStorage</a></li>
-    <li><a href="../tiki_sdk_dart/TikiSdkBuilder/l0Storage.html">l0Storage</a></li>
     <li class="inherited"><a href="../tiki_sdk_dart/TikiSdkBuilder/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../tiki_sdk_dart/TikiSdkBuilder/origin.html">origin</a></li>
     <li class="inherited"><a href="../tiki_sdk_dart/TikiSdkBuilder/toString.html">toString</a></li>

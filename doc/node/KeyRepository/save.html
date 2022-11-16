@@ -65,7 +65,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; save(KeyModel model) =&gt; _keyStorage.write(
-    key: _keyPrefix + base64.encode(model.address), value: model.toJson());</code></pre>
+    key: _keyPrefix + base64Url.encode(model.address), value: model.toJson());</code></pre>
 </section>
 
 
