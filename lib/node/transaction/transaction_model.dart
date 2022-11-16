@@ -109,58 +109,33 @@ class TransactionModel {
   /// Creates a [Uint8List] representation of this.
   ///
   /// The Uint8List is built by a list of the transaction properties, prepended
-  /// by its size obtained from [CompactSize.toSize].
-  /// Use with [includeSignature] to false, to sign and verify the signature.
+  /// by its size obtained from [CompactSize.encode].
+  /// Use with [includeSignature] to false, to sign or verify the signature.
   ///
   /// ```
-  /// Uint8List serialized = Uint8List.fromList([
-  ///   ...UtilsCompactSize.toSize(version),
-  ///   ...version,
-  ///   ...UtilsCompactSize.toSize(address),
-  ///   ...address,
-  ///   ...UtilsCompactSize.toSize(timestamp),
-  ///   ...timestamp,
-  ///   ...UtilsCompactSize.toSize(assetRef),
-  ///   ...assetRef,
-  ///   ...UtilsCompactSize.toSize(signature),
-  ///   ...signature,
-  ///   ...UtilsCompactSize.toSize(contents),
-  ///   ...contents,
+  /// Uint8List serialized =  (BytesBuilder()
+  ///        ..add(serializedVersion)
+  ///        ..add(serializedAddress)
+  ///        ..add(serializedTimestamp)
+  ///        ..add(serializedAssetRef)
+  ///        ..add(serializedSignature)
+  ///        ..add(serializedContents)).toBytes()
   /// ]);
   /// ```
   Uint8List serialize({includeSignature = true}) {
     Uint8List versionBytes = Bytes.encodeBigInt(BigInt.from(version));
-    Uint8List serializedVersion = (BytesBuilder()
-          ..add(CompactSize.toSize(versionBytes))
-          ..add(versionBytes))
-        .toBytes();
-    Uint8List serializedAddress = (BytesBuilder()
-          ..add(CompactSize.toSize(address))
-          ..add(address))
-        .toBytes();
+    Uint8List serializedVersion = CompactSize.encode(versionBytes);
+    Uint8List serializedAddress = CompactSize.encode(address);
     Uint8List timestampBytes = Bytes.encodeBigInt(
         BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000));
-    Uint8List serializedTimestamp = (BytesBuilder()
-          ..add(CompactSize.toSize(timestampBytes))
-          ..add(timestampBytes))
-        .toBytes();
+    Uint8List serializedTimestamp = CompactSize.encode(timestampBytes);
     Uint8List assetRefBytes = base64.decode(assetRef);
-    Uint8List serializedAssetRef = (BytesBuilder()
-          ..add(CompactSize.toSize(assetRefBytes))
-          ..add(assetRefBytes))
-        .toBytes();
-    Uint8List serializedSignature = (BytesBuilder()
-          ..add(CompactSize.toSize(includeSignature && signature != null
+    Uint8List serializedAssetRef = CompactSize.encode(assetRefBytes);
+    Uint8List serializedSignature = CompactSize.encode(
+      includeSignature && signature != null
               ? signature!
-              : Uint8List(0)))
-          ..add(includeSignature && signature != null
-              ? signature!
-              : Uint8List(0)))
-        .toBytes();
-    Uint8List serializedContents = (BytesBuilder()
-          ..add(CompactSize.toSize(contents))
-          ..add(contents))
-        .toBytes();
+              : Uint8List(0));
+    Uint8List serializedContents = CompactSize.encode(contents);
     return (BytesBuilder()
           ..add(serializedVersion)
           ..add(serializedAddress)
@@ -178,9 +153,6 @@ class TransactionModel {
       other is TransactionModel &&
           runtimeType == other.runtimeType &&
           id == other.id;
-
-  @override
-  int get hashCode => id.hashCode;
 
   /// Overrides toString() method for useful error messages
   @override

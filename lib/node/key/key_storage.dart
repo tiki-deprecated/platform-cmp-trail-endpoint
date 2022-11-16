@@ -3,14 +3,14 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-/// The interface for [KeysModel] persistance class.
+/// The interface for KeyModel persistance class.
 ///
 /// The implementation should use OS level encrypted storage. It should not be
 /// accessible to other applications or users because it will store the private
 /// keys of the user, which is required for write operations in the chain.
 ///
 /// EncryptedSharedPreferences should be used for Android. AES encryption is
-/// another option with AES secret key encrypted with RSA and RSA key is stored
+/// another option with AES secret key encrypted with RSA and RSA key stored
 /// in KeyStore.
 /// See https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
 ///

@@ -56,9 +56,9 @@ class NodeService {
   /// Creates a [TransactionModel] with the [contents] and save to local database.
   ///
   /// When a [TransactionModel] is created it is not added to the next block
-  /// immediately. It needs to wait until the [_blkTimer] runs again to check if
-  /// the oldest transaction was created more than [_blkInterval] duration or
-  /// if there are more than 200 [TransactionModel] waiting to be added to a
+  /// immediately. It needs to wait until the [_blockTimer] runs again to check if
+  /// the oldest transaction was created more than [_blockInterval] duration or
+  /// if there are more than [_maxTransactions] waiting to be added to a
   /// [BlockModel].
   Future<TransactionModel> write(Uint8List contents) async {
     TransactionModel transaction =
@@ -72,13 +72,13 @@ class NodeService {
 
   /// Gets a serialized block by its [id].
   Uint8List? getBlock(Uint8List id) {
-    BlockModel? header = _blockService.get(id);
-    if (header == null) return null;
+    BlockModel? block = _blockService.get(id);
+    if (block == null) return null;
 
     List<TransactionModel> transactions = _transactionService.getByBlock(id);
     if (transactions.isEmpty) return null;
 
-    return _serializeBlock(header, transactions);
+    return _serializeBlock(block, transactions);
   }
 
   void _startBlockTimer() {
@@ -106,9 +106,9 @@ class NodeService {
   }
 
   Uint8List? _serializeBlock(
-      BlockModel header, List<TransactionModel> transactions) {
+      BlockModel block, List<TransactionModel> transactions) {
     BytesBuilder bytes = BytesBuilder();
-    bytes.add(header.serialize());
+    bytes.add(block.serialize());
     bytes.add(CompactSize.encode(
         Bytes.encodeBigInt(BigInt.from(transactions.length))));
     for (TransactionModel transaction in transactions) {

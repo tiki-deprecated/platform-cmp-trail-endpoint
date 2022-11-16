@@ -26,7 +26,7 @@ class BackupRepository {
 
   /// Builds a [BackupRepository] that will use [_db] for persistence.
   ///
-  /// It calls [createTable] to make sure the table exists.
+  /// It calls [_createTable] to make sure the table exists.
   BackupRepository(this._db) {
     _createTable();
   }
@@ -40,7 +40,7 @@ class BackupRepository {
       );
     ''');
 
-  /// Persists [backup] in [_db].
+  /// Persists a [backup] in [_db].
   void save(BackupModel backup) => _db.execute('''
     INSERT INTO $table 
     VALUES ( ?, ?, ? );
@@ -74,7 +74,7 @@ class BackupRepository {
   List<BackupModel> getPending() =>
       _select(whereStmt: 'WHERE $columnTimestamp IS NULL');
 
-  /// Gets a backup registry by its path.
+  /// Gets a [BackupModel] registry by its [path].
   BackupModel? getByPath(String path) {
     List<BackupModel> bkups = _select(whereStmt: "WHERE $columnPath = '$path'");
     return bkups.isNotEmpty ? bkups.first : null;

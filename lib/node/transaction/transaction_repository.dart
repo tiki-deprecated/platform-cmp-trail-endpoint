@@ -98,7 +98,7 @@ class TransactionRepository {
     $columnBlockId =  x'${Bytes.hexEncode(block.id!)}' 
     WHERE $columnId = x'${Bytes.hexEncode(id)}'; ''');
 
-  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
+  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [BlockModel.id].
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(
       whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
