@@ -9,9 +9,7 @@ import 'dart:typed_data';
 ///
 /// For numbers from 0 to 252, compactSize unsigned integers look like regular
 /// unsigned integers. For other numbers up to 0xffffffffffffffff, a byte is
-/// prefixed to the number to indicate its length—but otherwise the numbers look
-/// like regular unsigned integers in little-endian order.
-///
+/// prefixed to the number to indicate its length.
 class CompactSize {
   /// Encodes a [Uint8List] into a compact size prepended Uint8List.
   static Uint8List encode(Uint8List uint8list) {
