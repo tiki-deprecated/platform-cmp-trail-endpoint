@@ -1,3 +1,9 @@
+## 0.0.8
+
+* code cleanup
+* documentation updates
+* tests updates
+
 ## 0.0.7
 
 * add toJson to consent and destination models
