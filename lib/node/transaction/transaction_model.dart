@@ -132,9 +132,7 @@ class TransactionModel {
     Uint8List assetRefBytes = base64.decode(assetRef);
     Uint8List serializedAssetRef = CompactSize.encode(assetRefBytes);
     Uint8List serializedSignature = CompactSize.encode(
-      includeSignature && signature != null
-              ? signature!
-              : Uint8List(0));
+        includeSignature && signature != null ? signature! : Uint8List(0));
     Uint8List serializedContents = CompactSize.encode(contents);
     return (BytesBuilder()
           ..add(serializedVersion)

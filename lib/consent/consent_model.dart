@@ -11,8 +11,8 @@ import 'consent_repository.dart';
 
 /// The Consent NFT data structure. It registers the consent from the creator of
 /// an Ownership NFT for the use of that data in a specific [destination].
-/// 
-/// Optionally the Consent can describe [about] its usage, a [reward] that will 
+///
+/// Optionally the Consent can describe [about] its usage, a [reward] that will
 /// be given in exchange and an [expiry] date and time for the consent.
 class ConsentModel {
   /// Transaction ID corresponding to the ownership NFT for the data source.

@@ -6,10 +6,8 @@ dartdoc:
     metadata,
     node,
     ownership,
-    wasabi,
     consent,
     transaction,
     utils,
-    xchain,
     tiki_sdk_dart,
     ]

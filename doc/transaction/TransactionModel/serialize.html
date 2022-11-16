@@ -62,21 +62,15 @@
 <section class="desc markdown">
   <p>Creates a <code>Uint8List</code> representation of this.</p>
 <p>The Uint8List is built by a list of the transaction properties, prepended
-by its size obtained from <a href="../../utils/CompactSize/toSize.html">CompactSize.toSize</a>.
-Use with <code>includeSignature</code> to false, to sign and verify the signature.</p>
-<pre class="language-dart"><code>Uint8List serialized = Uint8List.fromList([
-  ...UtilsCompactSize.toSize(version),
-  ...version,
-  ...UtilsCompactSize.toSize(address),
-  ...address,
-  ...UtilsCompactSize.toSize(timestamp),
-  ...timestamp,
-  ...UtilsCompactSize.toSize(assetRef),
-  ...assetRef,
-  ...UtilsCompactSize.toSize(signature),
-  ...signature,
-  ...UtilsCompactSize.toSize(contents),
-  ...contents,
+by its size obtained from <a href="../../utils/CompactSize/encode.html">CompactSize.encode</a>.
+Use with <code>includeSignature</code> to false, to sign or verify the signature.</p>
+<pre class="language-dart"><code>Uint8List serialized =  (BytesBuilder()
+       ..add(serializedVersion)
+       ..add(serializedAddress)
+       ..add(serializedTimestamp)
+       ..add(serializedAssetRef)
+       ..add(serializedSignature)
+       ..add(serializedContents)).toBytes()
 ]);
 </code></pre>
 </section>
@@ -87,37 +81,18 @@ Use with <code>includeSignature</code> to false, to sign and verify the signatur
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Uint8List serialize({includeSignature = true}) {
   Uint8List versionBytes = Bytes.encodeBigInt(BigInt.from(version));
-  Uint8List serializedVersion = (BytesBuilder()
-        ..add(CompactSize.toSize(versionBytes))
-        ..add(versionBytes))
-      .toBytes();
-  Uint8List serializedAddress = (BytesBuilder()
-        ..add(CompactSize.toSize(address))
-        ..add(address))
-      .toBytes();
+  Uint8List serializedVersion = CompactSize.encode(versionBytes);
+  Uint8List serializedAddress = CompactSize.encode(address);
   Uint8List timestampBytes = Bytes.encodeBigInt(
       BigInt.from(timestamp.millisecondsSinceEpoch ~&#47; 1000));
-  Uint8List serializedTimestamp = (BytesBuilder()
-        ..add(CompactSize.toSize(timestampBytes))
-        ..add(timestampBytes))
-      .toBytes();
+  Uint8List serializedTimestamp = CompactSize.encode(timestampBytes);
   Uint8List assetRefBytes = base64.decode(assetRef);
-  Uint8List serializedAssetRef = (BytesBuilder()
-        ..add(CompactSize.toSize(assetRefBytes))
-        ..add(assetRefBytes))
-      .toBytes();
-  Uint8List serializedSignature = (BytesBuilder()
-        ..add(CompactSize.toSize(includeSignature &amp;&amp; signature != null
+  Uint8List serializedAssetRef = CompactSize.encode(assetRefBytes);
+  Uint8List serializedSignature = CompactSize.encode(
+    includeSignature &amp;&amp; signature != null
             ? signature!
-            : Uint8List(0)))
-        ..add(includeSignature &amp;&amp; signature != null
-            ? signature!
-            : Uint8List(0)))
-      .toBytes();
-  Uint8List serializedContents = (BytesBuilder()
-        ..add(CompactSize.toSize(contents))
-        ..add(contents))
-      .toBytes();
+            : Uint8List(0));
+  Uint8List serializedContents = CompactSize.encode(contents);
   return (BytesBuilder()
         ..add(serializedVersion)
         ..add(serializedAddress)
@@ -163,7 +138,7 @@ Use with <code>includeSignature</code> to false, to sign and verify the signatur
     <li><a href="../../transaction/TransactionModel/assetRef.html">assetRef</a></li>
     <li><a href="../../transaction/TransactionModel/block.html">block</a></li>
     <li><a href="../../transaction/TransactionModel/contents.html">contents</a></li>
-    <li><a href="../../transaction/TransactionModel/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="../../transaction/TransactionModel/hashCode.html">hashCode</a></li>
     <li><a href="../../transaction/TransactionModel/id.html">id</a></li>
     <li><a href="../../transaction/TransactionModel/merkelProof.html">merkelProof</a></li>
     <li class="inherited"><a href="../../transaction/TransactionModel/runtimeType.html">runtimeType</a></li>

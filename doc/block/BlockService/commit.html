@@ -52,8 +52,7 @@
       
 
 <span class="returntype">void</span>
-<span class="name ">commit</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="commit-param-block"><span class="type-annotation"><a href="../../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span>, </span></li>
-<li><span class="parameter" id="commit-param-xchain">{<span class="type-annotation">Uint8List?</span> <span class="parameter-name">xchain</span>}</span></li>
+<span class="name ">commit</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="commit-param-block"><span class="type-annotation"><a href="../../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span></span></li>
 </ol>)
 
       
@@ -69,8 +68,8 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void commit(BlockModel block, {Uint8List? xchain}) =&gt;
-    _repository.save(block, xchain: xchain);</code></pre>
+  <pre class="language-dart"><code class="language-dart">void commit(BlockModel block) =&gt;
+    _repository.save(block);</code></pre>
 </section>
 
 
@@ -109,7 +108,6 @@
     <li><a href="../../block/BlockService/commit.html">commit</a></li>
     <li><a href="../../block/BlockService/create.html">create</a></li>
     <li><a href="../../block/BlockService/get.html">get</a></li>
-    <li><a href="../../block/BlockService/getCachedIds.html">getCachedIds</a></li>
     <li class="inherited"><a href="../../block/BlockService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../block/BlockService/toString.html">toString</a></li>
 

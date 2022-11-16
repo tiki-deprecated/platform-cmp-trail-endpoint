@@ -72,7 +72,7 @@ serialized version of it is used.</p>
           <span class="name"><a href="../block/BlockModel/BlockModel.deserialize.html">BlockModel.deserialize</a></span><span class="signature">(<span class="parameter" id="deserialize-param-block"><span class="type-annotation">Uint8List</span> <span class="parameter-name">block</span></span>)</span>
         </dt>
         <dd>
-          Builds a <a href="../block/BlockModel-class.html">BlockModel</a> from a <code>serialized</code> list of bytes.
+          Builds a <a href="../block/BlockModel-class.html">BlockModel</a> from a <code>block</code> list of bytes.
         </dd>
         <dt id="BlockModel.fromMap" class="callable">
           <span class="name"><a href="../block/BlockModel/BlockModel.fromMap.html">BlockModel.fromMap</a></span><span class="signature">(<span class="parameter" id="fromMap-param-map"><span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">map</span></span>)</span>
@@ -148,7 +148,7 @@ serialized version of it is used.</p>
 
 </dt>
 <dd>
-  The <a href="../utils/MerkelTree/root.html">MerkelTree.root</a> of the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> hashes taht are part of this.
+  The <a href="../utils/MerkelTree/root.html">MerkelTree.root</a> of the transaction hashes that are part of this.
   <div class="features">read / write</div>
 
 </dd>
@@ -160,17 +160,6 @@ serialized version of it is used.</p>
 </dt>
 <dd>
   The version number indicating the set of block validation rules to follow.
-  <div class="features">read / write</div>
-
-</dd>
-
-        <dt id="xchain" class="property">
-  <span class="name"><a href="../block/BlockModel/xchain.html">xchain</a></span>
-  <span class="signature">&#8596; Uint8List?</span> 
-
-</dt>
-<dd>
-  The xchain address for blocks retrieved from other chains.
   <div class="features">read / write</div>
 
 </dd>
@@ -304,7 +293,6 @@ serialized version of it is used.</p>
     <li><a href="../block/BlockModel/timestamp.html">timestamp</a></li>
     <li><a href="../block/BlockModel/transactionRoot.html">transactionRoot</a></li>
     <li><a href="../block/BlockModel/version.html">version</a></li>
-    <li><a href="../block/BlockModel/xchain.html">xchain</a></li>
 
     <li class="section-title"><a href="../block/BlockModel-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="../block/BlockModel/noSuchMethod.html">noSuchMethod</a></li>

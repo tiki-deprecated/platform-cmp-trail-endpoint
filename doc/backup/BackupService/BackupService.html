@@ -61,7 +61,7 @@
     
 <section class="desc markdown">
   <p>Creates a new BackupService</p>
-<p>It saves the public key in the initialization.</p>
+<p>Saves the public key in the initialization.</p>
 </section>
 
 
@@ -70,7 +70,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">BackupService(this._l0storage, Database database, this._key, this._getBlock)
     : _repository = BackupRepository(database) {
-  String keyBackupPath = &#39;${base64UrlEncode(_key.address)}&#47;key&#39;;
+  String keyBackupPath = &#39;${Bytes.base64UrlEncode(_key.address)}&#47;public.key&#39;;
   BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
 
   if (keyBackup == null) {

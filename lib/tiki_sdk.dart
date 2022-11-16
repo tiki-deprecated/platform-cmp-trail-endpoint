@@ -11,10 +11,11 @@ import 'utils/bytes.dart';
 export 'tiki_sdk_builder.dart';
 export 'tiki_sdk_data_type_enum.dart';
 export 'tiki_sdk_destination.dart';
+
 /// The TIKI SDK that enables the creation of Ownership and Consent NFTs for data.
-/// 
+///
 /// Use [TikiSdkBuilder] to build an instance of this.
-/// 
+///
 /// ## API Reference
 /// ### TikiSdkDataTypeEnum
 /// The type of data to which the ownership refers.
@@ -30,13 +31,13 @@ export 'tiki_sdk_destination.dart';
 /// To allow all the constant is `TikiSdkDestination.all()`. <br/>To block all use `TikiSdkDestination.none()`.
 /// #### uses
 ///  An optional list of application specific uses cases applicable to the given destination.<br />
-/// 
+///
 ///  Prefix with NOT to invert. _i.e. NOT ads_. </br >
-/// 
+///
 /// #### paths
 /// A list of paths, preferably URL without the scheme or reverse FQDN. Keep list short and use wildcard (*) matching. Prefix with NOT to invert. _i.e. NOT mytiki.com/*
 /// #### WildCards
-/// 
+///
 ///  Wildcards are allowed in paths and uses using `*`. <br/> To allow all uses, use a single item list with `*`. <br/> To block all uses, create an empty list.
 /// ### Assign Ownership
 /// ```
@@ -45,7 +46,7 @@ export 'tiki_sdk_destination.dart';
 /// Assign ownership to a given `source` : data point, pool, or stream.<br />
 /// The `types` describe the various types of data represented by the referenced data. <br />
 /// Optionally, the `origin` can be overridden for the specific ownership grant.
-/// 
+///
 /// ### Consent
 /// ### Give Consent
 /// ```
@@ -69,7 +70,7 @@ export 'tiki_sdk_destination.dart';
 /// sdk.applyConsent(source, destination, request, onBlocked: onBlocked);
 /// ```
 /// Runs a request if the consent was given for a specific source and destination. If the consent was not given, onBlocked is executed.
-/// 
+///
 class TikiSdk {
   late final OwnershipService _ownershipService;
   late final ConsentService _consentService;
@@ -86,20 +87,29 @@ class TikiSdk {
       _consentService = consentService;
   set nodeService(NodeService nodeService) => _nodeService = nodeService;
 
-  /// Assign ownership to a given [source] : data point, pool, or stream.
-  /// [type] describe the various types of data represented by
-  /// the referenced data. Optionally, the [origin] can be overridden
-  /// for the specific ownership grant.
+  /// Assign ownership to a given [source].
+  ///
+  /// The [type] identifies which [TikiSdkDataTypeEnum] the ownership refers to.
+  /// The list of items the data contains is described by [contains]. Optionally,
+  /// a description about this ownership can be giben in [about] and the [origin]
+  /// can be overridden for the specific ownership grant.
+  /// It returns a base64 url-safe representation of the [OwnershipModel.transactionId].
   Future<String> assignOwnership(
-      String source, TikiSdkDataTypeEnum type, List<String> contains, 
+      String source, TikiSdkDataTypeEnum type, List<String> contains,
       {String? about, String? origin}) async {
     OwnershipModel ownershipModel = await _ownershipService.create(
-        source: source, type: type, origin: origin, about:about, 
+        source: source,
+        type: type,
+        origin: origin,
+        about: about,
         contains: contains);
     return Bytes.base64UrlEncode(ownershipModel.transactionId!);
   }
 
-  /// Gets latest consent
+  /// Gets latest consent given for a [source] and [origin].
+  ///
+  /// It does not validate if the consent is expired or if it can be applied to
+  /// a specifi destination. For that, [applyConsent] should be used instead.
   ConsentModel? getConsent(String source, {String? origin}) {
     OwnershipModel? ownershipModel =
         _ownershipService.getBySource(source, origin: origin);
@@ -107,10 +117,11 @@ class TikiSdk {
     return _consentService.getByOwnershipId(ownershipModel.transactionId!);
   }
 
-  /// Modify consent for [ownership]. Ownership must be granted before
-  /// modifying consent. Consent is applied on an explicit only basis.
-  /// Meaning all requests will be denied by default unless the
-  /// destination is explicitly defined in [destinations].
+  /// Modify consent for an ownership identified by [ownershipId].
+  ///
+  /// The Ownership must be granted before modifying consent. Consent is applied
+  /// on an explicit only basis. Meaning all requests will be denied by default
+  /// unless the destination is explicitly defined in [destination].
   /// A blank list of [TikiSdkDestination.uses] or [TikiSdkDestination.paths]
   /// means revoked consent.
   Future<ConsentModel> modifyConsent(
@@ -125,8 +136,9 @@ class TikiSdk {
     return consentModel;
   }
 
-  /// Apply consent for [data] given a specific [destination].
-  /// If consent exists for the destination, [request] will be
+  /// Apply consent for a given [source] and [destination].
+  ///
+  /// If consent exists for the destination and is not expired, [request] will be
   /// executed. Else [onBlocked] is called.
   Future<void> applyConsent(
       String source, TikiSdkDestination destination, Function request,

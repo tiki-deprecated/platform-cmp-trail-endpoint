@@ -104,19 +104,6 @@
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="add" class="callable">
-  <span class="name"><a href="../transaction/TransactionService/add.html">add</a></span><span class="signature">(<wbr><span class="parameter" id="add-param-txn"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">txn</span></span>)
-    <span class="returntype parameter">&#8594; void</span>
-  </span>
-  
-
-</dt>
-<dd>
-  Adds a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> to local database.
-  
-
-</dd>
-
         <dt id="commit" class="callable">
   <span class="name"><a href="../transaction/TransactionService/commit.html">commit</a></span><span class="signature">(<wbr><span class="parameter" id="commit-param-transactionId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">transactionId</span>, </span><span class="parameter" id="commit-param-block"><span class="type-annotation"><a href="../block/BlockModel-class.html">BlockModel</a></span> <span class="parameter-name">block</span>, </span><span class="parameter" id="commit-param-merkelProof"><span class="type-annotation">Uint8List</span> <span class="parameter-name">merkelProof</span></span>)
     <span class="returntype parameter">&#8594; void</span>
@@ -125,7 +112,7 @@
 
 </dt>
 <dd>
-  Commits a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by persisting its its <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a>
+  Commits a <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by persisting its <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a>
 and <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> values.
   
 
@@ -224,20 +211,6 @@ and <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.
   <section class="summary offset-anchor" id="static-methods">
     <h2>Static Methods</h2>
     <dl class="callables">
-        <dt id="deserializeTransactions" class="callable">
-  <span class="name"><a href="../transaction/TransactionService/deserializeTransactions.html">deserializeTransactions</a></span><span class="signature">(<wbr><span class="parameter" id="deserializeTransactions-param-serializedBlock"><span class="type-annotation">Uint8List</span> <span class="parameter-name">serializedBlock</span></span>)
-    <span class="returntype parameter">&#8594; List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates a List of <code>TransactionModel</code>] from a <code>Uint8List</code> of the serialized
-block.
-  
-
-</dd>
-
         <dt id="validateAuthor" class="callable">
   <span class="name"><a href="../transaction/TransactionService/validateAuthor.html">validateAuthor</a></span><span class="signature">(<wbr><span class="parameter" id="validateAuthor-param-transaction"><span class="type-annotation"><a href="../transaction/TransactionModel-class.html">TransactionModel</a></span> <span class="parameter-name">transaction</span>, </span><span class="parameter" id="validateAuthor-param-pubKey"><span class="type-annotation"><a href="../utils/RsaPublicKey-class.html">RsaPublicKey</a></span> <span class="parameter-name">pubKey</span></span>)
     <span class="returntype parameter">&#8594; bool</span>
@@ -246,8 +219,8 @@ block.
 
 </dt>
 <dd>
-  Validates the author of the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by calling <code>verify</code> with its
-<a href="../transaction/TransactionModel/signature.html">TransactionModel.signature</a>.
+  Validates the author of the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> by calling <a href="../utils/Rsa/verify.html">Rsa.verify</a> with 
+its <a href="../transaction/TransactionModel/signature.html">TransactionModel.signature</a>.
   
 
 </dd>
@@ -261,7 +234,7 @@ block.
 </dt>
 <dd>
   Validates the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> inclusion in <a href="../transaction/TransactionModel/block.html">TransactionModel.block</a> by
-checking validating its <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> with <a href="../utils/MerkelTree/validate.html">MerkelTree.validate</a>.
+validating its <a href="../transaction/TransactionModel/merkelProof.html">TransactionModel.merkelProof</a> with <a href="../utils/MerkelTree/validate.html">MerkelTree.validate</a>.
   
 
 </dd>
@@ -274,7 +247,7 @@ checking validating its <a href="../transaction/TransactionModel/merkelProof.htm
 
 </dt>
 <dd>
-  Validates the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> integrity by rebuilds it hash <a href="../transaction/TransactionModel/id.html">TransactionModel.id</a>.
+  Validates the <a href="../transaction/TransactionModel-class.html">TransactionModel</a> integrity by rebuilding its hash <a href="../transaction/TransactionModel/id.html">TransactionModel.id</a>.
   
 
 </dd>
@@ -332,7 +305,6 @@ checking validating its <a href="../transaction/TransactionModel/merkelProof.htm
     <li class="inherited"><a href="../transaction/TransactionService/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../transaction/TransactionService-class.html#instance-methods">Methods</a></li>
-    <li><a href="../transaction/TransactionService/add.html">add</a></li>
     <li><a href="../transaction/TransactionService/commit.html">commit</a></li>
     <li><a href="../transaction/TransactionService/create.html">create</a></li>
     <li><a href="../transaction/TransactionService/getByBlock.html">getByBlock</a></li>
@@ -346,7 +318,6 @@ checking validating its <a href="../transaction/TransactionModel/merkelProof.htm
 
 
         <li class="section-title"><a href="../transaction/TransactionService-class.html#static-methods">Static methods</a></li>
-          <li><a href="../transaction/TransactionService/deserializeTransactions.html">deserializeTransactions</a></li>
           <li><a href="../transaction/TransactionService/validateAuthor.html">validateAuthor</a></li>
           <li><a href="../transaction/TransactionService/validateInclusion.html">validateInclusion</a></li>
           <li><a href="../transaction/TransactionService/validateIntegrity.html">validateIntegrity</a></li>

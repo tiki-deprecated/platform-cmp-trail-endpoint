@@ -50,7 +50,10 @@
 
     
 <section class="desc markdown">
-  <p>The Consent NFT data structure</p>
+  <p>The Consent NFT data structure. It registers the consent from the creator of
+an Ownership NFT for the use of that data in a specific <a href="../consent/ConsentModel/destination.html">destination</a>.</p>
+<p>Optionally the Consent can describe <a href="../consent/ConsentModel/about.html">about</a> its usage, a <a href="../consent/ConsentModel/reward.html">reward</a> that will 
+be given in exchange and an <a href="../consent/ConsentModel/expiry.html">expiry</a> date and time for the consent.</p>
 </section>
 
 
@@ -64,7 +67,7 @@
           <span class="name"><a href="../consent/ConsentModel/ConsentModel.html">ConsentModel</a></span><span class="signature">(<span class="parameter" id="-param-ownershipId"><span class="type-annotation">Uint8List</span> <span class="parameter-name">ownershipId</span>, </span><span class="parameter" id="-param-destination"><span class="type-annotation"><a href="../tiki_sdk_dart/TikiSdkDestination-class.html">TikiSdkDestination</a></span> <span class="parameter-name">destination</span>, </span><span class="parameter" id="-param-about">{<span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span><span class="parameter" id="-param-reward"><span class="type-annotation">String?</span> <span class="parameter-name">reward</span>, </span><span class="parameter" id="-param-expiry"><span class="type-annotation">DateTime?</span> <span class="parameter-name">expiry</span>}</span>)</span>
         </dt>
         <dd>
-          Builds a <a href="../consent/ConsentModel-class.html">ConsentModel</a> using the <code>assetRef</code> for the
+          Builds a <a href="../consent/ConsentModel-class.html">ConsentModel</a> for the data identified by <a href="../consent/ConsentModel/ownershipId.html">ownershipId</a>.
         </dd>
         <dt id="ConsentModel.fromMap" class="callable">
           <span class="name"><a href="../consent/ConsentModel/ConsentModel.fromMap.html">ConsentModel.fromMap</a></span><span class="signature">(<span class="parameter" id="fromMap-param-map"><span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">map</span></span>)</span>
@@ -129,7 +132,7 @@
 
 </dt>
 <dd>
-  Transaction ID corresponding to the ownership mint for the data source.
+  Transaction ID corresponding to the ownership NFT for the data source.
   <div class="features">read / write</div>
 
 </dd>
@@ -198,19 +201,6 @@
 </dt>
 <dd>
   Serializes the contents to be recorded in the blockchain.
-  
-
-</dd>
-
-        <dt id="toJson" class="callable">
-  <span class="name"><a href="../consent/ConsentModel/toJson.html">toJson</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; String</span>
-  </span>
-  
-
-</dt>
-<dd>
-  
   
 
 </dd>
@@ -331,7 +321,6 @@
     <li class="section-title"><a href="../consent/ConsentModel-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="../consent/ConsentModel/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../consent/ConsentModel/serialize.html">serialize</a></li>
-    <li><a href="../consent/ConsentModel/toJson.html">toJson</a></li>
     <li class="inherited"><a href="../consent/ConsentModel/toString.html">toString</a></li>
 
     <li class="section-title inherited"><a href="../consent/ConsentModel-class.html#operators">Operators</a></li>

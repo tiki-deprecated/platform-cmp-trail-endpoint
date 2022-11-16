@@ -51,7 +51,7 @@ class TransactionRepository {
 
   /// Builds a [TransactionRepository] that will use [_db] for persistence.
   ///
-  /// It calls [createTable] to make sure the table exists.
+  /// It calls [_createTable] to make sure the table exists.
   TransactionRepository(this._db) {
     _createTable();
   }

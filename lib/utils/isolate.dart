@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in https://github.com/flutter/flutter/blob/master/LICENSE
 ///
-/// This library is used as a wrapper for dart isolates. It was copied from the 
+/// This library is used as a wrapper for dart isolates. It was copied from the
 /// Flutter project, and the original code can be found in
 /// https://github.com/flutter/flutter/blob/52b3dc25f6471c27b2144594abb11c741cb88f57/packages/flutter/lib/src/foundation/_isolates_io.dart
-/// 
+///
 /// @nodoc
 import 'dart:async';
 import 'dart:developer';

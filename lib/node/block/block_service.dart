@@ -26,9 +26,9 @@ class BlockService {
 
   /// Creates a new block to be commited later.
   ///
-  /// It gets the last created block from the [BlockRepository] to extract 
-  /// [BlockModel.previousHash] from it. If there are no blocks it means that it 
-  /// is the genesis block, i.e, the first block created by the chain and the 
+  /// It gets the last created block from the [BlockRepository] to extract
+  /// [BlockModel.previousHash] from it. If there are no blocks it means that it
+  /// is the genesis block, i.e, the first block created by the chain and the
   /// [BlockModel.previousHash] will be 0.
   ///
   /// This method returns the [BlockModel] created in-memory. Its return should be used
@@ -48,10 +48,8 @@ class BlockService {
   /// Persists the block into [db].
   ///
   /// This method should be called only after all the transactions are committed.
-  void commit(BlockModel block) =>
-      _repository.save(block);
+  void commit(BlockModel block) => _repository.save(block);
 
   /// Gets a [BlockModel] by [BlockModel.id]
   BlockModel? get(Uint8List id) => _repository.getById(id);
-
 }

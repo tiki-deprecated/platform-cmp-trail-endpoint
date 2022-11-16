@@ -63,7 +63,7 @@ The map strucure is</p>
     BlockRepository.columnVersion : int
     BlockRepository.columnPreviousHash : Uint8List
     BlockRepository.columnTransactionRoot : Uint8List
-    BlockRepository.columnTransactionCount : int
+    BlockRepository.columnTimestamp : int // Milliseconds since epoch
    }
 </code></pre>
 </section>
@@ -77,7 +77,6 @@ The map strucure is</p>
       version = map[BlockRepository.columnVersion],
       previousHash = map[BlockRepository.columnPreviousHash],
       transactionRoot = map[BlockRepository.columnTransactionRoot],
-      xchain = map[BlockRepository.columnXchain],
       timestamp = DateTime.fromMillisecondsSinceEpoch(
           map[BlockRepository.columnTimestamp]);</code></pre>
 </section>
@@ -119,7 +118,6 @@ The map strucure is</p>
     <li><a href="../../block/BlockModel/timestamp.html">timestamp</a></li>
     <li><a href="../../block/BlockModel/transactionRoot.html">transactionRoot</a></li>
     <li><a href="../../block/BlockModel/version.html">version</a></li>
-    <li><a href="../../block/BlockModel/xchain.html">xchain</a></li>
 
     <li class="section-title"><a href="../../block/BlockModel-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="../../block/BlockModel/noSuchMethod.html">noSuchMethod</a></li>
