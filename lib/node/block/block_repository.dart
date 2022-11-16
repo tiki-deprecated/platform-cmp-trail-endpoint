@@ -55,7 +55,7 @@ class BlockRepository {
   /// Persists a [block] in the local [db].
   void save(BlockModel block) => db.execute('''
     INSERT INTO $table 
-    VALUES (?, ?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?);
     ''', [
         block.id,
         block.version,

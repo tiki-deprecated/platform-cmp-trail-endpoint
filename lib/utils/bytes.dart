@@ -105,8 +105,8 @@ class Bytes {
 
   /// Decodes url-safe base64 string without padding into bytes.
   static Uint8List base64UrlDecode(String b64String) {
-    int padding = b64String.length % 4;
-    int length = b64String.length + padding;
+    int extra = b64String.length % 4;
+    int length = extra > 0 ? b64String.length + (4-extra) : 0;
     return base64Url.decode(b64String.padRight(length, "="));
   }
 }

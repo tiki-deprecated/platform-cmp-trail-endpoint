@@ -164,4 +164,7 @@ class TransactionModel {
       timestamp : $timestamp,
       signature : $signature
     ''';
+  
+  @override
+  int get hashCode => id.hashCode;
 }
