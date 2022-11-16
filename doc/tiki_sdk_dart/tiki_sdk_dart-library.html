@@ -50,6 +50,54 @@
     
 <section class="desc markdown">
   <p>The SDK to handle data ownership and consent NFTs with TIKI.</p>
+<h2 id="api-reference">API Reference</h2>
+<h3 id="tikisdkdatatypeenum">TikiSdkDataTypeEnum</h3>
+<p>The type of data to which the ownership refers.</p>
+<ul>
+<li>data_point
+A specific and single ocurrence of a data.</li>
+<li>data_pool
+A pool of data from different ocurrences.</li>
+<li>data_stream
+A continuous stream of data.</li>
+</ul>
+<h3 id="tikisdkdestination">TikiSdkDestination</h3>
+<p>The destination to which the data is consented to be used.
+It is composed by <code>uses</code> and <code>paths</code>.
+To allow all the constant is <code>TikiSdkDestination.all()</code>. To block all use <code>TikiSdkDestination.none()</code>.</p>
+<h4 id="uses">uses</h4>
+<p>An optional list of application specific uses cases applicable to the given destination.<br></p>
+<p>Prefix with NOT to invert. <em>i.e. NOT ads</em>. <br></p>
+<h4 id="paths">paths</h4>
+<p>A list of paths, preferably URL without the scheme or reverse FQDN. Keep list short and use wildcard (<em>) matching. Prefix with NOT to invert. _i.e. NOT mytiki.com/</em></p>
+<h4 id="wildcards">WildCards</h4>
+<p>Wildcards are allowed in paths and uses using <code>*</code>.  To allow all uses, use a single item list with <code>*</code>.  To block all uses, create an empty list.</p>
+<h3 id="assign-ownership">Assign Ownership</h3>
+<pre class="language-dart"><code>String ownershipId = sdk.assignOwnership(source, type, contains, origin: origin);
+</code></pre>
+<p>Assign ownership to a given <code>source</code> : data point, pool, or stream.<br>
+The <code>types</code> describe the various types of data represented by the referenced data. <br>
+Optionally, the <code>origin</code> can be overridden for the specific ownership grant.</p>
+<h3 id="consent">Consent</h3>
+<h3 id="give-consent">Give Consent</h3>
+<pre class="language-dart"><code>ConsentModel consent = sdk.modifyConsent(
+  ownershipId, destination, about: about, reward: reward, expiry: expiry);
+</code></pre>
+<p>The consent is always given by overriding the previous consent. It is up to the implementer to verify the prior consent and modify it if necessary.</p>
+<h3 id="get-consent">Get Consent</h3>
+<pre class="language-dart"><code>ConsentModel consent = sdk. getConsent(source, origin: origin);
+</code></pre>
+<p>Get the latest consent given for the source. The origin is optional and defaults to the one used in SDK builder.</p>
+<h3 id="revoke-consent">Revoke Consent</h3>
+<pre class="language-dart"><code>ConsentModel consent = sdk.modifyConsent(ownershipId, TikiSdkDestination.none());
+</code></pre>
+<p>To revoke a given consent, use the constant TikiSdkDestition.none().</p>
+<h3 id="apply-consent">Apply Consent</h3>
+<pre class="language-dart"><code>Function request = () =&gt; print('ok');
+Function onBlocked = () =&gt; print('blocked');
+sdk.applyConsent(source, destination, request, onBlocked: onBlocked);
+</code></pre>
+<p>Runs a request if the consent was given for a specific source and destination. If the consent was not given, onBlocked is executed.</p>
 </section>
 
 
@@ -125,8 +173,10 @@
     <ol>
       <li class="section-title">Libraries</li>
       <li><a href="../consent/consent-library.html">consent</a></li>
+      <li><a href="../l0_storage/l0_storage-library.html">l0_storage</a></li>
       <li><a href="../node/node-library.html">node</a></li>
       <li><a href="../ownership/ownership-library.html">ownership</a></li>
+      <li><a href="../sstorage/sstorage-library.html">sstorage</a></li>
       <li><a href="../tiki_sdk_dart/tiki_sdk_dart-library.html">tiki_sdk_dart</a></li>
       <li><a href="../utils/utils-library.html">utils</a></li>
       <li class="section-subtitle">Node</li>

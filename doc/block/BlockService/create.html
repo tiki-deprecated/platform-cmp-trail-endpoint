@@ -61,9 +61,9 @@
     
 <section class="desc markdown">
   <p>Creates a new block to be commited later.</p>
-<p>It gets the last created block from the <a href="../../block/BlockRepository-class.html">BlockRepository</a> to extract 
-<a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> from it. If there are no blocks it means that it 
-is the genesis block, i.e, the first block created by the chain and the 
+<p>It gets the last created block from the <a href="../../block/BlockRepository-class.html">BlockRepository</a> to extract
+<a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> from it. If there are no blocks it means that it
+is the genesis block, i.e, the first block created by the chain and the
 <a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> will be 0.</p>
 <p>This method returns the <a href="../../block/BlockModel-class.html">BlockModel</a> created in-memory. Its return should be used
 to commit the <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>. After committing all the transactions,

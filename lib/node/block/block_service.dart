@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+/// The definition of block-related operations.
 library block;
 
 import 'dart:typed_data';

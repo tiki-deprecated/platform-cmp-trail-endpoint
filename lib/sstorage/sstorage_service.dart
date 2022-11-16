@@ -2,6 +2,8 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+/// The object storage service for the TIKI cloud.
+library sstorage;
 
 import 'dart:convert';
 import 'dart:io';
@@ -18,6 +20,7 @@ import 'sstorage_model_token_rsp.dart';
 import 'sstorage_model_upload.dart';
 import 'sstorage_repository.dart';
 
+/// The [L0Storage] implementation for the TIKI cloud.
 class SStorageService implements L0Storage {
   final SStorageRepository _repository;
   final RsaPrivateKey _privateKey;
@@ -25,6 +28,8 @@ class SStorageService implements L0Storage {
 
   SStorageModelTokenRsp? _token;
 
+  /// Initializes a [SStorageService] using [apiId] for user identification and
+  /// [privateKey] for signing token requests.
   SStorageService(String apiId, RsaPrivateKey privateKey)
       : _repository = SStorageRepository(),
         _privateKey = privateKey,

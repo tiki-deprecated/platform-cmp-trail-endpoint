@@ -10,4 +10,6 @@ dartdoc:
     transaction,
     utils,
     tiki_sdk_dart,
+    l0_storage,
+    sstorage
     ]

@@ -4,6 +4,7 @@
  */
 
 /// {@category Node}
+/// Handles transactions in the chain.
 library transaction;
 
 import 'dart:typed_data';

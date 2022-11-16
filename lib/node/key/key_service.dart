@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+/// RSA keys creation and persistance.
 library keys;
 
 import 'dart:typed_data';

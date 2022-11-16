@@ -1,21 +1,5 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
-library tiki_sdk_dart;
-
-import 'consent/consent_service.dart';
-import 'node/node_service.dart';
-import 'ownership/ownership_service.dart';
-import 'tiki_sdk_data_type_enum.dart';
-import 'tiki_sdk_destination.dart';
-import 'utils/bytes.dart';
-
-export 'tiki_sdk_builder.dart';
-export 'tiki_sdk_data_type_enum.dart';
-export 'tiki_sdk_destination.dart';
-
-/// The TIKI SDK that enables the creation of Ownership and Consent NFTs for data.
-///
-/// Use [TikiSdkBuilder] to build an instance of this.
-///
+/// 
 /// ## API Reference
 /// ### TikiSdkDataTypeEnum
 /// The type of data to which the ownership refers.
@@ -27,8 +11,8 @@ export 'tiki_sdk_destination.dart';
 ///   A continuous stream of data.
 /// ### TikiSdkDestination
 /// The destination to which the data is consented to be used.
-/// It is composed by `uses` and `paths`.<br/>
-/// To allow all the constant is `TikiSdkDestination.all()`. <br/>To block all use `TikiSdkDestination.none()`.
+/// It is composed by `uses` and `paths`.
+/// To allow all the constant is `TikiSdkDestination.all()`. To block all use `TikiSdkDestination.none()`.
 /// #### uses
 ///  An optional list of application specific uses cases applicable to the given destination.<br />
 ///
@@ -38,7 +22,7 @@ export 'tiki_sdk_destination.dart';
 /// A list of paths, preferably URL without the scheme or reverse FQDN. Keep list short and use wildcard (*) matching. Prefix with NOT to invert. _i.e. NOT mytiki.com/*
 /// #### WildCards
 ///
-///  Wildcards are allowed in paths and uses using `*`. <br/> To allow all uses, use a single item list with `*`. <br/> To block all uses, create an empty list.
+///  Wildcards are allowed in paths and uses using `*`.  To allow all uses, use a single item list with `*`.  To block all uses, create an empty list.
 /// ### Assign Ownership
 /// ```
 /// String ownershipId = sdk.assignOwnership(source, type, contains, origin: origin);
@@ -50,7 +34,8 @@ export 'tiki_sdk_destination.dart';
 /// ### Consent
 /// ### Give Consent
 /// ```
-/// ConsentModel consent = sdk.modifyConsent(ownershipId, destination, about: about, reward: reward, expiry: expiry);
+/// ConsentModel consent = sdk.modifyConsent(
+///   ownershipId, destination, about: about, reward: reward, expiry: expiry);
 /// ```
 /// The consent is always given by overriding the previous consent. It is up to the implementer to verify the prior consent and modify it if necessary.
 /// ### Get Consent
@@ -71,6 +56,22 @@ export 'tiki_sdk_destination.dart';
 /// ```
 /// Runs a request if the consent was given for a specific source and destination. If the consent was not given, onBlocked is executed.
 ///
+library tiki_sdk_dart;
+
+import 'consent/consent_service.dart';
+import 'node/node_service.dart';
+import 'ownership/ownership_service.dart';
+import 'tiki_sdk_data_type_enum.dart';
+import 'tiki_sdk_destination.dart';
+import 'utils/bytes.dart';
+
+export 'tiki_sdk_builder.dart';
+export 'tiki_sdk_data_type_enum.dart';
+export 'tiki_sdk_destination.dart';
+
+/// The TIKI SDK that enables the creation of Ownership and Consent NFTs for data.
+///
+/// Use [TikiSdkBuilder] to build an instance of this.
 class TikiSdk {
   late final OwnershipService _ownershipService;
   late final ConsentService _consentService;
