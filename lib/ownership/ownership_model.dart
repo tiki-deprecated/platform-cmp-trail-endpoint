@@ -10,12 +10,13 @@ import '../tiki_sdk_data_type_enum.dart';
 import '../utils/utils.dart';
 import 'ownership_repository.dart';
 
-/// The registry of ownership to a given [source] point, pool, or stream.
+/// The Ownership NFT. The registry of ownership to a given data point, pool, or
+/// stream.
 class OwnershipModel {
-  /// The identification of the data point, pool or stream.
+  /// The identification of the source. 
   String source;
 
-  /// The list of types the source holds.
+  /// The type of the data source: data point, pool or stream.
   TikiSdkDataTypeEnum type;
 
   /// The origin from which the data was generated.
@@ -24,10 +25,10 @@ class OwnershipModel {
   /// The transaction id of this registry.
   Uint8List? transactionId;
 
-  /// A description about the data.
+  /// The description about the data.
   String? about;
 
-  /// Which kind of data this contains
+  /// The kinds of data this contains.
   List<String> contains;
 
   OwnershipModel({
@@ -39,6 +40,21 @@ class OwnershipModel {
     this.about,
   });
 
+
+  /// Builds a [OwnershipModel] from a [map].
+  ///
+  /// It is used mainly for retrieving data from [OwnershipRepository].
+  /// The map strucure is
+  /// ```
+  ///   Map<String, dynamic> map = {
+  ///     OwnershipRepository.columnSource : String,
+  ///     OwnershipRepository.columnType : TikiSdkTypeEnum,
+  ///     OwnershipRepository.columnOrigin : String,
+  ///     OwnershipRepository.columnAbout : String,
+  ///     OwnershipRepository.columnContains : List<String>,
+  ///     OwnershipRepository.columnTransactionId : Uint8List,
+  ///    }
+  /// ```
   OwnershipModel.fromMap(Map<String, dynamic> map)
       : source = map[OwnershipRepository.columnSource],
         type = map[OwnershipRepository.columnType],

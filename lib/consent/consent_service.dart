@@ -23,7 +23,7 @@ class ConsentService {
 
   ConsentService(db, this._nodeService) : _repository = ConsentRepository(db);
 
-  /// Modify consent for a [OwnershipModel] by its [ownershipId].
+  /// Modify consent by its [ownershipId].
   Future<ConsentModel> modify(Uint8List ownershipId,
       {String? about,
       String? reward,
@@ -38,7 +38,7 @@ class ConsentService {
     return consentModel;
   }
 
-  /// Gets a consent by its [ownershipId].
+  /// Gets the latest consent by its [ownershipId].
   ConsentModel? getByOwnershipId(Uint8List ownershipId) =>
       _repository.getByOwnershipId(ownershipId);
 }

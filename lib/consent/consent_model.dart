@@ -2,7 +2,6 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-import 'dart:convert';
 import 'dart:typed_data';
 
 import '../tiki_sdk_destination.dart';
@@ -10,9 +9,13 @@ import '../utils/bytes.dart';
 import '../utils/compact_size.dart';
 import 'consent_repository.dart';
 
-/// The Consent NFT data structure
+/// The Consent NFT data structure. It registers the consent from the creator of
+/// an Ownership NFT for the use of that data in a specific [destination].
+/// 
+/// Optionally the Consent can describe [about] its usage, a [reward] that will 
+/// be given in exchange and an [expiry] date and time for the consent.
 class ConsentModel {
-  /// Transaction ID corresponding to the ownership mint for the data source.
+  /// Transaction ID corresponding to the ownership NFT for the data source.
   Uint8List ownershipId;
 
   /// The identifier of the paths and use cases for this consent.
@@ -30,7 +33,7 @@ class ConsentModel {
   // The Consent expiration date. Null for no expiration.
   DateTime? expiry;
 
-  /// Builds a [ConsentModel] using the [assetRef] for the
+  /// Builds a [ConsentModel] for the data identified by [ownershipId].
   ConsentModel(this.ownershipId, this.destination,
       {this.about, this.reward, this.expiry});
 
@@ -74,13 +77,4 @@ class ConsentModel {
           Bytes.decodeBigInt(unserialized[4]).toInt() * 1000),
     );
   }
-
-  String toJson() => jsonEncode(<String, String?>{
-        "ownershipId": String.fromCharCodes(ownershipId),
-        "destination": destination.toJson(),
-        "about": about,
-        "reward": reward,
-        "transactionId": String.fromCharCodes(transactionId!),
-        "expiry": expiry?.millisecondsSinceEpoch.toString()
-      });
 }
