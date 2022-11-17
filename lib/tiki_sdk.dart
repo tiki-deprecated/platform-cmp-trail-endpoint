@@ -1,5 +1,5 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
-/// 
+///
 /// ## API Reference
 /// ### TikiSdkDataTypeEnum
 /// The type of data to which the ownership refers.
@@ -68,6 +68,7 @@ import 'utils/bytes.dart';
 export 'tiki_sdk_builder.dart';
 export 'tiki_sdk_data_type_enum.dart';
 export 'tiki_sdk_destination.dart';
+export 'utils/bytes.dart';
 
 /// The TIKI SDK that enables the creation of Ownership and Consent NFTs for data.
 ///

@@ -21,7 +21,7 @@ class SStorageModelUpload {
   }
 
   Map<String, dynamic> toMap() =>
-      {'key': key, 'block': content != null ? base64Encode(content!) : null};
+      {'key': key, 'content': content != null ? base64Encode(content!) : null};
 
   @override
   String toString() {

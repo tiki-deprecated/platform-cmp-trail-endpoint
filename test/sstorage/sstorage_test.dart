@@ -18,7 +18,7 @@ import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
-  const String apiId = '';
+  const String apiId = '2b8de004-cbe0-4bd5-bda6-b266d54f5c90';
   RsaPrivateKey privateKey = Rsa.generate().privateKey;
 
   group('SStorage Tests', skip: apiId.isEmpty, () {
@@ -55,8 +55,7 @@ void main() {
       expect(() async => await repository.token('fail', req),
           throwsA(isA<HttpException>()));
     });
-
-    test('Upload - Success', () async {
+test('Upload - Success', () async {
       SStorageRepository repository = SStorageRepository();
       String stringToSign = const Uuid().v4();
       Uint8List signature =
@@ -73,7 +72,8 @@ void main() {
           rsp.token,
           SStorageModelUpload(
               key: '${rsp.urnPrefix}${const Uuid().v4()}', content: content));
-    });
+    })
+    ;
 
     test('Write - Success', () async {
       SStorageService service = SStorageService(apiId, privateKey);
