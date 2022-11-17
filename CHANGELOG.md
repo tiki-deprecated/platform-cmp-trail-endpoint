@@ -1,3 +1,7 @@
+## 0.0.9
+
+* expose utils/bytes lib
+* update sstorage 
 ## 0.0.8
 
 * code cleanup
