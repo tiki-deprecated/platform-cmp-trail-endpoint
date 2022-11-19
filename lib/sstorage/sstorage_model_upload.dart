@@ -15,12 +15,12 @@ class SStorageModelUpload {
   SStorageModelUpload.fromMap(Map<String, dynamic>? map) {
     if (map != null) {
       key = map['key'];
-      if (map['block'] != null) content = base64Decode(map['block']);
+      if (map['content'] != null) content = base64Decode(map['content']);
     }
   }
 
   Map<String, dynamic> toMap() =>
-      {'key': key, 'block': content != null ? base64Encode(content!) : null};
+      {'key': key, 'content': content != null ? base64Encode(content!) : null};
 
   @override
   String toString() {
