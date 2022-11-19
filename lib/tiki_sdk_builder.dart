@@ -1,5 +1,4 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
-
 import 'consent/consent_service.dart';
 import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
@@ -58,7 +57,7 @@ class TikiSdkBuilder {
   String? _origin;
   KeyStorage? _keyStorage;
   String? _databaseDir;
-  String? _apiKey;
+  String? _apiId;
   String? _address;
 
   /// Sets the default origin for all registries.
@@ -75,7 +74,7 @@ class TikiSdkBuilder {
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
 
   /// Sets the apiKey to connect to TIKI cloud.
-  void apiKey(String? apiKey) => _apiKey = apiKey;
+  void apiKey(String? apiId) => _apiId = apiId;
 
   /// Sets the blockchain address for the private key used in the SDK object.
   void address(String? address) => _address = address;
@@ -88,7 +87,7 @@ class TikiSdkBuilder {
     NodeServiceBuilder builder = NodeServiceBuilder()
       ..keyStorage = _keyStorage!
       ..databaseDir = _databaseDir!
-      ..apiKey = _apiKey
+      ..apiId = _apiId
       ..address = _address;
     NodeService nodeService = await builder.build();
     OwnershipService ownershipService =
