@@ -8,7 +8,7 @@ import 'package:html/dom.dart';
 import '../../utils/utils.dart';
 import 'sstorage_model_list_ver.dart';
 
-/// The Wasabi object data model.
+/// The Wasabi object data model list.
 class SStorageModelList {
   String? name;
   String? prefix;

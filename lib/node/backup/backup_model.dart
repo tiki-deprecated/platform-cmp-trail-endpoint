@@ -31,7 +31,7 @@ class BackupModel {
   ///   Map<String, dynamic> map = {
   ///     BackupRepository.columnPath : String,
   ///     BackupRepository.columnSignature : String
-  ///     BackupRepository.columnTimestamp : int? // seconds since epoch
+  ///     BackupRepository.columnTimestamp : int? // Milliseconds since epoch
   ///    }
   /// ```
   BackupModel.fromMap(Map<String, dynamic> map)

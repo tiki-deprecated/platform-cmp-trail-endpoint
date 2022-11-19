@@ -4,6 +4,7 @@
  */
 
 /// {@category Node}
+/// Handles transactions in the chain.
 library transaction;
 
 import 'dart:typed_data';
@@ -25,11 +26,11 @@ class TransactionService {
 
   /// Creates a [TransactionModel] with [contents].
   ///
-  /// Uses the wallet address from [key] ([KeysModel.address]) to sign the transaction.
-  /// If the [assetRef] is not set, it defaults to AA==.
-  /// The return is a uncommitted [TransactionModel]. The [TransactionModel]
-  /// should be added to a [BlockModel] by setting the [TransactionModel.block]
-  /// and [TransactionModel.merkelProof] values followed by calling the [commit] method.
+  /// Uses the [KeyModel.privateKey] from [key] to sign the transaction. If the
+  /// [assetRef] is not set, it defaults to AA==. The return is an uncommitted
+  /// [TransactionModel]. The [TransactionModel] should be added to a
+  /// [BlockModel] by setting the [TransactionModel.block] and
+  /// [TransactionModel.merkelProof] values and calling the [commit] method.
   TransactionModel create(Uint8List contents, KeyModel key,
       {String assetRef = 'AA=='}) {
     TransactionModel txn = TransactionModel(
@@ -41,28 +42,25 @@ class TransactionService {
     return txn;
   }
 
-  /// Commits a [TransactionModel] by persisting its its [TransactionModel.block]
+  /// Commits a [TransactionModel] by persisting its [TransactionModel.block]
   /// and [TransactionModel.merkelProof] values.
   void commit(
       Uint8List transactionId, BlockModel block, Uint8List merkelProof) {
     _repository.commit(transactionId, block, merkelProof);
   }
 
-  /// Adds a [TransactionModel] to local database.
-  void add(TransactionModel txn) => _repository.save(txn);
-
   /// Validates the [TransactionModel] inclusion in [TransactionModel.block] by
-  /// checking validating its [TransactionModel.merkelProof] with [MerkelTree.validate].
+  /// validating its [TransactionModel.merkelProof] with [MerkelTree.validate].
   static bool validateInclusion(TransactionModel transaction, Uint8List root) =>
       MerkelTree.validate(transaction.id!, transaction.merkelProof!, root);
 
-  /// Validates the [TransactionModel] integrity by rebuilds it hash [TransactionModel.id].
+  /// Validates the [TransactionModel] integrity by rebuilding its hash [TransactionModel.id].
   static bool validateIntegrity(TransactionModel transaction) =>
       Bytes.memEquals(
           Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
-  /// Validates the author of the [TransactionModel] by calling [verify] with its
-  /// [TransactionModel.signature].
+  /// Validates the author of the [TransactionModel] by calling [Rsa.verify] with
+  /// its [TransactionModel.signature].
   static bool validateAuthor(
           TransactionModel transaction, RsaPublicKey pubKey) =>
       Rsa.verify(pubKey, transaction.serialize(includeSignature: false),
@@ -74,29 +72,4 @@ class TransactionService {
 
   /// Gets all the transactions that were not committed by [commit].
   List<TransactionModel> getPending() => _repository.getByBlockId(null);
-
-  /// Creates a List of [TransactionModel]] from a [Uint8List] of the serialized
-  /// block.
-  ///
-  /// This is the revert function for [serializeTransactions]. It should be used
-  /// when recovering a block body.
-  static List<TransactionModel> deserializeTransactions(
-      Uint8List serializedBlock) {
-    List<TransactionModel> txns = [];
-    List<Uint8List> extractedBlockBytes = CompactSize.decode(serializedBlock);
-    List<Uint8List> serializedTransactions = extractedBlockBytes.sublist(5);
-    int totalTxn = Bytes.decodeBigInt(extractedBlockBytes[4]).toInt();
-    if (serializedTransactions.length != totalTxn) {
-      throw 'Invalid transaction length. Expected ${serializedTransactions.length}, got $totalTxn';
-    }
-    for (int i = 0; i < serializedTransactions.length; i++) {
-      TransactionModel txn =
-          TransactionModel.deserialize(serializedTransactions[i]);
-      if (!validateIntegrity(txn)) {
-        throw Exception('Corrupted transaction $txn');
-      }
-      txns.add(txn);
-    }
-    return txns;
-  }
 }

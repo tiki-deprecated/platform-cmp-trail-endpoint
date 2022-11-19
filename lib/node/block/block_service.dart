@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
+/// The definition of block-related operations.
 library block;
 
 import 'dart:typed_data';
@@ -26,13 +27,14 @@ class BlockService {
 
   /// Creates a new block to be commited later.
   ///
-  /// It gets the last created block from the [db] to extract [BlockModel.previousHash]
-  /// from it. If there are no blocks it means that it is the genesis block, i.e,
-  /// the first block created by the chain and the [BlockModel.previousHash] will be 0.
+  /// It gets the last created block from the [BlockRepository] to extract
+  /// [BlockModel.previousHash] from it. If there are no blocks it means that it
+  /// is the genesis block, i.e, the first block created by the chain and the
+  /// [BlockModel.previousHash] will be 0.
   ///
   /// This method returns the [BlockModel] created in-memory. Its return should be used
   /// to commit the [TransactionModel]. After committing all the transactions,
-  /// [commit] needs to be called to persist the block into [db].
+  /// [commit] needs to be called to persist the block into [BlockRepository].
   BlockModel create(Uint8List transactionRoot) {
     BlockModel? lastBlock = _repository.getLast();
     BlockModel block = BlockModel(
@@ -47,13 +49,8 @@ class BlockService {
   /// Persists the block into [db].
   ///
   /// This method should be called only after all the transactions are committed.
-  void commit(BlockModel block, {Uint8List? xchain}) =>
-      _repository.save(block, xchain: xchain);
+  void commit(BlockModel block) => _repository.save(block);
 
   /// Gets a [BlockModel] by [BlockModel.id]
   BlockModel? get(Uint8List id) => _repository.getById(id);
-
-  /// Gets all the Block addresses that were not cached yet.
-  List<String> getCachedIds(Uint8List address) =>
-      _repository.getAllIds(address);
 }

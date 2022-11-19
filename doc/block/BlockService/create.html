@@ -61,12 +61,13 @@
     
 <section class="desc markdown">
   <p>Creates a new block to be commited later.</p>
-<p>It gets the last created block from the <code>db</code> to extract <a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a>
-from it. If there are no blocks it means that it is the genesis block, i.e,
-the first block created by the chain and the <a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> will be 0.</p>
+<p>It gets the last created block from the <a href="../../block/BlockRepository-class.html">BlockRepository</a> to extract
+<a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> from it. If there are no blocks it means that it
+is the genesis block, i.e, the first block created by the chain and the
+<a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> will be 0.</p>
 <p>This method returns the <a href="../../block/BlockModel-class.html">BlockModel</a> created in-memory. Its return should be used
 to commit the <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>. After committing all the transactions,
-<a href="../../block/BlockService/commit.html">commit</a> needs to be called to persist the block into <code>db</code>.</p>
+<a href="../../block/BlockService/commit.html">commit</a> needs to be called to persist the block into <a href="../../block/BlockRepository-class.html">BlockRepository</a>.</p>
 </section>
 
 
@@ -121,7 +122,6 @@ to commit the <a href="../../transaction/TransactionModel-class.html">Transactio
     <li><a href="../../block/BlockService/commit.html">commit</a></li>
     <li><a href="../../block/BlockService/create.html">create</a></li>
     <li><a href="../../block/BlockService/get.html">get</a></li>
-    <li><a href="../../block/BlockService/getCachedIds.html">getCachedIds</a></li>
     <li class="inherited"><a href="../../block/BlockService/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../block/BlockService/toString.html">toString</a></li>
 

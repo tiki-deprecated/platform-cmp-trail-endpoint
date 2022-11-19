@@ -4,13 +4,11 @@
  */
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import 'l0_storage.dart';
+import '../utils/bytes.dart';
 import 'node_service.dart';
-import 'xchain/xchain_service.dart';
 
 export './backup/backup_service.dart';
 export './block/block_service.dart';
@@ -21,14 +19,12 @@ export './transaction/transaction_service.dart';
 class NodeServiceBuilder {
   KeyStorage? _keyStorage;
   String? _apiKey;
-  List<String> _readOnly = [];
   Duration _blockInterval = const Duration(minutes: 1);
   int _maxTransactions = 200;
   String? _databaseDir;
   String? _address;
 
   set apiKey(String? apiKey) => _apiKey = apiKey;
-  set readOnly(List<String> addresses) => _readOnly = addresses;
   set keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
   set blockInterval(Duration duration) => _blockInterval = duration;
   set maxTransactions(int maxTransactions) =>
@@ -40,15 +36,13 @@ class NodeServiceBuilder {
     KeyModel primaryKey = await _loadPrimaryKey();
     L0Storage l0Storage = SStorageService(_apiKey!, primaryKey.privateKey);
     Database database = sqlite3
-        .open("$_databaseDir/${base64Url.encode(primaryKey.address)}.db");
+        .open("$_databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
 
     NodeService nodeService = NodeService()
       ..blockInterval = _blockInterval
       ..maxTransactions = _maxTransactions
       ..transactionService = TransactionService(database)
       ..blockService = BlockService(database)
-      ..xchainService = XchainService(l0Storage, database)
-      ..readOnly = _readOnly
       ..primaryKey = primaryKey;
     nodeService.backupService =
         BackupService(l0Storage, database, primaryKey, nodeService.getBlock);

@@ -49,6 +49,10 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>The TIKI SDK that enables the creation of Ownership and Consent NFTs for data.</p>
+<p>Use <a href="../tiki_sdk_dart/TikiSdkBuilder-class.html">TikiSdkBuilder</a> to build an instance of this.</p>
+</section>
 
 
 
@@ -153,25 +157,20 @@
 
 </dt>
 <dd>
-  Apply consent for <code>data</code> given a specific <code>destination</code>.
-If consent exists for the destination, <code>request</code> will be
-executed. Else <code>onBlocked</code> is called.
+  Apply consent for a given <code>source</code> and <code>destination</code>.
   
 
 </dd>
 
         <dt id="assignOwnership" class="callable">
-  <span class="name"><a href="../tiki_sdk_dart/TikiSdk/assignOwnership.html">assignOwnership</a></span><span class="signature">(<wbr><span class="parameter" id="assignOwnership-param-source"><span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="assignOwnership-param-type"><span class="type-annotation"><a href="../tiki_sdk_dart/TikiSdkDataTypeEnum.html">TikiSdkDataTypeEnum</a></span> <span class="parameter-name">type</span>, </span><span class="parameter" id="assignOwnership-param-contains"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">contains</span>, </span><span class="parameter" id="assignOwnership-param-origin">{<span class="type-annotation">String?</span> <span class="parameter-name">origin</span>}</span>)
+  <span class="name"><a href="../tiki_sdk_dart/TikiSdk/assignOwnership.html">assignOwnership</a></span><span class="signature">(<wbr><span class="parameter" id="assignOwnership-param-source"><span class="type-annotation">String</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="assignOwnership-param-type"><span class="type-annotation"><a href="../tiki_sdk_dart/TikiSdkDataTypeEnum.html">TikiSdkDataTypeEnum</a></span> <span class="parameter-name">type</span>, </span><span class="parameter" id="assignOwnership-param-contains"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">contains</span>, </span><span class="parameter" id="assignOwnership-param-about">{<span class="type-annotation">String?</span> <span class="parameter-name">about</span>, </span><span class="parameter" id="assignOwnership-param-origin"><span class="type-annotation">String?</span> <span class="parameter-name">origin</span>}</span>)
     <span class="returntype parameter">&#8594; Future<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  Assign ownership to a given <code>source</code> : data point, pool, or stream.
-<code>types</code> describe the various types of data represented by
-the referenced data. Optionally, the <code>origin</code> can be overridden
-for the specific ownership grant.
+  Assign ownership to a given <code>source</code>.
   
 
 </dd>
@@ -184,7 +183,7 @@ for the specific ownership grant.
 
 </dt>
 <dd>
-  Gets latest consent
+  Gets latest consent given for a <code>source</code> and <code>origin</code>.
   
 
 </dd>
@@ -197,12 +196,7 @@ for the specific ownership grant.
 
 </dt>
 <dd>
-  Modify consent for <code>data</code>. Ownership must be granted before
-modifying consent. Consent is applied on an explicit only basis.
-Meaning all requests will be denied by default unless the
-destination is explicitly defined in <code>destinations</code>.
-A blank list of <a href="../tiki_sdk_dart/TikiSdkDestination/uses.html">TikiSdkDestination.uses</a> or <a href="../tiki_sdk_dart/TikiSdkDestination/paths.html">TikiSdkDestination.paths</a>
-means revoked consent.
+  Modify consent for an ownership identified by <code>ownershipId</code>.
   
 
 </dd>

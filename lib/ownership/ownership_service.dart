@@ -47,6 +47,7 @@ class OwnershipService {
         source: source,
         type: type,
         origin: origin ?? _defaultOrigin,
+        about: about,
         contains: contains);
     Uint8List contents = (BytesBuilder()
           ..addByte(1)

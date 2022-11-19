@@ -16,12 +16,15 @@ jobs:
       - name: 'Setup Dart'
         uses: dart-lang/setup-dart@v1.3
         with:
-          sdk: 2.16.1
+          sdk: 2.17.0
 
       - name: 'Setup credentials'
         run: |
           mkdir $XDG_CONFIG_HOME/dart
           echo '${{ secrets.PUB_DEV_CREDENTIALS }}' > "$XDG_CONFIG_HOME/dart/pub-credentials.json"
 
+      - name: Run tests
+        run: dart test
+        
       - name: 'Publish'
-        run: pub publish -f
+        run: dart pub publish -f

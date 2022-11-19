@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+/// The model used in block uploads to L0Storage
 class SStorageModelUpload {
   String? key;
   Uint8List? content;

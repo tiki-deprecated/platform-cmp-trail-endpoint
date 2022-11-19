@@ -67,7 +67,7 @@ void main() {
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
       await consentService.modify(ownershipModelId,
-          destinations: const TikiSdkDestination.all());
+          destination: const TikiSdkDestination.all());
       ConsentModel? consentModel =
           consentService.getByOwnershipId(ownershipModelId);
       expect(consentModel == null, false);
@@ -87,9 +87,9 @@ void main() {
               source: 'test', type: TikiSdkDataTypeEnum.pool))
           .transactionId!;
       await consentService.modify(ownershipModelId,
-          destinations: const TikiSdkDestination.all());
+          destination: const TikiSdkDestination.all());
       await consentService.modify(ownershipModelId,
-          destinations: const TikiSdkDestination.none());
+          destination: const TikiSdkDestination.none());
       ConsentModel? consentModel =
           consentService.getByOwnershipId(ownershipModelId);
       expect(consentModel == null, false);

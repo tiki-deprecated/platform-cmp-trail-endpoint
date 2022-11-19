@@ -4,11 +4,12 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category SDK}
+
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
+
 import '../node/transaction/transaction_service.dart';
 import '../tiki_sdk.dart';
 import '../utils/bytes.dart';
@@ -19,21 +20,27 @@ class OwnershipRepository {
   final Database _db;
   static const table = 'ownership';
 
+  /// The identification of the source.
   static const String columnSource = 'source';
 
+  /// The type of the data source: data point, pool or stream.
   static const String columnType = 'type';
 
+  /// The origin from which the data was generated.
   static const String columnOrigin = 'origin';
 
+  /// The transaction id of this registry.
   static const String columnTransactionId = 'transaction_id';
 
+  /// The description about the data.
   static const String columnAbout = 'about';
 
+  /// The kinds of data this contains.
   static const String columnContains = 'contains';
 
   /// Builds a [OwnershipRepository] that will use [_db] for persistence.
   ///
-  /// It calls [createTable] to make sure the table exists.
+  /// It calls [_createTable] to make sure the table exists.
   OwnershipRepository(this._db) {
     _createTable();
   }
@@ -68,7 +75,7 @@ class OwnershipRepository {
     ]);
   }
 
-  /// Gets all [OwnerShipModel] stored in local database.
+  /// Gets all [OwnershipModel] stored in local database.
   List<OwnershipModel> getAll() => _select();
 
   OwnershipModel? getById(Uint8List id) {
@@ -77,7 +84,7 @@ class OwnershipRepository {
     return ownerships.isNotEmpty ? ownerships.first : null;
   }
 
-  /// Gets the [OwnerShipModel] for [source] and [origin] in database.
+  /// Gets the [OwnershipModel] for [source] and [origin] in database.
   OwnershipModel? getBySource(String source, String origin) {
     List params = [source, origin];
     String where = "WHERE $columnSource = ? AND $columnOrigin = ?";

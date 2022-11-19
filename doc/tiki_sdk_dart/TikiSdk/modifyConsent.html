@@ -64,10 +64,10 @@
     </section>
     
 <section class="desc markdown">
-  <p>Modify consent for <code>data</code>. Ownership must be granted before
-modifying consent. Consent is applied on an explicit only basis.
-Meaning all requests will be denied by default unless the
-destination is explicitly defined in <code>destinations</code>.
+  <p>Modify consent for an ownership identified by <code>ownershipId</code>.</p>
+<p>The Ownership must be granted before modifying consent. Consent is applied
+on an explicit only basis. Meaning all requests will be denied by default
+unless the destination is explicitly defined in <code>destination</code>.
 A blank list of <a href="../../tiki_sdk_dart/TikiSdkDestination/uses.html">TikiSdkDestination.uses</a> or <a href="../../tiki_sdk_dart/TikiSdkDestination/paths.html">TikiSdkDestination.paths</a>
 means revoked consent.</p>
 </section>
@@ -80,11 +80,11 @@ means revoked consent.</p>
     String ownershipId, TikiSdkDestination destination,
     {String? about, String? reward, DateTime? expiry}) async {
   ConsentModel consentModel = await _consentService.modify(
-      base64Url.decode(ownershipId),
+      Bytes.base64UrlDecode(ownershipId),
+      destination: destination,
       about: about,
       reward: reward,
-      expiry: expiry,
-      destinations: destination);
+      expiry: expiry);
   return consentModel;
 }</code></pre>
 </section>

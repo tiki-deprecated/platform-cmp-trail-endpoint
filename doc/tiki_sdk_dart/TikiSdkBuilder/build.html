@@ -58,6 +58,11 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Builds the <code>TikiSdk</code> object.</p>
+<p>This method should only be called after setting <a href="../../tiki_sdk_dart/TikiSdkBuilder/keyStorage.html">keyStorage</a> and <a href="../../tiki_sdk_dart/TikiSdkBuilder/databaseDir.html">databaseDir</a>.
+An error will be thrown if one of them is not set</p>
+</section>
 
 
     
@@ -67,7 +72,6 @@
   NodeServiceBuilder builder = NodeServiceBuilder()
     ..keyStorage = _keyStorage!
     ..databaseDir = _databaseDir!
-    ..l0Storage = _l0Storage
     ..apiKey = _apiKey
     ..address = _address;
   NodeService nodeService = await builder.build();
@@ -120,7 +124,6 @@
     <li><a href="../../tiki_sdk_dart/TikiSdkBuilder/build.html">build</a></li>
     <li><a href="../../tiki_sdk_dart/TikiSdkBuilder/databaseDir.html">databaseDir</a></li>
     <li><a href="../../tiki_sdk_dart/TikiSdkBuilder/keyStorage.html">keyStorage</a></li>
-    <li><a href="../../tiki_sdk_dart/TikiSdkBuilder/l0Storage.html">l0Storage</a></li>
     <li class="inherited"><a href="../../tiki_sdk_dart/TikiSdkBuilder/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../tiki_sdk_dart/TikiSdkBuilder/origin.html">origin</a></li>
     <li class="inherited"><a href="../../tiki_sdk_dart/TikiSdkBuilder/toString.html">toString</a></li>

@@ -68,9 +68,9 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; block(Uint8List id) async {
-  String b64address = base64UrlEncode(_key.address);
+  String b64address = Bytes.base64UrlEncode(_key.address);
   BackupModel bkpModel =
-      BackupModel(path: &#39;$b64address&#47;${base64UrlEncode(id)}.block&#39;);
+      BackupModel(path: &#39;$b64address&#47;${Bytes.base64UrlEncode(id)}.block&#39;);
   _repository.save(bkpModel);
   return _pending();
 }</code></pre>

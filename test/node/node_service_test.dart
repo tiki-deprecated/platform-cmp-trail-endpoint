@@ -4,8 +4,7 @@ import 'dart:typed_data';
 import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/node/node_service_builder.dart';
-import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
+import 'package:tiki_sdk_dart/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
 import '../in_mem_node_service_builder.dart';
@@ -16,9 +15,9 @@ void main() {
       InMemNodeServiceBuilder inMemNodeServiceBuilder =
           InMemNodeServiceBuilder();
       NodeService node = await inMemNodeServiceBuilder.build();
-      Uint8List address = base64Decode(node.address);
+      Uint8List address = Bytes.base64UrlDecode(node.address);
       Uint8List? publicKey = await inMemNodeServiceBuilder.l0Storage
-          .read('${base64Url.encode(address)}/public.key');
+          .read('${Bytes.base64UrlEncode(address)}/public.key');
 
       expect(publicKey != null, true);
       expect(Digest("SHA3-256").process(publicKey!), address);

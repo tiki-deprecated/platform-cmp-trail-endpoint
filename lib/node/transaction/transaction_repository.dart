@@ -51,7 +51,7 @@ class TransactionRepository {
 
   /// Builds a [TransactionRepository] that will use [_db] for persistence.
   ///
-  /// It calls [createTable] to make sure the table exists.
+  /// It calls [_createTable] to make sure the table exists.
   TransactionRepository(this._db) {
     _createTable();
   }
@@ -98,7 +98,7 @@ class TransactionRepository {
     $columnBlockId =  x'${Bytes.hexEncode(block.id!)}' 
     WHERE $columnId = x'${Bytes.hexEncode(id)}'; ''');
 
-  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [blockId].
+  /// Gets the [List] of [TransactionModel] from the [BlockModel] from its [BlockModel.id].
   List<TransactionModel> getByBlockId(Uint8List? id) => _select(
       whereStmt: id == null
           ? 'WHERE $columnBlockId IS NULL'
