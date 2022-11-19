@@ -6,7 +6,7 @@
 
 # TIKI SDK —build the new data economy
 
-### [📚 Docs](https://mytiki.com/tiki-sdk-dart/) | [💬 Discord](https://discord.gg/tiki)
+### [📚 Docs](https://mytiki.com/tiki-sdk-dart/) &nbsp;&nbsp;[💬 Discord](https://discord.gg/tiki)
 
 The core implementation (**pure dart**) of TIKI's decentralized infrastructure plus abstractions to simplify the tokenization and application of data ownership, consent, and rewards.
 For new projects, we recommend one of our platform-specific SDKs. Same features. Much easier to implement.
@@ -14,8 +14,6 @@ For new projects, we recommend one of our platform-specific SDKs. Same features.
 #### 🤖 Android: [tiki-sdk-android](https://github.com/tiki/tiki-sdk-android)
 #### 🍎 iOS: [tiki-sdk-ios](https://github.com/tiki/tiki-sdk-ios)
 #### 🦋 Flutter: [tiki-sdk-flutter](https://github.com/tiki/tiki-sdk-flutter)
-
----
 
 ## Getting Started
 
@@ -148,8 +146,6 @@ await tiki.applyConsent('12345', const TikiSdkDestination.all(),
           () => print('Consent Approved. Send data to backend.')
 ```
 
----
-
 ##  Basic Architecture
 
 We leverage a novel blockchain-inspired data structure to create immutable, decentralized records of data ownership, consent grants, and rewards.
@@ -176,13 +172,9 @@ A cache layer (SQLite) on top of the chain data structure. Simplifies the execut
 
 #### SStorage (L0 Storage)
 
-The client-side interface for TIKI's L0 Storage service. A free, long-term (10 yrs.), immutable backup service.
+The client-side interface for TIKI's L0 Storage service. A free, long-term (10 yrs.), immutable backup service. Learn more about it [here](https://github.com/tiki/l0-storage).
 
-Learn more about it [here](https://github.com/tiki/l0-storage).
-
----
-
-### 🎯 Why Dart?
-Dart compiles to both machine code for native mobile/desktop apps and JS for web.
+## Why Dart?
+🎯 Dart compiles to both machine code for native mobile/desktop apps and JS for web.
 
 The vast majority of data origination and person-to-business exchange happens at the edge (web/mobile). Plus, edge execution can offer significant privacy and performance advantages.
