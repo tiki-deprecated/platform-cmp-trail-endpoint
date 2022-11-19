@@ -18,13 +18,13 @@ export './transaction/transaction_service.dart';
 /// The Builder for the blockchain Node.
 class NodeServiceBuilder {
   KeyStorage? _keyStorage;
-  String? _apiKey;
+  String? _apiId;
   Duration _blockInterval = const Duration(minutes: 1);
   int _maxTransactions = 200;
   String? _databaseDir;
   String? _address;
 
-  set apiKey(String? apiKey) => _apiKey = apiKey;
+  set apiId(String? apiId) => _apiId = apiId;
   set keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
   set blockInterval(Duration duration) => _blockInterval = duration;
   set maxTransactions(int maxTransactions) =>
@@ -34,7 +34,7 @@ class NodeServiceBuilder {
 
   Future<NodeService> build() async {
     KeyModel primaryKey = await _loadPrimaryKey();
-    L0Storage l0Storage = SStorageService(_apiKey!, primaryKey.privateKey);
+    L0Storage l0Storage = SStorageService(_apiId!, primaryKey.privateKey);
     Database database = sqlite3
         .open("$_databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
 

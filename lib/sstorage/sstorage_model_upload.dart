@@ -16,7 +16,7 @@ class SStorageModelUpload {
   SStorageModelUpload.fromMap(Map<String, dynamic>? map) {
     if (map != null) {
       key = map['key'];
-      if (map['block'] != null) content = base64Decode(map['block']);
+      if (map['content'] != null) content = base64Decode(map['content']);
     }
   }
 
