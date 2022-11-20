@@ -1,7 +1,11 @@
-## 0.0.9
+## 0.0.10
+* updated README
+* fixed apiId naming
 
+## 0.0.9
 * expose utils/bytes lib
 * update sstorage 
+
 ## 0.0.8
 
 * code cleanup
