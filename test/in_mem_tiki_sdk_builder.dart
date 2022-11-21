@@ -20,10 +20,6 @@ class InMemTikiSdkBuilder {
         OwnershipService(_origin!, nodeService, nodeService.database);
     ConsentService consentService =
         ConsentService(nodeService.database, nodeService);
-    TikiSdk tikiSdk = TikiSdk()
-      ..nodeService = nodeService
-      ..ownershipService = ownershipService
-      ..consentService = consentService;
-    return tikiSdk;
+    return TikiSdk(ownershipService, consentService, nodeService);
   }
 }

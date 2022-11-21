@@ -74,7 +74,7 @@ class TikiSdkBuilder {
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
 
   /// Sets the apiKey to connect to TIKI cloud.
-  void apiKey(String? apiId) => _apiId = apiId;
+  void apiId(String? apiId) => _apiId = apiId;
 
   /// Sets the blockchain address for the private key used in the SDK object.
   void address(String? address) => _address = address;
@@ -94,10 +94,6 @@ class TikiSdkBuilder {
         OwnershipService(_origin!, nodeService, nodeService.database);
     ConsentService consentService =
         ConsentService(nodeService.database, nodeService);
-    TikiSdk tikiSdk = TikiSdk()
-      ..nodeService = nodeService
-      ..ownershipService = ownershipService
-      ..consentService = consentService;
-    return tikiSdk;
+    return TikiSdk(ownershipService, consentService, nodeService);
   }
 }

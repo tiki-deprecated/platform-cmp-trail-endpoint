@@ -74,20 +74,18 @@ export 'utils/bytes.dart';
 ///
 /// Use [TikiSdkBuilder] to build an instance of this.
 class TikiSdk {
-  late final OwnershipService _ownershipService;
-  late final ConsentService _consentService;
-  late final NodeService _nodeService;
+  final OwnershipService _ownershipService;
+  final ConsentService _consentService;
+  final NodeService _nodeService;
 
-  TikiSdk();
+  TikiSdk(OwnershipService ownershipService, ConsentService consentService,
+      NodeService nodeService)
+      : _ownershipService = ownershipService,
+        _consentService = consentService,
+        _nodeService = nodeService;
 
   /// The blockchain address that is in use by this TikiSdk.
   String get address => _nodeService.address;
-
-  set ownershipService(OwnershipService ownershipService) =>
-      _ownershipService = ownershipService;
-  set consentService(ConsentService consentService) =>
-      _consentService = consentService;
-  set nodeService(NodeService nodeService) => _nodeService = nodeService;
 
   /// Assign ownership to a given [source].
   ///
