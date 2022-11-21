@@ -5,6 +5,5 @@ slug: tiki-sdk-dart-source
 hidden: false
 order: 7
 type: link
-link: 
-    url: https://github.com/tiki/tiki-sdk-dart
+link_url: https://github.com/tiki
 ---
