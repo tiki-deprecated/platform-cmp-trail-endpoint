@@ -8,20 +8,17 @@
 
 ### [📚 Docs](https://docs.mytiki.com) &nbsp;&nbsp;[💬 Discord](https://discord.gg/tiki)
 
-The core implementation (**pure dart**) of TIKI's decentralized infrastructure plus abstractions to simplify the tokenization and application of data ownership, consent, and rewards.
+The core implementation (**pure dart**) of TIKI's decentralized infrastructure plus abstractions to simplify the tokenization and application of data ownership, consent, and rewards. For new projects, we recommend one of our platform-specific SDKs. Same features. Much easier to implement.
 
----
-_For new projects, we recommend one of our platform-specific SDKs. Same features. Much easier to implement._
+- **🤖 Android: [tiki-sdk-android](https://github.com/tiki/tiki-sdk-android)**
+- **🍎 iOS: [tiki-sdk-ios](https://github.com/tiki/tiki-sdk-ios)**
+- **🦋 Flutter: [tiki-sdk-flutter](https://github.com/tiki/tiki-sdk-flutter)**
 
-#### 🤖 Android: [tiki-sdk-android](https://github.com/tiki/tiki-sdk-android)
-#### 🍎 iOS: [tiki-sdk-ios](https://github.com/tiki/tiki-sdk-ios)
-#### 🦋 Flutter: [tiki-sdk-flutter](https://github.com/tiki/tiki-sdk-flutter)
 
----
 
-### [How to get started ➝](https://docs.mytiki.com/docs/tiki-sdk-dart-getting-started)
-#### [API Reference ➝](https://docs.mytiki.com/reference/tiki-sdk-dart-tiki-sdk)
-#### [Dart Docs ➝](https://pub.dev/documentation/tiki_sdk_dart/latest/)
+### [🎬 How to get started ➝](https://docs.mytiki.com/docs/tiki-sdk-dart-getting-started)
+- **[API Reference ➝](https://docs.mytiki.com/reference/tiki-sdk-dart-tiki-sdk)**
+- **[Dart Docs ➝](https://pub.dev/documentation/tiki_sdk_dart/latest/)**
 
 ###  Basic Architecture
 
