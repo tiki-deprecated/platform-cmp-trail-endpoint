@@ -55,7 +55,7 @@ void main() {
       expect(() async => await repository.token('fail', req),
           throwsA(isA<HttpException>()));
     });
-test('Upload - Success', () async {
+    test('Upload - Success', () async {
       SStorageRepository repository = SStorageRepository();
       String stringToSign = const Uuid().v4();
       Uint8List signature =
@@ -72,8 +72,7 @@ test('Upload - Success', () async {
           rsp.token,
           SStorageModelUpload(
               key: '${rsp.urnPrefix}${const Uuid().v4()}', content: content));
-    })
-    ;
+    });
 
     test('Write - Success', () async {
       SStorageService service = SStorageService(apiId, privateKey);

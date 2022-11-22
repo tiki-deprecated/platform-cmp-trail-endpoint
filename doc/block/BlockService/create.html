@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the create method from the BlockService class, for the Dart programming language.">
+  <title>create method - BlockService class - block library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">tiki_sdk_dart</a></li>
+    <li><a href="../../block/block-library.html">block</a></li>
+    <li><a href="../../block/BlockService-class.html">BlockService</a></li>
+    <li class="self-crumb">create method</li>
+  </ol>
+  <div class="self-name">create</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">create</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="../../block/BlockModel-class.html">BlockModel</a></span>
+<span class="name ">create</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="create-param-transactionRoot"><span class="type-annotation">Uint8List</span> <span class="parameter-name">transactionRoot</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Creates a new block to be commited later.</p>
+<p>It gets the last created block from the <a href="../../block/BlockRepository-class.html">BlockRepository</a> to extract
+<a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> from it. If there are no blocks it means that it
+is the genesis block, i.e, the first block created by the chain and the
+<a href="../../block/BlockModel/previousHash.html">BlockModel.previousHash</a> will be 0.</p>
+<p>This method returns the <a href="../../block/BlockModel-class.html">BlockModel</a> created in-memory. Its return should be used
+to commit the <a href="../../transaction/TransactionModel-class.html">TransactionModel</a>. After committing all the transactions,
+<a href="../../block/BlockService/commit.html">commit</a> needs to be called to persist the block into <a href="../../block/BlockRepository-class.html">BlockRepository</a>.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">BlockModel create(Uint8List transactionRoot) {
+  BlockModel? lastBlock = _repository.getLast();
+  BlockModel block = BlockModel(
+      previousHash: lastBlock == null
+          ? Uint8List(1)
+          : Digest(&quot;SHA3-256&quot;).process(lastBlock.serialize()),
+      transactionRoot: transactionRoot);
+  block.id = Digest(&quot;SHA3-256&quot;).process(block.serialize());
+  return block;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">tiki_sdk_dart</a></li>
+  <li><a href="../../block/block-library.html">block</a></li>
+  <li><a href="../../block/BlockService-class.html">BlockService</a></li>
+  <li class="self-crumb">create method</li>
+</ol>
+
+
+    <h5>BlockService class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../block/BlockService-class.html#constructors">Constructors</a></li>
+          <li><a href="../../block/BlockService/BlockService.html">BlockService</a></li>
+
+
+    <li class="section-title">
+      <a href="../../block/BlockService-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../../block/BlockService/database.html">database</a></li>
+    <li class="inherited"><a href="../../block/BlockService/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="../../block/BlockService/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../../block/BlockService-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../block/BlockService/commit.html">commit</a></li>
+    <li><a href="../../block/BlockService/create.html">create</a></li>
+    <li><a href="../../block/BlockService/get.html">get</a></li>
+    <li class="inherited"><a href="../../block/BlockService/noSuchMethod.html">noSuchMethod</a></li>
+    <li class="inherited"><a href="../../block/BlockService/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../block/BlockService-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="../../block/BlockService/operator_equals.html">operator ==</a></li>
+
+
+
+
+        <li class="section-title"><a href="../../block/BlockService-class.html#constants">Constants</a></li>
+          <li><a href="../../block/BlockService/version-constant.html">version</a></li>
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.11
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

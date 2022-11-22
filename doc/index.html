@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="generator" content="made with love by dartdoc 6.0.0">
+  <meta name="description" content="tiki_sdk_dart API docs, for the Dart programming language.">
+  <title>tiki_sdk_dart - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="" data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="https://mytiki.com">tiki_sdk_dart package</a></li>
+  </ol>
+  <div class="self-name">tiki_sdk_dart</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <p><img src="https://img.shields.io/github/deployments/tiki/tiki-sdk-dart/Production?label=deployment&amp;logo=github" alt="Image">
+<img src="https://img.shields.io/github/workflow/status/tiki/tiki-sdk-dart/docs?label=docs&amp;logo=github" alt="Image">
+<img src="https://img.shields.io/pub/v/tiki_sdk_dart?logo=dart" alt="Image">
+<img src="https://img.shields.io/pub/points/tiki_sdk_dart?logo=dart" alt="Image">
+<img src="https://img.shields.io/github/license/tiki/tiki-sdk-dart" alt="Image"></p>
+<h1 id="tiki-sdk-build-the-new-data-economy">TIKI SDK —build the new data economy</h1>
+<h3 id="-docshttpsdocsmytikicom-nbspnbsp-discordhttpsdiscordggtiki"><a href="https://docs.mytiki.com">📚 Docs</a> &nbsp;&nbsp;<a href="https://discord.gg/tiki">💬 Discord</a></h3>
+<p>The core implementation (<strong>pure dart</strong>) of TIKI's decentralized infrastructure plus abstractions to simplify the tokenization and application of data ownership, consent, and rewards. For new projects, we recommend one of our platform-specific SDKs. Same features. Much easier to implement.</p>
+<ul>
+<li><strong>🤖 Android: <a href="https://github.com/tiki/tiki-sdk-android">tiki-sdk-android</a></strong></li>
+<li><strong>🍎 iOS: <a href="https://github.com/tiki/tiki-sdk-ios">tiki-sdk-ios</a></strong></li>
+<li><strong>🦋 Flutter: <a href="https://github.com/tiki/tiki-sdk-flutter">tiki-sdk-flutter</a></strong></li>
+</ul>
+<h3 id="-how-to-get-started-httpsdocsmytikicomdocstiki-sdk-dart-getting-started"><a href="https://docs.mytiki.com/docs/tiki-sdk-dart-getting-started">🎬 How to get started ➝</a></h3>
+<ul>
+<li><strong><a href="https://docs.mytiki.com/reference/tiki-sdk-dart-tiki-sdk">API Reference ➝</a></strong></li>
+<li><strong><a href="https://pub.dev/documentation/tiki_sdk_dart/latest/">Dart Docs ➝</a></strong></li>
+</ul>
+<h3 id="basic-architecture">Basic Architecture</h3>
+<p>We leverage a novel blockchain-inspired data structure to create immutable, decentralized records of data ownership, consent grants, and rewards.</p>
+<p>Unlike typical shared-state ⛓️ blockchains, TIKI operates on no consensus model, pushing scope responsibility to the application layer —kind of like shared cloud storage.</p>
+<p>The structure enables tokenization at the edge (no cost, high speed). Read more about it <a href="https://github.com/tiki/.github/blob/main/profile/WHITEPAPER-2CHAINZ.md">here</a>.</p>
+<p>✨ Highlights:</p>
+<ul>
+<li>No compute costs</li>
+<li>No backend changes</li>
+<li>Data remains private (never sent to a TIKI server)</li>
+<li>No P2P networking</li>
+<li>Fast AF and horizontally scalable (benchmarked on iPhones at 20,000 TPS)</li>
+<li>Immutable backup for 10+ yrs. via TIKI's L0 Storage service.</li>
+</ul>
+<h4 id="node">Node</h4>
+<p>Manages transaction creation, block packaging, backups, chain validation, and key management. Basically, all the blockchain stuff.</p>
+<h4 id="ownership-and-consent">Ownership and Consent</h4>
+<p>A cache layer (SQLite) on top of the chain data structure. Simplifies the execution of actions such as tokenization, consent modification, and consent application.</p>
+<h4 id="sstorage-l0-storage">SStorage (L0 Storage)</h4>
+<p>The client-side interface for TIKI's L0 Storage service. A free, long-term (10 yrs.), immutable backup service. Learn more about it <a href="https://github.com/tiki/l0-storage">here</a>.</p>
+<h3 id="why-dart">Why Dart?</h3>
+<p>🎯 Dart compiles to both machine code for native mobile/desktop apps and JS for web.</p>
+<p>The vast majority of data origination and person-to-business exchange happens at the edge (web/mobile). Plus, edge execution can offer significant privacy and performance advantages.</p>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="consent">
+  <span class="name"><a href="consent/consent-library.html">consent</a></span> 
+
+</dt>
+<dd>Handle Consent NFTs.
+</dd>
+
+          <dt id="l0_storage">
+  <span class="name"><a href="l0_storage/l0_storage-library.html">l0_storage</a></span> 
+
+</dt>
+<dd>The definition of L0 backup object storage.
+</dd>
+
+          <dt id="node">
+  <span class="name"><a href="node/node-library.html">node</a></span> 
+
+</dt>
+<dd>The core of the Blockchain.
+</dd>
+
+          <dt id="ownership">
+  <span class="name"><a href="ownership/ownership-library.html">ownership</a></span> 
+
+</dt>
+<dd>Handle Ownership NFTs.
+</dd>
+
+          <dt id="sstorage">
+  <span class="name"><a href="sstorage/sstorage-library.html">sstorage</a></span> 
+
+</dt>
+<dd>The object storage service for the TIKI cloud.
+</dd>
+
+          <dt id="tiki_sdk_dart">
+  <span class="name"><a href="tiki_sdk_dart/tiki_sdk_dart-library.html">tiki_sdk_dart</a></span> 
+
+</dt>
+<dd>The SDK to handle data ownership and consent NFTs with TIKI.
+</dd>
+
+          <dt id="utils">
+  <span class="name"><a href="utils/utils-library.html">utils</a></span> 
+
+</dt>
+<dd>Utility libraries for TIKI SDK
+</dd>
+
+          <h3>Node</h3>
+            <dt id="backup">
+  <span class="name"><a href="backup/backup-library.html">backup</a></span> 
+
+</dt>
+<dd>The backup library for node service.
+</dd>
+
+            <dt id="block">
+  <span class="name"><a href="block/block-library.html">block</a></span> 
+
+</dt>
+<dd>The definition of block-related operations.
+</dd>
+
+            <dt id="keys">
+  <span class="name"><a href="keys/keys-library.html">keys</a></span> 
+
+</dt>
+<dd>RSA keys creation and persistance.
+</dd>
+
+            <dt id="transaction">
+  <span class="name"><a href="transaction/transaction-library.html">transaction</a></span> 
+
+</dt>
+<dd>Handles transactions in the chain.
+</dd>
+
+        </dl>
+      </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="https://mytiki.com">tiki_sdk_dart package</a></li>
+</ol>
+
+
+    <h5 class="hidden-xs"><span class="package-name">tiki_sdk_dart</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="consent/consent-library.html">consent</a></li>
+      <li><a href="l0_storage/l0_storage-library.html">l0_storage</a></li>
+      <li><a href="node/node-library.html">node</a></li>
+      <li><a href="ownership/ownership-library.html">ownership</a></li>
+      <li><a href="sstorage/sstorage-library.html">sstorage</a></li>
+      <li><a href="tiki_sdk_dart/tiki_sdk_dart-library.html">tiki_sdk_dart</a></li>
+      <li><a href="utils/utils-library.html">utils</a></li>
+      <li class="section-subtitle">Node</li>
+        <li class="section-subitem"><a href="backup/backup-library.html">backup</a></li>
+        <li class="section-subitem"><a href="block/block-library.html">block</a></li>
+        <li class="section-subitem"><a href="keys/keys-library.html">keys</a></li>
+        <li class="section-subitem"><a href="transaction/transaction-library.html">transaction</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+
+</main>
+
+<footer>
+  <span class="no-break">
+    tiki_sdk_dart
+      0.0.11
+  </span>
+
+  
+</footer>
+
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+
