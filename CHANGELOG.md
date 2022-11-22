@@ -1,3 +1,7 @@
+## 0.0.11
+
+* fix destination deserialization
+
 ## 0.0.10
 * updated README
 * fixed apiId naming
