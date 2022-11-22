@@ -20,8 +20,8 @@ class TikiSdkDestination {
   /// _i.e. NOT mytiki.com/*
   final List<String> paths;
 
-  /// Builds a destination with [paths] and [uses].
-  const TikiSdkDestination(this.paths, {this.uses = const []});
+  /// Builds a destination with [paths] and [uses]. Default to all uses.
+  const TikiSdkDestination(this.paths, {this.uses = const ["*"]});
 
   /// Builds a destination for all [paths] and [uses]
   const TikiSdkDestination.all()
@@ -59,8 +59,10 @@ class TikiSdkDestination {
   /// Deserializes a byte array into a destination.
   static TikiSdkDestination deserialize(Uint8List serialized) {
     List<Uint8List> unserialized = CompactSize.decode(serialized);
-    return TikiSdkDestination(jsonDecode(String.fromCharCodes(unserialized[0])),
-        uses: jsonDecode(String.fromCharCodes(unserialized[0])));
+    List<dynamic> paths = jsonDecode(String.fromCharCodes(unserialized[0]));
+    List<dynamic> uses = jsonDecode(String.fromCharCodes(unserialized[1]));
+    return TikiSdkDestination(paths.map<String>((e) => e.toString()).toList(),
+        uses: uses.map<String>((e) => e.toString()).toList());
   }
 
   String toJson() => toString();

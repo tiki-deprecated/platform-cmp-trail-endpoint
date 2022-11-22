@@ -24,16 +24,16 @@ class SStorageRepository {
   SStorageRepository();
 
   /// Request a new token to write to the object storage
-  /// 
-  /// When a user wants to write to the object storage, an authentication token 
-  /// must be requested. To request the token, the user must provide the apiId 
-  /// that identifies the company that is writing that data in the object storage 
-  /// and proof of authorship, to make sure that whoever is writing to a specific 
+  ///
+  /// When a user wants to write to the object storage, an authentication token
+  /// must be requested. To request the token, the user must provide the apiId
+  /// that identifies the company that is writing that data in the object storage
+  /// and proof of authorship, to make sure that whoever is writing to a specific
   /// address is holding the private key for that address. This can be done by
-  /// signing a generic string and sending with the request the signature, the 
+  /// signing a generic string and sending with the request the signature, the
   /// public key, and the original string. With that information, the server can
-  /// verify the signature and make sure that the one trying to create a new 
-  /// registry in a specific address is the one that holds the private key for 
+  /// verify the signature and make sure that the one trying to create a new
+  /// registry in a specific address is the one that holds the private key for
   /// that address.
   Future<SStorageModelTokenRsp> token(
       String? apiId, SStorageModelTokenReq body) async {
@@ -53,7 +53,6 @@ class SStorageRepository {
     }
   }
 
-  
   Future<void> upload(String? token, SStorageModelUpload body) async {
     http.Response rsp =
         await http.put(_serviceUri.replace(path: '/api/latest/upload'),
