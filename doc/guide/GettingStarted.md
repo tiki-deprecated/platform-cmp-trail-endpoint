@@ -18,7 +18,7 @@ _Before you get started, for new projects, we recommend one of our platform-spec
 
 #### 🤖 Android: [tiki-sdk-android](https://github.com/tiki/tiki-sdk-android)
 #### 🍎 iOS: [tiki-sdk-ios](https://github.com/tiki/tiki-sdk-ios)
-#### 🦋 Flutter: [tiki-sdk-flutter](https://github.com/tiki/tiki-sdk-flutter)
+#### 🦋 Flutter: [tiki-sdk-flutter](tiki-sdk-flutter-getting-started)
 
 ---
 &nbsp;

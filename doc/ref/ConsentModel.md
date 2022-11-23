@@ -18,7 +18,7 @@ Builds a ConsentModel based in a Map. Used mostly for database operations.
 ## Properties
 
 ##### about &#8596; String?
-An optional description to provide additional context to the transaction. Most typically as human-readable text.
+An optional description to provide additional context to the transaction. Most typically as human-readable text.  
 _read / write_
 
 ##### destination &#8596; [TikiSdkDestination](tiki-sdk-dart-tiki-sdk-destination)
