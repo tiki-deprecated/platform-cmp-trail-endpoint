@@ -19,7 +19,7 @@ class ConsentRepository {
   static const table = 'consent';
 
   /// The table column for [ConsentModel.ownershipId]
-  static const columnOwnershipId = 'ownershipId';
+  static const columnOwnershipId = 'ownership_id';
 
   /// The table column for [ConsentModel.destination]
   static const columnDestination = 'destination';
@@ -92,6 +92,7 @@ class ConsentRepository {
         columnDestination: row[columnDestination],
         columnAbout: row[columnAbout],
         columnReward: row[columnReward],
+        columnTransactionId: row[columnTransactionId]
       };
       ConsentModel consentModel = ConsentModel.fromMap(map);
       consents.add(consentModel);

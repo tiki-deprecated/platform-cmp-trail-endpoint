@@ -111,11 +111,14 @@ class TikiSdk {
   /// It does not validate if the consent is expired or if it can be applied to
   /// a specifi destination. For that, [applyConsent] should be used instead.
   ConsentModel? getConsent(String source, {String? origin}) {
-    OwnershipModel? ownershipModel =
-        _ownershipService.getBySource(source, origin: origin);
+    OwnershipModel? ownershipModel = getOwnership(source, origin: origin);
     if (ownershipModel == null) return null;
     return _consentService.getByOwnershipId(ownershipModel.transactionId!);
   }
+
+  /// Gets the ownership for a [source] and optional [origin].
+  OwnershipModel? getOwnership(String source, {String? origin}) =>
+      _ownershipService.getBySource(source, origin: origin);
 
   /// Modify consent for an ownership identified by [ownershipId].
   ///
