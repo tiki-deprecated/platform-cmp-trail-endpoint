@@ -90,6 +90,29 @@ ConsentModel consent = await tiki.modifyConsent(oid, const TikiSdkDestination.al
 
 &nbsp;
 
+##### getOwnership(String source, {String? origin}) &#8594; [OwnerhsipModel](tiki-sdk-dart-ownership-model)?
+Get the `OwnershipModel` for a `source` and `origin`. If `origin` is unset, the default set during construction is used.
+
+Parameters:
+- **source &#8594; String**  
+  An identifier in your system corresponding to the raw data.  
+  _i.e. a user_id_
+
+
+- **origin &#8594; String?**  
+  An optional override of the default origin set during initialization
+
+Returns:
+- **[OwnershipModel](tiki-sdk-dart-consent-model)**  
+  the assigned `OwnerhsipModel`
+
+Example:
+```
+OwnershipModel? consent = await tiki.getOwnership('12345');
+```
+
+&nbsp;
+
 ##### getConsent(String source, {String? origin}) &#8594; [ConsentModel](tiki-sdk-dart-consent-model)?  
 Get the latest `ConsentModel` for a `source` and `origin`. If `origin` is unset, the default set during construction is used.
 
