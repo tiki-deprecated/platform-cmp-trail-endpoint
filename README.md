@@ -4,9 +4,9 @@
 ![Image](https://img.shields.io/pub/points/tiki_sdk_dart?logo=dart)
 ![Image](https://img.shields.io/github/license/tiki/tiki-sdk-dart)
 
-# TIKI SDK —build the new data economy
+###  [🍍 Console](https://console.mytiki.com) &nbsp; ⏐ &nbsp; [📚 Docs](https://docs.mytiki.com)
 
-### [📚 Docs](https://docs.mytiki.com) &nbsp;&nbsp;[💬 Discord](https://discord.gg/tiki)
+# TIKI SDK —build the new data economy
 
 The core implementation (**pure dart**) of TIKI's decentralized infrastructure plus abstractions to simplify the tokenization and application of data ownership, consent, and rewards. For new projects, we recommend one of our platform-specific SDKs. Same features. Much easier to implement.
 
