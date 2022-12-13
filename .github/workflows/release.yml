@@ -39,12 +39,12 @@ jobs:
       - name: Guide
         uses: readmeio/rdme@8.3.0
         with:
-          rdme: openapi docs/guide --key=${{ secrets.README_API_KEY }}
+          rdme: docs docs/guide --key=${{ secrets.README_API_KEY }}
 
       - name: Ref
         uses: readmeio/rdme@8.3.0
         with:
-          rdme: openapi docs/ref --key=${{ secrets.README_API_KEY }}
+          rdme: docs docs/ref --key=${{ secrets.README_API_KEY }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
