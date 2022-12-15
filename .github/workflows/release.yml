@@ -28,3 +28,23 @@ jobs:
         
       - name: 'Publish'
         run: dart pub publish -f
+
+  docs:
+    runs-on: ubuntu-latest
+    needs: [ publish ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.1.1
+
+      - name: Guide
+        uses: readmeio/rdme@8.3.0
+        with:
+          rdme: docs doc/guide --key=${{ secrets.README_API_KEY }}
+
+      - name: Ref
+        uses: readmeio/rdme@8.3.0
+        with:
+          rdme: docs doc/ref --key=${{ secrets.README_API_KEY }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
