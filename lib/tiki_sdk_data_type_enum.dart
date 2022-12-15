@@ -21,7 +21,7 @@ enum TikiSdkDataTypeEnum {
       }
     }
     throw ArgumentError.value(
-        value, 'value', 'Invaid TikiSdkDataTypeEnum value $value');
+        value, 'value', 'Invalid TikiSdkDataTypeEnum value $value');
   }
 
   final String val;

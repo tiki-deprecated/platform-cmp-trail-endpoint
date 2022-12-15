@@ -76,6 +76,18 @@ class OwnershipModel {
         .toBytes();
   }
 
+  /// Converts this to JSON String
+  String toJson() => jsonEncode({
+        source: source,
+        type: type.val,
+        origin: origin,
+        about: about,
+        contains: contains,
+        transactionId: transactionId != null
+            ? Bytes.base64UrlEncode(transactionId!)
+            : null,
+      });
+
   /// Deserializes the contents that was loaded from the blockchain.
   static OwnershipModel deserialize(Uint8List serialized) {
     List<Uint8List> unserialized = CompactSize.decode(serialized);

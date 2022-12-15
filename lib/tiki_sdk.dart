@@ -98,22 +98,13 @@ class TikiSdk {
       String source, TikiSdkDataTypeEnum type, List<String> contains,
       {String? about, String? origin}) async {
     OwnershipModel ownershipModel = await _ownershipService.create(
-        source: source,
-        type: type,
-        origin: origin,
-        about: about,
-        contains: contains);
+      source: source,
+      type: type,
+      contains: contains,
+      about: about,
+      origin: origin,
+    );
     return Bytes.base64UrlEncode(ownershipModel.transactionId!);
-  }
-
-  /// Gets latest consent given for a [source] and [origin].
-  ///
-  /// It does not validate if the consent is expired or if it can be applied to
-  /// a specifi destination. For that, [applyConsent] should be used instead.
-  ConsentModel? getConsent(String source, {String? origin}) {
-    OwnershipModel? ownershipModel = getOwnership(source, origin: origin);
-    if (ownershipModel == null) return null;
-    return _consentService.getByOwnershipId(ownershipModel.transactionId!);
   }
 
   /// Gets the ownership for a [source] and optional [origin].
@@ -137,6 +128,16 @@ class TikiSdk {
         reward: reward,
         expiry: expiry);
     return consentModel;
+  }
+
+  /// Gets latest consent given for a [source] and [origin].
+  ///
+  /// It does not validate if the consent is expired or if it can be applied to
+  /// a specifi destination. For that, [applyConsent] should be used instead.
+  ConsentModel? getConsent(String source, {String? origin}) {
+    OwnershipModel? ownershipModel = getOwnership(source, origin: origin);
+    if (ownershipModel == null) return null;
+    return _consentService.getByOwnershipId(ownershipModel.transactionId!);
   }
 
   /// Apply consent for a given [source] and [destination].
