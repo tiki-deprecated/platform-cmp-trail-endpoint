@@ -1,6 +1,10 @@
-## 0.0.12
+## 0.0.16
 
 * add toJson to ownership and consent models
+
+## 0.0.12 - 0.0.15
+
+* docs updates
 
 ## 0.0.11
 
