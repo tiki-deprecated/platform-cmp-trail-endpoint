@@ -2,6 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+import 'dart:convert';
 import 'dart:typed_data';
 
 import '../tiki_sdk_destination.dart';
@@ -30,7 +31,7 @@ class ConsentModel {
   /// The transaction id of this registry.
   Uint8List? transactionId;
 
-  // The Consent expiration date. Null for no expiration.
+  /// The Consent expiration date. Null for no expiration.
   DateTime? expiry;
 
   /// Builds a [ConsentModel] for the data identified by [ownershipId].
@@ -46,6 +47,18 @@ class ConsentModel {
         reward = map[ConsentRepository.columnReward],
         transactionId = map[ConsentRepository.columnTransactionId],
         expiry = map[ConsentRepository.columnExpiry];
+
+  /// Converts this to JSON String.
+  String toJson() => jsonEncode({
+        "ownershipId": Bytes.base64UrlEncode(ownershipId),
+        "destination": destination.toJson(),
+        "about": about,
+        "reward": reward,
+        "transactionId": transactionId != null
+            ? Bytes.base64UrlEncode(transactionId!)
+            : null,
+        "expiry": expiry?.millisecondsSinceEpoch,
+      });
 
   /// Serializes the contents to be recorded in the blockchain.
   Uint8List serialize() {

@@ -1,3 +1,7 @@
+## 0.0.12
+
+* add toJson to ownership and consent models
+
 ## 0.0.11
 
 * fix destination deserialization
