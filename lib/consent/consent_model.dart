@@ -46,7 +46,8 @@ class ConsentModel {
         about = map[ConsentRepository.columnAbout],
         reward = map[ConsentRepository.columnReward],
         transactionId = map[ConsentRepository.columnTransactionId],
-        expiry = map[ConsentRepository.columnExpiry];
+        expiry = map[ConsentRepository.columnExpiry] != null ?
+          DateTime.fromMillisecondsSinceEpoch(map[ConsentRepository.columnExpiry]) : null;
 
   /// Converts this to JSON String.
   String toJson() => jsonEncode(toMap());

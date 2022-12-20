@@ -51,6 +51,7 @@ class ConsentRepository {
      $columnAbout TEXT,
      $columnReward TEXT,
      $columnTransactionId TEXT,
+     $columnExpiry INTEGER,
      FOREIGN KEY($columnOwnershipId) 
       REFERENCES ${OwnershipRepository.table}(${OwnershipRepository.columnTransactionId}),
      FOREIGN KEY($columnTransactionId) 
@@ -62,13 +63,14 @@ class ConsentRepository {
   void save(ConsentModel consent) {
     _db.execute('''
     INSERT INTO $table 
-    VALUES ( ?, ?, ?, ?, ?);
+    VALUES ( ?, ?, ?, ?, ?, ?);
     ''', [
       consent.ownershipId,
       consent.destination.toString(),
       consent.about,
       consent.reward,
-      consent.transactionId
+      consent.transactionId,
+      consent.expiry?.millisecondsSinceEpoch
     ]);
   }
 
@@ -92,7 +94,8 @@ class ConsentRepository {
         columnDestination: row[columnDestination],
         columnAbout: row[columnAbout],
         columnReward: row[columnReward],
-        columnTransactionId: row[columnTransactionId]
+        columnTransactionId: row[columnTransactionId],
+        columnExpiry : row[columnExpiry]
       };
       ConsentModel consentModel = ConsentModel.fromMap(map);
       consents.add(consentModel);
