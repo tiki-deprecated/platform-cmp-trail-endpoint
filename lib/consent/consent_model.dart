@@ -46,19 +46,22 @@ class ConsentModel {
         about = map[ConsentRepository.columnAbout],
         reward = map[ConsentRepository.columnReward],
         transactionId = map[ConsentRepository.columnTransactionId],
-        expiry = map[ConsentRepository.columnExpiry];
+        expiry = map[ConsentRepository.columnExpiry] != null ?
+          DateTime.fromMillisecondsSinceEpoch(map[ConsentRepository.columnExpiry]) : null;
 
   /// Converts this to JSON String.
-  String toJson() => jsonEncode({
-        "ownershipId": Bytes.base64UrlEncode(ownershipId),
-        "destination": destination.toJson(),
-        "about": about,
-        "reward": reward,
-        "transactionId": transactionId != null
-            ? Bytes.base64UrlEncode(transactionId!)
-            : null,
-        "expiry": expiry?.millisecondsSinceEpoch,
-      });
+  String toJson() => jsonEncode(toMap());
+
+  Map toMap() => {
+    "ownershipId": Bytes.base64UrlEncode(ownershipId),
+    "destination": destination.toMap(),
+    "about": about,
+    "reward": reward,
+    "transactionId": transactionId != null
+        ? Bytes.base64UrlEncode(transactionId!)
+        : null,
+    "expiry": expiry?.millisecondsSinceEpoch,
+  };
 
   /// Serializes the contents to be recorded in the blockchain.
   Uint8List serialize() {

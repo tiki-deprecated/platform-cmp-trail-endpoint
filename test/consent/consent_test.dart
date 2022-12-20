@@ -6,7 +6,6 @@ import 'package:tiki_sdk_dart/consent/consent_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
-import 'package:tiki_sdk_dart/utils/bytes.dart';
 
 import '../in_mem_node_service_builder.dart';
 
@@ -39,7 +38,7 @@ void main() {
           about: 'test 2', reward: '2 points');
       ConsentModel consentModel3 = ConsentModel(
           ownershipModel3.transactionId!, destination,
-          about: 'test 3', reward: '3 points');
+          about: 'test 3', reward: '3 points', expiry: DateTime.now().add(const Duration(days:365)));
       repository.save(consentModel);
       repository.save(consentModel2);
       repository.save(consentModel3);
@@ -55,6 +54,7 @@ void main() {
       expect(consent2!.reward, '2 points');
       expect(consent3 == null, false);
       expect(consent3!.reward, '3 points');
+      expect(consent3.expiry?.isAfter(DateTime.now()), true);
     });
 
     test('Give consent', () async {

@@ -36,12 +36,18 @@ class TikiSdkDestination {
         uses = const [];
 
   /// Converts the json representation of the destination into its object.
-  static TikiSdkDestination fromJson(String jsonString) =>
-      TikiSdkDestination.fromMap(jsonDecode(jsonString));
+  static TikiSdkDestination fromJson(String jsonString) {
+    Map jsonMap = jsonDecode(jsonString);
+    Map<String, List<String>> destMap = {
+      "paths" : jsonMap["paths"]?.map<String>((e) => e.toString()).toList() ?? [],
+      "uses" : jsonMap["uses"]?.map<String>((e) => e.toString()).toList() ?? [],
+    };
+    return TikiSdkDestination.fromMap(destMap);
+  }
 
-  TikiSdkDestination.fromMap(Map map)
-      : uses = map['uses'] == null ? [] : [...map['uses']],
-        paths = [...map['paths']];
+  TikiSdkDestination.fromMap(Map<String, List<String>> map)
+      : uses = map['uses'] ?? [],
+        paths = map['paths'] ?? [];
 
   @override
   String toString() => jsonEncode({'uses': uses, 'paths': paths});
@@ -66,4 +72,9 @@ class TikiSdkDestination {
   }
 
   String toJson() => toString();
+
+  Map toMap() => {
+    "paths" : paths,
+    "uses" : uses
+  };
 }
