@@ -50,7 +50,7 @@ void main() {
       await tikiSdk.modifyConsent(ownershipId, const TikiSdkDestination.all(),
           expiry: DateTime.now());
       await tikiSdk.applyConsent(
-          'test', const TikiSdkDestination.all(), () => ok = false);
+          'test', const TikiSdkDestination.all(), () => ok = true, onBlocked: (_) => ok = false);
       expect(ok, false);
     });
     test('run a function based on user consent', () async {
