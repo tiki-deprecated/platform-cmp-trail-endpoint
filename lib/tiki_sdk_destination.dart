@@ -37,7 +37,6 @@ class TikiSdkDestination {
 
   /// Converts the json representation of the destination into its object.
   static TikiSdkDestination fromJson(String jsonString) {
-    print("tikisdkfromjson");
     Map jsonMap = jsonDecode(jsonString);
     Map<String, List<String>> destMap = {
       "paths" : jsonMap["paths"]?.map<String>((e) => e.toString()).toList() ?? [],
