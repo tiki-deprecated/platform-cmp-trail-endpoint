@@ -76,17 +76,20 @@ class OwnershipModel {
         .toBytes();
   }
 
+  /// Converts this to Map
+  Map toMap() => {
+    "source": source,
+    "type": type.val,
+    "origin": origin,
+    "about": about,
+    "contains": contains,
+    "transactionId": transactionId != null
+        ? Bytes.base64UrlEncode(transactionId!)
+        : null,
+  };
+
   /// Converts this to JSON String
-  String toJson() => jsonEncode({
-        source: source,
-        type: type.val,
-        origin: origin,
-        about: about,
-        contains: contains,
-        transactionId: transactionId != null
-            ? Bytes.base64UrlEncode(transactionId!)
-            : null,
-      });
+  String toJson() => jsonEncode(toMap());
 
   /// Deserializes the contents that was loaded from the blockchain.
   static OwnershipModel deserialize(Uint8List serialized) {
