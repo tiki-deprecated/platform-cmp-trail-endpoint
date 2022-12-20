@@ -1,3 +1,8 @@
+## 0.0.17
+
+* fix bugs with json convert
+* add expiry to ConsentModel repository
+
 ## 0.0.16
 
 * add toJson to ownership and consent models
