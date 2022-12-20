@@ -40,8 +40,8 @@ class TikiSdkDestination {
       TikiSdkDestination.fromMap(jsonDecode(jsonString));
 
   TikiSdkDestination.fromMap(Map map)
-      : uses = map['uses'] == null ? [] : [...map['uses']],
-        paths = [...map['paths']];
+      : uses = map['uses']?.map<String>((e) => e.toString()).asList() ?? [],
+        paths = map['paths']?.map<String>((e) => e.toString()).asList() ?? [];
 
   @override
   String toString() => jsonEncode({'uses': uses, 'paths': paths});
