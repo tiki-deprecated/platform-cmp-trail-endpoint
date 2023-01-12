@@ -9,8 +9,19 @@ order: 6
 
 ## Constructors
 
-##### ConsentModel(Uint8List ownershipId, [TikiSdkDestination](tiki-sdk-dart-tiki-sdk-destination) destination, {String? about, String? reward, DateTime? expiry})  
+##### ConsentModel(...,{...})
 Builds a ConsentModel for the data identified by `ownershipId`.
+
+Parameters:
+
+- **ownershipId &#8594; Uint8List**
+- **destination &#8594; [TikiSdkDestination](tiki-sdk-dart-tiki-sdk-destination)**
+
+Named Parameters:
+
+- **about &#8594; String?**
+- **reward &#8594; String?**
+- **expiry &#8594; [DateTime](https://api.dart.dev/stable/2.18.6/dart-core/DateTime-class.html)?**
 
 ##### ConsentModel.fromMap(Map&lt;String, dynamic> map)  
 Builds a ConsentModel based in a Map. Used mostly for database operations.
@@ -25,7 +36,7 @@ _read / write_
 The destination describing the allowed/disallowed paths and use cases for the consent.  
 _read / write_
 
-##### expiry &#8596; DateTime?
+##### expiry &#8596; [DateTime](https://api.dart.dev/stable/2.18.6/dart-core/DateTime-class.html)?
 The date the consent is valid until. Do no set (`Null`) for perpetual consent.
 _read / write_
 

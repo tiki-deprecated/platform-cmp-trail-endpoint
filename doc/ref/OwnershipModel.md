@@ -9,9 +9,17 @@ order: 6
 
 ## Constructors
 
-##### OwnershipModel({Uint8List? transactionId, required String source, required [TikiSdkDataTypeEnum](tiki-sdk-dart-tiki-sdk-data-type-enum) type, required String origin, List&lt;String> contains = const [], String? about})
+##### OwnershipModel({...})
 
-##### OwnershipModel.fromMap(Map&lt;String, dynamic> map)  
+Named Parameters:
+- **transactionId &#8594; Uint8List?**
+- **source &#8594; String**
+- **type &#8594; [TikiSdkDataTypeEnum](tiki-sdk-dart-tiki-sdk-data-type-enum)**
+- **origin &#8594; String**
+- **contains &#8594; List&lt;String> = const[]**
+- **about &#8594; String?**
+
+##### OwnershipModel.fromMap(Map&lt;String, dynamic> map) 
 Builds a `OwnershipModel` based in a Map. Used mostly for database operations.
 
 ## Properties
@@ -47,5 +55,5 @@ Serialize the ownership as a byte array. Used in transaction creation.
 
 ## Static Methods
 
-##### deserialize(Uint8List serialized) &#8594; ConsentModel
+##### deserialize(Uint8List serialized) &#8594; OwnershipModel
 Deserialize an ownership byte array, creating a new `OwnershipModel`.

@@ -20,7 +20,7 @@ _read-only_
 
 ## Methods
 
-##### assignOwnership(String source, [TikiSdkDataTypeEnum](tiki-sdk-dart-tiki-sdk-data-type-enum) type, List&lt;String> contains, {String? about, String? origin}) &#8594; Future&lt;String>  
+##### assignOwnership(...,{...}) &#8594; Future&lt;String>  
 Data ownership can be assigned to any data point, pool, or stream, creating an immutable, on-chain record.  
 
 Parameters:
@@ -36,7 +36,7 @@ Point, pool, or stream
 - **contains &#8594; List&lt;String>**  
 A list of metadata tags describing the represented data
 
-
+Named Parameters:
 - **origin &#8594; String?**  
 An optional override of the default origin set during initialization
 
@@ -45,7 +45,7 @@ An optional override of the default origin set during initialization
 An optional description to provide additional context to the transaction. Most typically as human-readable text.
 
 Returns:
-- **String**  
+- **Future&lt;String>**  
 The unique transaction id (use to recall the transaction record at any time)
 
 Example:
@@ -56,7 +56,7 @@ String oid = await tiki.assignOwnership('12345', TikiSdkDataTypeEnum.point, ['em
 
 &nbsp;
 
-##### modifyConsent(String ownershipId, [TikiSdkDestination](tiki-sdk-dart-tiki-sdk-destination) destination, {String? about, String? reward, DateTime? expiry}) &#8594; Future&lt;[ConsentModel](tiki-sdk-dart-consent-model)>  
+##### modifyConsent(...,{...}) &#8594; Future&lt;[ConsentModel](tiki-sdk-dart-consent-model)>  
 Consent is given (or revoked) for data ownership records. Consent defines "who" the data owner has given utilization rights.
 
 Parameters:
@@ -67,7 +67,7 @@ The transaction id for the ownership grant
 - **destination &#8594; [TikiSdkDestination](tiki-sdk-dart-tiki-sdk-destination)**  
 A collection of paths and application use cases that consent has been granted (or revoked) for.
 
-
+Named Parameters:
 - **expiry &#8594; DateTime?**  
 The date upon which the consent is no longer valid. If not set, consent is perpetual.
 
@@ -80,7 +80,7 @@ An optional definition of a reward promised to the user in exchange for consent.
 An optional description to provide additional context to the transaction. Most typically as human-readable text.
 
 Returns:
-- **[ConsentModel](tiki-sdk-dart-consent-model)**  
+- **Future&lt;[ConsentModel](tiki-sdk-dart-consent-model)>**  
 the modified `ConsentModel`
 
 Example:
@@ -108,7 +108,7 @@ Returns:
 
 Example:
 ```
-OwnershipModel? consent = await tiki.getOwnership('12345');
+OwnershipModel? consent = tiki.getOwnership('12345');
 ```
 
 &nbsp;
@@ -131,12 +131,12 @@ Returns:
 
 Example:
 ```
-ConsentModel? consent = await tiki.getConsent('12345');
+ConsentModel? consent = tiki.getConsent('12345');
 ```
 
 &nbsp;
 
-##### applyConsent(String source, [TikiSdkDestination](tiki-sdk-dart-tiki-sdk-destination) destination, Function() request, {void Function(String)? onBlocked, String? origin}) &#8594; Future&lt;void>  
+##### applyConsent(...,{...}) &#8594; Future&lt;void>  
 Apply consent to a data transaction. If consent is granted for the `source` and `destination` and has not expired, the request is executed.
 
 Parameters:
@@ -152,7 +152,7 @@ The destination(s) and use case(s) for the request.
 - **request &#8594; Function()**  
 The function to execute if consent granted
 
-
+Named Parameters:
 - **onBlocked &#8594; Function(String)?**  
 An optional function to execute if consent is denied.
 
