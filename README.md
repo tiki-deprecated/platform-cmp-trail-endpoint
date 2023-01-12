@@ -26,7 +26,7 @@ We leverage a novel blockchain-inspired data structure to create immutable, dece
 
 Unlike typical shared-state ⛓️ blockchains, TIKI operates on no consensus model, pushing scope responsibility to the application layer —kind of like shared cloud storage.
 
-The structure enables tokenization at the edge (no cost, high speed). Read more about it [here](https://github.com/tiki/.github/blob/main/profile/WHITEPAPER-2CHAINZ.md).
+The structure enables tokenization at the edge (no cost, high speed). Read more about it [here](https://github.com/tiki/tiki-sdk-dart/blob/main/WHITEPAPER.md).
 
 ✨ Highlights:
 - No compute costs
