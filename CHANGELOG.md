@@ -1,3 +1,8 @@
+## 0.0.18
+
+* fix apply consent errors
+* add more tests for apply consent
+
 ## 0.0.17
 
 * fix bugs with json convert
