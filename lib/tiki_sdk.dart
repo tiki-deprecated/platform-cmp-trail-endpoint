@@ -183,7 +183,7 @@ class TikiSdk {
     pathConsent = _compareConsentLists(consentPaths, destinationPaths);
     List<String> destinationUses = destination.uses;
     List<String> consentUses = consentModel.destination.uses;
-    useConsent = _compareConsentLists(consentUses, destinationUses);
+    useConsent = _compareUseLists(consentUses, destinationUses);
     return pathConsent && useConsent;
   }
 
@@ -191,12 +191,35 @@ class TikiSdk {
     for (int i = 0; i < destination.length; i++) {
       String path = destination[i];
       if (consent.contains(path)) return true;
+      if (consent.contains("*")) return true;
       List<String> paths = path.split('/');
       if (paths.length > 1) {
         for (int j = 0; j < paths.length; j++) {
           if (consent.contains('${paths[j]}/*')) {
             for (int k = j + 1; k < paths.length; k++) {
               if (consent.contains('NOT ${paths[k]}')) {
+                return false;
+              }
+            }
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  bool _compareUseLists(List<String> use, List<String> destination) {
+    for (int i = 0; i < destination.length; i++) {
+      String path = destination[i];
+      if (use.contains(path)) return true;
+      if (use.contains("*")) return true;
+      List<String> paths = path.split('/');
+      if (paths.length > 1) {
+        for (int j = 0; j < paths.length; j++) {
+          if (use.contains('${paths[j]}/*')) {
+            for (int k = j + 1; k < paths.length; k++) {
+              if (use.contains('NOT ${paths[k]}')) {
                 return false;
               }
             }
