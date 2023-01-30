@@ -1,6 +1,6 @@
 name: tiki_sdk_dart
 description: The core implementation (pure dart) of TIKI's decentralized infrastructure plus abstractions to simplify the tokenization and application of data ownership, consent, and rewards. For new projects, we recommend one of our platform-specific SDKs. Same features. Much easier to implement.
-version: 0.0.18
+version: 1.0.0
 homepage: https://mytiki.com
 documentation: https://docs.mytiki.com
 repository: https://github.com/tiki/tiki-sdk-dart
