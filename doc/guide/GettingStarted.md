@@ -31,7 +31,7 @@ _Before you get started, for new projects, we recommend one of our platform-spec
 This will add a line like this to your package's pubspec.yaml (and run an implicit dart pub get):
 ```
 dependencies:
-  tiki_sdk_dart: ^0.0.9
+  tiki_sdk_dart: ^1.0.0
 ```
 
 ### Usage
