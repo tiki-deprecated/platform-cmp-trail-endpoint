@@ -6,14 +6,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-/// The model used in block uploads to L0Storage
-class SStorageModelUpload {
+class StorageModelUpload {
   String? key;
   Uint8List? content;
 
-  SStorageModelUpload({this.key, this.content});
+  StorageModelUpload({this.key, this.content});
 
-  SStorageModelUpload.fromMap(Map<String, dynamic>? map) {
+  StorageModelUpload.fromMap(Map<String, dynamic>? map) {
     if (map != null) {
       key = map['key'];
       if (map['content'] != null) content = base64Decode(map['content']);
@@ -25,6 +24,6 @@ class SStorageModelUpload {
 
   @override
   String toString() {
-    return 'SStorageModelUpload{key: $key, content: ${content != null ? base64Encode(content!) : null}';
+    return 'StorageModelUpload{key: $key, content: ${content != null ? base64Encode(content!) : null}';
   }
 }

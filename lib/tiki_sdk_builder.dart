@@ -2,6 +2,8 @@
 import 'package:sqlite3/sqlite3.dart';
 
 import 'consent/consent_service.dart';
+import 'l0/auth/auth_service.dart';
+import 'l0/storage/storage_service.dart';
 import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
 import 'tiki_sdk.dart';
@@ -90,8 +92,8 @@ class TikiSdkBuilder {
     Database database = sqlite3
         .open("$_databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
 
-    BackupClient backupClient =
-        SStorageService(_publishingId!, primaryKey.privateKey); //TODO fix
+    AuthService l0Auth = AuthService(_publishingId!);
+    StorageService l0Storage = StorageService(primaryKey.privateKey, l0Auth);
 
     NodeService nodeService = NodeService()
       ..blockInterval = const Duration(minutes: 1)
@@ -100,7 +102,7 @@ class TikiSdkBuilder {
       ..blockService = BlockService(database)
       ..primaryKey = primaryKey;
     nodeService.backupService =
-        BackupService(backupClient, database, primaryKey, nodeService.getBlock);
+        BackupService(l0Storage, database, primaryKey, nodeService.getBlock);
     await nodeService.init();
 
     OwnershipService ownershipService =

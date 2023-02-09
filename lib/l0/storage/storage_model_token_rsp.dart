@@ -3,15 +3,15 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-class SStorageModelTokenRsp {
+class StorageModelTokenRsp {
   String? type;
   String? token;
   DateTime? expires;
   String? urnPrefix;
 
-  SStorageModelTokenRsp({this.type, this.token, this.expires, this.urnPrefix});
+  StorageModelTokenRsp({this.type, this.token, this.expires, this.urnPrefix});
 
-  SStorageModelTokenRsp.fromMap(Map<String, dynamic>? map) {
+  StorageModelTokenRsp.fromMap(Map<String, dynamic>? map) {
     if (map != null) {
       type = map['type'];
       token = map['token'];
@@ -29,6 +29,6 @@ class SStorageModelTokenRsp {
 
   @override
   String toString() {
-    return 'SStorageModelTokenRsp{type: $type, token: $token, expires: $expires, urnPrefix: $urnPrefix}';
+    return 'StorageModelTokenRsp{type: $type, token: $token, expires: $expires, urnPrefix: $urnPrefix}';
   }
 }
