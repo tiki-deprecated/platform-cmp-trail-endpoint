@@ -16,7 +16,7 @@ void main() {
           InMemNodeServiceBuilder();
       NodeService node = await inMemNodeServiceBuilder.build();
       Uint8List address = Bytes.base64UrlDecode(node.address);
-      Uint8List? publicKey = await inMemNodeServiceBuilder.l0Storage
+      Uint8List? publicKey = await inMemNodeServiceBuilder.backupClient
           .read('${Bytes.base64UrlEncode(address)}/public.key');
 
       expect(publicKey != null, true);

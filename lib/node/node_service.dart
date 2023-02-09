@@ -17,13 +17,12 @@ import 'block/block_service.dart';
 import 'key/key_service.dart';
 import 'transaction/transaction_service.dart';
 
+export './backup/backup_client.dart';
 export './backup/backup_service.dart';
 export './block/block_service.dart';
 export './key/key_service.dart';
 export './transaction/transaction_service.dart';
 export '../sstorage/sstorage_service.dart';
-export 'node_service_builder.dart';
-export 'l0_storage.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other

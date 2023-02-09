@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -91,6 +92,13 @@ void main() {
       String b64 = Bytes.base64UrlEncode(bytes);
       Uint8List decodedBytes = Bytes.base64UrlDecode(b64);
       expect(str, String.fromCharCodes(decodedBytes));
+    });
+
+    test('tmp', () {
+      Uint8List b = const Utf8Encoder().convert(
+          "hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world");
+      Uint8List size = CompactSize.encode(b);
+      print('enc1: ${Bytes.base64UrlEncode(size)}');
     });
   });
 }

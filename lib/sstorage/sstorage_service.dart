@@ -11,7 +11,7 @@ import 'dart:typed_data';
 
 import 'package:uuid/uuid.dart';
 
-import '../node/l0_storage.dart';
+import '../node/backup/backup_client.dart';
 import '../utils/rsa/rsa.dart';
 import 'sstorage_model_list.dart';
 import 'sstorage_model_list_ver.dart';
@@ -21,7 +21,7 @@ import 'sstorage_model_upload.dart';
 import 'sstorage_repository.dart';
 
 /// The [L0Storage] implementation for the TIKI cloud.
-class SStorageService implements L0Storage {
+class SStorageService implements BackupClient {
   final SStorageRepository _repository;
   final RsaPrivateKey _privateKey;
   final String _apiId;

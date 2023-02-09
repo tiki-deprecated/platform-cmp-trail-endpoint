@@ -1,4 +1,6 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
+import 'package:sqlite3/sqlite3.dart';
+
 import 'consent/consent_service.dart';
 import 'node/node_service.dart';
 import 'ownership/ownership_service.dart';
@@ -57,7 +59,7 @@ class TikiSdkBuilder {
   String? _origin;
   KeyStorage? _keyStorage;
   String? _databaseDir;
-  String? _apiId;
+  String? _publishingId;
   String? _address;
 
   /// Sets the default origin for all registries.
@@ -74,7 +76,7 @@ class TikiSdkBuilder {
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
 
   /// Sets the apiKey to connect to TIKI cloud.
-  void apiId(String? apiId) => _apiId = apiId;
+  void publishingId(String? publishingId) => _publishingId = publishingId;
 
   /// Sets the blockchain address for the private key used in the SDK object.
   void address(String? address) => _address = address;
@@ -84,16 +86,41 @@ class TikiSdkBuilder {
   /// This method should only be called after setting [keyStorage] and [databaseDir].
   /// An error will be thrown if one of them is not set
   Future<TikiSdk> build() async {
-    NodeServiceBuilder builder = NodeServiceBuilder()
-      ..keyStorage = _keyStorage!
-      ..databaseDir = _databaseDir!
-      ..apiId = _apiId
-      ..address = _address;
-    NodeService nodeService = await builder.build();
+    KeyModel primaryKey = await _loadPrimaryKey();
+    Database database = sqlite3
+        .open("$_databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
+
+    BackupClient backupClient =
+        SStorageService(_publishingId!, primaryKey.privateKey); //TODO fix
+
+    NodeService nodeService = NodeService()
+      ..blockInterval = const Duration(minutes: 1)
+      ..maxTransactions = 200
+      ..transactionService = TransactionService(database)
+      ..blockService = BlockService(database)
+      ..primaryKey = primaryKey;
+    nodeService.backupService =
+        BackupService(backupClient, database, primaryKey, nodeService.getBlock);
+    await nodeService.init();
+
     OwnershipService ownershipService =
         OwnershipService(_origin!, nodeService, nodeService.database);
     ConsentService consentService =
         ConsentService(nodeService.database, nodeService);
     return TikiSdk(ownershipService, consentService, nodeService);
+  }
+
+  Future<KeyModel> _loadPrimaryKey() async {
+    if (_keyStorage == null) {
+      throw Exception('Keystore must be set to build NodeService');
+    }
+    KeyService keyService = KeyService(_keyStorage!);
+    if (_address != null) {
+      KeyModel? key = await keyService.get(_address!);
+      if (key != null) {
+        return key;
+      }
+    }
+    return await keyService.create();
   }
 }

@@ -5,30 +5,25 @@
 
 import 'dart:typed_data';
 
-import 'package:tiki_sdk_dart/node/l0_storage.dart';
+import 'package:tiki_sdk_dart/node/backup/backup_client.dart';
 
-class InMemL0Storage implements L0Storage {
+class InMemL0Storage implements BackupClient {
   Map<String, Map<String, Uint8List>> storage = {};
 
   @override
-  Future<Uint8List?> read(String path) async {
-    List<String> paths = path.split('/');
-    String address = paths[0];
-    String id = paths[1];
-    return storage[address]?[id];
-  }
-
-  @override
-  Future<void> write(String path, Uint8List obj) async {
-    List<String> paths = path.split('/');
-    String address = paths[0];
-    String id = paths[1];
+  Future<void> write(String key, Uint8List value) async {
+    List<String> keys = key.split('/');
+    String address = keys[0];
+    String id = keys[1];
     if (storage[address] == null) storage[address] = {};
-    storage[address]![id] = obj;
+    storage[address]![id] = value;
   }
 
   @override
-  Future<Map<String, Uint8List>> getAll(String address) async {
-    return storage[address] ?? {};
+  Future<Uint8List?> read(String key) async {
+    List<String> keys = key.split('/');
+    String address = keys[0];
+    String id = keys[1];
+    return storage[address]?[id];
   }
 }
