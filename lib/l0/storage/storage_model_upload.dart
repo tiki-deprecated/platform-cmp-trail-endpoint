@@ -2,10 +2,14 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-
+/// {@category Node}
 import 'dart:convert';
 import 'dart:typed_data';
 
+/// A upload request
+///
+/// A POJO style model representing a JSON object for
+/// the hosted storage.
 class StorageModelUpload {
   String? key;
   Uint8List? content;

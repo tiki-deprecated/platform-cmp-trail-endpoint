@@ -2,12 +2,17 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+
 /// {@category Node}
 import 'package:html/dom.dart';
 
 import '../../utils/utils.dart';
 import 'storage_model_list_ver.dart';
 
+/// The list of versions for a stored object
+///
+/// A POJO style model representing an XML response object returned
+/// by the hosted storage.
 class StorageModelList {
   String? name;
   String? prefix;
@@ -49,7 +54,6 @@ class StorageModelList {
     }
   }
 
-  /// Overrides toString() method for useful error messages
   @override
   String toString() {
     return 'StorageModelList{name: $name, prefix: $prefix, keyMarker: $keyMarker, versionIdMarker: $versionIdMarker, maxKeys: $maxKeys, isTruncated: $isTruncated, nextKeyMarker: $nextKeyMarker, nextVersionIdMarker: $nextVersionIdMarker, versions: $versions}';

@@ -2,7 +2,12 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+/// {@category Node}
 
+/// An upload token response
+///
+/// A POJO style model representing a JSON object for
+/// the hosted storage.
 class StorageModelTokenRsp {
   String? type;
   String? token;

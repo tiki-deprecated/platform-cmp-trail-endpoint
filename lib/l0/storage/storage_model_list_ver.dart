@@ -2,12 +2,17 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+
 /// {@category Node}
 import 'package:html/dom.dart';
 
 import '../../utils/utils.dart';
 import 'storage_model_list_ver_owner.dart';
 
+/// A version of a stored object
+///
+/// A POJO style model representing an XML response object returned
+/// by the hosted storage.
 class StorageModelListVer {
   String? key;
   String? versionId;
