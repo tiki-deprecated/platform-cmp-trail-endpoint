@@ -20,7 +20,7 @@ void main() {
   const String publishingId = '2b8de004-cbe0-4bd5-bda6-b266d54f5c90';
   RsaPrivateKey privateKey = Rsa.generate().privateKey;
 
-  group('Storage Tests', skip: publishingId.isEmpty, () {
+  group('Storage Repository Tests', skip: publishingId.isEmpty, () {
     test('Token - Success', () async {
       StorageRepository repository = StorageRepository();
       String stringToSign = const Uuid().v4();

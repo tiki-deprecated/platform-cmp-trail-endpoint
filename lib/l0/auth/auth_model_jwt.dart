@@ -6,7 +6,7 @@
 class AuthModelJwt {
   String? accessToken;
   String? refreshToken;
-  String? scope;
+  List<String>? scope;
   String? tokenType;
   DateTime? expires;
 
@@ -21,12 +21,9 @@ class AuthModelJwt {
     if (map != null) {
       accessToken = map['access_token'];
       refreshToken = map['refresh_token'];
-      scope = map['scope'];
       tokenType = map['token_type'];
-      int? expiresIn = map['expires_in'];
-      if (expiresIn != null) {
-        expires = DateTime.now().add(Duration(seconds: expiresIn));
-      }
+      scope = (map['scope'] as String?)?.split(' ');
+      expires = DateTime.now().add(Duration(seconds: map['expires_in'] ?? 0));
     }
   }
 
