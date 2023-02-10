@@ -35,15 +35,16 @@ class StorageService implements BackupClient {
         super();
 
   @override
-  Future<Uint8List?> read(String path) async {
+  Future<Uint8List?> read(String key) async {
+    _token ??= await _requestToken();
     try {
       StorageModelList versions =
-          await _repository.versions('${_appId(_token?.urnPrefix)}/$path');
+          await _repository.versions('${_appId(_token?.urnPrefix)}/$key');
       String? versionId;
       if (versions.versions != null && versions.versions!.isNotEmpty) {
         versionId = _findFirst(versions.versions!).versionId;
       }
-      return _repository.get('${_appId(_token?.urnPrefix)}/$path',
+      return _repository.get('${_appId(_token?.urnPrefix)}/$key',
           versionId: versionId);
     } on HttpException catch (e) {
       if (e.message.contains('HTTP Error 404:')) {
@@ -55,16 +56,16 @@ class StorageService implements BackupClient {
   }
 
   @override
-  Future<void> write(String path, Uint8List obj) async {
+  Future<void> write(String key, Uint8List value) async {
     _token ??= await _requestToken();
     StorageModelUpload req = StorageModelUpload(
-        key: '${_appId(_token?.urnPrefix)}/$path', content: obj);
+        key: '${_appId(_token?.urnPrefix)}/$key', content: value);
     try {
       await _repository.upload(_token?.token, req);
     } on HttpException catch (e) {
       if (e.message.contains('HTTP Error 401')) {
         _token = await _requestToken();
-        req.key = _appId(_token?.urnPrefix) + path;
+        req.key = _appId(_token?.urnPrefix) + key;
         await _repository.upload(_token?.token, req);
       } else {
         rethrow;
@@ -95,5 +96,5 @@ class StorageService implements BackupClient {
     return await _repository.token(await _authService.token, req);
   }
 
-  String _appId(String? path) => path != null ? path.split('/')[0] : '';
+  String _appId(String? s) => s != null ? s.split('/')[0] : '';
 }

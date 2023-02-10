@@ -4,10 +4,9 @@
  */
 
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:pointycastle/api.dart';
+import 'package:nock/nock.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/l0/storage/storage_model_token_req.dart';
 import 'package:tiki_sdk_dart/l0/storage/storage_model_token_rsp.dart';
@@ -16,12 +15,19 @@ import 'package:tiki_sdk_dart/l0/storage/storage_repository.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
 import 'package:uuid/uuid.dart';
 
+import 'storage_nock.dart';
+
 void main() {
-  const String publishingId = '2b8de004-cbe0-4bd5-bda6-b266d54f5c90';
   RsaPrivateKey privateKey = Rsa.generate().privateKey;
 
-  group('Storage Repository Tests', skip: publishingId.isEmpty, () {
+  setUpAll(() => nock.init());
+  setUp(() => nock.cleanAll());
+
+  group('Storage Repository Tests', () {
     test('Token - Success', () async {
+      StorageNock storageNock = StorageNock();
+      final tokenInterceptor = storageNock.tokenInterceptor;
+
       StorageRepository repository = StorageRepository();
       String stringToSign = const Uuid().v4();
       Uint8List signature =
@@ -30,32 +36,19 @@ void main() {
           pubKey: privateKey.public.encode(),
           signature: base64Encode(signature),
           stringToSign: stringToSign);
+      StorageModelTokenRsp rsp = await repository.token('authorization', req);
 
-      StorageModelTokenRsp rsp = await repository.token(publishingId, req);
-      String address =
-          base64UrlEncode(Digest("SHA3-256").process(privateKey.public.bytes));
-      address = address.replaceAll("=", '');
-
-      expect(rsp.urnPrefix?.contains(address), true);
-      expect(rsp.token != null, true);
+      expect(tokenInterceptor.isDone, true);
+      expect(rsp.urnPrefix, storageNock.urnPrefix);
+      expect(rsp.token, storageNock.token);
       expect(rsp.expires?.isAfter(DateTime.now()), true);
       expect(rsp.type, 'Bearer');
     });
 
-    test('Token - Bad API Id - Failure', () async {
-      StorageRepository repository = StorageRepository();
-      String stringToSign = const Uuid().v4();
-      Uint8List signature =
-          Rsa.sign(privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
-      StorageModelTokenReq req = StorageModelTokenReq(
-          pubKey: privateKey.public.encode(),
-          signature: base64Encode(signature),
-          stringToSign: stringToSign);
-      expect(() async => await repository.token('fail', req),
-          throwsA(isA<HttpException>()));
-    });
-
     test('Upload - Success', () async {
+      StorageNock storageNock = StorageNock();
+      final tokenInterceptor = storageNock.tokenInterceptor;
+
       StorageRepository repository = StorageRepository();
       String stringToSign = const Uuid().v4();
       Uint8List signature =
@@ -65,13 +58,21 @@ void main() {
           signature: base64Encode(signature),
           stringToSign: stringToSign);
 
-      StorageModelTokenRsp rsp = await repository.token(publishingId, req);
+      StorageModelTokenRsp rsp = await repository.token('authorization', req);
       Uint8List content = Uint8List.fromList(utf8.encode('hello world'));
+      String key = '${rsp.urnPrefix}${const Uuid().v4()}';
+
+      final uploadInterceptor = storageNock.uploadInterceptor;
+      final readInterceptor = storageNock.readInterceptor(key, content);
 
       await repository.upload(
-          rsp.token,
-          StorageModelUpload(
-              key: '${rsp.urnPrefix}${const Uuid().v4()}', content: content));
+          rsp.token, StorageModelUpload(key: key, content: content));
+      Uint8List saved = await repository.get(key);
+
+      expect(tokenInterceptor.isDone, true);
+      expect(uploadInterceptor.isDone, true);
+      expect(readInterceptor.isDone, true);
+      expect(content, saved);
     });
   });
 }

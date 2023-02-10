@@ -17,22 +17,26 @@ import 'storage_model_token_rsp.dart';
 import 'storage_model_upload.dart';
 
 class StorageRepository {
-  final Uri _serviceUri = Uri(scheme: 'https', host: 'storage.l0.mytiki.com');
-  final Uri _bucketUri =
-      Uri(scheme: 'https', host: 'bucket.storage.l0.mytiki.com');
+  static const serviceUrl = 'https://storage.l0.mytiki.com';
+  static const bucketUrl = 'https://bucket.storage.l0.mytiki.com';
+
+  static const tokenPath = '/api/latest/token';
+  static const uploadPath = '/api/latest/upload';
+
+  final Uri _serviceUri = Uri.parse(serviceUrl);
+  final Uri _bucketUri = Uri.parse(bucketUrl);
 
   StorageRepository();
 
   Future<StorageModelTokenRsp> token(
       String? authorization, StorageModelTokenReq body) async {
-    http.Response rsp =
-        await http.post(_serviceUri.replace(path: '/api/latest/token'),
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json",
-              "Authorization": "Bearer ${authorization ?? ''}"
-            },
-            body: jsonEncode(body.toMap()));
+    http.Response rsp = await http.post(_serviceUri.replace(path: tokenPath),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer ${authorization ?? ''}"
+        },
+        body: jsonEncode(body.toMap()));
     if (rsp.statusCode == 200) {
       return StorageModelTokenRsp.fromMap(jsonDecode(rsp.body));
     } else {
@@ -42,24 +46,23 @@ class StorageRepository {
   }
 
   Future<void> upload(String? token, StorageModelUpload body) async {
-    http.Response rsp =
-        await http.put(_serviceUri.replace(path: '/api/latest/upload'),
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json",
-              "Authorization": "Bearer $token"
-            },
-            body: jsonEncode(body.toMap()));
+    http.Response rsp = await http.put(_serviceUri.replace(path: uploadPath),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonEncode(body.toMap()));
     if (rsp.statusCode != 201) {
       throw HttpException(
           'HTTP Error ${rsp.statusCode}: ${jsonDecode(rsp.body)}');
     }
   }
 
-  Future<Uint8List> get(String path, {String? versionId}) async {
-    if (path.startsWith('/')) path = path.replaceFirst('/', '');
+  Future<Uint8List> get(String key, {String? versionId}) async {
+    if (key.startsWith('/')) key = key.replaceFirst('/', '');
     http.Response rsp = await http.get(_bucketUri.replace(
-      path: path,
+      path: key,
       query: versionId != null ? 'versionId=$versionId' : null,
     ));
     if (rsp.statusCode == 200) {
@@ -69,10 +72,10 @@ class StorageRepository {
     }
   }
 
-  Future<StorageModelList> versions(String path) async {
-    if (path.startsWith('/')) path = path.replaceFirst('/', '');
+  Future<StorageModelList> versions(String key) async {
+    if (key.startsWith('/')) key = key.replaceFirst('/', '');
     http.Response rsp =
-        await http.get(_bucketUri.replace(query: 'versions&prefix=$path'));
+        await http.get(_bucketUri.replace(query: 'versions&prefix=$key'));
     if (rsp.statusCode == 200) {
       StorageModelList list = StorageModelList.fromElement(XmlParse.first(
           parse(rsp.body).getElementsByTagName('ListVersionsResult')));

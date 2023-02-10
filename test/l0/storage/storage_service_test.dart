@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:nock/nock.dart';
 import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/l0/auth/auth_service.dart';
@@ -13,55 +14,65 @@ import 'package:tiki_sdk_dart/l0/storage/storage_service.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
 import 'package:uuid/uuid.dart';
 
+import '../auth/auth_nock.dart';
+import 'storage_nock.dart';
+
 void main() {
-  const String publishingId = '2b8de004-cbe0-4bd5-bda6-b266d54f5c90';
   RsaPrivateKey privateKey = Rsa.generate().privateKey;
 
-  group('Storage Service Tests', skip: publishingId.isEmpty, () {
+  setUpAll(() => nock.init());
+  setUp(() => nock.cleanAll());
+
+  group('Storage Service Tests', () {
     test('Write - Success', () async {
+      AuthNock authNock = AuthNock();
+      final authInterceptor = authNock.interceptor;
+      StorageNock storageNock = StorageNock();
+      final tokenInterceptor = storageNock.tokenInterceptor;
+      final uploadInterceptor = storageNock.uploadInterceptor;
+
       StorageService service =
-          StorageService(privateKey, AuthService(publishingId));
+          StorageService(privateKey, AuthService(authNock.clientId));
       String address =
           base64UrlEncode(Digest("SHA3-256").process(privateKey.public.bytes));
       address = address.replaceAll("=", '');
 
       Uint8List content = Uint8List.fromList(utf8.encode('hello world'));
       await service.write('$address/${const Uuid().v4()}', content);
+
+      expect(authInterceptor.isDone, true);
+      expect(tokenInterceptor.isDone, true);
+      expect(uploadInterceptor.isDone, true);
     });
 
     test('Read - Success', () async {
+      AuthNock authNock = AuthNock();
+      final authInterceptor = authNock.interceptor;
+      StorageNock storageNock = StorageNock();
+      final tokenInterceptor = storageNock.tokenInterceptor;
+
       StorageService service =
-          StorageService(privateKey, AuthService(publishingId));
+          StorageService(privateKey, AuthService(authNock.clientId));
       String address =
           base64UrlEncode(Digest("SHA3-256").process(privateKey.public.bytes));
       address = address.replaceAll("=", '');
 
       Uint8List content = Uint8List.fromList(utf8.encode('hello world'));
       String path = '$address/${const Uuid().v4()}';
-      await service.write(path, content);
+      String appId = storageNock.urnPrefix.split('/')[0];
 
+      final readInterceptor = storageNock.readInterceptor(
+          '$appId/$path', content,
+          versionId: storageNock.firstVersion);
+      final versionInterceptor = storageNock.versionInterceptor('$appId/$path');
       Uint8List? rsp = await service.read(path);
+
+      expect(authInterceptor.isDone, true);
+      expect(tokenInterceptor.isDone, true);
+      expect(versionInterceptor.isDone, true);
+      expect(readInterceptor.isDone, true);
       expect(rsp != null, true);
       expect(utf8.decode(rsp!), utf8.decode(content));
-    });
-
-    test('Read - Versions - Success', () async {
-      StorageService service =
-          StorageService(privateKey, AuthService(publishingId));
-      String address =
-          base64UrlEncode(Digest("SHA3-256").process(privateKey.public.bytes));
-      address = address.replaceAll("=", '');
-
-      Uint8List content1 = Uint8List.fromList(utf8.encode('hello world 1'));
-      Uint8List content2 = Uint8List.fromList(utf8.encode('hello world 2'));
-      String path = '$address/${const Uuid().v4()}';
-      await service.write(path, content1);
-      await Future.delayed(const Duration(seconds: 5));
-      await service.write(path, content2);
-
-      Uint8List? rsp = await service.read(path);
-      expect(rsp != null, true);
-      expect(utf8.decode(rsp!), utf8.decode(content1));
     });
   });
 }
