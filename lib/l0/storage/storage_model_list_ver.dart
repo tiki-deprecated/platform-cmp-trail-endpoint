@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-/// {@category Node}
 import 'package:html/dom.dart';
 
 import '../../utils/utils.dart';

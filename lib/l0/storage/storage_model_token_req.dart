@@ -2,7 +2,6 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category Node}
 
 /// An upload token request
 ///

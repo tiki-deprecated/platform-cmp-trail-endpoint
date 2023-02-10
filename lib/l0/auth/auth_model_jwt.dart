@@ -3,6 +3,10 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+/// An authorization token response
+///
+/// A POJO style model representing a JSON object for
+/// the authorization service.
 class AuthModelJwt {
   String? accessToken;
   String? refreshToken;
