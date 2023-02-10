@@ -58,9 +58,9 @@
 ///
 library tiki_sdk_dart;
 
-import 'consent/consent_service.dart';
+import 'cache/consent/consent_service.dart';
+import 'cache/ownership/ownership_service.dart';
 import 'node/node_service.dart';
-import 'ownership/ownership_service.dart';
 import 'tiki_sdk_data_type_enum.dart';
 import 'tiki_sdk_destination.dart';
 import 'utils/bytes.dart';

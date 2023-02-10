@@ -1,4 +1,12 @@
 dartdoc:
+  categories:
+    "L0 Services":
+      markdown: lib/l0/README.md
+    "Node":
+      markdown: lib/node/README.md
+    "Cache":
+      markdown: lib/node/README.md
+  categoryOrder: [ "Node", "Cache", "L0 Services" ]
   include: [
     backup,
     block,
@@ -11,5 +19,7 @@ dartdoc:
     utils,
     tiki_sdk_dart,
     l0_storage,
-    sstorage
+    l0_auth,
     ]
+  favicon: doc/api_assets/favicon.ico
+  footerText: ["doc/api_assets/footer.txt"]

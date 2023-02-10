@@ -1,6 +1,11 @@
-import 'package:tiki_sdk_dart/consent/consent_service.dart';
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
+
+import 'package:tiki_sdk_dart/cache/consent/consent_service.dart';
+import 'package:tiki_sdk_dart/cache/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 
 import 'in_mem_node_service_builder.dart';

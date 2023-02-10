@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
+
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/cache/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 
 import '../in_mem_node_service_builder.dart';

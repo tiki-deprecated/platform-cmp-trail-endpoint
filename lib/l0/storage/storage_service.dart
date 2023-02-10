@@ -3,7 +3,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// The object storage service for the TIKI cloud.
-library sstorage;
+/// {@category L0 Services}
+library l0_storage;
 
 import 'dart:convert';
 import 'dart:io';
@@ -21,6 +22,14 @@ import 'storage_model_token_rsp.dart';
 import 'storage_model_upload.dart';
 import 'storage_repository.dart';
 
+export 'storage_model_list.dart';
+export 'storage_model_list_ver.dart';
+export 'storage_model_list_ver_owner.dart';
+export 'storage_model_token_req.dart';
+export 'storage_model_token_rsp.dart';
+export 'storage_model_upload.dart';
+export 'storage_repository.dart';
+
 class StorageService implements BackupClient {
   final StorageRepository _repository;
   final RsaPrivateKey _privateKey;
@@ -32,6 +41,12 @@ class StorageService implements BackupClient {
       : _repository = StorageRepository(),
         _privateKey = privateKey,
         _authService = authService,
+        super();
+
+  StorageService.publishingId(RsaPrivateKey privateKey, String publishingId)
+      : _repository = StorageRepository(),
+        _privateKey = privateKey,
+        _authService = AuthService(publishingId),
         super();
 
   @override

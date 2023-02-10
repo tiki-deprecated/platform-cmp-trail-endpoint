@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
+
 import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/consent/consent_service.dart';
+import 'package:tiki_sdk_dart/cache/consent/consent_service.dart';
+import 'package:tiki_sdk_dart/cache/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/ownership/ownership_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 
 import '../in_mem_node_service_builder.dart';
@@ -38,7 +43,9 @@ void main() {
           about: 'test 2', reward: '2 points');
       ConsentModel consentModel3 = ConsentModel(
           ownershipModel3.transactionId!, destination,
-          about: 'test 3', reward: '3 points', expiry: DateTime.now().add(const Duration(days:365)));
+          about: 'test 3',
+          reward: '3 points',
+          expiry: DateTime.now().add(const Duration(days: 365)));
       repository.save(consentModel);
       repository.save(consentModel2);
       repository.save(consentModel3);

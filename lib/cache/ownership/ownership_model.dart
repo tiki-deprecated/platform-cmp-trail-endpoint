@@ -6,8 +6,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import '../tiki_sdk_data_type_enum.dart';
-import '../utils/utils.dart';
+import '../../tiki_sdk_data_type_enum.dart';
+import '../../utils/utils.dart';
 import 'ownership_repository.dart';
 
 /// The Ownership NFT. The registry of ownership to a given data point, pool, or
@@ -78,15 +78,15 @@ class OwnershipModel {
 
   /// Converts this to Map
   Map toMap() => {
-    "source": source,
-    "type": type.val,
-    "origin": origin,
-    "about": about,
-    "contains": contains,
-    "transactionId": transactionId != null
-        ? Bytes.base64UrlEncode(transactionId!)
-        : null,
-  };
+        "source": source,
+        "type": type.val,
+        "origin": origin,
+        "about": about,
+        "contains": contains,
+        "transactionId": transactionId != null
+            ? Bytes.base64UrlEncode(transactionId!)
+            : null,
+      };
 
   /// Converts this to JSON String
   String toJson() => jsonEncode(toMap());

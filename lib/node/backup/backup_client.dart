@@ -3,8 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-library l0_storage;
-
 import 'dart:typed_data';
 
 abstract class BackupClient {

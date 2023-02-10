@@ -1,0 +1,6 @@
+targets:
+  $default:
+    sources:
+      - lib/$lib$
+      - lib/$lib$
+      - doc/api/**

@@ -12,13 +12,15 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
-import '../node_service.dart';
+import '../key/key_model.dart';
 import 'backup_client.dart';
+import 'backup_model.dart';
+import 'backup_repository.dart';
 
+export 'backup_client.dart';
 export 'backup_model.dart';
 export 'backup_repository.dart';
 
-/// A service to handle the backup requests to [L0Storage].
 class BackupService {
   final BackupRepository _repository;
   final BackupClient _backupClient;

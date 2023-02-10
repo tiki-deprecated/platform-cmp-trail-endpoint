@@ -13,7 +13,10 @@ import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
-import '../node_service.dart';
+import '../block/block_model.dart';
+import '../key/key_model.dart';
+import 'transaction_model.dart';
+import 'transaction_repository.dart';
 
 export 'transaction_model.dart';
 export 'transaction_repository.dart';

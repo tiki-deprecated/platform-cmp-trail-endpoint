@@ -1,11 +1,14 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
 import 'package:sqlite3/sqlite3.dart';
 
-import 'consent/consent_service.dart';
-import 'l0/auth/auth_service.dart';
+import 'cache/consent/consent_service.dart';
+import 'cache/ownership/ownership_service.dart';
 import 'l0/storage/storage_service.dart';
+import 'node/backup/backup_service.dart';
+import 'node/block/block_service.dart';
+import 'node/key/key_service.dart';
 import 'node/node_service.dart';
-import 'ownership/ownership_service.dart';
+import 'node/transaction/transaction_service.dart';
 import 'tiki_sdk.dart';
 
 /// # The Builder for the TikiSdk object
@@ -92,8 +95,8 @@ class TikiSdkBuilder {
     Database database = sqlite3
         .open("$_databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
 
-    AuthService l0Auth = AuthService(_publishingId!);
-    StorageService l0Storage = StorageService(primaryKey.privateKey, l0Auth);
+    StorageService l0Storage =
+        StorageService.publishingId(primaryKey.privateKey, _publishingId!);
 
     NodeService nodeService = NodeService()
       ..blockInterval = const Duration(minutes: 1)
