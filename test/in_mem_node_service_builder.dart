@@ -4,13 +4,18 @@
  */
 
 import 'package:sqlite3/sqlite3.dart';
+import 'package:tiki_sdk_dart/node/backup/backup_service.dart';
+import 'package:tiki_sdk_dart/node/block/block_service.dart';
+import 'package:tiki_sdk_dart/node/key/key_model.dart';
+import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
 
 import 'in_mem_key.dart';
 import 'in_mem_l0_storage.dart';
 
 class InMemNodeServiceBuilder {
-  late final InMemL0Storage l0Storage;
+  late final InMemL0Storage backupClient;
   late final InMemKeyStorage keyStorage;
   late final Database database;
 
@@ -24,7 +29,7 @@ class InMemNodeServiceBuilder {
   set address(String? address) => _address = address;
 
   Future<NodeService> build() async {
-    l0Storage = InMemL0Storage();
+    backupClient = InMemL0Storage();
     keyStorage = InMemKeyStorage();
     database = sqlite3.openInMemory();
     KeyModel primaryKey = await _loadPrimaryKey();
@@ -35,7 +40,7 @@ class InMemNodeServiceBuilder {
       ..blockService = BlockService(database)
       ..primaryKey = primaryKey;
     nodeService.backupService =
-        BackupService(l0Storage, database, primaryKey, nodeService.getBlock);
+        BackupService(backupClient, database, primaryKey, nodeService.getBlock);
     await nodeService.init();
     return nodeService;
   }

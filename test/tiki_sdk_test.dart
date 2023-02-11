@@ -1,5 +1,10 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
+
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/consent/consent_model.dart';
+import 'package:tiki_sdk_dart/cache/consent/consent_model.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 
 import 'in_mem_tiki_sdk_builder.dart';

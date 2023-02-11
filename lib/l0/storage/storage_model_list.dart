@@ -2,14 +2,17 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category Node}
+
 import 'package:html/dom.dart';
 
 import '../../utils/utils.dart';
-import 'sstorage_model_list_ver.dart';
+import 'storage_model_list_ver.dart';
 
-/// The Wasabi object data model list.
-class SStorageModelList {
+/// The list of versions for a stored object
+///
+/// A POJO style model representing an XML response object returned
+/// by the hosted storage.
+class StorageModelList {
   String? name;
   String? prefix;
   String? keyMarker;
@@ -18,9 +21,9 @@ class SStorageModelList {
   bool? isTruncated;
   String? nextKeyMarker;
   String? nextVersionIdMarker;
-  List<SStorageModelListVer>? versions;
+  List<StorageModelListVer>? versions;
 
-  SStorageModelList(
+  StorageModelList(
       {this.name,
       this.prefix,
       this.keyMarker,
@@ -31,7 +34,7 @@ class SStorageModelList {
       this.nextVersionIdMarker,
       this.versions});
 
-  SStorageModelList.fromElement(Element? element) {
+  StorageModelList.fromElement(Element? element) {
     if (element != null) {
       name = XmlParse.element(element, 'Name')?.text;
       prefix = XmlParse.element(element, 'Prefix')?.text;
@@ -46,13 +49,12 @@ class SStorageModelList {
           XmlParse.element(element, 'NextVersionIdMarker')?.text;
       List<Element> versionElements = element.getElementsByTagName('Version');
       versions = List.of(
-          versionElements.map((e) => SStorageModelListVer.fromElement(e)));
+          versionElements.map((e) => StorageModelListVer.fromElement(e)));
     }
   }
 
-  /// Overrides toString() method for useful error messages
   @override
   String toString() {
-    return 'SStorageModelList{name: $name, prefix: $prefix, keyMarker: $keyMarker, versionIdMarker: $versionIdMarker, maxKeys: $maxKeys, isTruncated: $isTruncated, nextKeyMarker: $nextKeyMarker, nextVersionIdMarker: $nextVersionIdMarker, versions: $versions}';
+    return 'StorageModelList{name: $name, prefix: $prefix, keyMarker: $keyMarker, versionIdMarker: $versionIdMarker, maxKeys: $maxKeys, isTruncated: $isTruncated, nextKeyMarker: $nextKeyMarker, nextVersionIdMarker: $nextVersionIdMarker, versions: $versions}';
   }
 }

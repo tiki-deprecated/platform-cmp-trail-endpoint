@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/key/key_storage.dart';
 
 /// A ephemeral key-value storage.
 class InMemKeyStorage extends KeyStorage {

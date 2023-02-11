@@ -3,12 +3,14 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// Handle Consent NFTs.
+/// {@category Cache}
 library consent;
 
 import 'dart:typed_data';
 
-import '../node/node_service.dart';
-import '../tiki_sdk_destination.dart';
+import '../../node/node_service.dart';
+import '../../node/transaction/transaction_model.dart';
+import '../../tiki_sdk_destination.dart';
 import 'consent_model.dart';
 import 'consent_repository.dart';
 

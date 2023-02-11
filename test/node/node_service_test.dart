@@ -1,9 +1,19 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
+
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/node/block/block_model.dart';
+import 'package:tiki_sdk_dart/node/block/block_repository.dart';
+import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_repository.dart';
 import 'package:tiki_sdk_dart/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
@@ -16,7 +26,7 @@ void main() {
           InMemNodeServiceBuilder();
       NodeService node = await inMemNodeServiceBuilder.build();
       Uint8List address = Bytes.base64UrlDecode(node.address);
-      Uint8List? publicKey = await inMemNodeServiceBuilder.l0Storage
+      Uint8List? publicKey = await inMemNodeServiceBuilder.backupClient
           .read('${Bytes.base64UrlEncode(address)}/public.key');
 
       expect(publicKey != null, true);

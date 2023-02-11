@@ -4,12 +4,14 @@
  */
 ///
 /// Handle Ownership NFTs.
+/// {@category Cache}
 library ownership;
 
 import 'dart:typed_data';
 
-import '../node/node_service.dart';
-import '../tiki_sdk.dart';
+import '../../node/node_service.dart';
+import '../../node/transaction/transaction_model.dart';
+import '../../tiki_sdk.dart';
 import 'ownership_model.dart';
 import 'ownership_repository.dart';
 

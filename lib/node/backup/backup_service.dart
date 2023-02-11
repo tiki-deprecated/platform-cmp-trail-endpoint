@@ -12,22 +12,26 @@ import 'dart:typed_data';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../utils/utils.dart';
-import '../node_service.dart';
+import '../key/key_model.dart';
+import 'backup_client.dart';
+import 'backup_model.dart';
+import 'backup_repository.dart';
 
+export 'backup_client.dart';
 export 'backup_model.dart';
 export 'backup_repository.dart';
 
-/// A service to handle the backup requests to [L0Storage].
 class BackupService {
   final BackupRepository _repository;
-  final L0Storage _l0storage;
+  final BackupClient _backupClient;
   final KeyModel _key;
   final Uint8List? Function(Uint8List) _getBlock;
 
   /// Creates a new BackupService
   ///
   /// Saves the public key in the initialization.
-  BackupService(this._l0storage, Database database, this._key, this._getBlock)
+  BackupService(
+      this._backupClient, Database database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
     String keyBackupPath = '${Bytes.base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
@@ -39,7 +43,7 @@ class BackupService {
 
     if (keyBackup.timestamp == null) {
       Uint8List obj = base64.decode(_key.privateKey.public.encode());
-      _l0storage.write(keyBackupPath, obj);
+      _backupClient.write(keyBackupPath, obj);
       keyBackup.timestamp = DateTime.now();
       _repository.update(keyBackup);
     }
@@ -71,7 +75,7 @@ class BackupService {
                   ..add(CompactSize.encode(signature))
                   ..add(CompactSize.encode(block)))
                 .toBytes();
-            await _l0storage.write(backup.path, signedBlock);
+            await _backupClient.write(backup.path, signedBlock);
             backup.timestamp = DateTime.now();
             _repository.update(backup);
           }

@@ -6,9 +6,9 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 
-import '../node/node_service.dart';
+import '../../node/transaction/transaction_repository.dart';
+import '../../utils/bytes.dart';
 import '../ownership/ownership_repository.dart';
-import '../utils/bytes.dart';
 import 'consent_model.dart';
 
 /// The repository for [ConsentModel] persistence.
@@ -95,7 +95,7 @@ class ConsentRepository {
         columnAbout: row[columnAbout],
         columnReward: row[columnReward],
         columnTransactionId: row[columnTransactionId],
-        columnExpiry : row[columnExpiry]
+        columnExpiry: row[columnExpiry]
       };
       ConsentModel consentModel = ConsentModel.fromMap(map);
       consents.add(consentModel);

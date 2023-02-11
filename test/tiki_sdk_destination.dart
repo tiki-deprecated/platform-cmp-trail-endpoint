@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
+
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
@@ -5,7 +10,6 @@ import 'package:tiki_sdk_dart/tiki_sdk_destination.dart';
 
 void main() {
   group('TIKI SDK Destination', () {
-
     test('from/to json', () {
       String json = '{"uses":["*"],"paths":["*"]}';
       TikiSdkDestination destination = TikiSdkDestination.fromJson(json);
