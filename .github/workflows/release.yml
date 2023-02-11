@@ -1,12 +1,19 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - '*.*.*'
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
-  publish:
+  release:
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
     runs-on: ubuntu-latest
     environment: Production
     steps:
@@ -25,9 +32,25 @@ jobs:
 
       - name: Run tests
         run: dart test
-        
+
+      - name: Git version
+        id: version
+        uses: codacy/git-version@2.4.0
+        with:
+          release-branch: "main"
+
+      - name: Create a new tag
+        run: |
+          git tag ${{ steps.version.outputs.version }}
+          git push origin ${{ steps.version.outputs.version }}
+
       - name: 'Publish'
         run: dart pub publish -f
+
+      - name: Create a Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{steps.version.outputs.version }}
 
   docs:
     runs-on: ubuntu-latest
