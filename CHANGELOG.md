@@ -1,3 +1,10 @@
+## 1.1.0
+
+* new L0 Auth and L0 Storage APIs
+* new test and release flow
+* dart doc categories and topics
+* move consent & ownership into a cache category
+
 ## 1.0.0
 
 * public release

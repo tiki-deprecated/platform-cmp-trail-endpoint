@@ -1,14 +1,17 @@
-name: Develop branch tests
+name: Tests
 
 on:
   pull_request:
-    branches: 
-      - 'develop'
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
