@@ -22,3 +22,6 @@ jobs:
 
       - name: Run tests
         run: dart test
+
+      - name: Check dart publish
+        run: dart pub publish --dry-run
