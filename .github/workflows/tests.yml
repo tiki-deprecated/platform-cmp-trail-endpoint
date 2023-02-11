@@ -14,17 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: 'main'
 
-      - name: Git version
-        id: version
-        uses: codacy/git-version@2.7.1
-        with:
-          release-branch: "main"
-          minor-identifier: "feat"
+      - uses: dart-lang/setup-dart@v1.3
 
-      - name: check tag
-        run: |
-          echo "tag: ${{ steps.version.outputs.version }}"
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Run tests
+        run: dart test
+
+      - name: Check dart publish
+        run: dart pub publish --dry-run

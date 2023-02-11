@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: 'main'
 
       - name: 'Setup Dart'
         uses: dart-lang/setup-dart@v1.3
@@ -34,9 +37,10 @@ jobs:
 
       - name: Git version
         id: version
-        uses: codacy/git-version@2.4.0
+        uses: codacy/git-version@2.7.1
         with:
           release-branch: "main"
+          minor-identifier: "feat"
 
       - name: Create a new tag
         run: |
