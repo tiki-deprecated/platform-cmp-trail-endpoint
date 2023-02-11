@@ -1,3 +1,7 @@
+## 1.1.1
+
+* bump version for Dart Pub sync
+
 ## 1.1.0
 
 * new L0 Auth and L0 Storage APIs
