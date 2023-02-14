@@ -72,7 +72,7 @@ class TikiSdkDestination {
   ///
   /// This function converts a JSON string into a TikiSdkDestination object.
   /// The JSON string must follow the pattern of the default main constructor,
-  /// with paths being a required field. If paths is not present, a [NullThrownError]
+  /// with paths being a required field. If paths is not present, a [TypeError]
   /// will be thrown.
   /// The function builds a Map from the JSON string and then
   /// calls [TikiSdkDestination.fromMap] to create the TikiSdkDestination object.
@@ -80,7 +80,7 @@ class TikiSdkDestination {
     Map jsonMap = jsonDecode(jsonString);
     Map<String, List<String>> destMap = {
       "paths": jsonMap["paths"]?.map<String>((e) => e.toString()).toList() ??
-          NullThrownError(),
+          TypeError(),
       "uses":
           jsonMap["uses"]?.map<String>((e) => e.toString()).toList() ?? ["*"],
     };
