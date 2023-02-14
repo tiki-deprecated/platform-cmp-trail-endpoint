@@ -25,8 +25,8 @@ import 'tiki_sdk.dart';
 ///
 /// ### 2 - Set the default Origin
 ///
-/// The default origin is the one that will be used as origin for all ownership 
-/// assignments that doesn't define different origins. It should follow a 
+/// The default origin is the one that will be used as origin for all ownership
+/// assignments that doesn't define different origins. It should follow a
 /// reverse-DNS syntax. _i.e. com.mycompany.myproduct_
 ///
 /// ```
@@ -35,7 +35,7 @@ import 'tiki_sdk.dart';
 ///
 /// ### 3 - Set the Database Directory
 ///
-/// TIKI SDK uses SQLite for local database caching. This directory defines 
+/// TIKI SDK uses SQLite for local database caching. This directory defines
 /// where the database files will be stored.
 ///
 /// ```
@@ -81,14 +81,14 @@ class TikiSdkBuilder {
 
   /// Sets the storage for user`s private key.
   ///
-  /// The user private key is sensitive information and should be kept in a secure 
-  /// and encrypted key-value storage. It should use an implementation of the 
+  /// The user private key is sensitive information and should be kept in a secure
+  /// and encrypted key-value storage. It should use an implementation of the
   /// [KeyStorage] interface,
   void keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
 
   /// Sets the directory to be used for the database files.
-  /// 
-  /// TIKI SDK uses SQLite for local database caching. This directory defines 
+  ///
+  /// TIKI SDK uses SQLite for local database caching. This directory defines
   /// where the database files will be stored.
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
 
@@ -98,10 +98,10 @@ class TikiSdkBuilder {
   void publishingId(String? publishingId) => _publishingId = publishingId;
 
   /// Sets the blockchain address for the private key used in the SDK object.
-  /// 
+  ///
   /// Each user will have a different private key for each device. If no [address]
   /// is provided, the TIKI SDK will create a new one for the user in the current
-  /// device. 
+  /// device.
   /// After building the SDK, the address can be obtained in [TikiSdk.address] property
   /// and could be saved somehwere else.
   void address(String? address) => _address = address;

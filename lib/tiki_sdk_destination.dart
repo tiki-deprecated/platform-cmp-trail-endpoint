@@ -27,9 +27,9 @@ class TikiSdkDestination {
   /// that the data should not be used for ads.
   final List<String> uses;
 
-/// A list of paths, preferably URL without the scheme or reverse-DNS. 
-/// 
-/// Keep list short and use wildcard () matching. Prefix with NOT to invert.
+  /// A list of paths, preferably URL without the scheme or reverse-DNS.
+  ///
+  /// Keep list short and use wildcard () matching. Prefix with NOT to invert.
   final List<String> paths;
 
   /// Builds a destination with [paths] and [uses]. Default to all uses.
@@ -71,10 +71,10 @@ class TikiSdkDestination {
   /// Converts the JSON representation of the destination into a TikiSdkDestination.
   ///
   /// This function converts a JSON string into a TikiSdkDestination object.
-  /// The JSON string must follow the pattern of the default main constructor, 
-  /// with paths being a required field. If paths is not present, a [NullThrownError] 
+  /// The JSON string must follow the pattern of the default main constructor,
+  /// with paths being a required field. If paths is not present, a [NullThrownError]
   /// will be thrown.
-  /// The function builds a Map from the JSON string and then 
+  /// The function builds a Map from the JSON string and then
   /// calls [TikiSdkDestination.fromMap] to create the TikiSdkDestination object.
   static TikiSdkDestination fromJson(String jsonString) {
     Map jsonMap = jsonDecode(jsonString);
