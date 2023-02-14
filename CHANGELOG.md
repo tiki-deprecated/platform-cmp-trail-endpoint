@@ -1,8 +1,8 @@
-### Current
+### 1.1.2
 
 * Add example app (in progress)
 * Change description
-* 
+* Update TIKI SDK public API docs
 
 ## 1.1.1
 
