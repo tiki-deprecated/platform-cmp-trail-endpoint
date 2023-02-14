@@ -26,7 +26,7 @@ jobs:
       - name: Static code analysis
         run: |
           cd lib
-          dart format -o none --set-exit-if-changed
+          dart format -o show --set-exit-if-changed
 
       - name: Check dart publish
         run: dart pub publish --dry-run
