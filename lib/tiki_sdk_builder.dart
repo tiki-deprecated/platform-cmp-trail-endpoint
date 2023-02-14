@@ -25,7 +25,9 @@ import 'tiki_sdk.dart';
 ///
 /// ### 2 - Set the default Origin
 ///
-/// The default origin is the one that will be used as origin for all ownership assignments that doesn't define different origins. It should follow a reversed FQDN syntax. _i.e. com.mycompany.myproduct_
+/// The default origin is the one that will be used as origin for all ownership 
+/// assignments that doesn't define different origins. It should follow a 
+/// reverse-DNS syntax. _i.e. com.mycompany.myproduct_
 ///
 /// ```
 /// builder.origin('com.mycompany.myproduct');
@@ -33,7 +35,8 @@ import 'tiki_sdk.dart';
 ///
 /// ### 3 - Set the Database Directory
 ///
-/// TIKI SDK uses SQLite for local database caching. This directory defines where the database files will be stored.
+/// TIKI SDK uses SQLite for local database caching. This directory defines 
+/// where the database files will be stored.
 ///
 /// ```
 /// builder.databaseDir('path/to/database')
@@ -73,7 +76,7 @@ class TikiSdkBuilder {
   ///
   /// The defalt origin is the one that will be used as origin for all ownership
   /// assignments that doesn't define different origins. It should follow a
-  /// reversed FQDN syntax. _i.e. com.mycompany.myproduct_
+  /// reverse-DNS syntax. _i.e. com.mycompany.myproduct_
   void origin(String origin) => _origin = origin;
 
   /// Sets the storage for user`s private key.
