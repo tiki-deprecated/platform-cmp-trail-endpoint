@@ -1,0 +1,16 @@
+name: example
+description: TIKI SDK Dart Example app.
+version: 1.0.0
+publish: none
+homepage: https://mytiki.com
+
+environment:
+  sdk: '>=2.18.2 <3.0.0'
+
+dependencies:
+  tiki_sdk_dart: 
+    path: ../.
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.16.0

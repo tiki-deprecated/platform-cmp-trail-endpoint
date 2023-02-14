@@ -39,8 +39,9 @@ class TikiSdkDestination {
   static TikiSdkDestination fromJson(String jsonString) {
     Map jsonMap = jsonDecode(jsonString);
     Map<String, List<String>> destMap = {
-      "paths" : jsonMap["paths"]?.map<String>((e) => e.toString()).toList() ?? [],
-      "uses" : jsonMap["uses"]?.map<String>((e) => e.toString()).toList() ?? [],
+      "paths":
+          jsonMap["paths"]?.map<String>((e) => e.toString()).toList() ?? [],
+      "uses": jsonMap["uses"]?.map<String>((e) => e.toString()).toList() ?? [],
     };
     return TikiSdkDestination.fromMap(destMap);
   }
@@ -73,8 +74,5 @@ class TikiSdkDestination {
 
   String toJson() => toString();
 
-  Map toMap() => {
-    "paths" : paths,
-    "uses" : uses
-  };
+  Map toMap() => {"paths": paths, "uses": uses};
 }

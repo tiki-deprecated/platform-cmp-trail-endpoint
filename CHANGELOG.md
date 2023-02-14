@@ -1,3 +1,9 @@
+### Current
+
+* Add example app (in progress)
+* Change description
+* 
+
 ## 1.1.1
 
 * bump version for Dart Pub sync
