@@ -15,6 +15,8 @@ import 'tiki_sdk.dart';
 ///
 /// ## How to use
 ///
+/// [Sign up](https://console.mytiki.com) (free) for a TIKI developer account to get a Publishing ID.
+///
 /// ### 1 - Initialize the builder
 ///
 /// ```
@@ -23,7 +25,9 @@ import 'tiki_sdk.dart';
 ///
 /// ### 2 - Set the default Origin
 ///
-/// The default origin is the one that will be used as origin for all ownership assignments that doesn't define different origins. It should follow a reversed FQDN syntax. _i.e. com.mycompany.myproduct_
+/// The default origin is the one that will be used as origin for all ownership
+/// assignments that doesn't define different origins. It should follow a
+/// reverse-DNS syntax. _i.e. com.mycompany.myproduct_
 ///
 /// ```
 /// builder.origin('com.mycompany.myproduct');
@@ -31,7 +35,8 @@ import 'tiki_sdk.dart';
 ///
 /// ### 3 - Set the Database Directory
 ///
-/// TIKI SDK uses SQLite for local database caching. This directory defines where the database files will be stored.
+/// TIKI SDK uses SQLite for local database caching. This directory defines
+/// where the database files will be stored.
 ///
 /// ```
 /// builder.databaseDir('path/to/database')
@@ -44,16 +49,16 @@ import 'tiki_sdk.dart';
 /// ```
 ///
 /// **DO NOT USE InMemKeyStorage in production.**
-/// ### 5 - Set the API key for connection with TIKI Cloud
-/// Create your API key in [mytiki.com](mytiki.com)
+/// ### 5 - Set the Publishing Id for connection with TIKI Cloud
+/// Create your Publishing Id in [https://console.mytiki.com](console.mytiki.com)
 /// ```
-/// builder.apiKey = "api_key_from_mytiki.com";
+/// builder.publishingId = "api_key_from_mytiki.com";
 /// ```
 ///
 /// ### 6 - address
 /// Set the user address. If it is not set, a new private key will be created for the user.
 /// ```
-/// builder.apiKey = "api_key_from_mytiki.com";
+/// builder.address = <user_address>;
 /// ```
 /// ### 7 - Build it!
 /// After setting all the properties for the builder, build it to use.
@@ -71,19 +76,34 @@ class TikiSdkBuilder {
   ///
   /// The defalt origin is the one that will be used as origin for all ownership
   /// assignments that doesn't define different origins. It should follow a
-  /// reversed FQDN syntax. _i.e. com.mycompany.myproduct_
+  /// reverse-DNS syntax. _i.e. com.mycompany.myproduct_
   void origin(String origin) => _origin = origin;
 
-  /// Sets the secure key storage to be used
+  /// Sets the storage for user`s private key.
+  ///
+  /// The user private key is sensitive information and should be kept in a secure
+  /// and encrypted key-value storage. It should use an implementation of the
+  /// [KeyStorage] interface,
   void keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
 
   /// Sets the directory to be used for the database files.
+  ///
+  /// TIKI SDK uses SQLite for local database caching. This directory defines
+  /// where the database files will be stored.
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
 
-  /// Sets the apiKey to connect to TIKI cloud.
+  /// Sets the Publishing Id for connection with TIKI Cloud
+  ///
+  /// Create your Publishing Id in [console.mytiki.com](console.mytiki.com).
   void publishingId(String? publishingId) => _publishingId = publishingId;
 
   /// Sets the blockchain address for the private key used in the SDK object.
+  ///
+  /// Each user will have a different private key for each device. If no [address]
+  /// is provided, the TIKI SDK will create a new one for the user in the current
+  /// device.
+  /// After building the SDK, the address can be obtained in [TikiSdk.address] property
+  /// and could be saved somehwere else.
   void address(String? address) => _address = address;
 
   /// Builds the [TikiSdk] object.

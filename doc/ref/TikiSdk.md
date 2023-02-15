@@ -28,10 +28,8 @@ Parameters:
 An identifier in your system corresponding to the raw data.  
 _i.e. a user_id_
 
-
 - **type &#8594; [TikiSdkDataTypeEnum](tiki-sdk-dart-tiki-sdk-data-type-enum)**  
 Point, pool, or stream
-
 
 - **contains &#8594; List&lt;String>**  
 A list of metadata tags describing the represented data
@@ -39,7 +37,6 @@ A list of metadata tags describing the represented data
 Named Parameters:
 - **origin &#8594; String?**  
 An optional override of the default origin set during initialization
-
 
 - **about &#8594; String?**  
 An optional description to provide additional context to the transaction. Most typically as human-readable text.

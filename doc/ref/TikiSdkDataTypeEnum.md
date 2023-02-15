@@ -10,7 +10,7 @@ order: 5
 ## Constructors
 
 ##### TikiSdkDataTypeEnum.fromValue(String value)
-Construct a new `TikiSdkDataTypeEnum` from a string value. See Constants below.  
+Construct a new `TikiSdkDataTypeEnum` from a string value. See the `val` Property below.  
 _factory_
 
 ## Values
@@ -30,7 +30,8 @@ _i.e. in-app analytics or location data_
 ## Properties
 
 ##### val &#8594; String
-
+A String representation of the enum value. 
+Valid options: `data_point`, `data_pool` or `data_stream`.
 _final_
 
 ## Constants

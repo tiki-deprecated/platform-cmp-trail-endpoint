@@ -1,5 +1,3 @@
-![Image](https://img.shields.io/github/deployments/tiki/tiki-sdk-dart/Production?label=deployment&logo=github)
-![Image](https://img.shields.io/github/workflow/status/tiki/tiki-sdk-dart/docs?label=docs&logo=github)
 ![Image](https://img.shields.io/pub/v/tiki_sdk_dart?logo=dart)
 ![Image](https://img.shields.io/pub/points/tiki_sdk_dart?logo=dart)
 ![Image](https://img.shields.io/github/license/tiki/tiki-sdk-dart)
