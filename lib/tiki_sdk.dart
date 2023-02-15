@@ -5,13 +5,12 @@
 /// To initialize the TIKI SDK, use the [TikiSdkBuilder].
 ///
 /// ```
-/// TikiSdkBuilder sdkBuilder = TikiSdkBuilder()
-///      ..databaseDir(<databaseDir>)
-///      ..keyStorage(FlutterKeyStorage())
-///      ..address(_address)
-///      ..publishingId(_publishingId)
-///      ..origin(_origin!);
-/// TikiSdk tikiSdk = sdkBuilder.build();
+/// TikiSdk tiki = await (TikiSdkBuilder()
+///   ..origin('com.mycompany.myproduct')
+///   ..databaseDir('/')
+///   ..apiKey('565b3268-cdc0-4e5c-94c8-5d8f53d4577c')
+///   ..keyStorage(MyKeyStorageImpl()))
+///   .build();
 /// ```
 /// Check [TikiSdkBuilder] documentation for a detailed description of the paramenters.
 ///

@@ -14,13 +14,13 @@ order: 2
 ## Methods
 
 ##### origin(String origin) &#8594; void
-Included in the on-chain transaction to denote the application of origination (can be overridden in individual requests). It should follow a reversed FQDN syntax.  
+Included in the on-chain transaction to denote the application of origination (can be overridden in individual requests). It should follow a  reverse-DNS syntax.  
 _i.e. com.mycompany.myproduct_
 
 ##### databaseDir(String databaseDir) &#8594; void
 Defines where the local data (SQLite used for persistence) will be stored.
 
-##### apiId(String? apiId) &#8594; void
+##### publishingId(String? publishingId) &#8594; void
 A unique identifier for your account. Create, revoke, and cycle Ids _(not a secret but try and treat it with care)_ at [console.mytiki.com](https://console.mytiki.com).
 
 ##### address(String? address) &#8594; void
