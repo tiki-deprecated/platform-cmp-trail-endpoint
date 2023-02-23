@@ -1,5 +1,6 @@
 /// The SDK to handle data ownership and consent NFTs with TIKI.
-import 'package:sqlite3/sqlite3.dart';
+import 'package:idb_sqflite/idb_sqflite.dart' if (dart.library.ffi) 'package:sqlite3/sqlite3.dart';
+
 
 import 'cache/consent/consent_service.dart';
 import 'cache/ownership/ownership_service.dart';
