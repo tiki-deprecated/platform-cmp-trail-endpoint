@@ -31,7 +31,7 @@ class BackupService {
   ///
   /// Saves the public key in the initialization.
   BackupService(
-      this._backupClient, Database database, this._key, this._getBlock)
+      this._backupClient, CommonDatabase database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
     String keyBackupPath = '${Bytes.base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);

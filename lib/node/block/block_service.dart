@@ -22,9 +22,9 @@ class BlockService {
   static const int version = 1;
   final BlockRepository _repository;
 
-  BlockService(Database db) : _repository = BlockRepository(db);
+  BlockService(CommonDatabase db) : _repository = BlockRepository(db);
 
-  Database get database => _repository.db;
+  CommonDatabase get database => _repository.db;
 
   /// Creates a new block to be commited later.
   ///

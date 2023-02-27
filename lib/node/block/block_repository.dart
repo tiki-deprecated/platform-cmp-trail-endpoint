@@ -10,7 +10,7 @@ import 'package:sqlite3/common.dart';
 import '../../utils/utils.dart';
 import 'block_model.dart';
 
-/// The repository for [BlockModel] persistance in [Database].
+/// The repository for [BlockModel] persistance in [CommonDatabase].
 class BlockRepository {
   /// The [BlockModel] table name in [db].
   static const table = 'block';
@@ -30,8 +30,8 @@ class BlockRepository {
   /// The [BlockModel.timestamp] column.
   static const columnTimestamp = 'timestamp';
 
-  /// The [Database] used to persist [BlockModel].
-  final Database db;
+  /// The [CommonDatabase] used to persist [BlockModel].
+  final CommonDatabase db;
 
   /// Builds a [BlockRepository] that will use [db] for persistence.
   ///

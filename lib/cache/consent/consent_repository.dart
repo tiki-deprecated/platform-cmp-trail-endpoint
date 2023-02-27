@@ -13,7 +13,7 @@ import 'consent_model.dart';
 
 /// The repository for [ConsentModel] persistence.
 class ConsentRepository {
-  final Database _db;
+  final CommonDatabase _db;
 
   /// The table that will persist [ConsentModel]
   static const table = 'consent';

@@ -12,7 +12,7 @@ import '../block/block_model.dart';
 import '../block/block_repository.dart';
 import 'transaction_model.dart';
 
-/// The repository for [TransactionModel] persistence in [Database].
+/// The repository for [TransactionModel] persistence in [CommonDatabase].
 class TransactionRepository {
   /// The [TransactionModel] table name in [_db].
   ///
@@ -46,8 +46,8 @@ class TransactionRepository {
   /// The [TransactionModel.signature] column.
   static const columnSignature = 'signature';
 
-  /// The [Database] used to persist [TransactionModel].
-  final Database _db;
+  /// The [CommonDatabase] used to persist [TransactionModel].
+  final CommonDatabase _db;
 
   /// Builds a [TransactionRepository] that will use [_db] for persistence.
   ///

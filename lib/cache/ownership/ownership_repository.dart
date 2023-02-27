@@ -16,7 +16,7 @@ import 'ownership_model.dart';
 
 /// The repository for [OwnershipModel] persistence.
 class OwnershipRepository {
-  final Database _db;
+  final CommonDatabase _db;
   static const table = 'ownership';
 
   /// The identification of the source.
