@@ -17,7 +17,7 @@ import '../in_mem_node_service_builder.dart';
 void main() {
   group('Ownership Tests', () {
     test('Repository tests. Save and get all', () {
-      Database db = sqlite3.openInMemory();
+      CommonDatabase db = sqlite3.openInMemory();
       OwnershipRepository repository = OwnershipRepository(db);
       OwnershipModel ownershipModel = OwnershipModel(
           transactionId: Uint8List.fromList('random1'.codeUnits),
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('Repository tests. Save and get by source', () {
-      Database db = sqlite3.openInMemory();
+      CommonDatabase db = sqlite3.openInMemory();
       OwnershipRepository repository = OwnershipRepository(db);
       OwnershipModel ownershipModel = OwnershipModel(
           transactionId: Uint8List.fromList('random1'.codeUnits),

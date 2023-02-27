@@ -33,7 +33,7 @@ void main() {
         origin: 'com.mytiki.test');
     TikiSdkDestination destination = const TikiSdkDestination(['com.mytiki/*']);
     test('Repository tests. Save and get by assetRef', () {
-      Database db = sqlite3.openInMemory();
+      CommonDatabase db = sqlite3.openInMemory();
       ConsentRepository repository = ConsentRepository(db);
       ConsentModel consentModel = ConsentModel(
           ownershipModel.transactionId!, destination,
