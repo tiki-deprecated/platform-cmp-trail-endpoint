@@ -3,7 +3,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
+
 
 import 'backup_model.dart';
 

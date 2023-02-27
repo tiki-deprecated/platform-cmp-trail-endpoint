@@ -10,7 +10,8 @@ library transaction;
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
+
 
 import '../../utils/utils.dart';
 import '../block/block_model.dart';

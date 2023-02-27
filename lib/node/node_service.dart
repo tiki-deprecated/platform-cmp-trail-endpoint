@@ -10,7 +10,7 @@ library node;
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
