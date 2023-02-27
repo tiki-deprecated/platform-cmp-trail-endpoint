@@ -3,7 +3,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'package:sqlite3/common.dart';
+//import 'package:sqlite3/common.dart';
+import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_service.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
 import 'package:tiki_sdk_dart/node/key/key_service.dart';
@@ -16,7 +17,7 @@ import 'in_mem_l0_storage.dart';
 class InMemNodeServiceBuilder {
   late final InMemL0Storage backupClient;
   late final InMemKeyStorage keyStorage;
-  late final CommonDatabase database;
+  late final Database database;
 
   Duration _blockInterval = const Duration(minutes: 1);
   int _maxTransactions = 200;

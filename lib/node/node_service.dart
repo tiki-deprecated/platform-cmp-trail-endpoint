@@ -32,7 +32,7 @@ class NodeService {
   Timer? _blockTimer;
 
   String get address => Bytes.base64UrlEncode(_primaryKey.address);
-  Database get database => _blockService.database;
+  CommonDatabase get database => _blockService.database;
 
   set blockInterval(Duration val) => _blockInterval = val;
   set maxTransactions(int val) => _maxTransactions = val;
