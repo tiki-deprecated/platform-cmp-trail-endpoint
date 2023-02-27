@@ -12,7 +12,6 @@ import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/common.dart';
 
-
 import '../../utils/utils.dart';
 import '../block/block_model.dart';
 import '../key/key_model.dart';
@@ -26,7 +25,8 @@ export 'transaction_repository.dart';
 class TransactionService {
   final TransactionRepository _repository;
 
-  TransactionService(CommonDatabase db) : _repository = TransactionRepository(db);
+  TransactionService(CommonDatabase db)
+      : _repository = TransactionRepository(db);
 
   /// Creates a [TransactionModel] with [contents].
   ///

@@ -5,7 +5,6 @@
 /// {@category Node}
 import 'package:sqlite3/common.dart';
 
-
 import 'backup_model.dart';
 
 /// The repository for [BackupModel] persistance in [CommonDatabase].
