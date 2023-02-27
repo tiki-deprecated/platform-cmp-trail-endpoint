@@ -33,7 +33,7 @@ import 'tiki_sdk.dart';
 /// builder.origin('com.mycompany.myproduct');
 /// ```
 ///
-/// ### 3 - Set the Database Directory
+/// ### 3 - Set the CommonDatabase Directory
 ///
 /// TIKI SDK uses SQLite for local database caching. This directory defines
 /// where the database files will be stored.
@@ -112,7 +112,7 @@ class TikiSdkBuilder {
   /// An error will be thrown if one of them is not set
   Future<TikiSdk> build() async {
     KeyModel primaryKey = await _loadPrimaryKey();
-    Database database = sqlite3
+    CommonDatabase database = sqlite3
         .open("$_databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
 
     StorageService l0Storage =
