@@ -5,7 +5,6 @@
 
 import 'dart:typed_data';
 
-import 'package:sqlite3/common.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/cache/ownership/ownership_service.dart';
@@ -18,7 +17,7 @@ import '../in_mem_node_service_builder.dart';
 void main() {
   group('Ownership Tests', () {
     test('Repository tests. Save and get all', () {
-      CommonDatabase db = sqlite3.openInMemory();
+      Database db = sqlite3.openInMemory();
       OwnershipRepository repository = OwnershipRepository(db);
       OwnershipModel ownershipModel = OwnershipModel(
           transactionId: Uint8List.fromList('random1'.codeUnits),
@@ -43,7 +42,7 @@ void main() {
     });
 
     test('Repository tests. Save and get by source', () {
-      CommonDatabase db = sqlite3.openInMemory();
+      Database db = sqlite3.openInMemory();
       OwnershipRepository repository = OwnershipRepository(db);
       OwnershipModel ownershipModel = OwnershipModel(
           transactionId: Uint8List.fromList('random1'.codeUnits),
