@@ -164,7 +164,6 @@ import 'tiki_sdk_data_type_enum.dart';
 import 'tiki_sdk_destination.dart';
 import 'utils/bytes.dart';
 
-export 'helpers/sdk_builder.dart' if (dart.library.ffi) 'tiki_sdk_builder.dart';
 export 'tiki_sdk_data_type_enum.dart';
 export 'tiki_sdk_destination.dart';
 export 'utils/bytes.dart';
