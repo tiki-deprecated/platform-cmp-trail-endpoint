@@ -14,7 +14,7 @@ import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
 import 'package:tiki_sdk_dart/utils/compact_size.dart';
 
-import '../in_mem_node_service_builder.dart';
+import '../../in_mem_node_service_builder.dart';
 
 void main() {
   group('Title Service Tests', () {

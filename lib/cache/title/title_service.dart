@@ -16,6 +16,11 @@ import 'title_record.dart';
 import 'title_repository.dart';
 import 'title_tag.dart';
 
+export 'title_record.dart';
+export 'title_repository.dart';
+export 'title_tag.dart';
+export 'title_tag_enum.dart';
+
 /// The service to manage title records.
 class TitleService {
   /// The default origin for all titles.
