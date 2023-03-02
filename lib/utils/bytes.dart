@@ -109,4 +109,10 @@ class Bytes {
     int length = extra > 0 ? b64String.length + (4 - extra) : 0;
     return base64Url.decode(b64String.padRight(length, "="));
   }
+
+  // Encodes a UTF-8 string as Uint8List
+  static Uint8List utf8Encode(String s) => Uint8List.fromList(utf8.encode(s));
+
+  // Decodes a Uint8List to a UTF-8 string
+  static String utf8Decode(Uint8List bytes) => utf8.decode(bytes.toList());
 }
