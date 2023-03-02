@@ -21,7 +21,7 @@ export 'title_repository.dart';
 export 'title_tag.dart';
 export 'title_tag_enum.dart';
 
-/// The service to manage title records.
+/// The service to manage [TitleRecord]s
 class TitleService {
   /// The default origin for all titles.
   final String _defaultOrigin;

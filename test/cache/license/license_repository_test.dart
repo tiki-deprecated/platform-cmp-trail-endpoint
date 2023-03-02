@@ -17,7 +17,7 @@ import 'package:tiki_sdk_dart/tiki_sdk.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
-  group('Consent Tests', () {
+  group('License Repository Tests', () {
     test('getByTitle - Success', () {
       Database db = sqlite3.openInMemory();
       TitleRepository titleRepository = TitleRepository(db);

@@ -30,7 +30,7 @@ class LicenseUsecase {
       LicenseUsecaseEnum usecase = LicenseUsecaseEnum.fromValue(value);
       return LicenseUsecase(usecase);
     } catch (e) {
-      return LicenseUsecase.custom(value);
+      return LicenseUsecase.custom(value.replaceFirst('custom:', ''));
     }
   }
 

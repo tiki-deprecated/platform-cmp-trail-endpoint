@@ -54,9 +54,10 @@ class NodeService {
   /// the oldest transaction was created more than [_blockInterval] duration or
   /// if there are more than [_maxTransactions] waiting to be added to a
   /// [BlockModel].
-  Future<TransactionModel> write(Uint8List contents) async {
+  Future<TransactionModel> write(Uint8List contents,
+      {String assetRef = 'AA=='}) async {
     TransactionModel transaction =
-        _transactionService.create(contents, _primaryKey);
+        _transactionService.create(contents, _primaryKey, assetRef: assetRef);
     List<TransactionModel> transactions = _transactionService.getPending();
     if (transactions.length >= _maxTransactions) {
       await _createBlock(transactions);

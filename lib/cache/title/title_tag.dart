@@ -53,7 +53,7 @@ class TitleTag {
       TitleTagEnum tag = TitleTagEnum.fromValue(value);
       return TitleTag(tag);
     } catch (e) {
-      return TitleTag.custom(value);
+      return TitleTag.custom(value.replaceFirst('custom:', ''));
     }
   }
 
