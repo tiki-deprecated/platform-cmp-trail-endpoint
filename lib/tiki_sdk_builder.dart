@@ -10,7 +10,7 @@ import 'node/block/block_service.dart';
 import 'node/key/key_service.dart';
 import 'node/node_service.dart';
 import 'node/transaction/transaction_service.dart';
-import 'helpers/sdk_builder.dart' show SdkBuilder;
+import 'helpers/sdk_builder.dart';
 import 'tiki_sdk.dart';
 
 /// # The Builder for the TikiSdk object
@@ -79,6 +79,7 @@ class TikiSdkBuilder implements SdkBuilder {
   /// The defalt origin is the one that will be used as origin for all ownership
   /// assignments that doesn't define different origins. It should follow a
   /// reverse-DNS syntax. _i.e. com.mycompany.myproduct_
+  @override
   void origin(String origin) => _origin = origin;
 
   /// Sets the storage for user`s private key.
@@ -86,17 +87,20 @@ class TikiSdkBuilder implements SdkBuilder {
   /// The user private key is sensitive information and should be kept in a secure
   /// and encrypted key-value storage. It should use an implementation of the
   /// [KeyStorage] interface,
+  @override
   void keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
 
   /// Sets the directory to be used for the database files.
   ///
   /// TIKI SDK uses SQLite for local database caching. This directory defines
   /// where the database files will be stored.
+  @override
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
 
   /// Sets the Publishing Id for connection with TIKI Cloud
   ///
   /// Create your Publishing Id in [console.mytiki.com](console.mytiki.com).
+  @override
   void publishingId(String? publishingId) => _publishingId = publishingId;
 
   /// Sets the blockchain address for the private key used in the SDK object.
@@ -106,12 +110,14 @@ class TikiSdkBuilder implements SdkBuilder {
   /// device.
   /// After building the SDK, the address can be obtained in [TikiSdk.address] property
   /// and could be saved somehwere else.
+  @override
   void address(String? address) => _address = address;
 
   /// Builds the [TikiSdk] object.
   ///
   /// This method should only be called after setting [keyStorage] and [databaseDir].
   /// An error will be thrown if one of them is not set
+  @override
   Future<TikiSdk> build() async {
     KeyModel primaryKey = await _loadPrimaryKey();
     CommonDatabase database = sqlite3
