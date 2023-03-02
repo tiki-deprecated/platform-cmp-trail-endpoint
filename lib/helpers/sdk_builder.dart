@@ -8,7 +8,6 @@ class SdkBuilder {
   String? _publishingId;
   String? _address;
 
-
   void origin(String origin) => _origin = origin;
   void keyStorage(KeyStorage keyStorage) => _keyStorage = keyStorage;
   void databaseDir(String databaseDir) => _databaseDir = databaseDir;
@@ -18,6 +17,5 @@ class SdkBuilder {
 
   @override
   noSuchMethod(Invocation msg) => "got ${msg.memberName} "
-                      "with arguments ${msg.positionalArguments}";
-
+      "with arguments ${msg.positionalArguments}";
 }
