@@ -10,6 +10,7 @@ import 'node/block/block_service.dart';
 import 'node/key/key_service.dart';
 import 'node/node_service.dart';
 import 'node/transaction/transaction_service.dart';
+import 'helpers/sdk_builder.dart' show SdkBuilder;
 import 'tiki_sdk.dart';
 
 /// # The Builder for the TikiSdk object
@@ -66,7 +67,7 @@ import 'tiki_sdk.dart';
 /// ```
 /// TikiSdk sdk = builder.build();
 /// ```
-class TikiSdkBuilder {
+class TikiSdkBuilder implements SdkBuilder {
   String? _origin;
   KeyStorage? _keyStorage;
   String? _databaseDir;
