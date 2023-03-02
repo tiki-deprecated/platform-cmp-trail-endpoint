@@ -5,6 +5,9 @@
 
 import 'title_tag_enum.dart';
 
+/// Tags are included in the [TitleRecord] and describe the represented data
+/// asset. Tags improve record searchability and come in handy when bulk
+/// searching and filtering licenses.
 class TitleTag {
   final String _value;
 
@@ -40,8 +43,11 @@ class TitleTag {
   TitleTag.crashData() : _value = TitleTagEnum.crashData.value;
   TitleTag.performanceData() : _value = TitleTagEnum.performanceData.value;
   TitleTag.diagnosticData() : _value = TitleTagEnum.diagnosticData.value;
+
+  /// Add a custom tag using the format of custom:<tag>
   TitleTag.custom(String customTag) : _value = "custom:$customTag";
 
+  /// Builds a [TitleTag] from [value]
   factory TitleTag.from(String value) {
     try {
       TitleTagEnum tag = TitleTagEnum.fromValue(value);
@@ -51,5 +57,6 @@ class TitleTag {
     }
   }
 
+  /// Returns the string value for the tag
   String get value => _value;
 }

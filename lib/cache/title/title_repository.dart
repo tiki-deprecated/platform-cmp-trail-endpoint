@@ -26,7 +26,7 @@ class TitleRepository {
 
   /// Builds a [TitleRepository] that will use [_db] for persistence.
   ///
-  /// It calls [_createTable] to make sure the table exists.
+  /// Calls [_createTable] to ensure the table exists.
   TitleRepository(this._db) {
     _createTable();
   }
@@ -60,16 +60,17 @@ class TitleRepository {
     ]);
   }
 
-  /// Gets all [TitleRecord] stored in local database.
+  /// Gets all [TitleRecord] stored in the local database.
   List<TitleRecord> getAll() => _select();
 
+  /// Gets the [TitleRecord] by transaction_[id] from the database.
   TitleRecord? getById(Uint8List id) {
     List<TitleRecord> titles = _select(
         whereStmt: "WHERE $columnTransactionId = x'${Bytes.hexEncode(id)}'");
     return titles.isNotEmpty ? titles.first : null;
   }
 
-  /// Gets the [TitleRecord] for [ptr] and [origin] in database.
+  /// Gets the [TitleRecord] for [ptr] and [origin] from the database.
   TitleRecord? getByPtr(String ptr, String origin) {
     List params = [ptr, origin];
     String where = "WHERE $columnPtr = ? AND $columnOrigin = ?";

@@ -83,7 +83,7 @@ class TitleRecord {
   factory TitleRecord.deserialize(Uint8List serialized) =>
       TitleRecord.decode(CompactSize.decode(serialized));
 
-  /// Construct a new [TitleRecord] from decoded data.
+  /// Construct a new [TitleRecord] from decoded binary data.
   ///
   /// See [serialize] for supported binary format.
   factory TitleRecord.decode(List<Uint8List> bytes) {

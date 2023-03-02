@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+/// Default accepted usecases
 enum LicenseUsecaseEnum {
   attribution("attribution"),
   retargeting("retargeting"),
@@ -16,6 +17,7 @@ enum LicenseUsecaseEnum {
 
   const LicenseUsecaseEnum(this._value);
 
+  // Returns the string value for the enum
   String get value => _value;
 
   /// Builds a TitleTagEnum from [value]

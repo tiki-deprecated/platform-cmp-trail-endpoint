@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+/// Default accepted tags
 enum TitleTagEnum {
   emailAddress("email_address"),
   phoneNumber("phone_number"),
@@ -39,9 +40,10 @@ enum TitleTagEnum {
 
   const TitleTagEnum(this._value);
 
+  /// Returns the string value for the enum
   String get value => _value;
 
-  /// Builds a TitleTagEnum from [value]
+  /// Builds a [TitleTagEnum] from [value]
   factory TitleTagEnum.fromValue(String value) {
     for (TitleTagEnum type in TitleTagEnum.values) {
       if (type.value == value) {

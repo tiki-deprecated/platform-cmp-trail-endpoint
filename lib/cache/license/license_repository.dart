@@ -12,6 +12,7 @@ import '../../node/transaction/transaction_repository.dart';
 import '../../utils/bytes.dart';
 import 'license_record.dart';
 
+/// The repository for [LicenseRecord] persistence.
 class LicenseRepository {
   final Database _db;
   static const table = 'license_record';
@@ -22,10 +23,14 @@ class LicenseRepository {
   static const columnTransactionId = 'transaction_id';
   static const columnExpiry = 'expiry';
 
+  /// Builds a [LicenseRepository] that will use [_db] for persistence.
+  ///
+  /// Calls [_createTable] to ensure the table exists.
   LicenseRepository(this._db) {
     _createTable();
   }
 
+  /// Creates the [LicenseRepository.table] if it does not exist.
   void _createTable() => _db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
      $columnTransactionId BLOB PRIMARY KEY,
@@ -41,6 +46,7 @@ class LicenseRepository {
       );
     ''');
 
+  /// Persists [license] in [_db].
   void save(LicenseRecord license) {
     Map map = license.toMap();
     _db.execute('''
@@ -56,6 +62,7 @@ class LicenseRepository {
     ]);
   }
 
+  /// Gets the [LicenseRecord] by [title] from the database.
   LicenseRecord? getByTitle(Uint8List title) {
     String where = '''WHERE $columnTitle = 
       x'${Bytes.hexEncode(title)}' ORDER BY $table.oid DESC LIMIT 1''';

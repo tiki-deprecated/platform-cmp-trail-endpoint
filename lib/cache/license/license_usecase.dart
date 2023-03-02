@@ -5,6 +5,7 @@
 
 import 'license_usecase_enum.dart';
 
+/// Usecases explicitly define HOW an asset may be used.
 class LicenseUsecase {
   final String _value;
 
@@ -18,9 +19,12 @@ class LicenseUsecase {
       : _value = LicenseUsecaseEnum.distribution.value;
   LicenseUsecase.analytics() : _value = LicenseUsecaseEnum.analytics.value;
   LicenseUsecase.support() : _value = LicenseUsecaseEnum.support.value;
+
+  /// Add a custom usecase using the format of custom:<usecase>
   LicenseUsecase.custom(String customUsecase)
       : _value = "custom:$customUsecase";
 
+  /// Builds a [LicenseUsecase] from [value]
   factory LicenseUsecase.from(String value) {
     try {
       LicenseUsecaseEnum usecase = LicenseUsecaseEnum.fromValue(value);
@@ -30,5 +34,6 @@ class LicenseUsecase {
     }
   }
 
+  /// Returns the string value for the usecase
   String get value => _value;
 }
