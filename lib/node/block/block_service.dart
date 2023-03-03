@@ -9,7 +9,7 @@ library block;
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
 import 'block_model.dart';
 import 'block_repository.dart';
@@ -22,9 +22,9 @@ class BlockService {
   static const int version = 1;
   final BlockRepository _repository;
 
-  BlockService(Database db) : _repository = BlockRepository(db);
+  BlockService(CommonDatabase db) : _repository = BlockRepository(db);
 
-  Database get database => _repository.db;
+  CommonDatabase get database => _repository.db;
 
   /// Creates a new block to be commited later.
   ///

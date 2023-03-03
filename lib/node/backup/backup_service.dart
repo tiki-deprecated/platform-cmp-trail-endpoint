@@ -9,7 +9,7 @@ library backup;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
 import '../../utils/utils.dart';
 import '../key/key_model.dart';
@@ -31,7 +31,7 @@ class BackupService {
   ///
   /// Saves the public key in the initialization.
   BackupService(
-      this._backupClient, Database database, this._key, this._getBlock)
+      this._backupClient, CommonDatabase database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
     String keyBackupPath = '${Bytes.base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);

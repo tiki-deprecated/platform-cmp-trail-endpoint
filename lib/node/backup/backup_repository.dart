@@ -3,11 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 /// {@category Node}
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
 import 'backup_model.dart';
 
-/// The repository for [BackupModel] persistance in [Database].
+/// The repository for [BackupModel] persistance in [CommonDatabase].
 class BackupRepository {
   /// The [BackupModel] table name in [_db].
   static const table = 'backup';
@@ -21,8 +21,8 @@ class BackupRepository {
   /// The [BackupModel.timestamp] collumn
   static const columnTimestamp = 'timestamp';
 
-  /// The [Database] used to persist [BackupModel].
-  final Database _db;
+  /// The [CommonDatabase] used to persist [BackupModel].
+  final CommonDatabase _db;
 
   /// Builds a [BackupRepository] that will use [_db] for persistence.
   ///

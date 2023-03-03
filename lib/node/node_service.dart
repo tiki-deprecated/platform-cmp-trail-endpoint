@@ -10,7 +10,7 @@ library node;
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
 import '../utils/utils.dart';
 import 'backup/backup_service.dart';
@@ -32,7 +32,7 @@ class NodeService {
   Timer? _blockTimer;
 
   String get address => Bytes.base64UrlEncode(_primaryKey.address);
-  Database get database => _blockService.database;
+  CommonDatabase get database => _blockService.database;
 
   set blockInterval(Duration val) => _blockInterval = val;
   set maxTransactions(int val) => _maxTransactions = val;
