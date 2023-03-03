@@ -5,6 +5,7 @@
 
 library tiki_sdk_dart;
 
+import 'package:sqlite3/common.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import 'cache/license/license_service.dart';
@@ -46,7 +47,7 @@ class TikiSdk {
         ? await keyService.get(address) ?? await keyService.create()
         : await keyService.create();
 
-    Database database = sqlite3
+    CommonDatabase database = sqlite3
         .open("$databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
     StorageService l0Storage =
         StorageService.publishingId(primaryKey.privateKey, publishingId);

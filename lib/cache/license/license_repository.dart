@@ -6,7 +6,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
 import '../../node/transaction/transaction_repository.dart';
 import '../../utils/bytes.dart';
@@ -14,7 +14,7 @@ import 'license_model.dart';
 
 /// The repository for [LicenseModel] persistence.
 class LicenseRepository {
-  final Database _db;
+  final CommonDatabase _db;
   static const table = 'license_record';
   static const columnTitle = 'title';
   static const columnUses = 'uses';

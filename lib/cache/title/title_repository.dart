@@ -8,7 +8,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
 import '../../node/transaction/transaction_repository.dart';
 import '../../utils/bytes.dart';
@@ -16,7 +16,7 @@ import 'title_model.dart';
 
 /// The repository for [TitleModel] persistence.
 class TitleRepository {
-  final Database _db;
+  final CommonDatabase _db;
   static const table = 'title_record';
   static const String columnPtr = 'ptr';
   static const String columnOrigin = 'origin';
