@@ -19,6 +19,13 @@ import 'node/transaction/transaction_service.dart';
 import 'title_record.dart';
 import 'utils/bytes.dart';
 
+export 'cache/license/license_use.dart';
+export 'cache/license/license_usecase.dart';
+export 'cache/title/title_tag.dart';
+export 'license_record.dart';
+export 'node/key/key_storage.dart';
+export 'title_record.dart';
+
 class TikiSdk {
   final TitleService _titleService;
   final LicenseService _licenseService;
