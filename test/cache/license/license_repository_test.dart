@@ -7,13 +7,13 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/cache/license/license_record.dart';
+import 'package:tiki_sdk_dart/cache/license/license_model.dart';
 import 'package:tiki_sdk_dart/cache/license/license_repository.dart';
 import 'package:tiki_sdk_dart/cache/license/license_use.dart';
 import 'package:tiki_sdk_dart/cache/license/license_usecase.dart';
-import 'package:tiki_sdk_dart/cache/title/title_record.dart';
+import 'package:tiki_sdk_dart/cache/title/title_model.dart';
 import 'package:tiki_sdk_dart/cache/title/title_repository.dart';
-import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:tiki_sdk_dart/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
@@ -31,11 +31,11 @@ void main() {
         String description = const Uuid().v4();
         tidDescMap[tid] = description;
 
-        TitleRecord title = TitleRecord('com.mytiki.test', const Uuid().v4(),
+        TitleModel title = TitleModel('com.mytiki.test', const Uuid().v4(),
             transactionId: tid);
         titleRepository.save(title);
 
-        LicenseRecord license = LicenseRecord(
+        LicenseModel license = LicenseModel(
             title.transactionId!,
             [
               LicenseUse([LicenseUsecase.analytics()],
@@ -47,8 +47,8 @@ void main() {
       }
 
       for (int i = 0; i < numRecords; i++) {
-        LicenseRecord? license =
-            licenseRepository.getByTitle(tidDescMap.keys.elementAt(i));
+        LicenseModel? license =
+            licenseRepository.getLatestByTitle(tidDescMap.keys.elementAt(i));
         expect(license == null, false);
         expect(license!.description, tidDescMap.values.elementAt(i));
         expect(license.expiry == null, true);

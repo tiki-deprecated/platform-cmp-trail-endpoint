@@ -3,8 +3,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'package:tiki_sdk_dart/cache/consent/consent_service.dart';
-import 'package:tiki_sdk_dart/cache/ownership/ownership_service.dart';
+import 'package:tiki_sdk_dart/cache/license/license_service.dart';
+import 'package:tiki_sdk_dart/cache/title/title_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 
@@ -21,10 +21,10 @@ class InMemTikiSdkBuilder {
   Future<TikiSdk> build() async {
     nodeServiceBuilder.address = _address;
     NodeService nodeService = await nodeServiceBuilder.build();
-    OwnershipService ownershipService =
-        OwnershipService(_origin!, nodeService, nodeService.database);
-    ConsentService consentService =
-        ConsentService(nodeService.database, nodeService);
-    return TikiSdk(ownershipService, consentService, nodeService);
+    TitleService titleService =
+        TitleService(_origin!, nodeService, nodeService.database);
+    LicenseService licenseService =
+        LicenseService(nodeService.database, nodeService);
+    return TikiSdk(titleService, licenseService, nodeService);
   }
 }

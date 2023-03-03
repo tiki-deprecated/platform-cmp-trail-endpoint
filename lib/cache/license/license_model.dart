@@ -8,19 +8,19 @@ import 'dart:typed_data';
 
 import '../../utils/bytes.dart';
 import '../../utils/compact_size.dart';
-import '../title/title_record.dart';
+import '../title/title_model.dart';
 import 'license_repository.dart';
 import 'license_use.dart';
 
-/// Describes the license for an asset ([TitleRecord]).
-class LicenseRecord {
-  /// The [TitleRecord] transactionId
+/// Describes the license for an asset ([TitleModel]).
+class LicenseModel {
+  /// The [TitleModel] transactionId
   Uint8List title;
 
   /// A list describing how an asset can be used
   List<LicenseUse> uses;
 
-  /// The legal terms for with the license
+  /// The legal terms for the license
   String terms;
 
   /// A human-readable description of the license
@@ -32,13 +32,13 @@ class LicenseRecord {
   /// The date when the license expires
   DateTime? expiry;
 
-  LicenseRecord(this.title, this.uses, this.terms,
+  LicenseModel(this.title, this.uses, this.terms,
       {this.description, this.transactionId, this.expiry});
 
-  /// Construct a [LicenseRecord] from a [map].
+  /// Construct a [LicenseModel] from a [map].
   ///
   /// Primary use is [LicenseRepository] object marshalling.
-  LicenseRecord.fromMap(Map<String, dynamic> map)
+  LicenseModel.fromMap(Map<String, dynamic> map)
       : title = map[LicenseRepository.columnTitle],
         uses = map[LicenseRepository.columnUses]
             ?.map<LicenseUse>((use) => LicenseUse.fromMap(use))
@@ -82,20 +82,20 @@ class LicenseRecord {
         .toBytes();
   }
 
-  /// Construct a new [LicenseRecord] from binary data.
+  /// Construct a new [LicenseModel] from binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory LicenseRecord.deserialize(Uint8List title, Uint8List serialized) =>
-      LicenseRecord.decode(title, CompactSize.decode(serialized));
+  factory LicenseModel.deserialize(Uint8List title, Uint8List serialized) =>
+      LicenseModel.decode(title, CompactSize.decode(serialized));
 
-  /// Construct a new [LicenseRecord] from decoded binary data.
+  /// Construct a new [LicenseModel] from decoded binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory LicenseRecord.decode(Uint8List title, List<Uint8List> bytes) {
+  factory LicenseModel.decode(Uint8List title, List<Uint8List> bytes) {
     List<LicenseUse> uses = jsonDecode(Bytes.utf8Decode(bytes[0]))
         .map<LicenseUse>((use) => LicenseUse.fromMap(use))
         .toList();
-    return LicenseRecord(title, uses, Bytes.utf8Decode(bytes[1]),
+    return LicenseModel(title, uses, Bytes.utf8Decode(bytes[1]),
         description: Bytes.utf8Decode(bytes[2]),
         expiry: DateTime.fromMillisecondsSinceEpoch(
             Bytes.decodeBigInt(bytes[3]).toInt() * 1000));

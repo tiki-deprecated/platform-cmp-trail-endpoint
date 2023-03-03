@@ -6,13 +6,13 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/cache/license/license_record.dart';
+import 'package:tiki_sdk_dart/cache/license/license_model.dart';
 import 'package:tiki_sdk_dart/cache/license/license_service.dart';
 import 'package:tiki_sdk_dart/cache/license/license_use.dart';
 import 'package:tiki_sdk_dart/cache/license/license_usecase.dart';
 import 'package:tiki_sdk_dart/cache/title/title_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:tiki_sdk_dart/utils/bytes.dart';
 
 import '../../in_mem_node_service_builder.dart';
 
@@ -27,7 +27,7 @@ void main() {
           LicenseService(nodeService.database, nodeService);
 
       Uint8List titleId = (await titleService.create('test')).transactionId!;
-      LicenseRecord license = await licenseService.create(
+      LicenseModel license = await licenseService.create(
           titleId,
           [
             LicenseUse([LicenseUsecase.custom('test')])
@@ -66,7 +66,7 @@ void main() {
           ],
           'terms');
 
-      LicenseRecord? license = licenseService.getByTitle(titleId);
+      LicenseModel? license = licenseService.getLatest(titleId);
       expect(license != null, true);
       expect(Bytes.memEquals(license!.title, titleId), true);
       expect(license.uses.length, 1);

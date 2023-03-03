@@ -5,9 +5,9 @@
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/cache/title/title_record.dart';
+import 'package:tiki_sdk_dart/cache/title/title_model.dart';
 import 'package:tiki_sdk_dart/cache/title/title_repository.dart';
-import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:tiki_sdk_dart/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
@@ -18,12 +18,12 @@ void main() {
 
       int numRecords = 3;
       for (int i = 0; i < numRecords; i++) {
-        TitleRecord record = TitleRecord('com.mytiki.test', const Uuid().v4(),
+        TitleModel record = TitleModel('com.mytiki.test', const Uuid().v4(),
             transactionId: Bytes.utf8Encode(const Uuid().v4()));
         repository.save(record);
       }
 
-      List<TitleRecord> titles = repository.getAll();
+      List<TitleModel> titles = repository.getAll();
       expect(titles.length, numRecords);
     });
 
@@ -37,13 +37,13 @@ void main() {
         String ptr = const Uuid().v4();
         String tid = const Uuid().v4();
         ptrTidMap[ptr] = tid;
-        TitleRecord record = TitleRecord('com.mytiki.test', ptr,
+        TitleModel record = TitleModel('com.mytiki.test', ptr,
             transactionId: Bytes.utf8Encode(tid));
         repository.save(record);
       }
 
       for (int i = 0; i < numRecords; i++) {
-        TitleRecord? title =
+        TitleModel? title =
             repository.getByPtr(ptrTidMap.keys.elementAt(i), 'com.mytiki.test');
         expect(title != null, true);
         expect(Bytes.utf8Decode(title!.transactionId!),

@@ -12,9 +12,9 @@ import 'package:sqlite3/sqlite3.dart';
 
 import '../../node/transaction/transaction_repository.dart';
 import '../../utils/bytes.dart';
-import 'title_record.dart';
+import 'title_model.dart';
 
-/// The repository for [TitleRecord] persistence.
+/// The repository for [TitleModel] persistence.
 class TitleRepository {
   final Database _db;
   static const table = 'title_record';
@@ -46,7 +46,7 @@ class TitleRepository {
     ''');
 
   /// Persists [title] in [_db].
-  void save(TitleRecord title) {
+  void save(TitleModel title) {
     Map map = title.toMap();
     _db.execute('''
     INSERT INTO $table 
@@ -60,30 +60,30 @@ class TitleRepository {
     ]);
   }
 
-  /// Gets all [TitleRecord] stored in the local database.
-  List<TitleRecord> getAll() => _select();
+  /// Gets all [TitleModel] stored in the local database.
+  List<TitleModel> getAll() => _select();
 
-  /// Gets the [TitleRecord] by transaction_[id] from the database.
-  TitleRecord? getById(Uint8List id) {
-    List<TitleRecord> titles = _select(
+  /// Gets the [TitleModel] by transaction_[id] from the database.
+  TitleModel? getById(Uint8List id) {
+    List<TitleModel> titles = _select(
         whereStmt: "WHERE $columnTransactionId = x'${Bytes.hexEncode(id)}'");
     return titles.isNotEmpty ? titles.first : null;
   }
 
-  /// Gets the [TitleRecord] for [ptr] and [origin] from the database.
-  TitleRecord? getByPtr(String ptr, String origin) {
+  /// Gets the [TitleModel] for [ptr] and [origin] from the database.
+  TitleModel? getByPtr(String ptr, String origin) {
     List params = [ptr, origin];
     String where = "WHERE $columnPtr = ? AND $columnOrigin = ?";
-    List<TitleRecord> titles = _select(whereStmt: where, params: params);
+    List<TitleModel> titles = _select(whereStmt: where, params: params);
     return titles.isNotEmpty ? titles.first : null;
   }
 
-  List<TitleRecord> _select({String? whereStmt, List params = const []}) {
+  List<TitleModel> _select({String? whereStmt, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT * FROM $table
       ${whereStmt ?? ''};
       ''', params);
-    List<TitleRecord> titles = [];
+    List<TitleModel> titles = [];
     for (final Row row in results) {
       Map<String, dynamic> map = {
         columnTransactionId: row[columnTransactionId],
@@ -94,7 +94,7 @@ class TitleRepository {
             .map<String>((e) => e.toString())
             .toList()
       };
-      TitleRecord record = TitleRecord.fromMap(map);
+      TitleModel record = TitleModel.fromMap(map);
       titles.add(record);
     }
     return titles;

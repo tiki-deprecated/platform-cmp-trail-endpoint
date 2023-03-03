@@ -12,16 +12,16 @@ import 'dart:typed_data';
 import '../../node/node_service.dart';
 import '../../node/transaction/transaction_model.dart';
 import '../content_schema.dart';
-import 'title_record.dart';
+import 'title_model.dart';
 import 'title_repository.dart';
 import 'title_tag.dart';
 
-export 'title_record.dart';
+export 'title_model.dart';
 export 'title_repository.dart';
 export 'title_tag.dart';
 export 'title_tag_enum.dart';
 
-/// The service to manage [TitleRecord]s
+/// The service to manage [TitleModel]s
 class TitleService {
   /// The default origin for all titles.
   final String _defaultOrigin;
@@ -33,21 +33,21 @@ class TitleService {
   TitleService(this._defaultOrigin, this.nodeService, db)
       : _repository = TitleRepository(db);
 
-  /// Creates an on-chain [TitleRecord].
+  /// Creates an on-chain [TitleModel].
   ///
   /// This method creates a new pending transaction that will be committed
   /// during assembly of the next block in the chain.
   ///
   /// If no [origin] is provided the default [origin] will be used
-  Future<TitleRecord> create(String ptr,
+  Future<TitleModel> create(String ptr,
       {String? origin,
       String? description,
       List<TitleTag> tags = const []}) async {
-    TitleRecord? titleRecord = getByPtr(ptr, origin: origin);
+    TitleModel? titleRecord = getByPtr(ptr, origin: origin);
     if (titleRecord != null) {
       throw 'Title already granted for $ptr and $origin. ${titleRecord.toString()}';
     }
-    titleRecord = TitleRecord(origin ?? _defaultOrigin, ptr,
+    titleRecord = TitleModel(origin ?? _defaultOrigin, ptr,
         description: description, tags: tags);
     Uint8List contents = (BytesBuilder()
           ..add(ContentSchema.title.toCompactSize())
@@ -59,9 +59,12 @@ class TitleService {
     return titleRecord;
   }
 
-  /// Returns a [TitleRecord] from the local cache using its [ptr] and [origin].
+  /// Returns a [TitleModel] from the local cache using its [ptr] and [origin].
   ///
   /// If no [origin] is provided the [_defaultOrigin] will be used
-  TitleRecord? getByPtr(String ptr, {String? origin}) =>
+  TitleModel? getByPtr(String ptr, {String? origin}) =>
       _repository.getByPtr(ptr, origin ?? _defaultOrigin);
+
+  /// Returns a [TitleModel] from the local cache using its [id].
+  TitleModel? getById(Uint8List id) => _repository.getById(id);
 }

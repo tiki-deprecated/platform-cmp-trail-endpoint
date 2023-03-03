@@ -10,9 +10,9 @@ import 'package:sqlite3/sqlite3.dart';
 
 import '../../node/transaction/transaction_repository.dart';
 import '../../utils/bytes.dart';
-import 'license_record.dart';
+import 'license_model.dart';
 
-/// The repository for [LicenseRecord] persistence.
+/// The repository for [LicenseModel] persistence.
 class LicenseRepository {
   final Database _db;
   static const table = 'license_record';
@@ -47,7 +47,7 @@ class LicenseRepository {
     ''');
 
   /// Persists [license] in [_db].
-  void save(LicenseRecord license) {
+  void save(LicenseModel license) {
     Map map = license.toMap();
     _db.execute('''
     INSERT INTO $table 
@@ -62,20 +62,34 @@ class LicenseRepository {
     ]);
   }
 
-  /// Gets the [LicenseRecord] by [title] from the database.
-  LicenseRecord? getByTitle(Uint8List title) {
+  /// Gets the latest [LicenseModel] by [title] from the database.
+  LicenseModel? getLatestByTitle(Uint8List title) {
     String where = '''WHERE $columnTitle = 
       x'${Bytes.hexEncode(title)}' ORDER BY $table.oid DESC LIMIT 1''';
-    List<LicenseRecord> licenses = _select(whereStmt: where, params: []);
+    List<LicenseModel> licenses = _select(whereStmt: where, params: []);
     return licenses.isNotEmpty ? licenses.first : null;
   }
 
-  List<LicenseRecord> _select({String? whereStmt, List params = const []}) {
+  /// Gets all [LicenseModel] for a [title] from the database.
+  List<LicenseModel> getAllByTitle(Uint8List title) {
+    String where = '''WHERE $columnTitle = 
+      x'${Bytes.hexEncode(title)}' ORDER BY $table.oid DESC''';
+    return _select(whereStmt: where, params: []);
+  }
+
+  /// Gets the [LicenseModel] by [id] from the database.
+  LicenseModel? getById(Uint8List id) {
+    List<LicenseModel> licenses = _select(
+        whereStmt: "WHERE $columnTransactionId = x'${Bytes.hexEncode(id)}'");
+    return licenses.isNotEmpty ? licenses.first : null;
+  }
+
+  List<LicenseModel> _select({String? whereStmt, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT * FROM $table
       ${whereStmt ?? ''};
       ''', params);
-    List<LicenseRecord> licenses = [];
+    List<LicenseModel> licenses = [];
     for (final Row row in results) {
       Map<String, dynamic> map = {
         columnTransactionId: row[columnTransactionId],
@@ -85,7 +99,7 @@ class LicenseRepository {
         columnDescription: row[columnDescription],
         columnExpiry: row[columnExpiry]
       };
-      LicenseRecord license = LicenseRecord.fromMap(map);
+      LicenseModel license = LicenseModel.fromMap(map);
       licenses.add(license);
     }
     return licenses;

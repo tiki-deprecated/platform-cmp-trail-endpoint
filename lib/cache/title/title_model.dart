@@ -13,7 +13,7 @@ import 'title_tag.dart';
 
 /// Describes an asset and contains a Pointer Record [ptr] to
 /// the actual asset.
-class TitleRecord {
+class TitleModel {
   /// A Pointer Record identifying the asset
   String ptr;
 
@@ -26,10 +26,10 @@ class TitleRecord {
   /// A human-readable description of the asset.
   String? description;
 
-  /// A list of search-friendly tags describing the data.
+  /// A list of search-friendly tags describing the asset.
   List<TitleTag> tags;
 
-  TitleRecord(
+  TitleModel(
     this.origin,
     this.ptr, {
     this.transactionId,
@@ -37,10 +37,10 @@ class TitleRecord {
     this.description,
   });
 
-  /// Construct a [TitleRecord] from a [map].
+  /// Construct a [TitleModel] from a [map].
   ///
   /// Primary use is [ModelRepository] object marshalling.
-  TitleRecord.fromMap(Map<String, dynamic> map)
+  TitleModel.fromMap(Map<String, dynamic> map)
       : ptr = map[TitleRepository.columnPtr],
         origin = map[TitleRepository.columnOrigin],
         description = map[TitleRepository.columnDescription],
@@ -77,17 +77,17 @@ class TitleRecord {
         .toBytes();
   }
 
-  /// Construct a new [TitleRecord] from binary data.
+  /// Construct a new [TitleModel] from binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory TitleRecord.deserialize(Uint8List serialized) =>
-      TitleRecord.decode(CompactSize.decode(serialized));
+  factory TitleModel.deserialize(Uint8List serialized) =>
+      TitleModel.decode(CompactSize.decode(serialized));
 
-  /// Construct a new [TitleRecord] from decoded binary data.
+  /// Construct a new [TitleModel] from decoded binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory TitleRecord.decode(List<Uint8List> bytes) {
-    return TitleRecord(Bytes.utf8Decode(bytes[1]), Bytes.utf8Decode(bytes[0]),
+  factory TitleModel.decode(List<Uint8List> bytes) {
+    return TitleModel(Bytes.utf8Decode(bytes[1]), Bytes.utf8Decode(bytes[0]),
         description: Bytes.utf8Decode(bytes[2]),
         tags: jsonDecode(Bytes.utf8Decode(bytes[3]))
             .map<TitleTag>((tag) => TitleTag.from(tag))

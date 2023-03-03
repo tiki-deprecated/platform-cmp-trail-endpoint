@@ -7,7 +7,7 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/cache/content_schema.dart';
-import 'package:tiki_sdk_dart/cache/title/title_record.dart';
+import 'package:tiki_sdk_dart/cache/title/title_model.dart';
 import 'package:tiki_sdk_dart/cache/title/title_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
@@ -30,7 +30,7 @@ void main() {
       List<Uint8List> contents = CompactSize.decode(transaction.contents);
       expect(
           Bytes.decodeBigInt(contents[0]).toInt(), ContentSchema.title.value);
-      TitleRecord retrieved = TitleRecord.decode(contents.sublist(1));
+      TitleModel retrieved = TitleModel.decode(contents.sublist(1));
       expect(retrieved.ptr, 'create test');
       expect(retrieved.origin, 'com.tiki.test');
     });
@@ -43,7 +43,7 @@ void main() {
       Uint8List titleId =
           (await titleService.create('create test')).transactionId!;
 
-      TitleRecord? titleRecord = titleService.getByPtr('create test');
+      TitleModel? titleRecord = titleService.getByPtr('create test');
       expect(titleRecord != null, true);
       expect(Bytes.memEquals(titleRecord!.transactionId!, titleId), true);
       expect(titleRecord.ptr, 'create test');
@@ -54,7 +54,7 @@ void main() {
       NodeService nodeService = await builder.build();
       TitleService titleService =
           TitleService('com.tiki.test', nodeService, builder.database);
-      TitleRecord? titleRecord = titleService.getByPtr('NOT');
+      TitleModel? titleRecord = titleService.getByPtr('NOT');
       expect(titleRecord == null, true);
     });
   });
