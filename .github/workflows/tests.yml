@@ -21,7 +21,7 @@ jobs:
         run: dart pub get
 
       - name: Run tests
-        run: dart test
+        run: dart test --reporter github
 
       - name: Static code analysis
         run: |
