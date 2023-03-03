@@ -6,7 +6,6 @@
 library tiki_sdk_dart;
 
 import 'package:sqlite3/common.dart';
-import 'package:sqlite3/sqlite3.dart';
 
 import 'cache/license/license_service.dart';
 import 'cache/title/title_service.dart';
@@ -32,23 +31,31 @@ class TikiSdk {
   final LicenseService _licenseService;
   final NodeService _nodeService;
 
-  /// Recommended to use [init] instead.
+  /// Recommended to use [withAddress] and [init] instead.
   TikiSdk(TitleService titleService, LicenseService licenseService,
       NodeService nodeService)
       : _titleService = titleService,
         _licenseService = licenseService,
         _nodeService = nodeService;
 
-  static init(String publishingId, String orign, KeyStorage keyStorage,
-      String databaseDir,
+  static Future<String> withAddress(KeyStorage keyStorage,
       {String? address}) async {
     KeyService keyService = KeyService(keyStorage);
     KeyModel primaryKey = address != null
-        ? await keyService.get(address) ?? await keyService.create()
+        ? await keyService.get(address) ??
+            await keyService.create() //should print warning about this!?
         : await keyService.create();
+    return Bytes.base64UrlEncode(primaryKey.address);
+  }
 
-    CommonDatabase database = sqlite3
-        .open("$databaseDir/${Bytes.base64UrlEncode(primaryKey.address)}.db");
+  static Future<TikiSdk> init(String publishingId, String orign,
+      KeyStorage keyStorage, String address, CommonDatabase database) async {
+    KeyService keyService = KeyService(keyStorage);
+    KeyModel? primaryKey = await keyService.get(address);
+    if (primaryKey == null) {
+      throw StateError("Use keystore() to initialize address");
+    }
+
     StorageService l0Storage =
         StorageService.publishingId(primaryKey.privateKey, publishingId);
     NodeService nodeService = NodeService()
