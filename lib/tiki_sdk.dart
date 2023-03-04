@@ -85,7 +85,9 @@ class TikiSdk {
   ///
   /// • [database] - Platform-specific sqlite3 implementation, opened.
   static Future<TikiSdk> init(String publishingId, String origin,
-      KeyStorage keyStorage, String address, CommonDatabase database) async {
+      KeyStorage keyStorage, String address, CommonDatabase database,
+      {int maxTransactions = 1,
+      Duration blockInterval = const Duration(minutes: 1)}) async {
     KeyService keyService = KeyService(keyStorage);
     KeyModel? primaryKey = await keyService.get(address);
     if (primaryKey == null) {
@@ -95,8 +97,8 @@ class TikiSdk {
     StorageService storageService =
         StorageService.publishingId(primaryKey.privateKey, publishingId);
     NodeService nodeService = NodeService()
-      ..blockInterval = const Duration(minutes: 1)
-      ..maxTransactions = 200
+      ..blockInterval = blockInterval
+      ..maxTransactions = maxTransactions
       ..transactionService = TransactionService(database)
       ..blockService = BlockService(database)
       ..primaryKey = primaryKey;
