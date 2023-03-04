@@ -5,6 +5,9 @@
 
 import 'cache/title/title_tag.dart';
 
+/// Title Records describe a data asset and MUST contain a Pointer Record to
+/// your system. [Learn more](https://docs.mytiki.com/docs/offer-customization)
+/// about Title Records.
 class TitleRecord {
   /// This record's id.
   String id;

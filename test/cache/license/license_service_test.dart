@@ -6,18 +6,20 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/cache/license/license_model.dart';
 import 'package:tiki_sdk_dart/cache/license/license_service.dart';
+import 'package:tiki_sdk_dart/cache/license/license_use.dart';
+import 'package:tiki_sdk_dart/cache/license/license_usecase.dart';
 import 'package:tiki_sdk_dart/cache/title/title_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
 
-import '../../in_mem_node_service_builder.dart';
+import '../../in_mem.dart';
 
 void main() {
   group('License Service Tests', () {
     test('create - Success', () async {
-      NodeService nodeService = await InMemNodeServiceBuilder().build();
-
+      NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
           TitleService('com.mytiki', nodeService, nodeService.database);
       LicenseService licenseService =
@@ -41,8 +43,7 @@ void main() {
     });
 
     test('getByTitle - Success', () async {
-      NodeService nodeService = await InMemNodeServiceBuilder().build();
-
+      NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
           TitleService('com.mytiki', nodeService, nodeService.database);
       LicenseService licenseService =

@@ -2,6 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+
 import 'package:html/dom.dart';
 
 /// Utility methods for XML parsing.

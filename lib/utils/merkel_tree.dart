@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// Caculates and validates Merkel Tree and repective proofs.
+
 import 'dart:math';
 import 'dart:typed_data';
 

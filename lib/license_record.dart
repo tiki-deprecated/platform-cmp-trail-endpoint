@@ -6,6 +6,10 @@
 import 'cache/license/license_use.dart';
 import 'title_record.dart';
 
+/// License Records describe the terms around which a data asset may be used
+/// and MUST contain a reference to the corresponding Title Record.
+/// [Learn more](https://docs.mytiki.com/docs/offer-customization) about
+/// License Records.
 class LicenseRecord {
   /// This record's id
   String? id;

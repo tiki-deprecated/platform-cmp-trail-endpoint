@@ -2,9 +2,6 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// Manage License Records
-/// {@category Cache}
-library license;
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -15,12 +12,6 @@ import '../content_schema.dart';
 import 'license_model.dart';
 import 'license_repository.dart';
 import 'license_use.dart';
-
-export 'license_model.dart';
-export 'license_repository.dart';
-export 'license_use.dart';
-export 'license_usecase.dart';
-export 'license_usecase_enum.dart';
 
 /// The service to manage [LicenseModel]s
 class LicenseService {

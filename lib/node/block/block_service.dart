@@ -2,9 +2,6 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category Node}
-/// The definition of block-related operations.
-library block;
 
 import 'dart:typed_data';
 
@@ -13,9 +10,6 @@ import 'package:sqlite3/common.dart';
 
 import 'block_model.dart';
 import 'block_repository.dart';
-
-export 'block_model.dart';
-export 'block_repository.dart';
 
 /// A service to handle block-related operations.
 class BlockService {

@@ -12,6 +12,7 @@ import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/l0/auth/auth_service.dart';
 import 'package:tiki_sdk_dart/l0/storage/storage_service.dart';
 import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa_private_key.dart';
 import 'package:uuid/uuid.dart';
 
 import '../auth/auth_nock.dart';

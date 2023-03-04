@@ -3,19 +3,19 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-/// The core of the Blockchain.
-/// {@category Node}
-library node;
-
 import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:sqlite3/common.dart';
 
-import '../utils/utils.dart';
+import '../utils/bytes.dart';
+import '../utils/compact_size.dart';
+import '../utils/merkel_tree.dart';
 import 'backup/backup_service.dart';
+import 'block/block_model.dart';
 import 'block/block_service.dart';
-import 'key/key_service.dart';
+import 'key/key_model.dart';
+import 'transaction/transaction_model.dart';
 import 'transaction/transaction_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the

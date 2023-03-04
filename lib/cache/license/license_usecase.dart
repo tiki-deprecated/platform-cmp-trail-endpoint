@@ -5,10 +5,13 @@
 
 import 'license_usecase_enum.dart';
 
-/// Usecases explicitly define HOW an asset may be used.
+/// Usecases explicitly define HOW an asset may be used. Use either our
+/// list of common enumerations or define your own using
+/// [LicenseUsecase.custom]
 class LicenseUsecase {
   final String _value;
 
+  /// @nodoc
   LicenseUsecase(LicenseUsecaseEnum usecase) : _value = usecase.value;
   LicenseUsecase.attribution() : _value = LicenseUsecaseEnum.attribution.value;
   LicenseUsecase.retargeting() : _value = LicenseUsecaseEnum.retargeting.value;

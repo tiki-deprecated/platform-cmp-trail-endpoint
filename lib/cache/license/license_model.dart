@@ -65,7 +65,7 @@ class LicenseModel {
 
   /// Serializes this to binary.
   ///
-  /// Primary use is on-chain storage. The [transaction_id] and [title] are not
+  /// Primary use is on-chain storage. The [transactionId] and [title] are not
   /// represented in the serialized output.
   Uint8List serialize() {
     String jsonUses = jsonEncode(uses.map((use) => use.toMap()).toList());

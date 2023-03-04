@@ -3,23 +3,19 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-/// {@category Node}
-/// Handles transactions in the chain.
-library transaction;
-
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/common.dart';
 
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
+import '../../utils/merkel_tree.dart';
+import '../../utils/rsa/rsa.dart';
+import '../../utils/rsa/rsa_public_key.dart';
 import '../block/block_model.dart';
 import '../key/key_model.dart';
 import 'transaction_model.dart';
 import 'transaction_repository.dart';
-
-export 'transaction_model.dart';
-export 'transaction_repository.dart';
 
 /// The service to manage transactions in the chain.
 class TransactionService {

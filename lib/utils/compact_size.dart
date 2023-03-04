@@ -2,10 +2,12 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// From https://developer.bitcoin.org/reference/transactions.html#compactsize-unsigned-integers
+
 import 'dart:typed_data';
 
 /// Compact Size operations.
+///
+/// From [bitcoin](https://developer.bitcoin.org/reference/transactions.html#compactsize-unsigned-integers)
 ///
 /// For numbers from 0 to 252, compactSize unsigned integers look like regular
 /// unsigned integers. For other numbers up to 0xffffffffffffffff, a byte is

@@ -39,7 +39,7 @@ class TitleModel {
 
   /// Construct a [TitleModel] from a [map].
   ///
-  /// Primary use is [ModelRepository] object marshalling.
+  /// Primary use is [TitleRepository] object marshalling.
   TitleModel.fromMap(Map<String, dynamic> map)
       : ptr = map[TitleRepository.columnPtr],
         origin = map[TitleRepository.columnOrigin],
@@ -63,7 +63,7 @@ class TitleModel {
 
   /// Serializes this to binary.
   ///
-  /// Primary use is on-chain storage. The [transaction_id] is not represented
+  /// Primary use is on-chain storage. The [transactionId] is not represented
   /// in the serialized output.
   Uint8List serialize() {
     String jsonTags = jsonEncode(tags.map((tag) => tag.value).toList());

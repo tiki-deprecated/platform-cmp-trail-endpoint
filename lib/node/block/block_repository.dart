@@ -7,7 +7,7 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/common.dart';
 
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
 import 'block_model.dart';
 
 /// The repository for [BlockModel] persistance in [CommonDatabase].

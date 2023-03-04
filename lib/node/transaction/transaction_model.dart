@@ -8,7 +8,8 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
+import '../../utils/compact_size.dart';
 import '../block/block_model.dart';
 import 'transaction_repository.dart';
 

@@ -8,7 +8,9 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/utils/utils.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa_private_key.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa_public_key.dart';
 
 void main() {
   group('RSA Tests', () {

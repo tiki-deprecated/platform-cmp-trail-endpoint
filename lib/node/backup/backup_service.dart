@@ -2,24 +2,19 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// The backup library for node service.
-/// {@category Node}
-library backup;
 
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sqlite3/common.dart';
 
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
+import '../../utils/compact_size.dart';
+import '../../utils/rsa/rsa.dart';
 import '../key/key_model.dart';
 import 'backup_client.dart';
 import 'backup_model.dart';
 import 'backup_repository.dart';
-
-export 'backup_client.dart';
-export 'backup_model.dart';
-export 'backup_repository.dart';
 
 class BackupService {
   final BackupRepository _repository;

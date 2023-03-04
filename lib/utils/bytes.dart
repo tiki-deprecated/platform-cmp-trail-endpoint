@@ -2,7 +2,7 @@
  * CopyrightHash (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// Helper functions handle data in [Uint8List].
+
 import 'dart:convert';
 import 'dart:typed_data';
 

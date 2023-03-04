@@ -2,8 +2,8 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category Node}
-/// The interface for KeyModel persistance class.
+
+/// The interface for platform-specific private key persistance.
 ///
 /// The implementation should use OS level encrypted storage. It should not be
 /// accessible to other applications or users because it will store the private

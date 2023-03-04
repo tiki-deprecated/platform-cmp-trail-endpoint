@@ -2,11 +2,6 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// Manage Title Records
-/// {@category Cache}
-
-library title;
-
 import 'dart:typed_data';
 
 import '../../node/node_service.dart';
@@ -15,11 +10,6 @@ import '../content_schema.dart';
 import 'title_model.dart';
 import 'title_repository.dart';
 import 'title_tag.dart';
-
-export 'title_model.dart';
-export 'title_repository.dart';
-export 'title_tag.dart';
-export 'title_tag_enum.dart';
 
 /// The service to manage [TitleModel]s
 class TitleService {

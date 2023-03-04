@@ -7,10 +7,12 @@ import 'title_tag_enum.dart';
 
 /// Tags are included in the [TitleRecord] and describe the represented data
 /// asset. Tags improve record searchability and come in handy when bulk
-/// searching and filtering licenses.
+/// searching and filtering licenses. Use either our list of common
+/// enumerations or define your own using [TitleTag.custom].
 class TitleTag {
   final String _value;
 
+  /// @nodoc
   TitleTag(TitleTagEnum tag) : _value = tag.value;
   TitleTag.emailAddress() : _value = TitleTagEnum.emailAddress.value;
   TitleTag.phoneNumber() : _value = TitleTagEnum.phoneNumber.value;

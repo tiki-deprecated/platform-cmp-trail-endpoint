@@ -1,8 +1,8 @@
 name: tiki_sdk_dart
-description: TIKI's decentralized infrastructure plus abstractions to simplify the tokenization and application of data ownership, consent, and rewards. 
-version: 1.1.2
+description: Create and enforce immutable data licensing records client-side. The core-implementation of TIKI's client-side infrastructure.
+version: 2.0.0
 homepage: https://mytiki.com
-documentation: https://docs.mytiki.com/docs/tiki-sdk-dart-getting-started
+documentation: https://docs.mytiki.com/docs/sdk-overview
 repository: https://github.com/tiki/tiki-sdk-dart
 issue_tracker: https://github.com/tiki/tiki-sdk-dart/issues
 

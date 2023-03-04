@@ -7,24 +7,24 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/cache/content_schema.dart';
+import 'package:tiki_sdk_dart/cache/title/title_model.dart';
 import 'package:tiki_sdk_dart/cache/title/title_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
 import 'package:tiki_sdk_dart/utils/compact_size.dart';
 
-import '../../in_mem_node_service_builder.dart';
+import '../../in_mem.dart';
 
 void main() {
   group('Title Service Tests', () {
     test('create - Success', () async {
-      InMemNodeServiceBuilder builder = InMemNodeServiceBuilder();
-      NodeService nodeService = await builder.build();
+      NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.tiki.test', nodeService, builder.database);
+          TitleService('com.tiki.test', nodeService, nodeService.database);
       await titleService.create('create test');
       TransactionModel transaction = TransactionModel.fromMap(
-          builder.database.select("SELECT * FROM txn LIMIT 1").first);
+          nodeService.database.select("SELECT * FROM txn LIMIT 1").first);
 
       List<Uint8List> contents = CompactSize.decode(transaction.contents);
       expect(
@@ -35,10 +35,9 @@ void main() {
     });
 
     test('getByPtr - Success', () async {
-      InMemNodeServiceBuilder builder = InMemNodeServiceBuilder();
-      NodeService nodeService = await builder.build();
+      NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.tiki.test', nodeService, builder.database);
+          TitleService('com.tiki.test', nodeService, nodeService.database);
       Uint8List titleId =
           (await titleService.create('create test')).transactionId!;
 
@@ -49,10 +48,9 @@ void main() {
     });
 
     test('getByPtr - Null', () async {
-      InMemNodeServiceBuilder builder = InMemNodeServiceBuilder();
-      NodeService nodeService = await builder.build();
+      NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.tiki.test', nodeService, builder.database);
+          TitleService('com.tiki.test', nodeService, nodeService.database);
       TitleModel? titleRecord = titleService.getByPtr('NOT');
       expect(titleRecord == null, true);
     });

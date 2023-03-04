@@ -7,7 +7,8 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
+import '../../utils/compact_size.dart';
 import 'block_repository.dart';
 
 /// The block model entity for local storage.
