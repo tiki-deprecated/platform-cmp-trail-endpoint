@@ -34,7 +34,7 @@ jobs:
       - name: Verify tag version
         id: tag
         run: |
-          export TAG_VERSION=$(grep version pubspec.yaml |  awk -F  ': ' '/1/ {print $2}')
+          export export TAG_VERSION=$(grep version pubspec.yaml |  awk -F  ': ' '{print $2}')
           echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
 
       - name: Confirm tag version
