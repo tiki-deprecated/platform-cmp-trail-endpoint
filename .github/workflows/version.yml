@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  bump:
+  version:
     if: startsWith(github.head_ref, 'release/')
     environment: Production
     runs-on: ubuntu-latest
