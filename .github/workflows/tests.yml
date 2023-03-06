@@ -23,10 +23,19 @@ jobs:
       - name: Run tests
         run: dart test --reporter github
 
-      - name: Static code analysis
+      - name: Dart Format
         run: |
           cd lib
           dart format . -o show --set-exit-if-changed
 
       - name: Check dart publish
         run: dart pub publish --dry-run
+
+      - name: Verify tag version
+        id: tag
+        run: |
+          export export TAG_VERSION=$(grep version pubspec.yaml |  awk -F  ': ' '{print $2}')
+          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Confirm tag version
+        run: echo ${{ steps.tag.outputs.version }}

@@ -17,7 +17,7 @@ jobs:
     environment: Production
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.tag.outputs.version }}
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v3
@@ -38,17 +38,14 @@ jobs:
       - name: Run tests
         run: dart test
 
-      - name: Git version
-        id: version
-        uses: codacy/git-version@2.7.1
-        with:
-          release-branch: "main"
-          minor-identifier: "feat"
-
-      - name: Create a new tag
+      - name: Check a new tag
+        id: tag
         run: |
-          git tag ${{ steps.version.outputs.version }}
-          git push origin ${{ steps.version.outputs.version }}
+          export TAG_VERSION=$(grep version pubspec.yaml |  awk -F  ': ' '{print $2}')
+          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+          echo $TAG_VERSION
+          git tag $TAG_VERSION
+          git push origin $TAG_VERSION
 
       - name: 'Publish'
         run: dart pub publish -f
@@ -56,4 +53,4 @@ jobs:
       - name: Create a Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.version.outputs.version }}
+          tag: ${{ steps.tag.outputs.version }}
