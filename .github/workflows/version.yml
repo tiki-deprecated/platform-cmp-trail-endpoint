@@ -10,8 +10,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  bump:
+    if: startsWith(github.head_ref, 'release/')
+    environment: Production
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.semver.outputs.nextStrict }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
