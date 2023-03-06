@@ -17,6 +17,9 @@ jobs:
     outputs:
       tag: ${{ steps.semver.outputs.nextStrict }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
