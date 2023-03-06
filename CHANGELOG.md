@@ -1,3 +1,30 @@
+### 2.0.0
+**Node**
+- Set `maxTransactions` default to 1 (_Most applications do not require high throughput, and longer chains will improve the immutability strength_)
+
+**Ownership**
+- Rename ownership to title (_As in "Title Record", the standard name used for declaring asset ownership._)
+- Rename source to ptr (_Stands for Pointer Record and is more explicit about its intended use._)
+- Rename about to description
+- Remove type (`TikiSdkDataTypeEnum`) (_They're more confusing than helpful and not critical to use._)
+- Title records should ALWAYS have an assetRef of 0x00 ("mint" transaction")
+- Update schema from `1` to an Enum AND bump version (_Contents body schema is changing shape._)
+- Rename contains to tags (_Both more explicit and flexible._)
+- Use Enum for tags, defined [here](https://docs.mytiki.com/docs/adding-tags)
+
+**Consent**
+- Rename consent to license (_As in "License Record", a more explicit and standard name_)
+- Bug: Schema is not serialized (_Fix and use an Enum_)
+- OwnershipId should be in the assetRef field, not in the contents (_See whitepaper_)
+- Rename about to description
+- Rename destination to uses, and update object structure to match [spec](https://docs.mytiki.com/docs/specifying-terms-and-usage).
+- Bug: Fix destination/uses serialization. (_for example, `[],[]` currently resolves to `[][]`_)
+
+**SDK**
+- Update method names to match naming changes from above
+- Rename `applyConsent` to `guard` and adjust functionality to match [spec](https://docs.mytiki.com/docs/enforce-license)
+- Update `_checkConsent` logic to match new uses data structure
+
 ### 1.1.2
 
 * Add example app (in progress)

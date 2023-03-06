@@ -3,19 +3,19 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-/// The core of the Blockchain.
-/// {@category Node}
-library node;
-
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
-import '../utils/utils.dart';
+import '../utils/bytes.dart';
+import '../utils/compact_size.dart';
+import '../utils/merkel_tree.dart';
 import 'backup/backup_service.dart';
+import 'block/block_model.dart';
 import 'block/block_service.dart';
-import 'key/key_service.dart';
+import 'key/key_model.dart';
+import 'transaction/transaction_model.dart';
 import 'transaction/transaction_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
@@ -32,7 +32,7 @@ class NodeService {
   Timer? _blockTimer;
 
   String get address => Bytes.base64UrlEncode(_primaryKey.address);
-  Database get database => _blockService.database;
+  CommonDatabase get database => _blockService.database;
 
   set blockInterval(Duration val) => _blockInterval = val;
   set maxTransactions(int val) => _maxTransactions = val;
@@ -54,9 +54,10 @@ class NodeService {
   /// the oldest transaction was created more than [_blockInterval] duration or
   /// if there are more than [_maxTransactions] waiting to be added to a
   /// [BlockModel].
-  Future<TransactionModel> write(Uint8List contents) async {
+  Future<TransactionModel> write(Uint8List contents,
+      {String assetRef = 'AA=='}) async {
     TransactionModel transaction =
-        _transactionService.create(contents, _primaryKey);
+        _transactionService.create(contents, _primaryKey, assetRef: assetRef);
     List<TransactionModel> transactions = _transactionService.getPending();
     if (transactions.length >= _maxTransactions) {
       await _createBlock(transactions);

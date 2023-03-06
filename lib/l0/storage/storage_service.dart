@@ -3,11 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-/// Client APIs for TIKI's long-term, hosted, and immutable backup service:
-/// [L0 Storage](https://github.com/tiki/l0-storage).
-/// {@category L0 Services}
-library l0_storage;
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -16,6 +11,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../node/backup/backup_client.dart';
 import '../../utils/rsa/rsa.dart';
+import '../../utils/rsa/rsa_private_key.dart';
 import '../auth/auth_service.dart';
 import 'storage_model_list.dart';
 import 'storage_model_list_ver.dart';
@@ -24,15 +20,8 @@ import 'storage_model_token_rsp.dart';
 import 'storage_model_upload.dart';
 import 'storage_repository.dart';
 
-export 'storage_model_list.dart';
-export 'storage_model_list_ver.dart';
-export 'storage_model_list_ver_owner.dart';
-export 'storage_model_token_req.dart';
-export 'storage_model_token_rsp.dart';
-export 'storage_model_upload.dart';
-export 'storage_repository.dart';
-
-/// The primary class for interaction with the L0 Storage Service.
+/// The primary class for interaction with the
+/// [L0 Storage](https://github.com/tiki/l0-storage) Service.
 ///
 /// Use to [read] objects from and [write] to the hosted storage.
 class StorageService implements BackupClient {

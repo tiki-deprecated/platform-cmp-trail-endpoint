@@ -2,24 +2,19 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// The backup library for node service.
-/// {@category Node}
-library backup;
 
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/common.dart';
 
-import '../../utils/utils.dart';
+import '../../utils/bytes.dart';
+import '../../utils/compact_size.dart';
+import '../../utils/rsa/rsa.dart';
 import '../key/key_model.dart';
 import 'backup_client.dart';
 import 'backup_model.dart';
 import 'backup_repository.dart';
-
-export 'backup_client.dart';
-export 'backup_model.dart';
-export 'backup_repository.dart';
 
 class BackupService {
   final BackupRepository _repository;
@@ -31,7 +26,7 @@ class BackupService {
   ///
   /// Saves the public key in the initialization.
   BackupService(
-      this._backupClient, Database database, this._key, this._getBlock)
+      this._backupClient, CommonDatabase database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
     String keyBackupPath = '${Bytes.base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);

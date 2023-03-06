@@ -7,32 +7,48 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
+import 'package:sqlite3/common.dart';
+import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/node/backup/backup_service.dart';
 import 'package:tiki_sdk_dart/node/block/block_model.dart';
 import 'package:tiki_sdk_dart/node/block/block_repository.dart';
+import 'package:tiki_sdk_dart/node/block/block_service.dart';
+import 'package:tiki_sdk_dart/node/key/key_model.dart';
 import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_repository.dart';
-import 'package:tiki_sdk_dart/utils/utils.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
+import 'package:tiki_sdk_dart/utils/bytes.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa_public_key.dart';
 import 'package:uuid/uuid.dart';
 
-import '../in_mem_node_service_builder.dart';
+import '../in_mem.dart';
 
 void main() {
   group('Node tests', () {
     test('Init - No Primary - Success ', () async {
-      InMemNodeServiceBuilder inMemNodeServiceBuilder =
-          InMemNodeServiceBuilder();
-      NodeService node = await inMemNodeServiceBuilder.build();
+      InMemL0Storage backupClient = InMemL0Storage();
+      CommonDatabase database = sqlite3.openInMemory();
+      KeyService keyService = KeyService(InMemKeyStorage());
+      KeyModel primaryKey = await keyService.create();
+      NodeService node = NodeService()
+        ..blockInterval = const Duration(minutes: 1)
+        ..maxTransactions = 200
+        ..transactionService = TransactionService(database)
+        ..blockService = BlockService(database)
+        ..primaryKey = primaryKey;
+      node.backupService =
+          BackupService(backupClient, database, primaryKey, node.getBlock);
+
       Uint8List address = Bytes.base64UrlDecode(node.address);
-      Uint8List? publicKey = await inMemNodeServiceBuilder.backupClient
+      Uint8List? publicKey = await backupClient
           .read('${Bytes.base64UrlEncode(address)}/public.key');
 
       expect(publicKey != null, true);
       expect(Digest("SHA3-256").process(publicKey!), address);
 
-      KeyService keyService = KeyService(inMemNodeServiceBuilder.keyStorage);
       KeyModel? key = await keyService.get(node.address);
       RsaPublicKey rsaPublicKey = RsaPublicKey.decode(base64.encode(publicKey));
 
@@ -41,10 +57,9 @@ void main() {
 
       await Future.delayed(const Duration(seconds: 3));
 
-      BlockRepository blockRepository =
-          BlockRepository(inMemNodeServiceBuilder.database);
+      BlockRepository blockRepository = BlockRepository(database);
       TransactionRepository transactionRepository =
-          TransactionRepository(inMemNodeServiceBuilder.database);
+          TransactionRepository(database);
 
       BlockModel? last = blockRepository.getLast();
       List<TransactionModel> pending = transactionRepository.getByBlockId(null);
@@ -54,10 +69,7 @@ void main() {
     });
 
     test('Write - Success ', () async {
-      InMemNodeServiceBuilder inMemNodeServiceBuilder =
-          InMemNodeServiceBuilder();
-      inMemNodeServiceBuilder.blockInterval = const Duration(seconds: 1);
-      NodeService node = await inMemNodeServiceBuilder.build();
+      NodeService node = await InMemBuilders.nodeService();
       TransactionModel tx =
           await node.write(Uint8List.fromList(utf8.encode(const Uuid().v4())));
 
@@ -65,14 +77,13 @@ void main() {
       expect(tx.signature != null, true);
 
       TransactionRepository transactionRepository =
-          TransactionRepository(inMemNodeServiceBuilder.database);
+          TransactionRepository(node.database);
       List<TransactionModel> pending = transactionRepository.getByBlockId(null);
       expect(pending.length, 1);
 
       await Future.delayed(const Duration(seconds: 3));
 
-      BlockRepository blockRepository =
-          BlockRepository(inMemNodeServiceBuilder.database);
+      BlockRepository blockRepository = BlockRepository(node.database);
       BlockModel? last = blockRepository.getLast();
       expect(last != null, true);
       expect(last?.id != null, true);
@@ -87,25 +98,15 @@ void main() {
     });
 
     test('Re-init - With Primary - Success ', () async {
-      InMemNodeServiceBuilder inMemNodeServiceBuilder =
-          InMemNodeServiceBuilder();
-      inMemNodeServiceBuilder.blockInterval = const Duration(seconds: 1);
-      NodeService node = await inMemNodeServiceBuilder.build();
-
+      NodeService node = await InMemBuilders.nodeService();
       String address = node.address;
       expect(node.address, address);
     });
 
     test('Re-init - Invalid Address - Success ', () async {
-      InMemNodeServiceBuilder inMemNodeServiceBuilder =
-          InMemNodeServiceBuilder();
-      inMemNodeServiceBuilder.blockInterval = const Duration(seconds: 1);
-      NodeService node = await inMemNodeServiceBuilder.build();
-
+      NodeService node = await InMemBuilders.nodeService();
       String address = const Uuid().v4();
-
       String address2 = node.address;
-
       expect(address != address2, true);
     });
   });

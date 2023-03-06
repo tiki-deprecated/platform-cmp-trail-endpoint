@@ -4,10 +4,11 @@
  */
 
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/node/key/key_model.dart';
 import 'package:tiki_sdk_dart/node/key/key_service.dart';
-import 'package:tiki_sdk_dart/utils/utils.dart';
+import 'package:tiki_sdk_dart/utils/bytes.dart';
 
-import '../../in_mem_key.dart';
+import '../../in_mem.dart';
 
 void main() {
   final InMemKeyStorage secureStorage = InMemKeyStorage();

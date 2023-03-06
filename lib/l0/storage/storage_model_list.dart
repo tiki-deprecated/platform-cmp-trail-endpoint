@@ -5,7 +5,7 @@
 
 import 'package:html/dom.dart';
 
-import '../../utils/utils.dart';
+import '../../utils/xml_parse.dart';
 import 'storage_model_list_ver.dart';
 
 /// The list of versions for a stored object

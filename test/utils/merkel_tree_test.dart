@@ -9,12 +9,14 @@ import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
+import 'package:tiki_sdk_dart/node/key/key_model.dart';
 import 'package:tiki_sdk_dart/node/key/key_service.dart';
+import 'package:tiki_sdk_dart/node/transaction/transaction_model.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
 import 'package:tiki_sdk_dart/utils/merkel_tree.dart';
 import 'package:uuid/uuid.dart';
 
-import '../in_mem_key.dart';
+import '../in_mem.dart';
 
 void main() {
   group('Merkel Tests', () {

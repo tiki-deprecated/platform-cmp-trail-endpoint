@@ -2,7 +2,8 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/utils/utils.dart';
+import 'package:tiki_sdk_dart/utils/bytes.dart';
+import 'package:tiki_sdk_dart/utils/compact_size.dart';
 
 void main() {
   group('Bytes Tests', () {
