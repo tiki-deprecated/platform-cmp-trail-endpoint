@@ -28,7 +28,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr checkout ${{ github.event.pull_request.number }}
-          export PR_BRANCH=$(branch=git branch --show-current)
+          export PR_BRANCH=$(git branch --show-current)
           echo "branch=$PR_BRANCH" >> $GITHUB_OUTPUT
           
       - name: Get Version
@@ -43,6 +43,7 @@ jobs:
           sed -i 's/version:*.*.*/version: ${{ steps.semver.outputs.nextStrict }}/' pubspec.yaml
 
       - name: Commit Changes
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
