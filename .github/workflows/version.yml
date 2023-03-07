@@ -35,7 +35,7 @@ jobs:
         uses: ietf-tools/semver-action@v1
         with:
           token: ${{ github.token }}
-          branch: release/2.0.0
+          branch: ${{ steps.getpr.outputs.branch }}
 
       - name: Set Version
         run: |
