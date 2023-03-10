@@ -12,8 +12,7 @@ import 'registry_model_req.dart';
 import 'registry_model_rsp.dart';
 
 class RegistryRepository {
-  //static const url = 'https://auth.l0.mytiki.com/api/latest/id';
-  static const String url = 'http://localhost:10507';
+  static const url = 'https://auth.l0.mytiki.com';
   static const String path = '/api/latest/id';
   static const String headerSignature = 'X-Address-Signature';
   static const String headerCustomerAuth = 'X-Customer-Authorization';

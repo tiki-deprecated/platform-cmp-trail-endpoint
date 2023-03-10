@@ -36,9 +36,11 @@ class LicenseService {
           ..add(ContentSchema.license.toCompactSize())
           ..add(license.serialize()))
         .toBytes();
+
+    String assetRef = base64.encode(utf8
+        .encode("${_nodeService.address}://${Bytes.base64UrlEncode(title)}"));
     TransactionModel transaction =
-        await _nodeService.write(contents, 
-          assetRef: "${_nodeService.address}://${Bytes.base64UrlEncode(title)}");
+        await _nodeService.write(contents, assetRef: assetRef);
 
     license.transactionId = transaction.id!;
     _repository.save(license);
