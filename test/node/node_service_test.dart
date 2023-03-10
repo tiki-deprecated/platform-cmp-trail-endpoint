@@ -49,7 +49,7 @@ void main() {
       expect(publicKey != null, true);
       expect(Digest("SHA3-256").process(publicKey!), address);
 
-      KeyModel? key = await keyService.get(node.address);
+      KeyModel? key = await keyService.get(primaryKey.id);
       RsaPublicKey rsaPublicKey = RsaPublicKey.decode(base64.encode(publicKey));
 
       expect(key != null, true);

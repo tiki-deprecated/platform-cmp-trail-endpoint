@@ -17,16 +17,16 @@ import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:uuid/uuid.dart';
 
 class InMemKeyStorage extends KeyStorage {
   Map<String, String> storage = {};
 
   @override
-  Future<String?> read({required String key}) async => storage[key];
+  Future<String?> read(String key) async => storage[key];
 
   @override
-  Future<void> write({required String key, required String value}) async =>
-      storage[key] = value;
+  Future<void> write(String key, String value) async => storage[key] = value;
 }
 
 class InMemL0Storage implements BackupClient {
@@ -78,11 +78,10 @@ class InMemBuilders {
   }
 
   static Future<TikiSdk> tikiSdk(
-      {String? address,
-      String origin = 'com.mytiki.tiki_sdk_dart.test'}) async {
+      {String? id, String origin = 'com.mytiki.tiki_sdk_dart.test'}) async {
     InMemKeyStorage keyStorage = InMemKeyStorage();
 
-    address = await TikiSdk.withAddress(keyStorage, address: address);
+    String address = await TikiSdk.withId(id ?? const Uuid().v4(), keyStorage);
     NodeService nodeService = await InMemBuilders.nodeService(
         address: address, keyStorage: keyStorage);
 
