@@ -22,11 +22,10 @@ class InMemKeyStorage extends KeyStorage {
   Map<String, String> storage = {};
 
   @override
-  Future<String?> read({required String key}) async => storage[key];
+  Future<String?> read(String key) async => storage[key];
 
   @override
-  Future<void> write({required String key, required String value}) async =>
-      storage[key] = value;
+  Future<void> write(String key, String value) async => storage[key] = value;
 }
 
 class InMemL0Storage implements BackupClient {
