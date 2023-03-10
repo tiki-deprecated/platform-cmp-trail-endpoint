@@ -50,21 +50,16 @@ class TikiSdk {
         _nodeService = nodeService;
 
   /// Use before [init] to add a wallet address and keypair
-  /// to the [keyStorage].
+  /// to the [keyStorage] for [id].
   ///
-  /// If an [address] is provided, [keyStorage] is checked for
-  /// corresponding private keys.
-  ///
-  /// If private keys are missing or no [address] is provided,
-  /// a new [address] and keys are created.
+  /// If the private keys are missing a new address and
+  /// private key is created.
   ///
   /// Returns the valid (created or provided) address
-  static Future<String> withAddress(KeyStorage keyStorage,
-      {String? address}) async {
+  static Future<String> withId(String id, KeyStorage keyStorage) async {
     KeyService keyService = KeyService(keyStorage);
-    KeyModel primaryKey = address != null
-        ? await keyService.get(address) ?? await keyService.create()
-        : await keyService.create();
+    KeyModel primaryKey =
+        await keyService.get(id) ?? await keyService.create(id: id);
     return Bytes.base64UrlEncode(primaryKey.address);
   }
 
@@ -80,16 +75,17 @@ class TikiSdk {
   ///
   /// • [keyStorage] - Platform-specific, encrypted, private key persistence.
   ///
-  /// • [address] - The wallet address for the instance. Private key MUST be
-  /// registered in the provided [keyStorage]. Use [withAddress].
+  /// • [id] - The id mapped to the wallet's address and private keys.
+  /// Private key MUST be previously registered in the provided [keyStorage].
+  /// Use [withId].
   ///
   /// • [database] - Platform-specific sqlite3 implementation, opened.
   static Future<TikiSdk> init(String publishingId, String origin,
-      KeyStorage keyStorage, String address, CommonDatabase database,
+      KeyStorage keyStorage, String id, CommonDatabase database,
       {int maxTransactions = 1,
       Duration blockInterval = const Duration(minutes: 1)}) async {
     KeyService keyService = KeyService(keyStorage);
-    KeyModel? primaryKey = await keyService.get(address);
+    KeyModel? primaryKey = await keyService.get(id);
     if (primaryKey == null) {
       throw StateError("Use keystore() to initialize address");
     }
