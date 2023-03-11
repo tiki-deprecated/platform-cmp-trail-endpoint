@@ -10,6 +10,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/cache/license/license_service.dart';
 import 'package:tiki_sdk_dart/cache/title/title_service.dart';
 import 'package:tiki_sdk_dart/l0/auth/auth_service.dart';
+import 'package:tiki_sdk_dart/l0/registry/registry_model_rsp.dart';
 import 'package:tiki_sdk_dart/l0/registry/registry_service.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_client.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_service.dart';
@@ -18,7 +19,11 @@ import 'package:tiki_sdk_dart/node/key/key_model.dart';
 import 'package:tiki_sdk_dart/node/key/key_service.dart';
 import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/node/transaction/transaction_service.dart';
+import 'package:tiki_sdk_dart/node/xchain/xchain_client.dart';
+import 'package:tiki_sdk_dart/node/xchain/xchain_service.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
+import 'package:tiki_sdk_dart/utils/rsa/rsa_private_key.dart';
 import 'package:uuid/uuid.dart';
 
 class InMemKeyStorage extends KeyStorage {
@@ -31,7 +36,7 @@ class InMemKeyStorage extends KeyStorage {
   Future<void> write(String key, String value) async => storage[key] = value;
 }
 
-class InMemL0Storage implements BackupClient {
+class InMemL0Storage implements BackupClient, XChainClient {
   Map<String, Map<String, Uint8List>> storage = {};
 
   @override
@@ -43,18 +48,52 @@ class InMemL0Storage implements BackupClient {
     storage[address]![id] = value;
   }
 
+  @override
   Future<Uint8List?> read(String key) async {
     List<String> keys = key.split('/');
     String address = keys[0];
     String id = keys[1];
     return storage[address]?[id];
   }
+
+  @override
+  Future<Set<String>> list(String key) async {
+    Set<String> keys = {};
+    storage.forEach((addr, value) {
+      value.forEach((id, value) {
+        keys.add('$addr/$id');
+      });
+    });
+    return keys;
+  }
 }
 
 class InMemAuthService implements AuthService {
   @override
-  // TODO: implement token
-  Future<String?> get token => throw UnimplementedError();
+  Future<String?> get token => Future.value('dummy');
+}
+
+class InMemRegistryService implements RegistryService {
+  final RsaPrivateKey privateKey = Rsa.generate().privateKey;
+  final Set<String> addresses = {};
+
+  InMemRegistryService({String? address}) {
+    if (address != null) addresses.add(address);
+  }
+
+  @override
+  Future<RegistryModelRsp> get(String id, {String? customerAuth}) {
+    return Future.value(
+        RegistryModelRsp(signKey: privateKey, addresses: addresses.toList()));
+  }
+
+  @override
+  Future<RegistryModelRsp> register(String id, String address,
+      {String? customerAuth}) {
+    addresses.add(address);
+    return Future.value(
+        RegistryModelRsp(signKey: privateKey, addresses: addresses.toList()));
+  }
 }
 
 class InMemBuilders {
@@ -62,14 +101,14 @@ class InMemBuilders {
   static const int _maxTransactions = 200;
 
   static Future<NodeService> nodeService(
-      {String? address, KeyStorage? keyStorage}) async {
+      {String? id, KeyStorage? keyStorage}) async {
     InMemL0Storage backupClient = InMemL0Storage();
-    keyStorage = InMemKeyStorage();
+    keyStorage ??= InMemKeyStorage();
     CommonDatabase database = sqlite3.openInMemory();
 
     KeyService keyService = KeyService(keyStorage);
-    KeyModel primaryKey = address != null
-        ? await keyService.get(address) ?? await keyService.create()
+    KeyModel primaryKey = id != null
+        ? await keyService.get(id) ?? await keyService.create()
         : await keyService.create();
 
     NodeService nodeService = NodeService()
@@ -77,7 +116,8 @@ class InMemBuilders {
       ..maxTransactions = _maxTransactions
       ..transactionService = TransactionService(database)
       ..blockService = BlockService(database)
-      ..primaryKey = primaryKey;
+      ..primaryKey = primaryKey
+      ..xChainService = XChainService(backupClient, database);
     nodeService.backupService =
         BackupService(backupClient, database, primaryKey, nodeService.getBlock);
     await nodeService.init();
@@ -86,22 +126,18 @@ class InMemBuilders {
 
   static Future<TikiSdk> tikiSdk(
       {String? id, String origin = 'com.mytiki.tiki_sdk_dart.test'}) async {
+    id ??= const Uuid().v4();
     InMemKeyStorage keyStorage = InMemKeyStorage();
 
-    String address = await TikiSdk.withId(id ?? const Uuid().v4(), keyStorage);
-    NodeService nodeService = await InMemBuilders.nodeService(
-        address: address, keyStorage: keyStorage);
+    String address = await TikiSdk.withId(id, keyStorage);
+    NodeService nodeService =
+        await InMemBuilders.nodeService(id: id, keyStorage: keyStorage);
 
     TitleService titleService =
         TitleService(origin, nodeService, nodeService.database);
     LicenseService licenseService =
         LicenseService(nodeService.database, nodeService);
-
-    KeyService keyService = KeyService(keyStorage);
-    KeyModel? primaryKey = await keyService.get(address);
-    RegistryService registryService =
-        RegistryService(primaryKey!.privateKey, InMemAuthService());
-
-    return TikiSdk(titleService, licenseService, nodeService, registryService);
+    return TikiSdk(titleService, licenseService, nodeService,
+        InMemRegistryService(address: address));
   }
 }

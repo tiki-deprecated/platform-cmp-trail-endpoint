@@ -80,8 +80,10 @@ class NodeService {
     return _serializeBlock(block, transactions);
   }
 
-  Future<void> sync(String address, Function(TransactionModel) onTxnAdded) =>
-      _xChainService.sync(address,
+  Future<void> sync(
+      String address, Function(TransactionModel) onTxnAdded) async {
+    if (address != this.address) {
+      await _xChainService.sync(address,
           (BlockModel block, List<TransactionModel> txns) {
         for (TransactionModel txn in txns) {
           _transactionService.tryAdd(txn);
@@ -89,6 +91,8 @@ class NodeService {
         }
         _blockService.tryAdd(block);
       });
+    }
+  }
 
   void _startBlockTimer() {
     if (_blockTimer == null || !_blockTimer!.isActive) {

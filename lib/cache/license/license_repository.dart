@@ -67,7 +67,7 @@ class LicenseRepository {
     ResultSet results = _db.select('''
       SELECT * FROM $table
       LEFT JOIN ${TransactionRepository.table} 
-      ON $table.${columnTransactionId} = ${TransactionRepository.table}.${TransactionRepository.columnId} 
+      ON $table.$columnTransactionId = ${TransactionRepository.table}.${TransactionRepository.columnId} 
       WHERE $columnTitle = x'${Bytes.hexEncode(title)}' 
       ORDER BY ${TransactionRepository.table}.${TransactionRepository.columnTimestamp} DESC
       LIMIT 1''');

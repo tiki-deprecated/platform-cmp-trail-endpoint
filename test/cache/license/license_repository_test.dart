@@ -3,8 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'dart:typed_data';
-
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/cache/license/license_model.dart';
@@ -28,18 +26,11 @@ void main() {
       TitleRepository titleRepository = TitleRepository(db);
       LicenseRepository licenseRepository = LicenseRepository(db);
 
+      TitleModel title = TitleModel('com.mytiki.test', const Uuid().v4(),
+          transactionId: Bytes.utf8Encode(const Uuid().v4()));
+      titleRepository.save(title);
       int numRecords = 3;
-      Map<Uint8List, String> tidDescMap = {};
-
       for (int i = 0; i < numRecords; i++) {
-        Uint8List tid = Bytes.utf8Encode(const Uuid().v4());
-        String description = const Uuid().v4();
-        tidDescMap[tid] = description;
-
-        TitleModel title = TitleModel('com.mytiki.test', const Uuid().v4(),
-            transactionId: tid);
-        titleRepository.save(title);
-
         LicenseModel license = LicenseModel(
             title.transactionId!,
             [
@@ -47,15 +38,15 @@ void main() {
                   destinations: ["*.mytiki.com"])
             ],
             'terms',
-            description: description);
+            description: 'license: $i');
         licenseRepository.save(license);
       }
 
+      List<LicenseModel> found =
+          licenseRepository.getAllByTitle(title.transactionId!);
+      expect(found.length, numRecords);
       for (int i = 0; i < numRecords; i++) {
-        LicenseModel? license =
-            licenseRepository.getLatestByTitle(tidDescMap.keys.elementAt(i));
-        expect(license == null, false);
-        expect(license!.description, tidDescMap.values.elementAt(i));
+        LicenseModel license = found.elementAt(i);
         expect(license.expiry == null, true);
         expect(license.terms, 'terms');
         expect(license.uses.length, 1);
