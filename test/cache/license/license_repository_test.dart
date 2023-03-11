@@ -9,12 +9,17 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/cache/license/license_model.dart';
 import 'package:tiki_sdk_dart/cache/license/license_repository.dart';
+import 'package:tiki_sdk_dart/cache/license/license_service.dart';
 import 'package:tiki_sdk_dart/cache/license/license_use.dart';
 import 'package:tiki_sdk_dart/cache/license/license_usecase.dart';
 import 'package:tiki_sdk_dart/cache/title/title_model.dart';
 import 'package:tiki_sdk_dart/cache/title/title_repository.dart';
+import 'package:tiki_sdk_dart/cache/title/title_service.dart';
+import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../in_mem.dart';
 
 void main() {
   group('License Repository Tests', () {
@@ -61,6 +66,28 @@ void main() {
         expect(license.uses.elementAt(0).destinations?.elementAt(0),
             "*.mytiki.com");
       }
+    });
+
+    test('getLatestByTitle - Success', () async {
+      NodeService nodeService = await InMemBuilders.nodeService();
+      TitleService titleService =
+          TitleService('com.tiki.test', nodeService, nodeService.database);
+      LicenseService licenseService =
+          LicenseService(nodeService.database, nodeService);
+      LicenseRepository licenseRepository =
+          LicenseRepository(nodeService.database);
+
+      TitleModel title = await titleService.create('ptr');
+      int numRecords = 10;
+      for (int i = 0; i < numRecords; i++) {
+        licenseService.create(title.transactionId!, [], 'record: $i');
+      }
+
+      await Future.delayed(const Duration(seconds: 5));
+
+      LicenseModel? license =
+          licenseRepository.getLatestByTitle(title.transactionId!);
+      expect(license?.terms, 'record: 9');
     });
   });
 }
