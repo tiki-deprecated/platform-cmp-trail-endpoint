@@ -49,6 +49,8 @@ class TransactionService {
     _repository.commit(transactionId, block, merkelProof);
   }
 
+  void add(TransactionModel transaction) => _repository.save(transaction);
+
   /// Validates the [TransactionModel] inclusion in [TransactionModel.block] by
   /// validating its [TransactionModel.merkelProof] with [MerkelTree.validate].
   static bool validateInclusion(TransactionModel transaction, Uint8List root) =>

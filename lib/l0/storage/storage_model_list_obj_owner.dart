@@ -11,13 +11,13 @@ import '../../utils/xml_parse.dart';
 ///
 /// A POJO style model representing an XML response object returned
 /// by the hosted storage.
-class StorageModelListVerOwner {
+class StorageModelListObjOwner {
   String? id;
   String? displayName;
 
-  StorageModelListVerOwner({this.id, this.displayName});
+  StorageModelListObjOwner({this.id, this.displayName});
 
-  StorageModelListVerOwner.fromElement(Element? element) {
+  StorageModelListObjOwner.fromElement(Element? element) {
     if (element != null) {
       id = XmlParse.element(element, 'ID')?.text;
       displayName = XmlParse.element(element, 'DisplayName')?.text;
@@ -26,6 +26,6 @@ class StorageModelListVerOwner {
 
   @override
   String toString() {
-    return 'StorageModelListVerOwner{id: $id, displayName: $displayName}';
+    return 'StorageModelListObjOwner{id: $id, displayName: $displayName}';
   }
 }

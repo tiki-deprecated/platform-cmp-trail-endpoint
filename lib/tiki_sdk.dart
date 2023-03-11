@@ -23,6 +23,7 @@ import 'node/key/key_service.dart';
 import 'node/key/key_storage.dart';
 import 'node/node_service.dart';
 import 'node/transaction/transaction_service.dart';
+import 'node/xchain/xchain_service.dart';
 import 'title_record.dart';
 import 'utils/bytes.dart';
 
@@ -92,11 +93,13 @@ class TikiSdk {
 
     StorageService storageService =
         StorageService.publishingId(primaryKey.privateKey, publishingId);
+
     NodeService nodeService = NodeService()
       ..blockInterval = blockInterval
       ..maxTransactions = maxTransactions
       ..transactionService = TransactionService(database)
       ..blockService = BlockService(database)
+      ..xChainService = XChainService(storageService, database)
       ..primaryKey = primaryKey;
     nodeService.backupService = BackupService(
         storageService, database, primaryKey, nodeService.getBlock);

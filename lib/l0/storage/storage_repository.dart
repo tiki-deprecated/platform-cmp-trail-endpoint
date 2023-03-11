@@ -16,6 +16,7 @@ import 'storage_model_list.dart';
 import 'storage_model_token_req.dart';
 import 'storage_model_token_rsp.dart';
 import 'storage_model_upload.dart';
+import 'storage_model_vlist.dart';
 
 /// Client-side implementation of storage APIs and request/response marshalling
 /// for use by the [StorageService]
@@ -93,20 +94,32 @@ class StorageRepository {
 
   /// Get a list of stored versions for an object by it's [key].
   ///
-  /// Returns [StorageModelList]
+  /// Returns [StorageModelVList]
   /// Throws [HttpException] for all non-200 HTTP responses
   /// Throws [UnimplementedError] for version lists greater than 1000
-  Future<StorageModelList> versions(String key) async {
+  Future<StorageModelVList> versions(String key,
+      {String? versionMarker}) async {
     if (key.startsWith('/')) key = key.replaceFirst('/', '');
-    http.Response rsp =
-        await http.get(_bucketUri.replace(query: 'versions&prefix=$key'));
+    String markerQuery =
+        versionMarker != null ? '&version-id-marker=$versionMarker' : '';
+    http.Response rsp = await http
+        .get(_bucketUri.replace(query: 'versions&prefix=$key$markerQuery'));
     if (rsp.statusCode == 200) {
-      StorageModelList list = StorageModelList.fromElement(XmlParse.first(
+      return StorageModelVList.fromElement(XmlParse.first(
           parse(rsp.body).getElementsByTagName('ListVersionsResult')));
-      if (list.isTruncated == true) {
-        throw UnimplementedError('Version lists > 1000 keys are not supported');
-      }
-      return list;
+    } else {
+      throw HttpException('HTTP Error ${rsp.statusCode}: ${rsp.body}');
+    }
+  }
+
+  Future<StorageModelList> list(String key, {String? marker}) async {
+    String markerQuery = marker != null ? '&marker=$marker' : '';
+    http.Response rsp = await http.get(
+        Uri.parse('https://bucket.storage.l0.mytiki.com')
+            .replace(query: 'prefix=$key$markerQuery'));
+    if (rsp.statusCode == 200) {
+      return StorageModelList.fromElement(XmlParse.first(
+          parse(rsp.body).getElementsByTagName('ListBucketResult')));
     } else {
       throw HttpException('HTTP Error ${rsp.statusCode}: ${rsp.body}');
     }

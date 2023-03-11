@@ -5,6 +5,7 @@
 
 import 'dart:typed_data';
 
-abstract class BackupClient {
-  Future<void> write(String key, Uint8List value);
+abstract class XChainClient {
+  Future<Uint8List?> read(String key);
+  Future<Set<String>> list(String key);
 }

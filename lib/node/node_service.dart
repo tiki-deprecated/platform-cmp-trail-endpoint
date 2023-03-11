@@ -17,6 +17,7 @@ import 'block/block_service.dart';
 import 'key/key_model.dart';
 import 'transaction/transaction_model.dart';
 import 'transaction/transaction_service.dart';
+import 'xchain/xchain_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
@@ -28,6 +29,7 @@ class NodeService {
   late final BackupService _backupService;
   late final Duration _blockInterval;
   late final int _maxTransactions;
+  late final XChainService _xChainService;
 
   Timer? _blockTimer;
 
@@ -40,6 +42,7 @@ class NodeService {
   set blockService(BlockService val) => _blockService = val;
   set backupService(BackupService val) => _backupService = val;
   set primaryKey(KeyModel val) => _primaryKey = val;
+  set xChainService(XChainService val) => _xChainService = val;
 
   startBlockTimer() => _blockTimer == null ? _startBlockTimer() : null;
 
@@ -111,4 +114,23 @@ class NodeService {
     }
     return bytes.toBytes();
   }
+
+  Future<void> addRef(address,
+          Function(Uint8List transactionId, Uint8List contents) callback) =>
+      _xChainService.sync(address,
+          (BlockModel block, List<TransactionModel> txns) {
+        for (TransactionModel txn in txns) {
+          try {
+            _transactionService.add(txn);
+            callback(txn.id!, txn.contents);
+          } catch (e) {
+            // do nothing
+          }
+        }
+        try {
+          _blockService.commit(block);
+        } catch (e) {
+          // do nothing
+        }
+      });
 }
