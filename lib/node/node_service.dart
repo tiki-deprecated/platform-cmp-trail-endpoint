@@ -80,6 +80,16 @@ class NodeService {
     return _serializeBlock(block, transactions);
   }
 
+  Future<void> sync(String address, Function(TransactionModel) onTxnAdded) =>
+      _xChainService.sync(address,
+          (BlockModel block, List<TransactionModel> txns) {
+        for (TransactionModel txn in txns) {
+          _transactionService.tryAdd(txn);
+          onTxnAdded(txn);
+        }
+        _blockService.tryAdd(block);
+      });
+
   void _startBlockTimer() {
     if (_blockTimer == null || !_blockTimer!.isActive) {
       _blockTimer = Timer.periodic(_blockInterval, (_) async {
@@ -115,25 +125,4 @@ class NodeService {
     }
     return bytes.toBytes();
   }
-
-  Future<void> addRef(
-          address,
-          Function(Uint8List transactionId, Uint8List contents, String assetRef)
-              callback) =>
-      _xChainService.sync(address,
-          (BlockModel block, List<TransactionModel> txns) {
-        for (TransactionModel txn in txns) {
-          try {
-            _transactionService.add(txn);
-            callback(txn.id!, txn.contents, txn.assetRef);
-          } catch (e) {
-            // do nothing
-          }
-        }
-        try {
-          _blockService.commit(block);
-        } catch (e) {
-          // do nothing
-        }
-      });
 }

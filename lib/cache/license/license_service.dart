@@ -58,5 +58,12 @@ class LicenseService {
   /// Returns the consent for a [id].
   LicenseModel? getById(Uint8List id) => _repository.getById(id);
 
-  void add(LicenseModel license) => _repository.save(license);
+  void tryAdd(LicenseModel license) {
+    if (license.transactionId != null) {
+      LicenseModel? found = _repository.getById(license.transactionId!);
+      if (found == null) {
+        _repository.save(license);
+      }
+    }
+  }
 }

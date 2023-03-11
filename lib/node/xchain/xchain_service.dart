@@ -28,12 +28,12 @@ class XChainService {
       : _repository = XChainRepository(db);
 
   Future<void> sync(String address,
-      Function(BlockModel, List<TransactionModel>) callback) async {
+      Function(BlockModel, List<TransactionModel>) onBlockAdded) async {
     RsaPublicKey publicKey = await _getPublicKey(address);
     List<String> blockIds = await _getBlockIds(address);
     List<Future> fetches = [];
     for (String key in blockIds) {
-      fetches.add(_fetchBlock(key, publicKey, callback));
+      fetches.add(_fetchBlock(key, publicKey, onBlockAdded));
     }
     await Future.wait(fetches);
   }
@@ -63,7 +63,7 @@ class XChainService {
   }
 
   Future<void> _fetchBlock(String key, RsaPublicKey publicKey,
-      Function(BlockModel, List<TransactionModel>) callback) async {
+      Function(BlockModel, List<TransactionModel>) onBlockAdded) async {
     Uint8List? bytes = await _client.read(key);
     if (bytes != null) {
       List<Uint8List> signedBlock = CompactSize.decode(bytes);
@@ -82,7 +82,7 @@ class XChainService {
           _decodeAndVerifyTxns(decodedBlock, publicKey, block);
 
       if (txns.isNotEmpty) {
-        callback(block, txns);
+        onBlockAdded(block, txns);
         _repository.save(XChainModel(key,
             address: txns.elementAt(0).address,
             blockId: block.id,

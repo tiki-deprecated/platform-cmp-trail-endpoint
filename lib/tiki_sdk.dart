@@ -7,7 +7,6 @@ library tiki_sdk_dart;
 import 'dart:typed_data';
 
 import 'package:sqlite3/common.dart';
-import 'package:tiki_sdk_dart/utils/compact_size.dart';
 
 import 'cache/content_schema.dart';
 import 'cache/license/license_model.dart';
@@ -32,6 +31,7 @@ import 'node/transaction/transaction_service.dart';
 import 'node/xchain/xchain_service.dart';
 import 'title_record.dart';
 import 'utils/bytes.dart';
+import 'utils/compact_size.dart';
 
 export 'cache/license/license_use.dart';
 export 'cache/license/license_usecase.dart';
@@ -356,29 +356,24 @@ class TikiSdk {
           expiry: license.expiry);
 
   Future<void> _syncRegistry() => _registryService.get(id).then((rsp) {
-        if (rsp.addresses != null) {
-          for (String address in rsp.addresses!) {
-            _nodeService.addRef(address, (transactionId, contents, assetRef) {
-              List<Uint8List> decoded = CompactSize.decode(contents);
-              try {
-                ContentSchema schema = ContentSchema.fromValue(
-                    Bytes.decodeBigInt(decoded[0]).toInt());
-                if (schema == ContentSchema.title) {
-                  TitleModel title = TitleModel.decode(decoded.sublist(1));
-                  title.transactionId = transactionId;
-                  _titleService.add(title);
-                } else if (schema == ContentSchema.license) {
-                  //todo update cache for cross address titles
-                  LicenseModel license =
-                      LicenseModel.decode(null, decoded.sublist(1));
-                  license.transactionId = transactionId;
-                  _licenseService.add(license);
-                }
-              } catch (e) {
-                // do nothing
+        rsp.addresses?.forEach((address) => _nodeService.sync(address, (txn) {
+              List<Uint8List> decodedContents =
+                  CompactSize.decode(txn.contents);
+              ContentSchema schema = ContentSchema.fromValue(
+                  Bytes.decodeBigInt(decodedContents[0]).toInt());
+              if (schema == ContentSchema.title) {
+                TitleModel title =
+                    TitleModel.decode(decodedContents.sublist(1));
+                title.transactionId = txn.id;
+                _titleService.tryAdd(title);
+              } else if (schema == ContentSchema.license) {
+                Uint8List title =
+                    Bytes.base64UrlDecode(txn.assetRef.split("://").last);
+                LicenseModel license =
+                    LicenseModel.decode(title, decodedContents.sublist(1));
+                license.transactionId = txn.id;
+                _licenseService.tryAdd(license);
               }
-            });
-          }
-        }
+            }));
       });
 }

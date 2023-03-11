@@ -58,5 +58,12 @@ class TitleService {
   /// Returns a [TitleModel] from the local cache using its [id].
   TitleModel? getById(Uint8List id) => _repository.getById(id);
 
-  void add(TitleModel title) => _repository.save(title);
+  void tryAdd(TitleModel title) {
+    if (title.transactionId != null) {
+      TitleModel? found = _repository.getById(title.transactionId!);
+      if (found == null) {
+        _repository.save(title);
+      }
+    }
+  }
 }
