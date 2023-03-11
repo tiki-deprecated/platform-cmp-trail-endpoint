@@ -4,8 +4,12 @@
  */
 library tiki_sdk_dart;
 
-import 'package:sqlite3/common.dart';
+import 'dart:typed_data';
 
+import 'package:sqlite3/common.dart';
+import 'package:tiki_sdk_dart/utils/compact_size.dart';
+
+import 'cache/content_schema.dart';
 import 'cache/license/license_model.dart';
 import 'cache/license/license_service.dart';
 import 'cache/license/license_use.dart';
@@ -14,6 +18,8 @@ import 'cache/title/title_model.dart';
 import 'cache/title/title_service.dart';
 import 'cache/title/title_tag.dart';
 import 'guard.dart';
+import 'l0/auth/auth_service.dart';
+import 'l0/registry/registry_service.dart';
 import 'l0/storage/storage_service.dart';
 import 'license_record.dart';
 import 'node/backup/backup_service.dart';
@@ -91,8 +97,9 @@ class TikiSdk {
       throw StateError("Use keystore() to initialize address");
     }
 
+    AuthService authService = AuthService(publishingId);
     StorageService storageService =
-        StorageService.publishingId(primaryKey.privateKey, publishingId);
+        StorageService(primaryKey.privateKey, authService);
 
     NodeService nodeService = NodeService()
       ..blockInterval = blockInterval
@@ -109,6 +116,39 @@ class TikiSdk {
         TitleService(origin, nodeService, nodeService.database);
     LicenseService licenseService =
         LicenseService(nodeService.database, nodeService);
+
+    RegistryService registryService =
+        RegistryService(primaryKey.privateKey, authService);
+    registryService
+        .register(id, Bytes.base64UrlEncode(primaryKey.address))
+        .then((rsp) {
+      if (rsp.addresses != null) {
+        for (String address in rsp.addresses!) {
+          nodeService.addRef(address, (transactionId, contents, assetRef) {
+            List<Uint8List> decoded = CompactSize.decode(contents);
+            try {
+              ContentSchema schema = ContentSchema.fromValue(
+                  Bytes.decodeBigInt(decoded[0]).toInt());
+              if (schema == ContentSchema.title) {
+                TitleModel title = TitleModel.decode(decoded.sublist(1));
+                title.transactionId = transactionId;
+                titleService.add(title);
+              } else if (schema == ContentSchema.license) {
+                //todo update cache for cross address titles
+
+                LicenseModel license =
+                    LicenseModel.decode(null, decoded.sublist(1));
+                license.transactionId = transactionId;
+                licenseService.add(license);
+              }
+            } catch (e) {
+              // do nothing
+            }
+          });
+        }
+      }
+    });
+
     return TikiSdk(titleService, licenseService, nodeService);
   }
 

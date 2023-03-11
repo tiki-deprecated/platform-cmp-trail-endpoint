@@ -57,4 +57,6 @@ class LicenseService {
 
   /// Returns the consent for a [id].
   LicenseModel? getById(Uint8List id) => _repository.getById(id);
+
+  void add(LicenseModel license) => _repository.save(license);
 }

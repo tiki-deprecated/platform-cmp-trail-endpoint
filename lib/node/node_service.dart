@@ -115,14 +115,16 @@ class NodeService {
     return bytes.toBytes();
   }
 
-  Future<void> addRef(address,
-          Function(Uint8List transactionId, Uint8List contents) callback) =>
+  Future<void> addRef(
+          address,
+          Function(Uint8List transactionId, Uint8List contents, String assetRef)
+              callback) =>
       _xChainService.sync(address,
           (BlockModel block, List<TransactionModel> txns) {
         for (TransactionModel txn in txns) {
           try {
             _transactionService.add(txn);
-            callback(txn.id!, txn.contents);
+            callback(txn.id!, txn.contents, txn.assetRef);
           } catch (e) {
             // do nothing
           }
