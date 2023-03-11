@@ -44,6 +44,7 @@ export 'title_record.dart';
 /// Use this to create, get, and enforce [LicenseRecord]s and
 /// [TitleRecord]s.
 class TikiSdk {
+  final RegistryService _registryService;
   final TitleService _titleService;
   final LicenseService _licenseService;
   final NodeService _nodeService;
@@ -51,10 +52,13 @@ class TikiSdk {
   /// Prefer [withAddress] and [init] instead.
   /// @nodoc
   TikiSdk(TitleService titleService, LicenseService licenseService,
-      NodeService nodeService)
+      NodeService nodeService, RegistryService registryService)
       : _titleService = titleService,
         _licenseService = licenseService,
-        _nodeService = nodeService;
+        _nodeService = nodeService,
+        _registryService = registryService {
+    _syncRegistry();
+  }
 
   /// Use before [init] to add a wallet address and keypair
   /// to the [keyStorage] for [id].
@@ -116,40 +120,11 @@ class TikiSdk {
         TitleService(origin, nodeService, nodeService.database);
     LicenseService licenseService =
         LicenseService(nodeService.database, nodeService);
-
     RegistryService registryService =
         RegistryService(primaryKey.privateKey, authService);
-    registryService
-        .register(id, Bytes.base64UrlEncode(primaryKey.address))
-        .then((rsp) {
-      if (rsp.addresses != null) {
-        for (String address in rsp.addresses!) {
-          nodeService.addRef(address, (transactionId, contents, assetRef) {
-            List<Uint8List> decoded = CompactSize.decode(contents);
-            try {
-              ContentSchema schema = ContentSchema.fromValue(
-                  Bytes.decodeBigInt(decoded[0]).toInt());
-              if (schema == ContentSchema.title) {
-                TitleModel title = TitleModel.decode(decoded.sublist(1));
-                title.transactionId = transactionId;
-                titleService.add(title);
-              } else if (schema == ContentSchema.license) {
-                //todo update cache for cross address titles
+    await registryService.register(id, nodeService.address);
 
-                LicenseModel license =
-                    LicenseModel.decode(null, decoded.sublist(1));
-                license.transactionId = transactionId;
-                licenseService.add(license);
-              }
-            } catch (e) {
-              // do nothing
-            }
-          });
-        }
-      }
-    });
-
-    return TikiSdk(titleService, licenseService, nodeService);
+    return TikiSdk(titleService, licenseService, nodeService, registryService);
   }
 
   /// Returns the in-use wallet [address].
@@ -162,6 +137,8 @@ class TikiSdk {
   /// After [init], store the address somewhere local to your app that
   /// you can easily retrieve and reuse on app-reload.
   String get address => _nodeService.address;
+
+  String get id => _nodeService.id;
 
   /// Create a new [LicenseRecord].
   ///
@@ -377,4 +354,31 @@ class TikiSdk {
           license.terms,
           description: license.description,
           expiry: license.expiry);
+
+  Future<void> _syncRegistry() => _registryService.get(id).then((rsp) {
+        if (rsp.addresses != null) {
+          for (String address in rsp.addresses!) {
+            _nodeService.addRef(address, (transactionId, contents, assetRef) {
+              List<Uint8List> decoded = CompactSize.decode(contents);
+              try {
+                ContentSchema schema = ContentSchema.fromValue(
+                    Bytes.decodeBigInt(decoded[0]).toInt());
+                if (schema == ContentSchema.title) {
+                  TitleModel title = TitleModel.decode(decoded.sublist(1));
+                  title.transactionId = transactionId;
+                  _titleService.add(title);
+                } else if (schema == ContentSchema.license) {
+                  //todo update cache for cross address titles
+                  LicenseModel license =
+                      LicenseModel.decode(null, decoded.sublist(1));
+                  license.transactionId = transactionId;
+                  _licenseService.add(license);
+                }
+              } catch (e) {
+                // do nothing
+              }
+            });
+          }
+        }
+      });
 }

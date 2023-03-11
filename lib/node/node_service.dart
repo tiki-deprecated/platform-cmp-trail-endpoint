@@ -34,6 +34,7 @@ class NodeService {
   Timer? _blockTimer;
 
   String get address => Bytes.base64UrlEncode(_primaryKey.address);
+  String get id => _primaryKey.id;
   CommonDatabase get database => _blockService.database;
 
   set blockInterval(Duration val) => _blockInterval = val;

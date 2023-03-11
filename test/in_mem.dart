@@ -9,6 +9,8 @@ import 'package:sqlite3/common.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/cache/license/license_service.dart';
 import 'package:tiki_sdk_dart/cache/title/title_service.dart';
+import 'package:tiki_sdk_dart/l0/auth/auth_service.dart';
+import 'package:tiki_sdk_dart/l0/registry/registry_service.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_client.dart';
 import 'package:tiki_sdk_dart/node/backup/backup_service.dart';
 import 'package:tiki_sdk_dart/node/block/block_service.dart';
@@ -47,6 +49,12 @@ class InMemL0Storage implements BackupClient {
     String id = keys[1];
     return storage[address]?[id];
   }
+}
+
+class InMemAuthService implements AuthService {
+  @override
+  // TODO: implement token
+  Future<String?> get token => throw UnimplementedError();
 }
 
 class InMemBuilders {
@@ -88,6 +96,12 @@ class InMemBuilders {
         TitleService(origin, nodeService, nodeService.database);
     LicenseService licenseService =
         LicenseService(nodeService.database, nodeService);
-    return TikiSdk(titleService, licenseService, nodeService);
+
+    KeyService keyService = KeyService(keyStorage);
+    KeyModel? primaryKey = await keyService.get(address);
+    RegistryService registryService =
+        RegistryService(primaryKey!.privateKey, InMemAuthService());
+
+    return TikiSdk(titleService, licenseService, nodeService, registryService);
   }
 }
