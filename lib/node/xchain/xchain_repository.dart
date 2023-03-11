@@ -33,12 +33,6 @@ class XChainRepository {
       );
     ''');
 
-  XChainModel? getBySrc(String src) {
-    List<XChainModel> xcs =
-        _select(whereStmt: "WHERE $columnSrc = '${src.toLowerCase()}'");
-    return xcs.isNotEmpty ? xcs.first : null;
-  }
-
   List<XChainModel> getAllByAddress(Uint8List address) => _select(
       whereStmt: "WHERE $columnAddress = x'${Bytes.hexEncode(address)}'");
 
