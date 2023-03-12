@@ -43,7 +43,6 @@ class RegistryNock {
           "accept": "application/json",
           "authorization": startsWith("Bearer "),
           "x-address-signature": anything,
-          "x-customer-authorization": startsWith("Bearer "),
         })
         ..reply(
           200,

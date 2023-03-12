@@ -94,7 +94,8 @@ class TikiSdk {
   static Future<TikiSdk> init(String publishingId, String origin,
       KeyStorage keyStorage, String id, CommonDatabase database,
       {int maxTransactions = 1,
-      Duration blockInterval = const Duration(minutes: 1)}) async {
+      Duration blockInterval = const Duration(minutes: 1),
+      String? customerAuth}) async {
     KeyService keyService = KeyService(keyStorage);
     KeyModel? primaryKey = await keyService.get(id);
     if (primaryKey == null) {
@@ -122,7 +123,8 @@ class TikiSdk {
         LicenseService(nodeService.database, nodeService);
     RegistryService registryService =
         RegistryService(primaryKey.privateKey, authService);
-    await registryService.register(id, nodeService.address);
+    await registryService.register(id, nodeService.address,
+        customerAuth: customerAuth);
 
     return TikiSdk(titleService, licenseService, nodeService, registryService);
   }

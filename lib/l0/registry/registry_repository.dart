@@ -39,14 +39,13 @@ class RegistryRepository {
   }
 
   Future<RegistryModelRsp> addresses(String id,
-      {String? signature, String? authorization, String? customerAuth}) async {
+      {String? signature, String? authorization}) async {
     http.Response rsp = await http
         .get(_serviceUri.replace(path: '$path/$id/addresses'), headers: {
       "Content-Type": "application/json",
       "Accept": "application/json",
       "Authorization": "Bearer $authorization",
       headerSignature: signature ?? "",
-      headerCustomerAuth: "Bearer $customerAuth",
     });
     if (rsp.statusCode == 200) {
       return RegistryModelRsp.fromMap(jsonDecode(rsp.body));
