@@ -40,6 +40,10 @@ jobs:
       - name: Set Version
         run: |
           sed -i 's/version:*.*.*/version: ${{ steps.semver.outputs.nextStrict }}/' pubspec.yaml
+          
+
+      - name: Update docs
+        run: dart doc
 
       - name: Commit Changes
         continue-on-error: true
@@ -49,5 +53,6 @@ jobs:
           git config --global user.email "action@github.com"
           git config --global user.name "GH Action"
           git add pubspec.yaml
+          git add doc/
           git commit -m 'version bump'
           git push
