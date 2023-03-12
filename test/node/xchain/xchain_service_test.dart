@@ -81,7 +81,7 @@ void main() {
           xChainNock.address);
       expect(Bytes.base64UrlEncode(syncedTxns!.elementAt(0).signature!),
           'Ltp9hf-OvBizDsLzAiwwFZ6PP88Efc3GzuOrhd2IVpXA8DI3YHxJseJxsMZh5gV2fzVfZe25jm6uuPz7xFHmWO60e-LTmT2SB4-RBHR83YCB0V1J3d6hvYhfhGKP-GQ-7o9-alJXnxaaCiAfx7Xy7PuhZsM30UfpEHiJp4aO4n0oSHfRvnrQHN151JFdaVqmh0woPZFAHUsbknp2iDieujQLtoU0jhZjZYo3qTauru4yRYSqxoVw_cXL4Kt-KPspQwaMicQA1u56o2JkVwf-MWkbGuJWChdSVKYVbYO0AYg-kdgx1RUo1fUQuGgEVt1hm4be6BxBr8msAd4tJXO-8w');
-      expect(syncedTxns!.elementAt(0).assetRef, 'AA==');
+      expect(syncedTxns!.elementAt(0).assetRef, '\x00');
     });
   });
 }
