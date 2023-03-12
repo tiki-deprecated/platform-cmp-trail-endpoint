@@ -4,8 +4,10 @@
  */
 library tiki_sdk_dart;
 
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:pointycastle/api.dart';
 import 'package:sqlite3/common.dart';
 
 import 'cache/content_schema.dart';
@@ -190,6 +192,7 @@ class TikiSdk {
       String? titleDescription,
       String? licenseDescription,
       DateTime? expiry}) async {
+    ptr = _hashPtr(ptr);
     TitleModel? title = _titleService.getByPtr(ptr, origin: origin);
     title ??= await _titleService.create(ptr,
         origin: origin, tags: tags, description: titleDescription);
@@ -224,6 +227,7 @@ class TikiSdk {
       {String? origin,
       List<TitleTag> tags = const [],
       String? description}) async {
+    ptr = _hashPtr(ptr);
     TitleModel title = await _titleService.create(ptr,
         origin: origin, description: description, tags: tags);
     return TitleRecord(Bytes.base64UrlEncode(title.transactionId!), title.ptr,
@@ -240,6 +244,7 @@ class TikiSdk {
   /// specific [LicenseUse]. To check license validity, use the [guard]
   /// method.
   LicenseRecord? latest(String ptr, {String? origin}) {
+    ptr = _hashPtr(ptr);
     TitleModel? title = _titleService.getByPtr(ptr, origin: origin);
     if (title == null) return null;
     LicenseModel? license = _licenseService.getLatest(title.transactionId!);
@@ -256,6 +261,7 @@ class TikiSdk {
   /// specific [LicenseUse]. To check license validity, use the [guard]
   /// method.
   List<LicenseRecord> all(String ptr, {String? origin}) {
+    ptr = _hashPtr(ptr);
     TitleModel? title = _titleService.getByPtr(ptr, origin: origin);
     if (title == null) return [];
     List<LicenseModel> licenses = _licenseService.getAll(title.transactionId!);
@@ -330,6 +336,7 @@ class TikiSdk {
       List<String>? destinations,
       Function()? onPass,
       Function(String)? onFail}) {
+    ptr = _hashPtr(ptr);
     LicenseRecord? license = latest(ptr, origin: origin);
     if (license == null) {
       if (onFail != null) onFail('Missing license for ptr: $ptr');
@@ -345,6 +352,9 @@ class TikiSdk {
       return false;
     }
   }
+
+  String _hashPtr(String ptr) => base64
+      .encode(Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
 
   LicenseRecord _toLicense(
           TitleModel title, LicenseModel license) =>
