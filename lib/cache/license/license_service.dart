@@ -8,6 +8,7 @@ import 'dart:typed_data';
 
 import '../../node/node_service.dart';
 import '../../node/transaction/transaction_model.dart';
+import '../../utils/bytes.dart';
 import '../content_schema.dart';
 import 'license_model.dart';
 import 'license_repository.dart';
@@ -35,8 +36,11 @@ class LicenseService {
           ..add(ContentSchema.license.toCompactSize())
           ..add(license.serialize()))
         .toBytes();
+
+    String assetRef = base64.encode(utf8
+        .encode("${_nodeService.address}://${Bytes.base64UrlEncode(title)}"));
     TransactionModel transaction =
-        await _nodeService.write(contents, assetRef: base64.encode(title));
+        await _nodeService.write(contents, assetRef: assetRef);
 
     license.transactionId = transaction.id!;
     _repository.save(license);
