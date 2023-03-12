@@ -18,7 +18,7 @@ import 'backup_repository.dart';
 
 class BackupService {
   final BackupRepository _repository;
-  final BackupClient _backupClient;
+  final BackupClient _client;
   final KeyModel _key;
   final Uint8List? Function(Uint8List) _getBlock;
 
@@ -26,7 +26,7 @@ class BackupService {
   ///
   /// Saves the public key in the initialization.
   BackupService(
-      this._backupClient, CommonDatabase database, this._key, this._getBlock)
+      this._client, CommonDatabase database, this._key, this._getBlock)
       : _repository = BackupRepository(database) {
     String keyBackupPath = '${Bytes.base64UrlEncode(_key.address)}/public.key';
     BackupModel? keyBackup = _repository.getByPath(keyBackupPath);
@@ -38,7 +38,7 @@ class BackupService {
 
     if (keyBackup.timestamp == null) {
       Uint8List obj = base64.decode(_key.privateKey.public.encode());
-      _backupClient.write(keyBackupPath, obj);
+      _client.write(keyBackupPath, obj);
       keyBackup.timestamp = DateTime.now();
       _repository.update(keyBackup);
     }
@@ -70,7 +70,7 @@ class BackupService {
                   ..add(CompactSize.encode(signature))
                   ..add(CompactSize.encode(block)))
                 .toBytes();
-            await _backupClient.write(backup.path, signedBlock);
+            await _client.write(backup.path, signedBlock);
             backup.timestamp = DateTime.now();
             _repository.update(backup);
           }

@@ -3,18 +3,21 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'dart:typed_data';
-
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/cache/license/license_model.dart';
 import 'package:tiki_sdk_dart/cache/license/license_repository.dart';
+import 'package:tiki_sdk_dart/cache/license/license_service.dart';
 import 'package:tiki_sdk_dart/cache/license/license_use.dart';
 import 'package:tiki_sdk_dart/cache/license/license_usecase.dart';
 import 'package:tiki_sdk_dart/cache/title/title_model.dart';
 import 'package:tiki_sdk_dart/cache/title/title_repository.dart';
+import 'package:tiki_sdk_dart/cache/title/title_service.dart';
+import 'package:tiki_sdk_dart/node/node_service.dart';
 import 'package:tiki_sdk_dart/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../in_mem.dart';
 
 void main() {
   group('License Repository Tests', () {
@@ -23,18 +26,11 @@ void main() {
       TitleRepository titleRepository = TitleRepository(db);
       LicenseRepository licenseRepository = LicenseRepository(db);
 
+      TitleModel title = TitleModel('com.mytiki.test', const Uuid().v4(),
+          transactionId: Bytes.utf8Encode(const Uuid().v4()));
+      titleRepository.save(title);
       int numRecords = 3;
-      Map<Uint8List, String> tidDescMap = {};
-
       for (int i = 0; i < numRecords; i++) {
-        Uint8List tid = Bytes.utf8Encode(const Uuid().v4());
-        String description = const Uuid().v4();
-        tidDescMap[tid] = description;
-
-        TitleModel title = TitleModel('com.mytiki.test', const Uuid().v4(),
-            transactionId: tid);
-        titleRepository.save(title);
-
         LicenseModel license = LicenseModel(
             title.transactionId!,
             [
@@ -42,15 +38,15 @@ void main() {
                   destinations: ["*.mytiki.com"])
             ],
             'terms',
-            description: description);
+            description: 'license: $i');
         licenseRepository.save(license);
       }
 
+      List<LicenseModel> found =
+          licenseRepository.getAllByTitle(title.transactionId!);
+      expect(found.length, numRecords);
       for (int i = 0; i < numRecords; i++) {
-        LicenseModel? license =
-            licenseRepository.getLatestByTitle(tidDescMap.keys.elementAt(i));
-        expect(license == null, false);
-        expect(license!.description, tidDescMap.values.elementAt(i));
+        LicenseModel license = found.elementAt(i);
         expect(license.expiry == null, true);
         expect(license.terms, 'terms');
         expect(license.uses.length, 1);
@@ -61,6 +57,28 @@ void main() {
         expect(license.uses.elementAt(0).destinations?.elementAt(0),
             "*.mytiki.com");
       }
+    });
+
+    test('getLatestByTitle - Success', () async {
+      NodeService nodeService = await InMemBuilders.nodeService();
+      TitleService titleService =
+          TitleService('com.tiki.test', nodeService, nodeService.database);
+      LicenseService licenseService =
+          LicenseService(nodeService.database, nodeService);
+      LicenseRepository licenseRepository =
+          LicenseRepository(nodeService.database);
+
+      TitleModel title = await titleService.create('ptr');
+      int numRecords = 10;
+      for (int i = 0; i < numRecords; i++) {
+        licenseService.create(title.transactionId!, [], 'record: $i');
+      }
+
+      await Future.delayed(const Duration(seconds: 5));
+
+      LicenseModel? license =
+          licenseRepository.getLatestByTitle(title.transactionId!);
+      expect(license?.terms, 'record: 9');
     });
   });
 }

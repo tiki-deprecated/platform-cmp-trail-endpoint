@@ -4,8 +4,11 @@
  */
 library tiki_sdk_dart;
 
+import 'dart:typed_data';
+
 import 'package:sqlite3/common.dart';
 
+import 'cache/content_schema.dart';
 import 'cache/license/license_model.dart';
 import 'cache/license/license_service.dart';
 import 'cache/license/license_use.dart';
@@ -14,6 +17,8 @@ import 'cache/title/title_model.dart';
 import 'cache/title/title_service.dart';
 import 'cache/title/title_tag.dart';
 import 'guard.dart';
+import 'l0/auth/auth_service.dart';
+import 'l0/registry/registry_service.dart';
 import 'l0/storage/storage_service.dart';
 import 'license_record.dart';
 import 'node/backup/backup_service.dart';
@@ -23,8 +28,10 @@ import 'node/key/key_service.dart';
 import 'node/key/key_storage.dart';
 import 'node/node_service.dart';
 import 'node/transaction/transaction_service.dart';
+import 'node/xchain/xchain_service.dart';
 import 'title_record.dart';
 import 'utils/bytes.dart';
+import 'utils/compact_size.dart';
 
 export 'cache/license/license_use.dart';
 export 'cache/license/license_usecase.dart';
@@ -37,6 +44,7 @@ export 'title_record.dart';
 /// Use this to create, get, and enforce [LicenseRecord]s and
 /// [TitleRecord]s.
 class TikiSdk {
+  final RegistryService _registryService;
   final TitleService _titleService;
   final LicenseService _licenseService;
   final NodeService _nodeService;
@@ -44,10 +52,13 @@ class TikiSdk {
   /// Prefer [withAddress] and [init] instead.
   /// @nodoc
   TikiSdk(TitleService titleService, LicenseService licenseService,
-      NodeService nodeService)
+      NodeService nodeService, RegistryService registryService)
       : _titleService = titleService,
         _licenseService = licenseService,
-        _nodeService = nodeService;
+        _nodeService = nodeService,
+        _registryService = registryService {
+    _syncRegistry();
+  }
 
   /// Use before [init] to add a wallet address and keypair
   /// to the [keyStorage] for [id].
@@ -90,13 +101,16 @@ class TikiSdk {
       throw StateError("Use keystore() to initialize address");
     }
 
+    AuthService authService = AuthService(publishingId);
     StorageService storageService =
-        StorageService.publishingId(primaryKey.privateKey, publishingId);
+        StorageService(primaryKey.privateKey, authService);
+
     NodeService nodeService = NodeService()
       ..blockInterval = blockInterval
       ..maxTransactions = maxTransactions
       ..transactionService = TransactionService(database)
       ..blockService = BlockService(database)
+      ..xChainService = XChainService(storageService, database)
       ..primaryKey = primaryKey;
     nodeService.backupService = BackupService(
         storageService, database, primaryKey, nodeService.getBlock);
@@ -106,7 +120,11 @@ class TikiSdk {
         TitleService(origin, nodeService, nodeService.database);
     LicenseService licenseService =
         LicenseService(nodeService.database, nodeService);
-    return TikiSdk(titleService, licenseService, nodeService);
+    RegistryService registryService =
+        RegistryService(primaryKey.privateKey, authService);
+    await registryService.register(id, nodeService.address);
+
+    return TikiSdk(titleService, licenseService, nodeService, registryService);
   }
 
   /// Returns the in-use wallet [address].
@@ -119,6 +137,8 @@ class TikiSdk {
   /// After [init], store the address somewhere local to your app that
   /// you can easily retrieve and reuse on app-reload.
   String get address => _nodeService.address;
+
+  String get id => _nodeService.id;
 
   /// Create a new [LicenseRecord].
   ///
@@ -334,4 +354,28 @@ class TikiSdk {
           license.terms,
           description: license.description,
           expiry: license.expiry);
+
+  Future<void> _syncRegistry() => _registryService.get(id).then((rsp) {
+        rsp.addresses?.forEach((address) => _nodeService.sync(address, (txn) {
+              List<Uint8List> decodedContents =
+                  CompactSize.decode(txn.contents);
+              ContentSchema schema = ContentSchema.fromValue(
+                  Bytes.decodeBigInt(decodedContents[0]).toInt());
+              if (schema == ContentSchema.title) {
+                TitleModel title =
+                    TitleModel.decode(decodedContents.sublist(1));
+                title.transactionId = txn.id;
+                _titleService.tryAdd(title);
+              } else if (schema == ContentSchema.license) {
+                if (txn.assetRef.startsWith("txn://")) {
+                  Uint8List title =
+                      Bytes.base64UrlDecode(txn.assetRef.split("://").last);
+                  LicenseModel license =
+                      LicenseModel.decode(title, decodedContents.sublist(1));
+                  license.transactionId = txn.id;
+                  _licenseService.tryAdd(license);
+                }
+              }
+            }));
+      });
 }

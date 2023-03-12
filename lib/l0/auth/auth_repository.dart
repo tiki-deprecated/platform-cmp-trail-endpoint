@@ -27,7 +27,7 @@ class AuthRepository {
     http.Response rsp = await http.post(
         _serviceUri.replace(path: grantPath, queryParameters: {
           'grant_type': 'client_credentials',
-          'scope': 'storage',
+          'scope': 'storage registry',
           'client_id': clientId,
           'client_secret': clientSecret
         }),

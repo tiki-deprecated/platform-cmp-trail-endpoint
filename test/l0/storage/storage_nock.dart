@@ -14,7 +14,7 @@ import 'package:uuid/uuid.dart';
 class StorageNock {
   final String token = const Uuid().v4();
   final DateTime expires = DateTime.now().add(const Duration(hours: 1));
-  final String urnPrefix = '${const Uuid().v4()}/${const Uuid().v4()}';
+  String urnPrefix = '${const Uuid().v4()}/${const Uuid().v4()}';
   final String firstVersion = const Uuid().v4();
 
   Interceptor get tokenInterceptor =>

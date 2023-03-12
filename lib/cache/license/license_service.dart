@@ -3,7 +3,6 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'dart:convert';
 import 'dart:typed_data';
 
 import '../../node/node_service.dart';
@@ -37,8 +36,7 @@ class LicenseService {
           ..add(license.serialize()))
         .toBytes();
 
-    String assetRef = base64.encode(utf8
-        .encode("${_nodeService.address}://${Bytes.base64UrlEncode(title)}"));
+    String assetRef = "txn://${Bytes.base64UrlEncode(title)}";
     TransactionModel transaction =
         await _nodeService.write(contents, assetRef: assetRef);
 
@@ -57,4 +55,13 @@ class LicenseService {
 
   /// Returns the consent for a [id].
   LicenseModel? getById(Uint8List id) => _repository.getById(id);
+
+  void tryAdd(LicenseModel license) {
+    if (license.transactionId != null) {
+      LicenseModel? found = _repository.getById(license.transactionId!);
+      if (found == null) {
+        _repository.save(license);
+      }
+    }
+  }
 }

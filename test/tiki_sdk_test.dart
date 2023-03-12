@@ -16,7 +16,7 @@ void main() {
       expect(1, 1);
     });
 
-    test('tile - Success', () async {
+    test('title - Success', () async {
       TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
       await tikiSdk.title(const Uuid().v4(), tags: [TitleTag.emailAddress()]);
       expect(1, 1);

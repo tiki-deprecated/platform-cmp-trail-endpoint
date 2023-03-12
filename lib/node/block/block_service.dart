@@ -46,6 +46,15 @@ class BlockService {
   /// This method should be called only after all the transactions are committed.
   void commit(BlockModel block) => _repository.save(block);
 
+  void tryAdd(BlockModel block) {
+    if (block.id != null) {
+      BlockModel? found = _repository.getById(block.id!);
+      if (found == null) {
+        _repository.save(block);
+      }
+    }
+  }
+
   /// Gets a [BlockModel] by [BlockModel.id]
   BlockModel? get(Uint8List id) => _repository.getById(id);
 }

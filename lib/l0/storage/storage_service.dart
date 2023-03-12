@@ -10,21 +10,23 @@ import 'dart:typed_data';
 import 'package:uuid/uuid.dart';
 
 import '../../node/backup/backup_client.dart';
+import '../../node/xchain/xchain_client.dart';
 import '../../utils/rsa/rsa.dart';
 import '../../utils/rsa/rsa_private_key.dart';
 import '../auth/auth_service.dart';
 import 'storage_model_list.dart';
-import 'storage_model_list_ver.dart';
+import 'storage_model_list_obj.dart';
 import 'storage_model_token_req.dart';
 import 'storage_model_token_rsp.dart';
 import 'storage_model_upload.dart';
+import 'storage_model_vlist.dart';
 import 'storage_repository.dart';
 
 /// The primary class for interaction with the
 /// [L0 Storage](https://github.com/tiki/l0-storage) Service.
 ///
 /// Use to [read] objects from and [write] to the hosted storage.
-class StorageService implements BackupClient {
+class StorageService implements BackupClient, XChainClient {
   final StorageRepository _repository;
   final RsaPrivateKey _privateKey;
   final AuthService _authService;
@@ -46,37 +48,6 @@ class StorageService implements BackupClient {
         _authService = AuthService(publishingId),
         super();
 
-  /// Read a binary object from hosted storage
-  ///
-  /// Returns the **first** version of an object stored with the
-  /// specified [key].
-  ///
-  /// The [key] is automatically prefixed with the application identifier
-  /// derived from the //urnPrefix described in [StorageModelTokenRsp] and
-  /// fetched using the [publishingId].
-  ///
-  /// DO use the full key path, including file type  (e.g., .block, .txt)
-  @override
-  Future<Uint8List?> read(String key) async {
-    _token ??= await _requestToken();
-    try {
-      StorageModelList versions =
-          await _repository.versions('${_appId(_token?.urnPrefix)}/$key');
-      String? versionId;
-      if (versions.versions != null && versions.versions!.isNotEmpty) {
-        versionId = _findFirst(versions.versions!).versionId;
-      }
-      return _repository.get('${_appId(_token?.urnPrefix)}/$key',
-          versionId: versionId);
-    } on HttpException catch (e) {
-      if (e.message.contains('HTTP Error 404:')) {
-        return null;
-      } else {
-        rethrow;
-      }
-    }
-  }
-
   /// Write a binary object to hosted storage
   ///
   /// The [key] is automatically prefixed with the application identifier
@@ -90,14 +61,14 @@ class StorageService implements BackupClient {
   @override
   Future<void> write(String key, Uint8List value) async {
     _token ??= await _requestToken();
-    StorageModelUpload req = StorageModelUpload(
-        key: '${_appId(_token?.urnPrefix)}/$key', content: value);
+    String appId = _appId(_token?.urnPrefix);
+    StorageModelUpload req =
+        StorageModelUpload(key: '$appId/$key', content: value);
     try {
       await _repository.upload(_token?.token, req);
     } on HttpException catch (e) {
       if (e.message.contains('HTTP Error 401')) {
         _token = await _requestToken();
-        req.key = _appId(_token?.urnPrefix) + key;
         await _repository.upload(_token?.token, req);
       } else {
         rethrow;
@@ -105,10 +76,61 @@ class StorageService implements BackupClient {
     }
   }
 
-  StorageModelListVer _findFirst(List<StorageModelListVer> versions) {
-    StorageModelListVer first = versions.first;
+  @override
+  Future<Set<String>> list(String key) async {
+    Set<String> rsp = {};
+    _token ??= await _requestToken();
+    String appId = _appId(_token?.urnPrefix);
+    StorageModelList objList = await _repository.list('$appId/$key');
+    rsp.addAll(objList.contents
+            ?.skipWhile((obj) => obj.key == null)
+            .map((obj) => obj.key!.replaceFirst('$appId/', '')) ??
+        []);
+    while (objList.isTruncated == true) {
+      objList = await _repository.list('$appId/$key',
+          marker: objList.contents?.last.key);
+      rsp.addAll(objList.contents
+              ?.skipWhile((obj) => obj.key == null)
+              .map((obj) => obj.key!.replaceFirst('$appId/', '')) ??
+          []);
+    }
+
+    return rsp;
+  }
+
+  @override
+  Future<Uint8List?> read(String key) async {
+    _token ??= await _requestToken();
+    String appId = _appId(_token?.urnPrefix);
+    List<StorageModelListObj> versions = [];
+    try {
+      StorageModelVList list = await _repository.versions('$appId/$key');
+      versions.addAll(list.versions ?? []);
+      while (list.isTruncated == true) {
+        list = await _repository.versions('$appId/$key',
+            versionMarker: list.versions?.last.versionId);
+        versions.addAll(list.versions ?? []);
+      }
+      String? versionId;
+      if (versions.isNotEmpty) {
+        versionId = _findFirst(versions).versionId;
+      }
+      Uint8List rsp =
+          await _repository.get('$appId/$key', versionId: versionId);
+      return rsp;
+    } on HttpException catch (e) {
+      if (e.message.contains('HTTP Error 404:')) {
+        return null;
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  StorageModelListObj _findFirst(List<StorageModelListObj> versions) {
+    StorageModelListObj first = versions.first;
     if (versions.length > 1) {
-      for (StorageModelListVer version in versions) {
+      for (StorageModelListObj version in versions) {
         if (version.lastModified!.isBefore(first.lastModified!)) {
           first = version;
         }
@@ -128,5 +150,5 @@ class StorageService implements BackupClient {
     return await _repository.token(await _authService.token, req);
   }
 
-  String _appId(String? s) => s != null ? s.split('/')[0] : '';
+  String _appId(String? s) => s?.split('/')[0] ?? '';
 }

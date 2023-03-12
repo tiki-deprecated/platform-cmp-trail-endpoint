@@ -25,7 +25,7 @@ void main() {
       expect(interceptor.isDone, true);
       expect(jwt.accessToken, nock.accessToken);
       expect(jwt.refreshToken, nock.refreshToken);
-      expect(jwt.scope?.length, 1);
+      expect(jwt.scope?.length, 2);
       expect(jwt.scope?[0], 'storage');
       expect(jwt.tokenType, 'Bearer');
       expect(jwt.expires?.isAfter(DateTime.now()), true);
