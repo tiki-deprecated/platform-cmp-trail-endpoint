@@ -75,6 +75,7 @@ method.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">LicenseRecord? latest(String ptr, {String? origin}) {
+  ptr = _hashPtr(ptr);
   TitleModel? title = _titleService.getByPtr(ptr, origin: origin);
   if (title == null) return null;
   LicenseModel? license = _licenseService.getLatest(title.transactionId!);
@@ -146,7 +147,7 @@ method.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      2.0.0
+      2.1.0
   </span>
 
   ・🍍 mytiki.com・© Tiki inc.

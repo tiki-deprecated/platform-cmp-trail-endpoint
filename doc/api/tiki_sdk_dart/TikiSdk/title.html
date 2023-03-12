@@ -88,6 +88,7 @@ the <code>TitleRecord</code> as a future reminder.</p>
     {String? origin,
     List&lt;TitleTag&gt; tags = const [],
     String? description}) async {
+  ptr = _hashPtr(ptr);
   TitleModel title = await _titleService.create(ptr,
       origin: origin, description: description, tags: tags);
   return TitleRecord(Bytes.base64UrlEncode(title.transactionId!), title.ptr,
@@ -158,7 +159,7 @@ the <code>TitleRecord</code> as a future reminder.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      2.0.0
+      2.1.0
   </span>
 
   ・🍍 mytiki.com・© Tiki inc.

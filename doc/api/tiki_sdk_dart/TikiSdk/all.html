@@ -74,6 +74,7 @@ method.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">List&lt;LicenseRecord&gt; all(String ptr, {String? origin}) {
+  ptr = _hashPtr(ptr);
   TitleModel? title = _titleService.getByPtr(ptr, origin: origin);
   if (title == null) return [];
   List&lt;LicenseModel&gt; licenses = _licenseService.getAll(title.transactionId!);
@@ -144,7 +145,7 @@ method.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      2.0.0
+      2.1.0
   </span>
 
   ・🍍 mytiki.com・© Tiki inc.

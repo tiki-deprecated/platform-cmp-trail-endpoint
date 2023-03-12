@@ -108,6 +108,7 @@ license never expires.</p>
     String? titleDescription,
     String? licenseDescription,
     DateTime? expiry}) async {
+  ptr = _hashPtr(ptr);
   TitleModel? title = _titleService.getByPtr(ptr, origin: origin);
   title ??= await _titleService.create(ptr,
       origin: origin, tags: tags, description: titleDescription);
@@ -181,7 +182,7 @@ license never expires.</p>
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      2.0.0
+      2.1.0
   </span>
 
   ・🍍 mytiki.com・© Tiki inc.
