@@ -115,7 +115,9 @@ class StorageService implements BackupClient, XChainClient {
       if (versions.isNotEmpty) {
         versionId = _findFirst(versions).versionId;
       }
-      return _repository.get('$appId/$key', versionId: versionId);
+      Uint8List rsp =
+          await _repository.get('$appId/$key', versionId: versionId);
+      return rsp;
     } on HttpException catch (e) {
       if (e.message.contains('HTTP Error 404:')) {
         return null;

@@ -29,22 +29,22 @@ class XChainService {
 
   Future<void> sync(String address,
       Function(BlockModel, List<TransactionModel>) onBlockAdded) async {
-    RsaPublicKey publicKey = await _getPublicKey(address);
-    List<String> blockIds = await _getBlockIds(address);
-    List<Future> fetches = [];
-    for (String key in blockIds) {
-      fetches.add(_fetchBlock(key, publicKey, onBlockAdded));
+    RsaPublicKey? publicKey = await _getPublicKey(address);
+    if (publicKey != null) {
+      List<String> blockIds = await _getBlockIds(address);
+      List<Future> fetches = [];
+      for (String key in blockIds) {
+        fetches.add(_fetchBlock(key, publicKey, onBlockAdded));
+      }
+      await Future.wait(fetches);
     }
-    await Future.wait(fetches);
   }
 
-  Future<RsaPublicKey> _getPublicKey(String address) async {
+  Future<RsaPublicKey?> _getPublicKey(String address) async {
     RsaPublicKey? publicKey = _knownAddresses[address];
     if (publicKey == null) {
       Uint8List? pubKeyBytes = await _client.read('$address/public.key');
-      if (pubKeyBytes == null) {
-        throw StateError("$address/public.key required.");
-      }
+      if (pubKeyBytes == null) return null;
       publicKey = RsaPublicKey.decode(base64.encode(pubKeyBytes));
       _knownAddresses[address] = publicKey;
     }

@@ -367,12 +367,14 @@ class TikiSdk {
                 title.transactionId = txn.id;
                 _titleService.tryAdd(title);
               } else if (schema == ContentSchema.license) {
-                Uint8List title =
-                    Bytes.base64UrlDecode(txn.assetRef.split("://").last);
-                LicenseModel license =
-                    LicenseModel.decode(title, decodedContents.sublist(1));
-                license.transactionId = txn.id;
-                _licenseService.tryAdd(license);
+                if (txn.assetRef.startsWith("txn://")) {
+                  Uint8List title =
+                      Bytes.base64UrlDecode(txn.assetRef.split("://").last);
+                  LicenseModel license =
+                      LicenseModel.decode(title, decodedContents.sublist(1));
+                  license.transactionId = txn.id;
+                  _licenseService.tryAdd(license);
+                }
               }
             }));
       });
