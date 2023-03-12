@@ -120,6 +120,7 @@ class InMemBuilders {
       ..xChainService = XChainService(backupClient, database);
     nodeService.backupService =
         BackupService(backupClient, database, primaryKey, nodeService.getBlock);
+    nodeService.appKey = null;
     await nodeService.init();
     return nodeService;
   }
