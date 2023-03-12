@@ -11,6 +11,7 @@ import 'package:sqlite3/common.dart';
 import '../../utils/bytes.dart';
 import '../../utils/merkel_tree.dart';
 import '../../utils/rsa/rsa.dart';
+import '../../utils/rsa/rsa_private_key.dart';
 import '../../utils/rsa/rsa_public_key.dart';
 import '../block/block_model.dart';
 import '../key/key_model.dart';
@@ -32,11 +33,14 @@ class TransactionService {
   /// [BlockModel] by setting the [TransactionModel.block] and
   /// [TransactionModel.merkelProof] values and calling the [commit] method.
   TransactionModel create(Uint8List contents, KeyModel key,
-      {String assetRef = ''}) {
+      {String assetRef = '', RsaPrivateKey? appKey}) {
     TransactionModel txn = TransactionModel(
         address: key.address, contents: contents, assetRef: assetRef);
-    txn.signature =
-        Rsa.sign(key.privateKey, txn.serialize(includeSignature: false));
+    Uint8List serializedWithoutSigs = txn.serialize(includeSignature: false);
+    txn.userSignature = Rsa.sign(key.privateKey, serializedWithoutSigs);
+    if (appKey != null) {
+      txn.appSignature = Rsa.sign(appKey, serializedWithoutSigs);
+    }
     txn.id = Digest("SHA3-256").process(txn.serialize());
     _repository.save(txn);
     return txn;
@@ -69,11 +73,11 @@ class TransactionService {
           Digest("SHA3-256").process(transaction.serialize()), transaction.id!);
 
   /// Validates the author of the [TransactionModel] by calling [Rsa.verify] with
-  /// its [TransactionModel.signature].
+  /// its [TransactionModel.userSignature].
   static bool validateAuthor(
           TransactionModel transaction, RsaPublicKey pubKey) =>
       Rsa.verify(pubKey, transaction.serialize(includeSignature: false),
-          transaction.signature!);
+          transaction.userSignature!);
 
   /// Gets all the transactions from a [BlockModel] by its [BlockModel.id].
   List<TransactionModel> getByBlock(Uint8List id) =>

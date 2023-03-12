@@ -43,8 +43,11 @@ class TransactionRepository {
   /// The [TransactionModel.timestamp] column.
   static const columnTimestamp = 'timestamp';
 
-  /// The [TransactionModel.signature] column.
-  static const columnSignature = 'signature';
+  /// The [TransactionModel.userSignature] column.
+  static const columnUserSignature = 'user_signature';
+
+  /// The [TransactionModel.appSignature] column.
+  static const columnAppSignature = 'app_signature';
 
   /// The [CommonDatabase] used to persist [TransactionModel].
   final CommonDatabase _db;
@@ -67,7 +70,8 @@ class TransactionRepository {
       $columnAssetRef TEXT NOT NULL,
       $columnBlockId BLOB, 
       $columnTimestamp INTEGER NOT NULL,
-      $columnSignature BlOB NOT NULL,
+      $columnUserSignature BlOB NOT NULL,
+      $columnAppSignature BlOB,
       FOREIGN KEY($columnBlockId) 
         REFERENCES ${BlockRepository.table}(${BlockRepository.columnId})
      ); 
@@ -76,7 +80,7 @@ class TransactionRepository {
   /// Persists a [transaction] in [_db].
   void save(TransactionModel transaction) => _db.execute('''
     INSERT INTO $table 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     ''', [
         transaction.id,
         transaction.merkelProof,
@@ -86,7 +90,8 @@ class TransactionRepository {
         transaction.assetRef,
         transaction.block?.id,
         transaction.timestamp.millisecondsSinceEpoch,
-        transaction.signature,
+        transaction.userSignature,
+        transaction.appSignature,
       ]);
 
   /// Commits the [transaction] by saving its [TransactionModel.merkelProof] and
@@ -123,7 +128,8 @@ class TransactionRepository {
         $table.$columnMerkelProof as '$table.$columnMerkelProof',
         $table.$columnBlockId as '$table.$columnBlockId',
         $table.$columnTimestamp as '$table.$columnTimestamp',
-        $table.$columnSignature as '$table.$columnSignature',
+        $table.$columnUserSignature as '$table.$columnUserSignature',
+        $table.$columnAppSignature as '$table.$columnAppSignature',
         $table.oid as 'oid',
         ${BlockRepository.table}.${BlockRepository.columnId} as '${BlockRepository.table}.${BlockRepository.columnId}',
         ${BlockRepository.table}.${BlockRepository.columnVersion} as '${BlockRepository.table}.${BlockRepository.columnVersion}',
@@ -163,7 +169,8 @@ class TransactionRepository {
         columnAssetRef: row['$table.$columnAssetRef'],
         'block': blockMap != null ? BlockModel.fromMap(blockMap) : null,
         columnTimestamp: row['$table.$columnTimestamp'],
-        columnSignature: row['$table.$columnSignature'],
+        columnUserSignature: row['$table.$columnUserSignature'],
+        columnAppSignature: row['$table.$columnAppSignature'],
       };
       TransactionModel transaction = TransactionModel.fromMap(transactionMap);
       transactions.add(transaction);
