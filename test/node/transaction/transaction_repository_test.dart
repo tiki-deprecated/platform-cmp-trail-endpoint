@@ -21,7 +21,7 @@ void main() {
       BlockRepository(database);
       TransactionRepository repository = TransactionRepository(database);
 
-      String assetRef = 'AA==';
+      String assetRef = '';
       DateTime timestamp = DateTime.now();
       Uint8List address = Uint8List.fromList(utf8.encode(const Uuid().v4()));
       Uint8List contents = Uint8List.fromList(utf8.encode(const Uuid().v4()));
@@ -56,7 +56,7 @@ void main() {
       BlockRepository blockRepository = BlockRepository(database);
       TransactionRepository repository = TransactionRepository(database);
 
-      String assetRef = 'AA==';
+      String assetRef = '';
       DateTime timestamp = DateTime.now();
       Uint8List address = Uint8List.fromList(utf8.encode(const Uuid().v4()));
       Uint8List contents = Uint8List.fromList(utf8.encode(const Uuid().v4()));

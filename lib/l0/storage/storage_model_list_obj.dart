@@ -6,23 +6,23 @@
 import 'package:html/dom.dart';
 
 import '../../utils/xml_parse.dart';
-import 'storage_model_list_ver_owner.dart';
+import 'storage_model_list_obj_owner.dart';
 
 /// A version of a stored object
 ///
 /// A POJO style model representing an XML response object returned
 /// by the hosted storage.
-class StorageModelListVer {
+class StorageModelListObj {
   String? key;
   String? versionId;
   bool? isLatest;
   DateTime? lastModified;
   String? eTag;
   int? size;
-  StorageModelListVerOwner? owner;
+  StorageModelListObjOwner? owner;
   String? storageClass;
 
-  StorageModelListVer(
+  StorageModelListObj(
       {this.key,
       this.versionId,
       this.isLatest,
@@ -32,7 +32,7 @@ class StorageModelListVer {
       this.owner,
       this.storageClass});
 
-  StorageModelListVer.fromElement(Element? element) {
+  StorageModelListObj.fromElement(Element? element) {
     if (element != null) {
       key = XmlParse.element(element, 'Key')?.text;
       versionId = XmlParse.element(element, 'VersionId')?.text;
@@ -44,7 +44,7 @@ class StorageModelListVer {
       }
       eTag = XmlParse.element(element, 'ETag')?.text;
       size = int.tryParse(XmlParse.element(element, 'Size')?.text ?? '');
-      owner = StorageModelListVerOwner.fromElement(
+      owner = StorageModelListObjOwner.fromElement(
           XmlParse.element(element, 'Owner'));
       storageClass = XmlParse.element(element, 'StorageClass')?.text;
     }
@@ -53,6 +53,6 @@ class StorageModelListVer {
   /// Overrides toString() method for useful error messages
   @override
   String toString() {
-    return 'StorageModelListVer{key: $key, versionId: $versionId, isLatest: $isLatest, lastModified: $lastModified, eTag: $eTag, size: $size, owner: $owner, storageClass: $storageClass}';
+    return 'StorageModelListObj{key: $key, versionId: $versionId, isLatest: $isLatest, lastModified: $lastModified, eTag: $eTag, size: $size, owner: $owner, storageClass: $storageClass}';
   }
 }

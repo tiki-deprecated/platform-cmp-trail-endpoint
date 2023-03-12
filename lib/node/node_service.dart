@@ -17,6 +17,7 @@ import 'block/block_service.dart';
 import 'key/key_model.dart';
 import 'transaction/transaction_model.dart';
 import 'transaction/transaction_service.dart';
+import 'xchain/xchain_service.dart';
 
 /// The node slice is responsible for orchestrating the other slices to keep the
 /// blockchain locally, persist blocks and syncing with remote backup and other
@@ -28,10 +29,12 @@ class NodeService {
   late final BackupService _backupService;
   late final Duration _blockInterval;
   late final int _maxTransactions;
+  late final XChainService _xChainService;
 
   Timer? _blockTimer;
 
   String get address => Bytes.base64UrlEncode(_primaryKey.address);
+  String get id => _primaryKey.id;
   CommonDatabase get database => _blockService.database;
 
   set blockInterval(Duration val) => _blockInterval = val;
@@ -40,6 +43,7 @@ class NodeService {
   set blockService(BlockService val) => _blockService = val;
   set backupService(BackupService val) => _backupService = val;
   set primaryKey(KeyModel val) => _primaryKey = val;
+  set xChainService(XChainService val) => _xChainService = val;
 
   startBlockTimer() => _blockTimer == null ? _startBlockTimer() : null;
 
@@ -55,7 +59,7 @@ class NodeService {
   /// if there are more than [_maxTransactions] waiting to be added to a
   /// [BlockModel].
   Future<TransactionModel> write(Uint8List contents,
-      {String assetRef = 'AA=='}) async {
+      {String assetRef = ''}) async {
     TransactionModel transaction =
         _transactionService.create(contents, _primaryKey, assetRef: assetRef);
     List<TransactionModel> transactions = _transactionService.getPending();
@@ -74,6 +78,20 @@ class NodeService {
     if (transactions.isEmpty) return null;
 
     return _serializeBlock(block, transactions);
+  }
+
+  Future<void> sync(
+      String address, Function(TransactionModel) onTxnAdded) async {
+    if (address != this.address) {
+      await _xChainService.sync(address,
+          (BlockModel block, List<TransactionModel> txns) {
+        for (TransactionModel txn in txns) {
+          _transactionService.tryAdd(txn);
+          onTxnAdded(txn);
+        }
+        _blockService.tryAdd(block);
+      });
+    }
   }
 
   void _startBlockTimer() {

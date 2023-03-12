@@ -27,12 +27,12 @@ class TransactionService {
   /// Creates a [TransactionModel] with [contents].
   ///
   /// Uses the [KeyModel.privateKey] from [key] to sign the transaction. If the
-  /// [assetRef] is not set, it defaults to AA==. The return is an uncommitted
+  /// [assetRef] is not set, it defaults to ''. The return is an uncommitted
   /// [TransactionModel]. The [TransactionModel] should be added to a
   /// [BlockModel] by setting the [TransactionModel.block] and
   /// [TransactionModel.merkelProof] values and calling the [commit] method.
   TransactionModel create(Uint8List contents, KeyModel key,
-      {String assetRef = 'AA=='}) {
+      {String assetRef = ''}) {
     TransactionModel txn = TransactionModel(
         address: key.address, contents: contents, assetRef: assetRef);
     txn.signature =
@@ -47,6 +47,15 @@ class TransactionService {
   void commit(
       Uint8List transactionId, BlockModel block, Uint8List merkelProof) {
     _repository.commit(transactionId, block, merkelProof);
+  }
+
+  void tryAdd(TransactionModel transaction) {
+    if (transaction.id != null) {
+      TransactionModel? found = _repository.getById(transaction.id!);
+      if (found == null) {
+        _repository.save(transaction);
+      }
+    }
   }
 
   /// Validates the [TransactionModel] inclusion in [TransactionModel.block] by

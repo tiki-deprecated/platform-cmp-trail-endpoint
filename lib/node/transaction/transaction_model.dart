@@ -24,7 +24,7 @@ class TransactionModel {
   /// The timestamp of the creation of this.
   late final DateTime timestamp;
 
-  /// The path of the asset to which this refers to. AA== if null.
+  /// The path of the asset to which this refers to. '' if null.
   late final String assetRef;
 
   /// The binary encoded transaction payload.
@@ -51,13 +51,13 @@ class TransactionModel {
   /// Builds a new [TransactionModel]
   ///
   /// If no [timestamp] is provided, the object creation time is used.
-  /// If no [assetRef] is provided, it uses AA== as [assetRef] value.
+  /// If no [assetRef] is provided, it uses '' as [assetRef] value.
   TransactionModel(
       {this.id,
       this.version = 1,
       required this.address,
       required this.contents,
-      this.assetRef = "AA==",
+      this.assetRef = '',
       DateTime? timestamp,
       this.merkelProof,
       this.block,
@@ -101,7 +101,7 @@ class TransactionModel {
     address = extractedBytes[1];
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         Bytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
-    assetRef = base64.encode(extractedBytes[3]);
+    assetRef = utf8.decode(extractedBytes[3]);
     signature = extractedBytes[4];
     contents = extractedBytes[5];
     id = Digest("SHA3-256").process(serialize());
@@ -130,7 +130,7 @@ class TransactionModel {
     Uint8List timestampBytes = Bytes.encodeBigInt(
         BigInt.from(timestamp.millisecondsSinceEpoch ~/ 1000));
     Uint8List serializedTimestamp = CompactSize.encode(timestampBytes);
-    Uint8List assetRefBytes = base64.decode(assetRef);
+    Uint8List assetRefBytes = Uint8List.fromList(utf8.encode(assetRef));
     Uint8List serializedAssetRef = CompactSize.encode(assetRefBytes);
     Uint8List serializedSignature = CompactSize.encode(
         includeSignature && signature != null ? signature! : Uint8List(0));

@@ -3,11 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'dart:convert';
 import 'dart:typed_data';
 
 import '../../node/node_service.dart';
 import '../../node/transaction/transaction_model.dart';
+import '../../utils/bytes.dart';
 import '../content_schema.dart';
 import 'license_model.dart';
 import 'license_repository.dart';
@@ -35,8 +35,10 @@ class LicenseService {
           ..add(ContentSchema.license.toCompactSize())
           ..add(license.serialize()))
         .toBytes();
+
+    String assetRef = "txn://${Bytes.base64UrlEncode(title)}";
     TransactionModel transaction =
-        await _nodeService.write(contents, assetRef: base64.encode(title));
+        await _nodeService.write(contents, assetRef: assetRef);
 
     license.transactionId = transaction.id!;
     _repository.save(license);
@@ -53,4 +55,13 @@ class LicenseService {
 
   /// Returns the consent for a [id].
   LicenseModel? getById(Uint8List id) => _repository.getById(id);
+
+  void tryAdd(LicenseModel license) {
+    if (license.transactionId != null) {
+      LicenseModel? found = _repository.getById(license.transactionId!);
+      if (found == null) {
+        _repository.save(license);
+      }
+    }
+  }
 }

@@ -14,7 +14,7 @@ class AuthNock {
   final String accessToken = const Uuid().v4();
   final String refreshToken = const Uuid().v4();
   final int expiresIn = 600;
-  final String scope = 'storage';
+  final String scope = 'storage registry';
 
   Interceptor get interceptor =>
       nock(AuthRepository.url).post(AuthRepository.grantPath)

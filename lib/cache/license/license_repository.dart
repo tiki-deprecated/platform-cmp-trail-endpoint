@@ -64,9 +64,14 @@ class LicenseRepository {
 
   /// Gets the latest [LicenseModel] by [title] from the database.
   LicenseModel? getLatestByTitle(Uint8List title) {
-    String where = '''WHERE $columnTitle = 
-      x'${Bytes.hexEncode(title)}' ORDER BY $table.oid DESC LIMIT 1''';
-    List<LicenseModel> licenses = _select(whereStmt: where, params: []);
+    ResultSet results = _db.select('''
+      SELECT * FROM $table
+      LEFT JOIN ${TransactionRepository.table} 
+      ON $table.$columnTransactionId = ${TransactionRepository.table}.${TransactionRepository.columnId} 
+      WHERE $columnTitle = x'${Bytes.hexEncode(title)}' 
+      ORDER BY ${TransactionRepository.table}.${TransactionRepository.columnTimestamp} DESC
+      LIMIT 1''');
+    List<LicenseModel> licenses = _toLicense(results);
     return licenses.isNotEmpty ? licenses.first : null;
   }
 
@@ -89,6 +94,10 @@ class LicenseRepository {
       SELECT * FROM $table
       ${whereStmt ?? ''};
       ''', params);
+    return _toLicense(results);
+  }
+
+  List<LicenseModel> _toLicense(ResultSet results) {
     List<LicenseModel> licenses = [];
     for (final Row row in results) {
       Map<String, dynamic> map = {
