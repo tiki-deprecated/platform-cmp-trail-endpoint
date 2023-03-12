@@ -63,8 +63,8 @@ class NodeService {
   /// [BlockModel].
   Future<TransactionModel> write(Uint8List contents,
       {String assetRef = ''}) async {
-    TransactionModel transaction =
-        _transactionService.create(contents, _primaryKey, assetRef: assetRef);
+    TransactionModel transaction = _transactionService
+        .create(contents, _primaryKey, assetRef: assetRef, appKey: _appKey);
     List<TransactionModel> transactions = _transactionService.getPending();
     if (transactions.length >= _maxTransactions) {
       await _createBlock(transactions);
