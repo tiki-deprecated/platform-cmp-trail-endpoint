@@ -25,7 +25,7 @@
 ///
 /// In other environments, use equivalent implementations of the recommended ones.
 abstract class KeyStorage {
-  Future<void> write({required String key, required String value});
+  Future<void> write(String key, String value);
 
-  Future<String?> read({required String key});
+  Future<String?> read(String key);
 }

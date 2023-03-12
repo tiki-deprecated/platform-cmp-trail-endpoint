@@ -10,12 +10,13 @@ import '../../utils/rsa/rsa_private_key.dart';
 
 /// The keys storage model.
 class KeyModel {
+  final String id;
   final Uint8List address;
   final RsaPrivateKey privateKey;
 
-  KeyModel(this.address, this.privateKey);
+  KeyModel(this.id, this.address, this.privateKey);
 
-  KeyModel.fromJson(String jsonString)
+  KeyModel.fromJson(this.id, String jsonString)
       : address = base64.decode(json.decode(jsonString)['address']!),
         privateKey =
             RsaPrivateKey.decode(jsonDecode(jsonString)['private_key']!);
