@@ -23,12 +23,10 @@ class RegistryService {
   RegistryService(this._privateKey, this._authService)
       : _repository = RegistryRepository();
 
-  Future<RegistryModelRsp> get(String id, {String? customerAuth}) async {
+  Future<RegistryModelRsp> get(String id) async {
     String? auth = await _authService.token;
     return _repository.addresses(id,
-        signature: _signature(),
-        authorization: auth,
-        customerAuth: customerAuth);
+        signature: _signature(), authorization: auth);
   }
 
   Future<RegistryModelRsp> register(String id, String address,
