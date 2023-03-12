@@ -23,7 +23,7 @@ void main() {
 
       RegistryRepository repository = RegistryRepository();
       RegistryModelRsp rsp = await repository.addresses(const Uuid().v4(),
-          customerAuth: "dummy", authorization: "dummy", signature: "dummy");
+          authorization: "dummy", signature: "dummy");
 
       expect(interceptor.isDone, true);
       expect(
