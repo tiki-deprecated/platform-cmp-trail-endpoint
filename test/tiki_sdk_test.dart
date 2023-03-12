@@ -3,6 +3,10 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
 import 'package:uuid/uuid.dart';
@@ -18,13 +22,22 @@ void main() {
 
     test('title - Success', () async {
       TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
-      await tikiSdk.title(const Uuid().v4(), tags: [TitleTag.emailAddress()]);
-      expect(1, 1);
+      String ptr = const Uuid().v4();
+      String hashedPtr = base64.encode(
+          Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
+      TitleRecord title =
+          await tikiSdk.title(ptr, tags: [TitleTag.emailAddress()]);
+      expect(title.tags.elementAt(0).value, TitleTag.emailAddress().value);
+      expect(title.origin, 'com.mytiki.tiki_sdk_dart.test');
+      expect(title.ptr, hashedPtr);
+      expect(title.description, null);
     });
 
     test('license - update - Success', () async {
       TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
       String ptr = const Uuid().v4();
+      String hashedPtr = base64.encode(
+          Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
       LicenseRecord first = await tikiSdk.license(
           ptr,
           [
@@ -34,6 +47,8 @@ void main() {
 
       expect(first.uses.elementAt(0).usecases.elementAt(0).value,
           LicenseUsecase.attribution().value);
+      expect(first.terms, 'terms');
+      expect(first.title.ptr, hashedPtr);
       LicenseRecord second = await tikiSdk.license(ptr, [], 'terms');
       expect(second.uses.length, 0);
     });
