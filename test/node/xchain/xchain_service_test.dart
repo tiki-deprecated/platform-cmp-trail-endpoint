@@ -29,12 +29,12 @@ void main() {
       RsaPrivateKey privateKey = Rsa.generate().privateKey;
       AuthNock authNock = AuthNock();
 
-      final authIntercept = authNock.interceptor;
+      authNock.interceptor;
       StorageNock storageNock = StorageNock();
       XChainNock xChainNock = XChainNock();
       storageNock.urnPrefix = '${xChainNock.appId}/${xChainNock.address}';
-      final tokenIntercept = storageNock.tokenInterceptor;
-      String appId = storageNock.urnPrefix.split("/").first;
+      storageNock.tokenInterceptor;
+      storageNock.urnPrefix.split("/").first;
       final pkvIntercept = xChainNock.pkvInterceptor;
       final pkIntercept = xChainNock.pkInterceptor;
       final bvIntercept = xChainNock.bvInterceptor;
