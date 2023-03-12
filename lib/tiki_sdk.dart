@@ -18,6 +18,7 @@ import 'cache/title/title_service.dart';
 import 'cache/title/title_tag.dart';
 import 'guard.dart';
 import 'l0/auth/auth_service.dart';
+import 'l0/registry/registry_model_rsp.dart';
 import 'l0/registry/registry_service.dart';
 import 'l0/storage/storage_service.dart';
 import 'license_record.dart';
@@ -123,8 +124,9 @@ class TikiSdk {
         LicenseService(nodeService.database, nodeService);
     RegistryService registryService =
         RegistryService(primaryKey.privateKey, authService);
-    await registryService.register(id, nodeService.address,
-        customerAuth: customerAuth);
+    RegistryModelRsp registryRsp = await registryService
+        .register(id, nodeService.address, customerAuth: customerAuth);
+    nodeService.appKey = registryRsp.signKey;
 
     return TikiSdk(titleService, licenseService, nodeService, registryService);
   }

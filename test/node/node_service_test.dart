@@ -74,7 +74,7 @@ void main() {
           await node.write(Uint8List.fromList(utf8.encode(const Uuid().v4())));
 
       expect(tx.id != null, true);
-      expect(tx.signature != null, true);
+      expect(tx.userSignature != null, true);
 
       TransactionRepository transactionRepository =
           TransactionRepository(node.database);

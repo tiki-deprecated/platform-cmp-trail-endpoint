@@ -58,30 +58,28 @@ void main() {
       expect(bIntercept.isDone, true);
       expect(bvIntercept.isDone, true);
       expect(listIntercept.isDone, true);
-      expect(syncedTxns?.length, 3);
+      expect(syncedTxns?.length, 1);
       expect(Bytes.base64UrlEncode(syncedBlock!.id!),
-          'eBhsjwopFAC3-ybuVUvo2lkIfGLTB4PnPmWKBkUoV4M');
+          '2jPH00bX27QFlbJDynobsTHMQ71_kVWJbKVbuJMGTYI');
       expect(syncedBlock?.version, 1);
       expect(Bytes.base64UrlEncode(syncedBlock!.transactionRoot),
-          '_ArUHdfhVNxux9OKdxa0A3zLnLGqFSs_Yn8XKaPcciQ');
-      expect(Bytes.base64UrlEncode(syncedBlock!.previousHash), 'AA');
-      expect(syncedBlock?.timestamp.millisecondsSinceEpoch, 1676493019000);
+          '1CQMYKYtO9Bt2DnexUWNL3gSvs6kPKIxY84gYovUJM4');
+      expect(Bytes.base64UrlEncode(syncedBlock!.previousHash),
+          'XO99p1jVEfpQoSnGnLy42h0NXgoDXJ428CaEI9p9ZtY');
+      expect(syncedBlock?.timestamp.millisecondsSinceEpoch, 1678594781000);
       expect(Bytes.base64UrlEncode(syncedTxns!.elementAt(0).id!),
-          'x-ZeyVQBs1sS34DFyzLZCCXib9lOgtHYseRi0K4bFoA');
-      expect(Bytes.base64UrlEncode(syncedTxns!.elementAt(1).id!),
-          'P6i-1oibc4QXQkkwGYdAXt4UGLNnfxc1fVlpX9o13OU');
-      expect(Bytes.base64UrlEncode(syncedTxns!.elementAt(2).id!),
-          '-yNtsrHDKHtKJnRGymbduxN3z4c3ztz3ujbeVd_qtfA');
+          'mQyDnlU0LkUKiQnvIGUubEsxomWrTJ3CrKHqOPM13rc');
       expect(Bytes.base64UrlEncode(syncedTxns!.elementAt(0).block!.id!),
-          'eBhsjwopFAC3-ybuVUvo2lkIfGLTB4PnPmWKBkUoV4M');
-      expect(syncedTxns!.elementAt(0).version, 1);
+          '2jPH00bX27QFlbJDynobsTHMQ71_kVWJbKVbuJMGTYI');
+      expect(syncedTxns!.elementAt(0).version, 2);
       expect(syncedTxns!.elementAt(0).timestamp.millisecondsSinceEpoch,
-          1676492959000);
+          1678594781000);
       expect(Bytes.base64UrlEncode(syncedTxns!.elementAt(0).address),
           xChainNock.address);
-      expect(Bytes.base64UrlEncode(syncedTxns!.elementAt(0).signature!),
-          'Ltp9hf-OvBizDsLzAiwwFZ6PP88Efc3GzuOrhd2IVpXA8DI3YHxJseJxsMZh5gV2fzVfZe25jm6uuPz7xFHmWO60e-LTmT2SB4-RBHR83YCB0V1J3d6hvYhfhGKP-GQ-7o9-alJXnxaaCiAfx7Xy7PuhZsM30UfpEHiJp4aO4n0oSHfRvnrQHN151JFdaVqmh0woPZFAHUsbknp2iDieujQLtoU0jhZjZYo3qTauru4yRYSqxoVw_cXL4Kt-KPspQwaMicQA1u56o2JkVwf-MWkbGuJWChdSVKYVbYO0AYg-kdgx1RUo1fUQuGgEVt1hm4be6BxBr8msAd4tJXO-8w');
-      expect(syncedTxns!.elementAt(0).assetRef, '\x00');
+      expect(Bytes.base64UrlEncode(syncedTxns!.elementAt(0).userSignature!),
+          'QO6y-6uh8KJc4u-1AAWOS4mur2FpUb4My1mYDsG3Odt4Oi-fIZxJO_MqZ9DNC6_Y1Fc6_Fnarh04_7-5HKmr-1sT-D8aQyFnm41Lop3TBtH4tfsFZSHN_rO-bJ5ICRwrdqJwhBabW9K35f4x8rWm11oBJFDNCNVd-S1DNt4CVlE_DRI76Fna1JTRq0doG8TPt3Y4FW5X77aB-hZZwbZOcDCe2vYUxvCZT2fLYEOkjR3Qke-_iCrXUSODPJ8rkHVA1rgf2iRYVpN9H3KX6RAT4IcSdPOZlsWrF7yhXDplJqLQHqRjW6OZBSg3s_3TJ4ekbkruxhZx7KugWhu6sFAe9Q');
+      expect(syncedTxns!.elementAt(0).assetRef,
+          'txn://4QlIHwMZYjcFv5ZmORsTxXyZLOOfmiSUUb5MgCjdrUE');
     });
   });
 }

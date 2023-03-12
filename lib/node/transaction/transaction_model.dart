@@ -45,8 +45,11 @@ class TransactionModel {
   /// The [BlockModel] in which this [TransactionModel] is included.
   BlockModel? block;
 
-  /// The asymmetric digital signature (RSA) for the [serialize] transaction.
-  Uint8List? signature;
+  /// The asymmetric user's digital signature (RSA) for the transaction.
+  Uint8List? userSignature;
+
+  /// The asymmetric app's digital signature (RSA) for the transaction.
+  Uint8List? appSignature;
 
   /// Builds a new [TransactionModel]
   ///
@@ -54,14 +57,15 @@ class TransactionModel {
   /// If no [assetRef] is provided, it uses '' as [assetRef] value.
   TransactionModel(
       {this.id,
-      this.version = 1,
+      this.version = 2,
       required this.address,
       required this.contents,
       this.assetRef = '',
       DateTime? timestamp,
       this.merkelProof,
       this.block,
-      this.signature})
+      this.userSignature,
+      this.appSignature})
       : timestamp = timestamp ?? DateTime.now();
 
   /// Builds a [BlockModel] from a [map].
@@ -90,7 +94,8 @@ class TransactionModel {
         block = map['block'],
         timestamp = DateTime.fromMillisecondsSinceEpoch(
             map[TransactionRepository.columnTimestamp]),
-        signature = map[TransactionRepository.columnSignature];
+        userSignature = map[TransactionRepository.columnUserSignature],
+        appSignature = map[TransactionRepository.columnAppSignature];
 
   /// Builds a [TransactionModel] from a [transaction] list of bytes.
   ///
@@ -102,8 +107,9 @@ class TransactionModel {
     timestamp = DateTime.fromMillisecondsSinceEpoch(
         Bytes.decodeBigInt(extractedBytes[2]).toInt() * 1000);
     assetRef = utf8.decode(extractedBytes[3]);
-    signature = extractedBytes[4];
-    contents = extractedBytes[5];
+    userSignature = extractedBytes[4];
+    appSignature = extractedBytes[5];
+    contents = extractedBytes[6];
     id = Digest("SHA3-256").process(serialize());
   }
 
@@ -132,15 +138,22 @@ class TransactionModel {
     Uint8List serializedTimestamp = CompactSize.encode(timestampBytes);
     Uint8List assetRefBytes = Uint8List.fromList(utf8.encode(assetRef));
     Uint8List serializedAssetRef = CompactSize.encode(assetRefBytes);
-    Uint8List serializedSignature = CompactSize.encode(
-        includeSignature && signature != null ? signature! : Uint8List(0));
+    Uint8List serializedUserSignature = CompactSize.encode(
+        includeSignature && userSignature != null
+            ? userSignature!
+            : Uint8List(0));
+    Uint8List serializedAppSignature = CompactSize.encode(
+        includeSignature && appSignature != null
+            ? appSignature!
+            : Uint8List(0));
     Uint8List serializedContents = CompactSize.encode(contents);
     return (BytesBuilder()
           ..add(serializedVersion)
           ..add(serializedAddress)
           ..add(serializedTimestamp)
           ..add(serializedAssetRef)
-          ..add(serializedSignature)
+          ..add(serializedUserSignature)
+          ..add(serializedAppSignature)
           ..add(serializedContents))
         .toBytes();
   }
@@ -163,7 +176,8 @@ class TransactionModel {
       asset_ref : $assetRef,
       block : ${block?.id ?? 'null'},
       timestamp : $timestamp,
-      signature : $signature
+      userSignature : $userSignature,
+      appSignature: $appSignature
     ''';
 
   @override

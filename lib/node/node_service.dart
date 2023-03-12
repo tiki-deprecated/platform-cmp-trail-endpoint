@@ -11,6 +11,7 @@ import 'package:sqlite3/common.dart';
 import '../utils/bytes.dart';
 import '../utils/compact_size.dart';
 import '../utils/merkel_tree.dart';
+import '../utils/rsa/rsa_private_key.dart';
 import 'backup/backup_service.dart';
 import 'block/block_model.dart';
 import 'block/block_service.dart';
@@ -30,6 +31,7 @@ class NodeService {
   late final Duration _blockInterval;
   late final int _maxTransactions;
   late final XChainService _xChainService;
+  late final RsaPrivateKey? _appKey;
 
   Timer? _blockTimer;
 
@@ -44,6 +46,7 @@ class NodeService {
   set backupService(BackupService val) => _backupService = val;
   set primaryKey(KeyModel val) => _primaryKey = val;
   set xChainService(XChainService val) => _xChainService = val;
+  set appKey(RsaPrivateKey? val) => _appKey = val;
 
   startBlockTimer() => _blockTimer == null ? _startBlockTimer() : null;
 
@@ -60,8 +63,8 @@ class NodeService {
   /// [BlockModel].
   Future<TransactionModel> write(Uint8List contents,
       {String assetRef = ''}) async {
-    TransactionModel transaction =
-        _transactionService.create(contents, _primaryKey, assetRef: assetRef);
+    TransactionModel transaction = _transactionService
+        .create(contents, _primaryKey, assetRef: assetRef, appKey: _appKey);
     List<TransactionModel> transactions = _transactionService.getPending();
     if (transactions.length >= _maxTransactions) {
       await _createBlock(transactions);

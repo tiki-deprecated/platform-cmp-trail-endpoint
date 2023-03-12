@@ -35,7 +35,7 @@ void main() {
           contents: contents,
           assetRef: assetRef,
           timestamp: timestamp,
-          signature: signature);
+          userSignature: signature);
 
       repository.save(transaction);
       TransactionModel? found = repository.getById(id);
@@ -47,7 +47,7 @@ void main() {
           timestamp.subtract(Duration(microseconds: timestamp.microsecond)));
       expect(found?.address, address);
       expect(found?.contents, contents);
-      expect(found?.signature, signature);
+      expect(found?.userSignature, signature);
       expect(found?.id, id);
     });
 
@@ -70,7 +70,7 @@ void main() {
           contents: contents,
           assetRef: assetRef,
           timestamp: timestamp,
-          signature: signature);
+          userSignature: signature);
 
       repository.save(transaction);
 
@@ -102,7 +102,7 @@ void main() {
           timestamp.subtract(Duration(microseconds: timestamp.microsecond)));
       expect(found.elementAt(0).address, address);
       expect(found.elementAt(0).contents, contents);
-      expect(found.elementAt(0).signature, signature);
+      expect(found.elementAt(0).userSignature, signature);
       expect(found.elementAt(0).id, id);
       expect(found.elementAt(0).block?.id, blockId);
       expect(found.elementAt(0).merkelProof, merkelProof);

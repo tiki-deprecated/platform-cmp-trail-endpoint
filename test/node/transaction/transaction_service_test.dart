@@ -42,7 +42,7 @@ void main() {
               Duration(microseconds: transaction.timestamp.microsecond)));
       expect(pending.elementAt(0).version, transaction.version);
       expect(pending.elementAt(0).assetRef, transaction.assetRef);
-      expect(pending.elementAt(0).signature, transaction.signature);
+      expect(pending.elementAt(0).userSignature, transaction.userSignature);
       expect(pending.elementAt(0).address, transaction.address);
       expect(pending.elementAt(0).contents, contents);
 
@@ -84,7 +84,8 @@ void main() {
               Duration(microseconds: transaction.timestamp.microsecond)));
       expect(transactions.elementAt(0).version, transaction.version);
       expect(transactions.elementAt(0).assetRef, transaction.assetRef);
-      expect(transactions.elementAt(0).signature, transaction.signature);
+      expect(
+          transactions.elementAt(0).userSignature, transaction.userSignature);
       expect(transactions.elementAt(0).address, transaction.address);
       expect(transactions.elementAt(0).contents, contents);
       expect(transactions.elementAt(0).block?.id, block.id);
