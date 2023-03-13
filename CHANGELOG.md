@@ -1,4 +1,4 @@
-### 2.0.1
+### 2.1.0
 **Expands the API to:**
 - Allow customer provided IDs (instead of directly utilizing addresses)
 - Allow customers to provide their own user token (JWT) for added registry security
