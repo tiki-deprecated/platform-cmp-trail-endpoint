@@ -1,0 +1,33 @@
+# -------------------------------------------------------------------------------------
+# Backend development owns this repo as a whole.
+# -------------------------------------------------------------------------------------
+*                    @tiki/backend-development
+
+
+# -------------------------------------------------------------------------------------
+# Content should have eyes on any Markdown changes.
+# -------------------------------------------------------------------------------------
+*.md                 @tiki/content @tiki/backend-development
+
+
+# -------------------------------------------------------------------------------------
+# Core development should all have eyes on any changes under .github/
+# -------------------------------------------------------------------------------------
+/.github/            @tiki/core-development @tiki/backend-development
+
+
+# -------------------------------------------------------------------------------------
+# Governance needs to have eyes on any licensing or risk-related changes
+# -------------------------------------------------------------------------------------
+LICENSE              @tiki/governance @tiki/backend-development
+/.github/CODEOWNERS  @tiki/governance @tiki/core-development @tiki/backend-development
+
+
+# -------------------------------------------------------------------------------------
+# Backend development and infrastructure care about Docker, databases, and Terraform
+# -------------------------------------------------------------------------------------
+
+*.dockerfile         @tiki/backend-development @tiki/infrastructure
+docker-compose.yaml  @tiki/backend-development @tiki/infrastructure
+/database/           @tiki/backend-development @tiki/infrastructure
+/infra/              @tiki/backend-development @tiki/infrastructure
