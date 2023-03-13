@@ -78,6 +78,15 @@ Follow a reverse-DNS syntax. <em>i.e. com.myco.myapp</em></p>
 Private key MUST be previously registered in the provided <code>keyStorage</code>.
 Use <a href="../../tiki_sdk_dart/TikiSdk/withId.html">withId</a>.</p>
 <p>• <code>database</code> - Platform-specific sqlite3 implementation, opened.</p>
+<p>• <code>maxTransactions</code> - The maximum number of transactions to bundle
+in a block. Use in combination with <code>blockInterval</code>. Default is 1.</p>
+<p>• <code>blockInterval</code> - The duration before a block is automatically
+created if there are any pending transactions AND the <code>maxTransactions</code>
+limit has not been reached. Use in combination with <code>blockInterval</code>.
+Default is 1 minute.</p>
+<p>• <code>customerAuth</code> - A customer provided Authorization Token (JWT) for
+use in <code>id</code> registration. Use <code>customerAuth</code> to add user identity
+verification. Configure in <a href="https://console.mytiki.com">console</a></p>
 </section>
 
 
@@ -98,11 +107,17 @@ Use <a href="../../tiki_sdk_dart/TikiSdk/withId.html">withId</a>.</p>
   AuthService authService = AuthService(publishingId);
   StorageService storageService =
       StorageService(primaryKey.privateKey, authService);
+  RegistryService registryService =
+      RegistryService(primaryKey.privateKey, authService);
+  RegistryModelRsp registryRsp = await registryService.register(
+      id, Bytes.base64UrlEncode(primaryKey.address),
+      customerAuth: customerAuth);
 
   NodeService nodeService = NodeService()
     ..blockInterval = blockInterval
     ..maxTransactions = maxTransactions
-    ..transactionService = TransactionService(database)
+    ..transactionService =
+        TransactionService(database, appKey: registryRsp.signKey)
     ..blockService = BlockService(database)
     ..xChainService = XChainService(storageService, database)
     ..primaryKey = primaryKey;
@@ -114,11 +129,6 @@ Use <a href="../../tiki_sdk_dart/TikiSdk/withId.html">withId</a>.</p>
       TitleService(origin, nodeService, nodeService.database);
   LicenseService licenseService =
       LicenseService(nodeService.database, nodeService);
-  RegistryService registryService =
-      RegistryService(primaryKey.privateKey, authService);
-  RegistryModelRsp registryRsp = await registryService
-      .register(id, nodeService.address, customerAuth: customerAuth);
-  nodeService.appKey = registryRsp.signKey;
 
   return TikiSdk(titleService, licenseService, nodeService, registryService);
 }</code></pre>

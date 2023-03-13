@@ -63,7 +63,7 @@ about Title Records.</p>
 
     <dl class="constructor-summary-list">
         <dt id="TitleRecord" class="callable">
-          <span class="name"><a href="../tiki_sdk_dart/TitleRecord/TitleRecord.html">TitleRecord</a></span><span class="signature">(<span class="parameter" id="-param-id"><span class="type-annotation">String</span> <span class="parameter-name">id</span>, </span><span class="parameter" id="-param-ptr"><span class="type-annotation">String</span> <span class="parameter-name">ptr</span>, </span><span class="parameter" id="-param-origin">{<span class="type-annotation">String?</span> <span class="parameter-name">origin</span>, </span><span class="parameter" id="-param-tags"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../tiki_sdk_dart/TitleTag-class.html">TitleTag</a></span>&gt;</span></span> <span class="parameter-name">tags</span> = <span class="default-value">const []</span>, </span><span class="parameter" id="-param-description"><span class="type-annotation">String?</span> <span class="parameter-name">description</span>}</span>)</span>
+          <span class="name"><a href="../tiki_sdk_dart/TitleRecord/TitleRecord.html">TitleRecord</a></span><span class="signature">(<span class="parameter" id="-param-id"><span class="type-annotation">String</span> <span class="parameter-name">id</span>, </span><span class="parameter" id="-param-hashedPtr"><span class="type-annotation">String</span> <span class="parameter-name">hashedPtr</span>, </span><span class="parameter" id="-param-origin">{<span class="type-annotation">String?</span> <span class="parameter-name">origin</span>, </span><span class="parameter" id="-param-tags"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../tiki_sdk_dart/TitleTag-class.html">TitleTag</a></span>&gt;</span></span> <span class="parameter-name">tags</span> = <span class="default-value">const []</span>, </span><span class="parameter" id="-param-description"><span class="type-annotation">String?</span> <span class="parameter-name">description</span>}</span>)</span>
         </dt>
         <dd>
           
@@ -97,6 +97,17 @@ about Title Records.</p>
 
 </dd>
 
+        <dt id="hashedPtr" class="property">
+  <span class="name"><a href="../tiki_sdk_dart/TitleRecord/hashedPtr.html">hashedPtr</a></span>
+  <span class="signature">&#8596; String</span> 
+
+</dt>
+<dd>
+  The hashed (SHA3-256) Pointer Record identifying the asset
+  <div class="features">read / write</div>
+
+</dd>
+
         <dt id="id" class="property">
   <span class="name"><a href="../tiki_sdk_dart/TitleRecord/id.html">id</a></span>
   <span class="signature">&#8596; String</span> 
@@ -115,17 +126,6 @@ about Title Records.</p>
 </dt>
 <dd>
   The origin from which the data was generated.
-  <div class="features">read / write</div>
-
-</dd>
-
-        <dt id="ptr" class="property">
-  <span class="name"><a href="../tiki_sdk_dart/TitleRecord/ptr.html">ptr</a></span>
-  <span class="signature">&#8596; String</span> 
-
-</dt>
-<dd>
-  A Pointer Record identifying the asset
   <div class="features">read / write</div>
 
 </dd>
@@ -265,9 +265,9 @@ about Title Records.</p>
     </li>
     <li><a href="../tiki_sdk_dart/TitleRecord/description.html">description</a></li>
     <li class="inherited"><a href="../tiki_sdk_dart/TitleRecord/hashCode.html">hashCode</a></li>
+    <li><a href="../tiki_sdk_dart/TitleRecord/hashedPtr.html">hashedPtr</a></li>
     <li><a href="../tiki_sdk_dart/TitleRecord/id.html">id</a></li>
     <li><a href="../tiki_sdk_dart/TitleRecord/origin.html">origin</a></li>
-    <li><a href="../tiki_sdk_dart/TitleRecord/ptr.html">ptr</a></li>
     <li class="inherited"><a href="../tiki_sdk_dart/TitleRecord/runtimeType.html">runtimeType</a></li>
     <li><a href="../tiki_sdk_dart/TitleRecord/tags.html">tags</a></li>
 

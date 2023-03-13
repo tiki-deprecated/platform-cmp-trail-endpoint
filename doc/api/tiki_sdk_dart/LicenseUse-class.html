@@ -93,10 +93,8 @@ ECMAScript Regex to specify flexible and easily enforceable rules.</p>
 </dt>
 <dd>
   Destinations explicitly define WHERE an asset may be used.
-Destinations can be: a wildcard URL (*.your-co.com),
-a string defining a category of destinations (data marketplaces),
-or prefixed by NOT, to explicitly deny specific destinations
-(NOT *.enemy.com).
+Destinations can be either explicit (<code>'https://mytiki.com'</code>) or
+ECMAScript Compatible Regex (<code>'\\.mytiki\\.com'</code>)
   <div class="features">read / write</div>
 
 </dd>
