@@ -12,8 +12,8 @@ class TitleRecord {
   /// This record's id.
   String id;
 
-  /// A Pointer Record identifying the asset
-  String ptr;
+  /// The hashed (SHA3-256) Pointer Record identifying the asset
+  String hashedPtr;
 
   /// The origin from which the data was generated.
   String? origin;
@@ -24,6 +24,6 @@ class TitleRecord {
   /// A human-readable description of the asset.
   String? description;
 
-  TitleRecord(this.id, this.ptr,
+  TitleRecord(this.id, this.hashedPtr,
       {this.origin, this.tags = const [], this.description});
 }

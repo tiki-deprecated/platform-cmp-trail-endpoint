@@ -29,7 +29,7 @@ void main() {
           await tikiSdk.title(ptr, tags: [TitleTag.emailAddress()]);
       expect(title.tags.elementAt(0).value, TitleTag.emailAddress().value);
       expect(title.origin, 'com.mytiki.tiki_sdk_dart.test');
-      expect(title.ptr, hashedPtr);
+      expect(title.hashedPtr, hashedPtr);
       expect(title.description, null);
     });
 
@@ -48,7 +48,7 @@ void main() {
       expect(first.uses.elementAt(0).usecases.elementAt(0).value,
           LicenseUsecase.attribution().value);
       expect(first.terms, 'terms');
-      expect(first.title.ptr, hashedPtr);
+      expect(first.title.hashedPtr, hashedPtr);
       LicenseRecord second = await tikiSdk.license(ptr, [], 'terms');
       expect(second.uses.length, 0);
     });

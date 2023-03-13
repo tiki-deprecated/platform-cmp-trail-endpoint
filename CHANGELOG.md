@@ -1,3 +1,14 @@
+### 2.1.0
+**Expands the API to:**
+- Allow customer provided IDs (instead of directly utilizing addresses)
+- Allow customers to provide their own user token (JWT) for added registry security
+
+**Adds logic to:**
+- Sync all transactions for all addresses registered to the ID on startup
+- Auto-register new addresses created to the ID
+- Add an app signature (using sign key from registry) to transactions
+- Interface with the l0-registry service
+
 ### 2.0.0
 **Node**
 - Set `maxTransactions` default to 1 (_Most applications do not require high throughput, and longer chains will improve the immutability strength_)

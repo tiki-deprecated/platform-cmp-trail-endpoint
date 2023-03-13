@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category Node}
+
 import 'dart:typed_data';
 
 import 'package:sqlite3/common.dart';
@@ -40,9 +40,7 @@ class BlockRepository {
     createTable();
   }
 
-  /// Builds a [BlockRepository] that will use [db] for persistence.
-  ///
-  /// It calls [createTable] to make sure the table exists.
+  /// Creates the [BlockRepository.table] if it does not exist.
   void createTable() => db.execute('''
     CREATE TABLE IF NOT EXISTS $table (
       $columnId BLOB PRIMARY KEY NOT NULL,

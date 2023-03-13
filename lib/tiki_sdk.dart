@@ -67,7 +67,7 @@ class TikiSdk {
   /// to the [keyStorage] for [id].
   ///
   /// If the private keys are missing a new address and
-  /// private key is created.
+  /// private key is created and registered to the [id].
   ///
   /// Returns the valid (created or provided) address
   static Future<String> withId(String id, KeyStorage keyStorage) async {
@@ -94,6 +94,18 @@ class TikiSdk {
   /// Use [withId].
   ///
   /// • [database] - Platform-specific sqlite3 implementation, opened.
+  ///
+  /// • [maxTransactions] - The maximum number of transactions to bundle
+  /// in a block. Use in combination with [blockInterval]. Default is 1.
+  ///
+  /// • [blockInterval] - The duration before a block is automatically
+  /// created if there are any pending transactions AND the [maxTransactions]
+  /// limit has not been reached. Use in combination with [blockInterval].
+  /// Default is 1 minute.
+  ///
+  /// • [customerAuth] - A customer provided Authorization Token (JWT) for
+  /// use in [id] registration. Use [customerAuth] to add user identity
+  /// verification. Configure in [console](https://console.mytiki.com)
   static Future<TikiSdk> init(String publishingId, String origin,
       KeyStorage keyStorage, String id, CommonDatabase database,
       {int maxTransactions = 1,
@@ -108,11 +120,17 @@ class TikiSdk {
     AuthService authService = AuthService(publishingId);
     StorageService storageService =
         StorageService(primaryKey.privateKey, authService);
+    RegistryService registryService =
+        RegistryService(primaryKey.privateKey, authService);
+    RegistryModelRsp registryRsp = await registryService.register(
+        id, Bytes.base64UrlEncode(primaryKey.address),
+        customerAuth: customerAuth);
 
     NodeService nodeService = NodeService()
       ..blockInterval = blockInterval
       ..maxTransactions = maxTransactions
-      ..transactionService = TransactionService(database)
+      ..transactionService =
+          TransactionService(database, appKey: registryRsp.signKey)
       ..blockService = BlockService(database)
       ..xChainService = XChainService(storageService, database)
       ..primaryKey = primaryKey;
@@ -124,11 +142,6 @@ class TikiSdk {
         TitleService(origin, nodeService, nodeService.database);
     LicenseService licenseService =
         LicenseService(nodeService.database, nodeService);
-    RegistryService registryService =
-        RegistryService(primaryKey.privateKey, authService);
-    RegistryModelRsp registryRsp = await registryService
-        .register(id, nodeService.address, customerAuth: customerAuth);
-    nodeService.appKey = registryRsp.signKey;
 
     return TikiSdk(titleService, licenseService, nodeService, registryService);
   }
@@ -139,11 +152,13 @@ class TikiSdk {
   /// instance. This [address] serves as a unique identifier for a particular
   /// combination of user and device. If either the user or the device changes,
   /// use a a different [address].
-  ///
-  /// After [init], store the address somewhere local to your app that
-  /// you can easily retrieve and reuse on app-reload.
   String get address => _nodeService.address;
 
+  // Returns the in-use id [id]
+  //
+  // A customer provided identifier for the user, in use by this [TikiSdk]
+  // instance. This [id] serves as a unique identifier for a user. Set the
+  // [id] using the [withId] method before calling [init].
   String get id => _nodeService.id;
 
   /// Create a new [LicenseRecord].
@@ -353,9 +368,11 @@ class TikiSdk {
     }
   }
 
+  /// Helper method to SHA3-256 hash customer provided Pointer Records ([ptr]).
   String _hashPtr(String ptr) => base64
       .encode(Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
 
+  /// Helper method to convert [title] and [license] models to [LicenseRecord]s
   LicenseRecord _toLicense(
           TitleModel title, LicenseModel license) =>
       LicenseRecord(
@@ -369,6 +386,8 @@ class TikiSdk {
           description: license.description,
           expiry: license.expiry);
 
+  /// Method to sync missing blocks and transactions for the [id] using
+  /// the L0 Registry Service.
   Future<void> _syncRegistry() => _registryService.get(id).then((rsp) {
         rsp.addresses?.forEach((address) => _nodeService.sync(address, (txn) {
               List<Uint8List> decodedContents =

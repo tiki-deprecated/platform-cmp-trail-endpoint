@@ -21,9 +21,11 @@ import 'transaction_repository.dart';
 /// The service to manage transactions in the chain.
 class TransactionService {
   final TransactionRepository _repository;
+  final RsaPrivateKey? _appKey;
 
-  TransactionService(CommonDatabase db)
-      : _repository = TransactionRepository(db);
+  TransactionService(CommonDatabase db, {RsaPrivateKey? appKey})
+      : _repository = TransactionRepository(db),
+        _appKey = appKey;
 
   /// Creates a [TransactionModel] with [contents].
   ///
@@ -33,13 +35,13 @@ class TransactionService {
   /// [BlockModel] by setting the [TransactionModel.block] and
   /// [TransactionModel.merkelProof] values and calling the [commit] method.
   TransactionModel create(Uint8List contents, KeyModel key,
-      {String assetRef = '', RsaPrivateKey? appKey}) {
+      {String assetRef = ''}) {
     TransactionModel txn = TransactionModel(
         address: key.address, contents: contents, assetRef: assetRef);
     Uint8List serializedWithoutSigs = txn.serialize(includeSignature: false);
     txn.userSignature = Rsa.sign(key.privateKey, serializedWithoutSigs);
-    if (appKey != null) {
-      txn.appSignature = Rsa.sign(appKey, serializedWithoutSigs);
+    if (_appKey != null) {
+      txn.appSignature = Rsa.sign(_appKey!, serializedWithoutSigs);
     }
     txn.id = Digest("SHA3-256").process(txn.serialize());
     _repository.save(txn);
