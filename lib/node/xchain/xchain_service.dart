@@ -19,14 +19,25 @@ import 'xchain_client.dart';
 import 'xchain_model.dart';
 import 'xchain_repository.dart';
 
+/// A service to retrieve blocks (and transactions) from other
+/// addresses (WITHIN the app scope)
 class XChainService {
   final XChainRepository _repository;
   final XChainClient _client;
   final Map<String, RsaPublicKey> _knownAddresses = {};
 
+  /// Creates a new XChainService
+  ///
+  /// Requires a [_client] compatible service and [db] compatible
+  /// database.
   XChainService(this._client, CommonDatabase db)
       : _repository = XChainRepository(db);
 
+  /// Fetch and verify all blocks and transactions for an
+  /// [address] that are not already in local database.
+  ///
+  /// Use [onBlockAdded] to asynchronously interact with each
+  /// new block identified.
   Future<void> sync(String address,
       Function(BlockModel, List<TransactionModel>) onBlockAdded) async {
     RsaPublicKey? publicKey = await _getPublicKey(address);
@@ -40,6 +51,9 @@ class XChainService {
     }
   }
 
+  /// Returns the [RsaPublicKey] for the [address]. If
+  /// the public key is not already in local memory, retrieve it
+  /// from storage.
   Future<RsaPublicKey?> _getPublicKey(String address) async {
     RsaPublicKey? publicKey = _knownAddresses[address];
     if (publicKey == null) {
@@ -51,6 +65,7 @@ class XChainService {
     return publicKey;
   }
 
+  /// Returns a List of block ids that are not already synced.
   Future<List<String>> _getBlockIds(String address) async {
     Set<String> allBlockIds = (await _client.list(address))
         .where((key) => key.endsWith('.block'))
@@ -62,6 +77,7 @@ class XChainService {
     return allBlockIds.where((key) => !syncedBlockIds.contains(key)).toList();
   }
 
+  /// Fetches and verifies ([publicKey]) a block using it's storage [key]
   Future<void> _fetchBlock(String key, RsaPublicKey publicKey,
       Function(BlockModel, List<TransactionModel>) onBlockAdded) async {
     Uint8List? bytes = await _client.read(key);
@@ -91,6 +107,7 @@ class XChainService {
     }
   }
 
+  /// Returns decoded and verified transactions for a [decodedBlock]
   List<TransactionModel> _decodeAndVerifyTxns(
       List<Uint8List> decodedBlock, RsaPublicKey publicKey, BlockModel block) {
     int txnCount = Bytes.decodeBigInt(decodedBlock[4]).toInt();

@@ -2,7 +2,7 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-/// {@category Node}
+
 import 'package:sqlite3/common.dart';
 
 import 'backup_model.dart';

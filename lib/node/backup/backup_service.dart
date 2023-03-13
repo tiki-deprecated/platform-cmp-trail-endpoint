@@ -16,6 +16,7 @@ import 'backup_client.dart';
 import 'backup_model.dart';
 import 'backup_repository.dart';
 
+/// A service to handle block backups
 class BackupService {
   final BackupRepository _repository;
   final BackupClient _client;

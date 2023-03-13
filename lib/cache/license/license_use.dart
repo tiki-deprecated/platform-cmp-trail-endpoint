@@ -22,10 +22,8 @@ class LicenseUse {
   List<LicenseUsecase> usecases;
 
   /// Destinations explicitly define WHERE an asset may be used.
-  /// Destinations can be: a wildcard URL (*.your-co.com),
-  /// a string defining a category of destinations (data marketplaces),
-  /// or prefixed by NOT, to explicitly deny specific destinations
-  /// (NOT *.enemy.com).
+  /// Destinations can be either explicit (`'https://mytiki.com'`) or
+  /// ECMAScript Compatible Regex (`'\\.mytiki\\.com'`)
   List<String>? destinations;
 
   LicenseUse(this.usecases, {this.destinations});

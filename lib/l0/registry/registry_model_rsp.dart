@@ -5,8 +5,16 @@
 
 import '../../utils/rsa/rsa_private_key.dart';
 
+/// A Registry Response
+///
+/// A POJO style model representing a JSON object for
+/// the registry service.
 class RegistryModelRsp {
+  /// A [signKey] unique to the registered id for use in
+  /// in generating app signatures.
   RsaPrivateKey? signKey;
+
+  /// All [addresses] corresponding to the registered id
   List<String>? addresses;
 
   RegistryModelRsp({this.signKey, this.addresses});
