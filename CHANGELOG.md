@@ -1,3 +1,7 @@
+### 2.1.1
+
+* fix: Guard method should use plain text PTRs.
+
 ### 2.1.0
 **Expands the API to:**
 - Allow customer provided IDs (instead of directly utilizing addresses)
