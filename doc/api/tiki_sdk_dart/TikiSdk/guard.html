@@ -108,7 +108,6 @@ if(pass) http.post(...);
     List&lt;String&gt;? destinations,
     Function()? onPass,
     Function(String)? onFail}) {
-  ptr = _hashPtr(ptr);
   LicenseRecord? license = latest(ptr, origin: origin);
   if (license == null) {
     if (onFail != null) onFail(&#39;Missing license for ptr: $ptr&#39;);
@@ -189,7 +188,7 @@ if(pass) http.post(...);
 <footer>
   <span class="no-break">
     tiki_sdk_dart
-      2.1.0
+      2.1.1
   </span>
 
   ・🍍 mytiki.com・© Tiki inc.

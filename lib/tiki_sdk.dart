@@ -351,7 +351,6 @@ class TikiSdk {
       List<String>? destinations,
       Function()? onPass,
       Function(String)? onFail}) {
-    ptr = _hashPtr(ptr);
     LicenseRecord? license = latest(ptr, origin: origin);
     if (license == null) {
       if (onFail != null) onFail('Missing license for ptr: $ptr');
