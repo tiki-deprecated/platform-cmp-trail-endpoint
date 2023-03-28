@@ -9,6 +9,7 @@ import 'package:pointycastle/export.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../utils/rsa/rsa.dart';
+import '../../utils/rsa/rsa_private_key.dart';
 import 'key_model.dart';
 import 'key_repository.dart';
 import 'key_storage.dart';
@@ -21,12 +22,12 @@ class KeyService {
 
   /// Create a new [RsaKeyPair] and save its public key in object storage.
   Future<KeyModel> create({String? id}) async {
-    RsaKeyPair rsaKeyPair = await Rsa.generateAsync();
-    Uint8List address = Digest("SHA3-256").process(rsaKeyPair.publicKey.bytes);
+    RsaPrivateKey privateKey = await _repository.generate();
+    Uint8List address = Digest("SHA3-256").process(privateKey.public.bytes);
     KeyModel keys = KeyModel(
       id ?? const Uuid().v4(),
       address,
-      rsaKeyPair.privateKey,
+      privateKey,
     );
     _repository.save(keys);
     return keys;

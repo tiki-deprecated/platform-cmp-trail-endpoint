@@ -30,6 +30,12 @@ class InMemKeyStorage extends KeyStorage {
   Map<String, String> storage = {};
 
   @override
+  Future<String> generate() async {
+    RsaKeyPair rsaKeyPair = await Rsa.generateAsync();
+    return rsaKeyPair.privateKey.encode();
+  }
+
+  @override
   Future<String?> read(String key) async => storage[key];
 
   @override

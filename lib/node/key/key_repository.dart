@@ -3,6 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import '../../utils/rsa/rsa_private_key.dart';
 import 'key_model.dart';
 import 'key_storage.dart';
 
@@ -12,6 +13,11 @@ class KeyRepository {
   late final KeyStorage _keyStorage;
 
   KeyRepository(this._keyStorage);
+
+  Future<RsaPrivateKey> generate() async {
+    String encoded = await _keyStorage.generate();
+    return RsaPrivateKey.decode(encoded);
+  }
 
   Future<void> save(KeyModel model) =>
       _keyStorage.write('$_keyPrefix.${model.id}', model.toJson());
