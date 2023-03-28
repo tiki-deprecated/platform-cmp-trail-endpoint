@@ -42,7 +42,7 @@ jobs:
           sed -i 's/version:*.*.*/version: ${{ steps.semver.outputs.nextStrict }}/' pubspec.yaml
 
       - name: 'Setup Dart'
-        uses: dart-lang/setup-dart@v1.3
+        uses: dart-lang/setup-dart@v1.4
         with:
           sdk: 2.18.2
 
