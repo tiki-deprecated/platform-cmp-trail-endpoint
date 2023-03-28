@@ -5,6 +5,7 @@
 
 import 'dart:typed_data';
 
+import 'package:pointycastle/api.dart';
 import 'package:sqlite3/common.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tiki_sdk_dart/cache/license/license_service.dart';
@@ -30,7 +31,26 @@ class InMemKeyStorage extends KeyStorage {
   Map<String, String> storage = {};
 
   @override
+  Future<String> generate() async {
+    RsaKeyPair rsaKeyPair = await Rsa.generateAsync();
+    return rsaKeyPair.privateKey.encode();
+  }
+
+  @override
   Future<String?> read(String key) async => storage[key];
+
+  @override
+  Future<String> create(String id) async {
+    RsaKeyPair rsaKeyPair = await Rsa.generateAsync();
+    Uint8List address = Digest("SHA3-256").process(rsaKeyPair.publicKey.bytes);
+    KeyModel keys = KeyModel(
+      id,
+      address,
+      rsaKeyPair.privateKey,
+    );
+    storage[id] = keys.toJson();
+    return storage[id]!;
+  }
 
   @override
   Future<void> write(String key, String value) async => storage[key] = value;
