@@ -1,6 +1,10 @@
-### 2.1.2
+### 2.1.3
 
 - fix: Remove Uint64Lists for web compatability.
+
+### 2.1.2
+
+- fix: Move key generation to Key Storage interface for web compatability.
 
 ### 2.1.1
 
