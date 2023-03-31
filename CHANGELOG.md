@@ -1,6 +1,10 @@
+### 2.1.2
+
+- fix: Remove Uint64Lists for web compatability.
+
 ### 2.1.1
 
-* fix: Guard method should use plain text PTRs.
+- fix: Guard method should use plain text PTRs.
 
 ### 2.1.0
 **Expands the API to:**
