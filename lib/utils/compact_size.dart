@@ -58,9 +58,11 @@ class CompactSize {
       Uint32List uint32list = Uint32List.fromList([size]);
       byteList.add(uint32list.buffer.asUint8List());
     } else {
-      byteList.addByte(255);
-      Uint64List uint64list = Uint64List.fromList([size]);
-      byteList.add(uint64list.buffer.asUint8List());
+      throw UnsupportedError(
+          ">Uint32 length sizes are not unsupported. Pick a size under 4,294,967,295 bytes");
+      // byteList.addByte(255);
+      // Uint64List uint64list = Uint64List.fromList([size]);
+      // byteList.add(uint64list.buffer.asUint8List());
     }
     return byteList.toBytes();
   }

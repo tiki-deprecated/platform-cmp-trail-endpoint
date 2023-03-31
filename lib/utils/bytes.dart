@@ -64,32 +64,23 @@ class Bytes {
         : BigInt.zero;
   }
 
-  /// Compares two [Uint8List]s by comparing 8 bytes at a time.
-  static bool memEquals(Uint8List bytes1, Uint8List bytes2) {
-    if (identical(bytes1, bytes2)) {
-      return true;
+  /// Compares two [Uint8List]s for equality
+  /// From: https://api.flutter.dev/flutter/foundation/listEquals.html.
+  static bool memEquals(Uint8List? a, Uint8List? b) {
+    if (a == null) {
+      return b == null;
     }
-
-    if (bytes1.lengthInBytes != bytes2.lengthInBytes) {
+    if (b == null || a.length != b.length) {
       return false;
     }
-
-    var numWords = bytes1.lengthInBytes ~/ 8;
-    var words1 = bytes1.buffer.asUint64List(0, numWords);
-    var words2 = bytes2.buffer.asUint64List(0, numWords);
-
-    for (var i = 0; i < words1.length; i += 1) {
-      if (words1[i] != words2[i]) {
+    if (identical(a, b)) {
+      return true;
+    }
+    for (int index = 0; index < a.length; index += 1) {
+      if (a[index] != b[index]) {
         return false;
       }
     }
-
-    for (var i = words1.lengthInBytes; i < bytes1.lengthInBytes; i += 1) {
-      if (bytes1[i] != bytes2[i]) {
-        return false;
-      }
-    }
-
     return true;
   }
 
