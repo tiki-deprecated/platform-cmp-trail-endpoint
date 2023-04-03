@@ -43,6 +43,13 @@ class XChainService {
     RsaPublicKey? publicKey = await _getPublicKey(address);
     if (publicKey != null) {
       List<String> blockIds = await _getBlockIds(address);
+      List<String> existing = _repository
+          .getAllByAddress(Bytes.base64UrlDecode(address))
+          .where((xc) => xc.blockId != null)
+          .map((xc) => Bytes.base64UrlEncode(xc.blockId!))
+          .toList();
+      blockIds.removeWhere(
+          (id) => existing.contains(id.replaceAll(".block", "").split("/")[1]));
       List<Future> fetches = [];
       for (String key in blockIds) {
         fetches.add(_fetchBlock(key, publicKey, onBlockAdded));
