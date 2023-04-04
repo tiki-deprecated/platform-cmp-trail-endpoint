@@ -38,6 +38,9 @@ jobs:
       - name: Run tests
         run: dart test
 
+      - name: Run docs
+        run: dart doc
+
       - name: Check a new tag
         id: tag
         run: |
