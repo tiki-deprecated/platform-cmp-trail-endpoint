@@ -1,3 +1,6 @@
+### 2.1.4
+- fix: SQlite Unique Constraint violation in XChain Sync —skip blocks that have already been synced. 
+
 ### 2.1.3
 
 - fix: Remove Uint64Lists for web compatability.
