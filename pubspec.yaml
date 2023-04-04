@@ -1,6 +1,6 @@
 name: tiki_sdk_dart
 description: Create and enforce immutable data licensing records client-side. The core-implementation of TIKI's client-side infrastructure.
-version: 2.1.3
+version: 2.1.4
 homepage: https://mytiki.com
 documentation: https://docs.mytiki.com/docs/sdk-overview
 repository: https://github.com/tiki/tiki-sdk-dart

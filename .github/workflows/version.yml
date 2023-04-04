@@ -46,9 +46,6 @@ jobs:
         with:
           sdk: 2.18.2
 
-      - name: Update docs
-        run: dart doc
-
       - name: Commit Changes
         continue-on-error: true
         env:
@@ -57,6 +54,5 @@ jobs:
           git config --global user.email "action@github.com"
           git config --global user.name "GH Action"
           git add pubspec.yaml
-          git add doc/
           git commit -m 'version bump'
           git push
