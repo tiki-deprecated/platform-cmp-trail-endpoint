@@ -2,5 +2,3 @@ dartdoc:
   include: [
     tiki_sdk_dart
   ]
-  favicon: doc/assets/favicon.ico
-  footerText: ["doc/assets/footer.txt"]
