@@ -15,12 +15,12 @@ dependencies:
   http: ^0.13.5
   html: ^0.15.2
   uuid: ^3.0.7
-  nock: ^1.2.1
 
 dev_dependencies:
   test: ^1.24.0
   flutter_lints: ^2.0.1
   build_web_compilers: ^3.2.7
+  nock: ^1.2.1
   build_runner: ">=1.6.2 <3.0.0"
 
 
