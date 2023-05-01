@@ -1,0 +1,64 @@
+labels:
+  - name: breaking
+    color: D73A4A
+    description: Introduces a breaking change.
+
+  - name: 'good first issue'
+    color: 7057FF
+    description: Good for newcomers.
+
+  - name: help
+    color: 0E8A16
+    description: Requires help to resolve.
+
+  - name: 'priority: now'
+    color: D73A4A
+    description: Stop what you're doing and fix it, now.
+
+  - name: 'priority: soon'
+    color: FFB8C6
+    description: Critical, requires work ASAP.
+
+  - name: 'priority: 2day'
+    color: FBCA04
+    description: Priority this task above others.
+
+  - name: blocked
+    color: D73A4A
+    description: Something is blocking this.
+
+  - name: bug
+    color: FFB8C6
+    description: Something isn't working.
+
+  - name: chore
+    color: FEF2C0
+    description: Naming, organizing folder structure, and less impactful tasks.
+
+  - name: discuss
+    color: D4C5F9
+    description: Questions, proposals and info that requires discussion.
+
+  - name: docs
+    color: FEF2C0
+    description: Related to documentation and information.
+
+  - name: feature
+    color: 5EBEFF
+    description: Brand new functionality, features, pages, workflows, endpoints, etc.
+
+  - name: fix
+    color: 91CA55
+    description: Iterations on existing features or infrastructure.
+    
+  - name: security
+    color: D73A4A
+    description: Something is vulnerable or not secure.
+
+  - name: testing
+    color: 64CFDB
+    description: Related to testing.
+
+  - name: duplicate
+    color: CFD3D7
+    description: This issue or pull request already exists.
