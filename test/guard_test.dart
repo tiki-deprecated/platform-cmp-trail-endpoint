@@ -3,9 +3,16 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
 import 'package:tiki_sdk_dart/guard.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:uuid/uuid.dart';
+
+import 'in_mem.dart';
 
 void main() {
   LicenseRecord fakeLicense(List<LicenseUse> uses, {DateTime? expiry}) {
@@ -168,6 +175,51 @@ void main() {
           ]) ==
           null;
       expect(pass, false);
+    });
+
+    test('valid license - True', () async {
+      String ptr = const Uuid().v4();
+      TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
+      tikiSdk.title(ptr);
+      String terms = 'This is a new term';
+      List<LicenseUsecase> list = [
+        LicenseUsecase.personalization(),
+        LicenseUsecase.analytics()
+      ];
+      await tikiSdk.license(ptr, [LicenseUse(list)], terms,
+          origin: 'com.mytiki',
+          tags: [TitleTag.audio(), TitleTag.advertisingData()],
+          expiry: DateTime(1));
+      bool result = tikiSdk.guard(ptr, list);
+      expect(result, true);
+    });
+
+    test('invalid license - True', () async {
+      String ptr = const Uuid().v4();
+      TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
+      tikiSdk.title(ptr);
+      String terms = 'This is a new term';
+      List<LicenseUsecase> list = [
+        LicenseUsecase.personalization(),
+        LicenseUsecase.analytics()
+      ];
+      await tikiSdk.license(ptr, [], terms,
+          origin: 'com.mytiki',
+          tags: [TitleTag.audio(), TitleTag.advertisingData()],
+          expiry: DateTime(1));
+      bool result = tikiSdk.guard(ptr, list);
+      expect(result, false);
+    });
+
+    test('invalid parameters - True', () async {
+      String ptr = const Uuid().v4();
+      TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
+      List<LicenseUsecase> list = [
+        LicenseUsecase.personalization(),
+        LicenseUsecase.aiTraining()
+      ];
+      bool result = tikiSdk.guard(ptr, list);
+      expect(result, false);
     });
   });
 }
