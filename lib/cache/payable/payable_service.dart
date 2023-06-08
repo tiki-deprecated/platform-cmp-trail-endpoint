@@ -42,6 +42,10 @@ class PayableService {
     return payable;
   }
 
-  /// Returns the payable for a [id].
+  /// Returns the payable for a [id]
   PayableModel? getById(Uint8List id) => _repository.getById(id);
+
+  /// Returns all payables given a [license]
+  List<PayableModel> getAll(Uint8List license) =>
+      _repository.getByLicense(license);
 }

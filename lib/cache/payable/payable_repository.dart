@@ -72,6 +72,13 @@ class PayableRepository {
     return payables.isNotEmpty ? payables.first : null;
   }
 
+  /// Gets all [PayableModel]s for a [license]
+  List<PayableModel> getByLicense(Uint8List license) {
+    String where = '''WHERE $columnLicense = 
+      x'${Bytes.hexEncode(license)}' ORDER BY $table.oid DESC''';
+    return _select(whereStmt: where, params: []);
+  }
+
   List<PayableModel> _select({String? whereStmt, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT * FROM $table
