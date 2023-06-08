@@ -11,7 +11,8 @@ import '../utils/compact_size.dart';
 /// A schema identifier for a transaction's contents
 enum ContentSchema {
   title(2),
-  license(3);
+  license(3),
+  payable(4);
 
   final int _value;
 
