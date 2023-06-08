@@ -51,5 +51,40 @@ void main() {
       expect(payable.reference, "ooo I got a ref");
       expect(payable.expiry, DateTime(2000));
     });
+
+    test('getAll - Success', () async {
+      NodeService nodeService = await InMemBuilders.nodeService();
+      TitleService titleService =
+          TitleService('com.mytiki', nodeService, nodeService.database);
+      LicenseService licenseService =
+          LicenseService(nodeService.database, nodeService);
+
+      Uint8List titleId = (await titleService.create('test')).transactionId!;
+      Uint8List licenseId = (await licenseService.create(
+              titleId,
+              [
+                LicenseUse([LicenseUsecase.custom('test')])
+              ],
+              'terms'))
+          .transactionId!;
+
+      PayableService payableService =
+          PayableService(nodeService.database, nodeService);
+      await payableService.create(licenseId, "all the monies", "fake",
+          description: "Im a description",
+          reference: "ooo I got a ref",
+          expiry: DateTime(2000));
+
+      List<PayableModel> payables = payableService.getAll(licenseId);
+      expect(payables.length, 1);
+      PayableModel payable = payables.first;
+      expect(Bytes.memEquals(payable.license, licenseId), true);
+      expect(payable.transactionId != null, true);
+      expect(payable.amount, "all the monies");
+      expect(payable.type, "fake");
+      expect(payable.description, "Im a description");
+      expect(payable.reference, "ooo I got a ref");
+      expect(payable.expiry, DateTime(2000));
+    });
   });
 }
