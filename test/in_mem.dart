@@ -147,7 +147,6 @@ class InMemBuilders {
     PayableService payableService =
         PayableService(nodeService.database, nodeService);
 
-    return TikiSdk(titleService, licenseService, payableService, nodeService,
-        InMemRegistryService(address: address));
+    return TikiSdk(origin, nodeService, InMemRegistryService(address: address));
   }
 }

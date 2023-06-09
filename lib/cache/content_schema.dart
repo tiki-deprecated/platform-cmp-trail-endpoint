@@ -12,7 +12,8 @@ import '../utils/compact_size.dart';
 enum ContentSchema {
   title(2),
   license(3),
-  payable(4);
+  payable(4),
+  receipt(5);
 
   final int _value;
 

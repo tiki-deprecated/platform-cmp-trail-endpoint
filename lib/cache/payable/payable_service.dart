@@ -48,4 +48,13 @@ class PayableService {
   /// Returns all payables given a [license]
   List<PayableModel> getAll(Uint8List license) =>
       _repository.getByLicense(license);
+
+  void tryAdd(PayableModel payable) {
+    if (payable.transactionId != null) {
+      PayableModel? found = _repository.getById(payable.transactionId!);
+      if (found == null) {
+        _repository.save(payable);
+      }
+    }
+  }
 }
