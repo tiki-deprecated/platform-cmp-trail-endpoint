@@ -6,10 +6,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import '../../tiki_sdk.dart';
 import '../../utils/bytes.dart';
 import '../../utils/compact_size.dart';
 import 'title_repository.dart';
-import 'title_tag.dart';
 
 /// Describes an asset and contains a Pointer Record [ptr] to
 /// the actual asset.
@@ -93,4 +93,8 @@ class TitleModel {
             .map<TitleTag>((tag) => TitleTag.from(tag))
             .toList());
   }
+
+  TitleRecord toRecord() =>
+      TitleRecord(Bytes.base64UrlEncode(transactionId!), ptr,
+          origin: origin, tags: tags, description: description);
 }

@@ -16,7 +16,6 @@ import 'license_use.dart';
 /// The service to manage [LicenseModel]s
 class LicenseService {
   final LicenseRepository _repository;
-
   final NodeService _nodeService;
 
   LicenseService(db, this._nodeService) : _repository = LicenseRepository(db);
@@ -45,15 +44,15 @@ class LicenseService {
     return license;
   }
 
-  /// Returns the latest consent for a [title].
+  /// Returns the latest license for a [title].
   LicenseModel? getLatest(Uint8List title) =>
       _repository.getLatestByTitle(title);
 
-  /// Returns the latest consent for a [title].
+  /// Returns the latest license for a [title].
   List<LicenseModel> getAll(Uint8List title) =>
       _repository.getAllByTitle(title);
 
-  /// Returns the consent for a [id].
+  /// Returns the license for a [id].
   LicenseModel? getById(Uint8List id) => _repository.getById(id);
 
   void tryAdd(LicenseModel license) {

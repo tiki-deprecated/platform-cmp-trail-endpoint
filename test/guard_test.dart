@@ -4,8 +4,8 @@
  */
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/guard.dart';
 import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:tiki_sdk_dart/utils/guard.dart';
 
 void main() {
   LicenseRecord fakeLicense(List<LicenseUse> uses, {DateTime? expiry}) {

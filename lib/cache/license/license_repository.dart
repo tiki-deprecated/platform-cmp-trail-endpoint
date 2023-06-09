@@ -10,6 +10,7 @@ import 'package:sqlite3/common.dart';
 
 import '../../node/transaction/transaction_repository.dart';
 import '../../utils/bytes.dart';
+import '../title/title_repository.dart';
 import 'license_model.dart';
 
 /// The repository for [LicenseModel] persistence.
@@ -40,7 +41,7 @@ class LicenseRepository {
      $columnDescription TEXT,
      $columnExpiry INTEGER,
      FOREIGN KEY($columnTitle) 
-      REFERENCES ${LicenseRepository.table}(${LicenseRepository.columnTransactionId}),
+      REFERENCES ${TitleRepository.table}(${TitleRepository.columnTransactionId}),
      FOREIGN KEY($columnTransactionId) 
       REFERENCES ${TransactionRepository.table}(${TransactionRepository.columnId})
       );
