@@ -11,7 +11,12 @@ import 'package:sqlite3/common.dart';
 import 'cache/content_schema.dart';
 import 'cache/license/license_model.dart';
 import 'cache/license/license_service.dart';
+import 'cache/license/license_use.dart';
+import 'cache/license/license_usecase.dart';
+import 'cache/payable/payable_model.dart';
 import 'cache/payable/payable_service.dart';
+import 'cache/receipt/receipt_model.dart';
+import 'cache/receipt/receipt_service.dart';
 import 'cache/title/title_model.dart';
 import 'cache/title/title_service.dart';
 import 'l0/auth/auth_service.dart';
@@ -19,6 +24,7 @@ import 'l0/registry/registry_model_rsp.dart';
 import 'l0/registry/registry_service.dart';
 import 'l0/storage/storage_service.dart';
 import 'license.dart';
+import 'license_record.dart';
 import 'node/backup/backup_service.dart';
 import 'node/block/block_service.dart';
 import 'node/key/key_model.dart';
@@ -28,10 +34,12 @@ import 'node/node_service.dart';
 import 'node/transaction/transaction_service.dart';
 import 'node/xchain/xchain_service.dart';
 import 'payable.dart';
+import 'receipt.dart';
 import 'title.dart';
 import 'title_record.dart';
 import 'utils/bytes.dart';
 import 'utils/compact_size.dart';
+import 'utils/guard.dart';
 
 export 'cache/license/license_use.dart';
 export 'cache/license/license_usecase.dart';
@@ -53,21 +61,27 @@ class TikiSdk {
   late final Title title;
   late final License license;
   late final Payable payable;
+  late final Receipt receipt;
 
   /// Prefer [withAddress] and [init] instead.
   /// @nodoc
   TikiSdk(
-      TitleService titleService,
-      LicenseService licenseService,
-      PayableService payableService,
-      NodeService nodeService,
-      RegistryService registryService)
+      String origin, NodeService nodeService, RegistryService registryService)
       : _nodeService = nodeService {
+    TitleService titleService =
+        TitleService(origin, nodeService, nodeService.database);
+    LicenseService licenseService =
+        LicenseService(nodeService.database, nodeService);
+    PayableService payableService =
+        PayableService(nodeService.database, nodeService);
+    ReceiptService receiptService =
+        ReceiptService(nodeService.database, nodeService);
     title = Title(titleService);
-    license = License(licenseService, title);
-    payable = Payable(payableService, license);
-    _syncRegistry(
-        titleService, licenseService, payableService, registryService);
+    license = License(licenseService, this);
+    payable = Payable(payableService, this);
+    receipt = Receipt(receiptService, this);
+    _syncRegistry(titleService, licenseService, payableService, receiptService,
+        registryService);
   }
 
   /// Use before [init] to add a wallet address and keypair
@@ -145,15 +159,7 @@ class TikiSdk {
         storageService, database, primaryKey, nodeService.getBlock);
     await nodeService.init();
 
-    TitleService titleService =
-        TitleService(origin, nodeService, nodeService.database);
-    LicenseService licenseService =
-        LicenseService(nodeService.database, nodeService);
-    PayableService payableService =
-        PayableService(nodeService.database, nodeService);
-
-    return TikiSdk(titleService, licenseService, payableService, nodeService,
-        registryService);
+    return TikiSdk(origin, nodeService, registryService);
   }
 
   /// Returns the in-use wallet [address].
@@ -171,12 +177,83 @@ class TikiSdk {
   // [id] using the [withId] method before calling [init].
   String get id => _nodeService.id;
 
+  /// Guard against an invalid [LicenseRecord] for a List of [usecases] and
+  /// [destinations].
+  ///
+  /// Use this method to verify a non-expired, [LicenseRecord] for the [ptr]
+  /// exists, and permits the listed [usecases] and [destinations].
+  ///
+  /// Parameters:
+  ///
+  /// • [ptr] - The Pointer Record for the asset. Used to located the latest
+  /// relevant [LicenseRecord].
+  ///
+  /// • [origin] - An optional override of the default [origin] specified in
+  /// [init].
+  ///
+  /// • [usecases] - A List of usecases defining how the asset will be used.
+  ///
+  /// • [destinations] - A List of destinations defining where the asset will
+  /// be used. _Often URLs_
+  ///
+  /// • [onPass] - A Function to execute automatically upon successfully
+  /// resolving the [LicenseRecord] against the [usecases] and [destinations]
+  ///
+  /// • [onFail] - A Fucntion to execute automatically upon failure to resolve
+  /// the [LicenseRecord]. Accepts a String parameter, holding an error
+  /// message describing the reason for failure.
+  ///
+  /// This method can be used in two forms, 1) as a traditional guard,
+  /// returning a pass/fail boolean. Or 2) as a wrapper around function.
+  ///
+  /// For example: An http that you want to run IF permitted by a
+  /// [LicenseRecord].
+  ///
+  /// Option 1:
+  /// ```
+  /// bool pass = guard('ptr', [LicenseUsecase.attribution()]);
+  /// if(pass) http.post(...);
+  /// ```
+  ///
+  /// Option 2:
+  /// ```
+  /// guard('ptr', [LicenseUsecase.attribution()], onPass: () => http.post(...));
+  /// ```
+  ///
+  /// Returns the created [TitleRecord]
+  bool guard(String ptr, List<LicenseUsecase> usecases,
+      {String? origin,
+      List<String>? destinations,
+      Function()? onPass,
+      Function(String)? onFail}) {
+    TitleRecord? title = this.title.get(ptr, origin: origin);
+    if (title == null) {
+      if (onFail != null) onFail('Missing title for ptr: $ptr');
+      return false;
+    }
+    LicenseRecord? license = this.license.latest(title);
+    if (license == null) {
+      if (onFail != null) onFail('Missing license for ptr: $ptr');
+      return false;
+    }
+    String? guardMessage = Guard.check(
+        license, [LicenseUse(usecases, destinations: destinations)]);
+    if (guardMessage == null) {
+      if (onPass != null) onPass();
+      return true;
+    } else {
+      if (onFail != null) onFail(guardMessage);
+      return false;
+    }
+  }
+
   /// Method to sync missing blocks and transactions for the [id] using
   /// the L0 Registry Service.
   Future<void> _syncRegistry(
           TitleService titleService,
           LicenseService licenseService,
           PayableService payableService,
+          ReceiptService receiptService,
           RegistryService registryService) =>
       registryService.get(id).then((rsp) {
         rsp.addresses?.forEach((address) => _nodeService.sync(address, (txn) {
@@ -197,6 +274,24 @@ class TikiSdk {
                       LicenseModel.decode(title, decodedContents.sublist(1));
                   license.transactionId = txn.id;
                   licenseService.tryAdd(license);
+                }
+              } else if (schema == ContentSchema.payable) {
+                if (txn.assetRef.startsWith("txn://")) {
+                  Uint8List license =
+                      Bytes.base64UrlDecode(txn.assetRef.split("://").last);
+                  PayableModel payable =
+                      PayableModel.decode(license, decodedContents.sublist(1));
+                  payable.transactionId = txn.id;
+                  payableService.tryAdd(payable);
+                }
+              } else if (schema == ContentSchema.receipt) {
+                if (txn.assetRef.startsWith("txn://")) {
+                  Uint8List payable =
+                      Bytes.base64UrlDecode(txn.assetRef.split("://").last);
+                  ReceiptModel receipt =
+                      ReceiptModel.decode(payable, decodedContents.sublist(1));
+                  receipt.transactionId = txn.id;
+                  receiptService.tryAdd(receipt);
                 }
               }
             }));

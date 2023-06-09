@@ -38,8 +38,10 @@ void main() {
       String ptr = const Uuid().v4();
       String hashedPtr = base64.encode(
           Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
+      TitleRecord title =
+          await tikiSdk.title.create(ptr, tags: [TitleTag.emailAddress()]);
       LicenseRecord first = await tikiSdk.license.create(
-          ptr,
+          title,
           [
             LicenseUse([LicenseUsecase.attribution()])
           ],
@@ -49,7 +51,7 @@ void main() {
           LicenseUsecase.attribution().value);
       expect(first.terms, 'terms');
       expect(first.title.hashedPtr, hashedPtr);
-      LicenseRecord second = await tikiSdk.license.create(ptr, [], 'terms');
+      LicenseRecord second = await tikiSdk.license.create(title, [], 'terms');
       expect(second.uses.length, 0);
     });
   });

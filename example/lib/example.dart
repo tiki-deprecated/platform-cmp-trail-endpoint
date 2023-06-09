@@ -17,16 +17,16 @@ void main(List<String> arguments) async {
       await tikiSdk.title.create(ptr, tags: [TitleTag.emailAddress()]);
   print("Created a Title Record with id ${title.id} for PTR: $ptr");
   LicenseRecord first = await tikiSdk.license.create(
-      ptr,
+      title,
       [
         LicenseUse([LicenseUsecase.attribution()])
       ],
       'terms');
   print("Created a License Record with id ${first.id} for PTR: $ptr");
-  tikiSdk.license.guard(ptr, [LicenseUsecase.attribution()],
+  tikiSdk.guard(ptr, [LicenseUsecase.attribution()],
       onPass: () => print(
           "There is a valid License Record for attribution use for Title Record with PTR $ptr"));
-  tikiSdk.license.guard(ptr, [LicenseUsecase.support()],
+  tikiSdk.guard(ptr, [LicenseUsecase.support()],
       onFail: (cause) => print(
           "There is no valid License Record for support use for Title Record with PTR $ptr. Cause: $cause"));
   exit(0);

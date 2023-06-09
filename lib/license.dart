@@ -5,20 +5,14 @@
 
 import 'cache/license/license_model.dart';
 import 'cache/license/license_service.dart';
-import 'cache/license/license_use.dart';
-import 'cache/license/license_usecase.dart';
-import 'cache/title/title_tag.dart';
-import 'license_record.dart';
-import 'title.dart';
-import 'title_record.dart';
+import 'tiki_sdk.dart';
 import 'utils/bytes.dart';
-import 'utils/guard.dart';
 
 class License {
   final LicenseService _licenseService;
-  final Title _title;
+  final TikiSdk _sdk;
 
-  License(this._licenseService, this._title);
+  License(this._licenseService, this._sdk);
 
   /// Create a new [LicenseRecord].
   ///
@@ -60,18 +54,12 @@ class License {
   /// license never expires.
   ///
   /// Returns the created [LicenseRecord]
-  Future<LicenseRecord> create(String ptr, List<LicenseUse> uses, String terms,
-      {String? origin,
-      List<TitleTag> tags = const [],
-      String? titleDescription,
-      String? licenseDescription,
-      DateTime? expiry}) async {
-    TitleRecord? title = _title.get(ptr, origin: origin);
-    title ??= await _title.create(ptr,
-        origin: origin, tags: tags, description: titleDescription);
+  Future<LicenseRecord> create(
+      TitleRecord title, List<LicenseUse> uses, String terms,
+      {String? description, DateTime? expiry}) async {
     LicenseModel license = await _licenseService.create(
         Bytes.base64UrlDecode(title.id), uses, terms,
-        description: licenseDescription, expiry: expiry);
+        description: description, expiry: expiry);
     return license.toRecord(title);
   }
 
@@ -84,9 +72,7 @@ class License {
   /// The [LicenseRecord] returned may be expired or not applicable to a
   /// specific [LicenseUse]. To check license validity, use the [guard]
   /// method.
-  LicenseRecord? latest(String ptr, {String? origin}) {
-    TitleRecord? title = _title.get(ptr, origin: origin);
-    if (title == null) return null;
+  LicenseRecord? latest(TitleRecord title) {
     LicenseModel? license =
         _licenseService.getLatest(Bytes.base64UrlDecode(title.id));
     if (license == null) return null;
@@ -101,9 +87,7 @@ class License {
   /// The [LicenseRecord]s returned may be expired or not applicable to a
   /// specific [LicenseUse]. To check license validity, use the [guard]
   /// method.
-  List<LicenseRecord> all(String ptr, {String? origin}) {
-    TitleRecord? title = _title.get(ptr, origin: origin);
-    if (title == null) return [];
+  List<LicenseRecord> all(TitleRecord title) {
     List<LicenseModel> licenses =
         _licenseService.getAll(Bytes.base64UrlDecode(title.id));
     return licenses.map((license) => license.toRecord(title)).toList();
@@ -114,73 +98,8 @@ class License {
   LicenseRecord? get(String id) {
     LicenseModel? license = _licenseService.getById(Bytes.base64UrlDecode(id));
     if (license == null) return null;
-    TitleRecord? title = _title.id(Bytes.base64UrlEncode(license.title));
+    TitleRecord? title = _sdk.title.id(Bytes.base64UrlEncode(license.title));
     if (title == null) return null;
     return license.toRecord(title);
-  }
-
-  /// Guard against an invalid [LicenseRecord] for a List of [usecases] and
-  /// [destinations].
-  ///
-  /// Use this method to verify a non-expired, [LicenseRecord] for the [ptr]
-  /// exists, and permits the listed [usecases] and [destinations].
-  ///
-  /// Parameters:
-  ///
-  /// • [ptr] - The Pointer Record for the asset. Used to located the latest
-  /// relevant [LicenseRecord].
-  ///
-  /// • [origin] - An optional override of the default [origin] specified in
-  /// [init].
-  ///
-  /// • [usecases] - A List of usecases defining how the asset will be used.
-  ///
-  /// • [destinations] - A List of destinations defining where the asset will
-  /// be used. _Often URLs_
-  ///
-  /// • [onPass] - A Function to execute automatically upon successfully
-  /// resolving the [LicenseRecord] against the [usecases] and [destinations]
-  ///
-  /// • [onFail] - A Fucntion to execute automatically upon failure to resolve
-  /// the [LicenseRecord]. Accepts a String parameter, holding an error
-  /// message describing the reason for failure.
-  ///
-  /// This method can be used in two forms, 1) as a traditional guard,
-  /// returning a pass/fail boolean. Or 2) as a wrapper around function.
-  ///
-  /// For example: An http that you want to run IF permitted by a
-  /// [LicenseRecord].
-  ///
-  /// Option 1:
-  /// ```
-  /// bool pass = guard('ptr', [LicenseUsecase.attribution()]);
-  /// if(pass) http.post(...);
-  /// ```
-  ///
-  /// Option 2:
-  /// ```
-  /// guard('ptr', [LicenseUsecase.attribution()], onPass: () => http.post(...));
-  /// ```
-  ///
-  /// Returns the created [TitleRecord]
-  bool guard(String ptr, List<LicenseUsecase> usecases,
-      {String? origin,
-      List<String>? destinations,
-      Function()? onPass,
-      Function(String)? onFail}) {
-    LicenseRecord? license = latest(ptr, origin: origin);
-    if (license == null) {
-      if (onFail != null) onFail('Missing license for ptr: $ptr');
-      return false;
-    }
-    String? guardMessage = Guard.check(
-        license, [LicenseUse(usecases, destinations: destinations)]);
-    if (guardMessage == null) {
-      if (onPass != null) onPass();
-      return true;
-    } else {
-      if (onFail != null) onFail(guardMessage);
-      return false;
-    }
   }
 }
