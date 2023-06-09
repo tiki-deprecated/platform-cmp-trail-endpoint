@@ -5,12 +5,11 @@
 
 import 'dart:typed_data';
 
-import 'package:tiki_sdk_dart/cache/payable/payable_repository.dart';
-
 import '../../license_record.dart';
 import '../../payable_record.dart';
 import '../../utils/bytes.dart';
 import '../../utils/compact_size.dart';
+import 'payable_repository.dart';
 
 /// Describes a payable against a License Model [LicenseModel]
 class PayableModel {
