@@ -19,6 +19,8 @@ jobs:
 
       - name: Install dependencies
         run: dart pub get
+        with:
+          sdk: 2.0.3
 
       - name: Run tests
         run: dart test --reporter github
