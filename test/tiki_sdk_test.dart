@@ -26,7 +26,7 @@ void main() {
       String hashedPtr = base64.encode(
           Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
       TitleRecord title =
-          await tikiSdk.title(ptr, tags: [TitleTag.emailAddress()]);
+          await tikiSdk.title.create(ptr, tags: [TitleTag.emailAddress()]);
       expect(title.tags.elementAt(0).value, TitleTag.emailAddress().value);
       expect(title.origin, 'com.mytiki.tiki_sdk_dart.test');
       expect(title.hashedPtr, hashedPtr);
@@ -38,7 +38,7 @@ void main() {
       String ptr = const Uuid().v4();
       String hashedPtr = base64.encode(
           Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
-      LicenseRecord first = await tikiSdk.license(
+      LicenseRecord first = await tikiSdk.license.create(
           ptr,
           [
             LicenseUse([LicenseUsecase.attribution()])
@@ -49,7 +49,7 @@ void main() {
           LicenseUsecase.attribution().value);
       expect(first.terms, 'terms');
       expect(first.title.hashedPtr, hashedPtr);
-      LicenseRecord second = await tikiSdk.license(ptr, [], 'terms');
+      LicenseRecord second = await tikiSdk.license.create(ptr, [], 'terms');
       expect(second.uses.length, 0);
     });
   });

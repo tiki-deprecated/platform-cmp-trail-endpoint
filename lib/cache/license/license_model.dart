@@ -6,11 +6,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import '../../tiki_sdk.dart';
 import '../../utils/bytes.dart';
 import '../../utils/compact_size.dart';
 import '../title/title_model.dart';
 import 'license_repository.dart';
-import 'license_use.dart';
 
 /// Describes the license for an asset ([TitleModel]).
 class LicenseModel {
@@ -100,4 +100,8 @@ class LicenseModel {
         expiry: DateTime.fromMillisecondsSinceEpoch(
             Bytes.decodeBigInt(bytes[3]).toInt() * 1000));
   }
+
+  LicenseRecord toRecord(TitleRecord title) =>
+      LicenseRecord(Bytes.base64UrlEncode(transactionId!), title, uses, terms,
+          description: description, expiry: expiry);
 }

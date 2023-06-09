@@ -3,9 +3,9 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'cache/license/license_use.dart';
-import 'cache/license/license_usecase.dart';
-import 'license_record.dart';
+import '../cache/license/license_use.dart';
+import '../cache/license/license_usecase.dart';
+import '../license_record.dart';
 
 /// @nodoc
 class Guard {

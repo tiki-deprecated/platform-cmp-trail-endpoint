@@ -5,10 +5,12 @@
 
 import 'dart:typed_data';
 
+import 'package:tiki_sdk_dart/cache/payable/payable_repository.dart';
+
+import '../../license_record.dart';
+import '../../payable_record.dart';
 import '../../utils/bytes.dart';
 import '../../utils/compact_size.dart';
-import '../license/license_model.dart';
-import 'payable_repository.dart';
 
 /// Describes a payable against a License Model [LicenseModel]
 class PayableModel {
@@ -102,4 +104,8 @@ class PayableModel {
           expiry: DateTime.fromMillisecondsSinceEpoch(
               Bytes.decodeBigInt(bytes[3]).toInt() * 1000),
           reference: Bytes.utf8Decode(bytes[4]));
+
+  PayableRecord toRecord(LicenseRecord license) => PayableRecord(
+      Bytes.base64UrlEncode(transactionId!), license, amount, type,
+      description: description, reference: reference, expiry: expiry);
 }
