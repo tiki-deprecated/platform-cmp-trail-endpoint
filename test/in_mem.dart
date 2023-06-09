@@ -7,9 +7,6 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/common.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_sdk_dart/cache/license/license_service.dart';
-import 'package:tiki_sdk_dart/cache/payable/payable_service.dart';
-import 'package:tiki_sdk_dart/cache/title/title_service.dart';
 import 'package:tiki_sdk_dart/l0/auth/auth_service.dart';
 import 'package:tiki_sdk_dart/l0/registry/registry_model_rsp.dart';
 import 'package:tiki_sdk_dart/l0/registry/registry_service.dart';
@@ -139,14 +136,6 @@ class InMemBuilders {
     String address = await TikiSdk.withId(id, keyStorage);
     NodeService nodeService =
         await InMemBuilders.nodeService(id: id, keyStorage: keyStorage);
-
-    TitleService titleService =
-        TitleService(origin, nodeService, nodeService.database);
-    LicenseService licenseService =
-        LicenseService(nodeService.database, nodeService);
-    PayableService payableService =
-        PayableService(nodeService.database, nodeService);
-
     return TikiSdk(origin, nodeService, InMemRegistryService(address: address));
   }
 }
