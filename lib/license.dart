@@ -16,16 +16,9 @@ class License {
 
   /// Create a new [LicenseRecord].
   ///
-  /// If a [TitleRecord] for the [ptr] and [origin] is not found. A new
-  /// [TitleRecord] is created. If a [TitleRecord] is found, [tags] and
-  /// [titleDescription] parameters are ignored.
-  ///
   /// Parameters:
   ///
-  /// • [ptr] - The Pointer Records identifies data stored in your system,
-  /// similar to a foreign key.
-  /// [Learn more](https://docs.mytiki.com/docs/selecting-a-pointer-record)
-  /// about selecting good pointer records.
+  /// • [title] - The [TitleRecord] to attach the license to.
   ///
   /// • [uses] - A `List` defining how and where an asset may be used, in a
   /// the format of usecases and destinations, per the [terms] of the license.
@@ -34,20 +27,7 @@ class License {
   ///
   /// • [terms] - The legal terms of the contract (a lot of words).
   ///
-  /// • [origin] - An optional override of the default [origin] specified in
-  /// [init]. Follow a reverse-DNS syntax. _i.e. com.myco.myapp_.
-  ///
-  /// • [tags] - A `List` of metadata tags included in the [TitleRecord]
-  /// describing the asset, for your use in record search and filtering.
-  /// [Learn more](https://docs.mytiki.com/docs/adding-tags)
-  /// about adding tags. Only set IF a title does not already exist for the
-  /// [ptr].
-  ///
-  /// • [titleDescription] - Sets the [TitleRecord] description IF a title
-  /// does not already exist for the [ptr]. A short, human-readable,
-  /// description of the [TitleRecord] as a future reminder.
-  ///
-  /// • [licenseDescription] - A short, human-readable,
+  /// • [description] - A short, human-readable,
   /// description of the [LicenseRecord] as a future reminder.
   ///
   /// • [expiry] - A [LicenseRecord] expiration date. Leave `null` if the
@@ -63,11 +43,8 @@ class License {
     return license.toRecord(title);
   }
 
-  /// Returns the latest [LicenseRecord] for a [ptr] or null if the
+  /// Returns the latest [LicenseRecord] for a [title] or null if the
   /// title or license records are not found.
-  ///
-  /// Optionally, an [origin] may be specified. If null [origin] defaults
-  /// to the [init] origin.
   ///
   /// The [LicenseRecord] returned may be expired or not applicable to a
   /// specific [LicenseUse]. To check license validity, use the [guard]
@@ -79,10 +56,7 @@ class License {
     return license.toRecord(title);
   }
 
-  /// Returns all [LicenseRecord]s for a [ptr].
-  ///
-  /// Optionally, an [origin] may be specified. If null [origin] defaults
-  /// to the [init] origin.
+  /// Returns all [LicenseRecord]s for a [title].
   ///
   /// The [LicenseRecord]s returned may be expired or not applicable to a
   /// specific [LicenseUse]. To check license validity, use the [guard]
