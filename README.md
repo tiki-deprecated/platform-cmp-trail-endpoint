@@ -1,7 +1,4 @@
 ![Image](https://img.shields.io/pub/v/tiki_sdk_dart?logo=dart)
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 ![Image](https://img.shields.io/pub/points/tiki_sdk_dart?logo=dart)
 ![Image](https://img.shields.io/github/license/tiki/tiki-sdk-dart)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg)](#contributors-)
