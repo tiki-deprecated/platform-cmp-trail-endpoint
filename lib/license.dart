@@ -8,13 +8,17 @@ import 'cache/license/license_service.dart';
 import 'tiki_sdk.dart';
 import 'utils/bytes.dart';
 
+/// Methods for creating and retrieving [LicenseRecord]s. Use like a namespace,
+/// and call from [TikiSdk]. E.g. `tikiSdk.license.create(...)`.
 class License {
   final LicenseService _licenseService;
   final TikiSdk _sdk;
 
+  /// Use [TikiSdk] to construct.
+  /// @nodoc
   License(this._licenseService, this._sdk);
 
-  /// Create a new [LicenseRecord].
+  /// Create a new [LicenseRecord]
   ///
   /// Parameters:
   ///
@@ -23,12 +27,13 @@ class License {
   /// • [uses] - A `List` defining how and where an asset may be used, in a
   /// the format of usecases and destinations, per the [terms] of the license.
   /// [Learn more](https://docs.mytiki.com/docs/specifying-terms-and-usage)
-  /// about defining uses.
+  ///  about defining uses.
   ///
-  /// • [terms] - The legal terms of the contract (a lot of words).
+  /// • [terms] - The legal terms of the contract — typically text or
+  /// markdown, but can a be a URI to externally hosted terms.
   ///
-  /// • [description] - A short, human-readable,
-  /// description of the [LicenseRecord] as a future reminder.
+  /// • [description] - An optional, short, human-readable,
+  /// description of the [LicenseRecord].
   ///
   /// • [expiry] - A [LicenseRecord] expiration date. Leave `null` if the
   /// license never expires.
@@ -43,8 +48,8 @@ class License {
     return license.toRecord(title);
   }
 
-  /// Returns the latest [LicenseRecord] for a [title] or null if the
-  /// title or license records are not found.
+  /// Returns the latest [LicenseRecord] for a [title] or null if no
+  /// license records are not found.
   ///
   /// The [LicenseRecord] returned may be expired or not applicable to a
   /// specific [LicenseUse]. To check license validity, use the [guard]
@@ -67,8 +72,8 @@ class License {
     return licenses.map((license) => license.toRecord(title)).toList();
   }
 
-  /// Returns the [LicenseRecord] for an [id] or null if the license
-  /// or corresponding title record is not found.
+  /// Returns the [LicenseRecord] with a specific [id] or null if the license
+  /// is not found.
   LicenseRecord? get(String id) {
     LicenseModel? license = _licenseService.getById(Bytes.base64UrlDecode(id));
     if (license == null) return null;

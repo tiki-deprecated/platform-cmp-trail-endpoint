@@ -19,10 +19,11 @@ class ReceiptRecord {
   /// such as downloadable content.
   String amount;
 
-  /// A human-readable description of the payable
+  /// An optional, human-readable description of the payable
   String? description;
 
-  /// A customer-specific reference identifier
+  /// An optional, customer-specific reference identifier. Use to connect
+  /// the record to your system.
   String? reference;
 
   ReceiptRecord(this.id, this.payable, this.amount,
