@@ -3,11 +3,10 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'license_record.dart';
 import 'payable_record.dart';
 
-/// Payable Records describe a payment issued or owed in accordance with
-/// the terms of a [LicenseRecord].
+/// Receipt Records describe a payment or partial-payment in accordance with
+/// a [PayableRecord].
 class ReceiptRecord {
   /// This record's id
   String? id;

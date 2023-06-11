@@ -1,76 +1,142 @@
-![Image](https://img.shields.io/pub/v/tiki_sdk_dart?logo=dart)
-![Image](https://img.shields.io/pub/points/tiki_sdk_dart?logo=dart)
-![Image](https://img.shields.io/github/license/tiki/tiki-sdk-dart)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+![Image](https://img.shields.io/pub/v/tiki_trail_dart?logo=dart)
+![Image](https://img.shields.io/pub/points/tiki_trail_dart?logo=dart)
+![Image](https://img.shields.io/github/license/tiki/tiki-trail)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-### [🍍 Console](https://console.mytiki.com) &nbsp; ⏐ &nbsp; [📚 Docs](https://docs.mytiki.com)
+# TIKI Trail
 
-# TIKI SDK —build the new data economy
+The TIKI trail project is an immutable, distributed, record system for data
+transactions.
 
-The core implementation (**pure dart**) of TIKI's decentralized infrastructure
-plus abstractions to simplify the tokenization and application of data
-ownership, consent, and rewards. For new projects, we recommend one of our
-platform-specific SDKs. Same features. Much easier to implement.
+The design is inspired by traditional asset record systems, like property
+titles, birth certificates, etc. Where the asset itself is external to the
+record keeping system.
 
-- **🤖 Android: [tiki-sdk-android](https://github.com/tiki/tiki-sdk-android)**
-- **🍎 iOS: [tiki-sdk-ios](https://github.com/tiki/tiki-sdk-ios)**
-- **🦋 Flutter: [tiki-sdk-flutter](https://github.com/tiki/tiki-sdk-flutter)**
+Traditionally these systems were immutable through paper (only 1 original),
+using physical signatures and notaries. Newer-age systems often employ
+blockchains to create digital immutability, streamlining costs, improving
+access, and time-to-finality. For traditional assets, like land, blockchain gas
+costs, and write times are more than sufficient.
 
-### [🎬 How to get started ➝](https://docs.mytiki.com/docs/tiki-sdk-dart-getting-started)
+But! With data as an asset, that doesn't cut it. There's always workarounds.
+Though scaling to trillions of records, often warrants a dedicated design. This
+is that.
 
-- **[API Reference ➝](https://docs.mytiki.com/reference/tiki-sdk-dart-tiki-sdk)
-  **
-- **[Dart Docs ➝](https://pub.dev/documentation/tiki_sdk_dart/latest/)**
+_For example, TIKI trail benchmarked at over 25,000 transactions per second per
+device (iPhone 12)._
 
-### Basic Architecture
+The TIKI Trail design utilizes two levels of immutability, first at the data
+layer and then at the storage layer. Records are created and digitally-signed
+locally using a blockchain-inspired data structure. This enables fast writes,
+with 0 gas costs, since records are single-party —using zero-party data as a
+standard, the owner of the device creating the data is the owner of the data
+itself.
 
-We leverage a novel blockchain-inspired data structure to create immutable,
-decentralized records of data ownership, consent grants, and rewards.
+The chain of records is then backed up to one or more
+hosted [WORM (write-once, read-many)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html)
+repositories. The shared repository functions both as
+long term storage for device failure recovery, and
+as an index, enabling easy integration of records into backend services.
 
-Unlike typical shared-state ⛓️ blockchains, TIKI operates on no consensus model,
-pushing scope responsibility to the application layer —kind of like shared cloud
-storage.
+**If you'd like to read more about the design, check
+out the original 📄 [WHITEPAPER.md](WHITEPAPER.md)**.
 
-The structure enables tokenization at the edge (no cost, high speed). Read more
-about it [here](https://github.com/tiki/tiki-sdk-dart/blob/main/WHITEPAPER.md).
+## How to use
 
-✨ Highlights:
+For most applications, we do not recommend using this project directly. Instead,
+use one of our dedicated native libraries
+for [iOS](https://github.com/tiki/tiki-sdk-ios), [Android](https://github.com/tiki/tiki-sdk-android), [Flutter](https://github.com/tiki/tiki-sdk-flutter),
+and [Javascript](https://github.com/tiki/tiki-sdk-js).
 
-- No compute costs
-- No backend changes
-- Data remains private (never sent to a TIKI server)
-- No P2P networking
-- Fast AF and horizontally scalable (benchmarked on iPhones at 20,000 TPS)
-- Immutable backup for 10+ yrs. via TIKI's L0 Storage service.
+**Get familiar with our platform-wide 📚 [docs](https://mytiki.com/docs), or jump
+right into the
+📘 [API reference](https://pub.dev/documentation/tiki_trail/latest/).**
 
-#### Node
+### Requirements
 
-Manages transaction creation, block packaging, backups, chain validation, and
-key management. Basically, all the blockchain stuff.
+- A Publishing ID. Get one for free
+  at [console.mytiki.com](https://console.mytiki.com).
+- A platform-specific secure [key_storage](lib/node/key/key_storage.dart)
+  implementation.
+- A platform-specific implementation
+  of [CommonDatabase](https://pub.dev/documentation/sqlite3/latest/sqlite3.wasm/CommonDatabase-class.html).
 
-#### Ownership and Consent
+### Record Types
 
-A cache layer (SQLite) on top of the chain data structure. Simplifies the
-execution of actions such as tokenization, consent modification, and consent
-application.
+While technically this library can be used to create records of any type. We've
+simplified and abstracted the API. By all means, feel free to fork and create
+your own type(s).
 
-#### SStorage (L0 Storage)
+- [TitleRecord](lib/title_record.dart) - describe a data asset and MUST contain
+  a Pointer Record to the raw data (often stored in your system).
+- [LicenseRecord](lib/license_record.dart) - describe the terms around how a
+  data asset may be used and always contain a reference to a corresponding
+  TitleRecord.
+- [PayableRecord](lib/payable_record.dart) - describe a payment issued or owed
+  in accordance with terms of a LicenseRecord.
+- [ReceiptRecord](lib/receipt_record.dart) - describe a payment or
+  partial-payment in accordance with a PayableRecord.
 
-The client-side interface for TIKI's L0 Storage service. A free, long-term (10
-yrs.), immutable backup service. Learn more about
-it [here](https://github.com/tiki/l0-storage).
+### Example
 
-### Why Dart?
+[example.dart](example/lib/example.dart)
 
-🎯 Dart compiles to both machine code for native mobile/desktop apps and JS for
-web.
+```dart
 
-The vast majority of data origination and person-to-business exchange happens at
-the edge (web/mobile). Plus, edge execution can offer significant privacy and
-performance advantages.
+InMemKeyStorage keyStorage = InMemKeyStorage();
+CommonDatabase database = sqlite3.openInMemory();
 
-## Contributors ✨
+String id = Uuid().v4();
+String ptr = const Uuid().v4();
+
+TikiTrail.withId
+(id, keyStorage);
+
+TikiTrail tiki = await
+TikiTrail.init
+('PUBLISHING_ID
+'
+,
+'com.mytiki.tiki_trail.example
+'
+, keyStorage, id, database);
+
+TitleRecord title = await tiki.title.create(ptr, tags: [TitleTag.userId()]);
+print("Title Record created with id ${title.id} for ptr: $ptr");
+
+LicenseRecord license = await tiki.license.create(title,
+[LicenseUse([LicenseUsecase.attribution()])],'terms');
+print("License Record created with id ${license.id} for title: ${license.title.id}");
+
+tiki.guard(ptr, [LicenseUsecase.attribution()],
+onPass: () => print("There is a valid license for usecase attribution."));
+
+tiki.guard(ptr, [LicenseUsecase.support()],
+onFail: (cause) => print(
+"There is not a valid license for usecase support. Cause: $cause"));
+```
+
+### Backend Services
+
+The TIKI Trail project interacts with the following backend services:
+
+- [Storage](https://github.com/tiki/l0-storage) - Writing backups to the shared
+  WORM repository.
+- [Index](https://github.com/tiki/l0-index) - Search and fetch records using
+  metadata.
+- [Registry](https://github.com/tiki/l0-registry) - Sync user records across
+  multiple devices.
+
+## Contributing
+
+The more, the merrier. Just open an issue or fork the project and create a PR.
+That's it to make the fancy table 👀.
+
+Please follow
+our [Code of Conduct](https://github.com/tiki/.github/blob/main/CODE_OF_CONDUCT.md).
+
+### Contributors
 
 Thanks goes to these wonderful
 people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
