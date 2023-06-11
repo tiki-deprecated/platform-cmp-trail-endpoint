@@ -1,5 +1,27 @@
+### 3.0.1
+
+- no code changes.
+- improved docs for 3.0.0 changes.
+- renames the library to tiki-trail, better representing the purpose of the
+  library.
+
+### 3.0.0
+
+- feat:
+    - Adds PayableRecords for creating an immutable audit trail of compensation
+      owed in accordance with a LicenseRecord.
+    - Adds ReceiptRecords for connecting payments made to outstanding payables
+      owed.
+- fix:
+    - Moves license, title, payable, and receipt methods into sub-libraries for
+      use akin to namespaces.
+    - Decouples title creation from license creation, opting for a more explicit
+      uniform API when supporting a multitude of records.
+
 ### 2.1.4
-- fix: SQlite Unique Constraint violation in XChain Sync —skip blocks that have already been synced. 
+
+- fix: SQlite Unique Constraint violation in XChain Sync —skip blocks that have
+  already been synced.
 
 ### 2.1.3
 
@@ -14,41 +36,60 @@
 - fix: Guard method should use plain text PTRs.
 
 ### 2.1.0
+
 **Expands the API to:**
+
 - Allow customer provided IDs (instead of directly utilizing addresses)
-- Allow customers to provide their own user token (JWT) for added registry security
+- Allow customers to provide their own user token (JWT) for added registry
+  security
 
 **Adds logic to:**
+
 - Sync all transactions for all addresses registered to the ID on startup
 - Auto-register new addresses created to the ID
 - Add an app signature (using sign key from registry) to transactions
 - Interface with the l0-registry service
 
 ### 2.0.0
+
 **Node**
-- Set `maxTransactions` default to 1 (_Most applications do not require high throughput, and longer chains will improve the immutability strength_)
+
+- Set `maxTransactions` default to 1 (_Most applications do not require high
+  throughput, and longer chains will improve the immutability strength_)
 
 **Ownership**
-- Rename ownership to title (_As in "Title Record", the standard name used for declaring asset ownership._)
-- Rename source to ptr (_Stands for Pointer Record and is more explicit about its intended use._)
+
+- Rename ownership to title (_As in "Title Record", the standard name used for
+  declaring asset ownership._)
+- Rename source to ptr (_Stands for Pointer Record and is more explicit about
+  its intended use._)
 - Rename about to description
-- Remove type (`TikiSdkDataTypeEnum`) (_They're more confusing than helpful and not critical to use._)
+- Remove type (`TikiSdkDataTypeEnum`) (_They're more confusing than helpful and
+  not critical to use._)
 - Title records should ALWAYS have an assetRef of 0x00 ("mint" transaction")
-- Update schema from `1` to an Enum AND bump version (_Contents body schema is changing shape._)
+- Update schema from `1` to an Enum AND bump version (_Contents body schema is
+  changing shape._)
 - Rename contains to tags (_Both more explicit and flexible._)
 - Use Enum for tags, defined [here](https://docs.mytiki.com/docs/adding-tags)
 
 **Consent**
-- Rename consent to license (_As in "License Record", a more explicit and standard name_)
+
+- Rename consent to license (_As in "License Record", a more explicit and
+  standard name_)
 - Bug: Schema is not serialized (_Fix and use an Enum_)
-- OwnershipId should be in the assetRef field, not in the contents (_See whitepaper_)
+- OwnershipId should be in the assetRef field, not in the contents (_See
+  whitepaper_)
 - Rename about to description
-- Rename destination to uses, and update object structure to match [spec](https://docs.mytiki.com/docs/specifying-terms-and-usage).
-- Bug: Fix destination/uses serialization. (_for example, `[],[]` currently resolves to `[][]`_)
+- Rename destination to uses, and update object structure to
+  match [spec](https://docs.mytiki.com/docs/specifying-terms-and-usage).
+- Bug: Fix destination/uses serialization. (_for example, `[],[]` currently
+  resolves to `[][]`_)
 
 **SDK**
+
 - Update method names to match naming changes from above
-- Rename `applyConsent` to `guard` and adjust functionality to match [spec](https://docs.mytiki.com/docs/enforce-license)
+- Rename `applyConsent` to `guard` and adjust functionality to
+  match [spec](https://docs.mytiki.com/docs/enforce-license)
 - Update `_checkConsent` logic to match new uses data structure
 
 ### 1.1.2
@@ -95,12 +136,14 @@
 * fix destination deserialization
 
 ## 0.0.10
+
 * updated README
 * fixed apiId naming
 
 ## 0.0.9
+
 * expose utils/bytes lib
-* update sstorage 
+* update sstorage
 
 ## 0.0.8
 
@@ -120,17 +163,21 @@
 ## 0.0.5
 
 * TIKI SDK methods implementation
+
 ## 0.0.4
 
 * Add xchain
 * Add NFT layer (consent and ownership)
+
 ## 0.0.3
 
 * Update lib structure
 * Add doc
+
 ## 0.0.2
 
 * Blockchain local node
+
 ## 0.0.1
 
 * Setup repository
