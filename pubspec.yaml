@@ -1,6 +1,6 @@
 name: tiki_trail
 description: Create and enforce TIKI's immutable data transaction records.
-version: 3.0.0
+version: 3.0.1
 homepage: https://mytiki.com
 documentation: https://mytiki.com/docs
 repository: https://github.com/tiki/tiki-trail
