@@ -7,7 +7,7 @@ import 'dart:convert';
 
 import 'package:nock/nock.dart';
 import 'package:test/expect.dart';
-import 'package:tiki_sdk_dart/l0/registry/registry_repository.dart';
+import 'package:tiki_trail/l0/registry/registry_repository.dart';
 
 class RegistryNock {
   static const String address1 = 'uuAT_XIBZlerT0JWxk9NxvXqeJ4VFfwqHL5E8gB8Kug';

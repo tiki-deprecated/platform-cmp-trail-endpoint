@@ -4,8 +4,8 @@
  */
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/key/key_model.dart';
-import 'package:tiki_sdk_dart/node/key/key_service.dart';
+import 'package:tiki_trail/node/key/key_model.dart';
+import 'package:tiki_trail/node/key/key_service.dart';
 
 import '../../in_mem.dart';
 

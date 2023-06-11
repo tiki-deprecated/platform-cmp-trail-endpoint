@@ -5,29 +5,41 @@
 
 import 'dart:io';
 
-import 'package:example/in_mem.dart';
-import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:example/in_mem_key_storage.dart';
+import 'package:sqlite3/common.dart';
+import 'package:sqlite3/sqlite3.dart';
+import 'package:tiki_trail/tiki_sdk.dart';
 import 'package:uuid/uuid.dart';
 
 void main(List<String> arguments) async {
-  TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
+  InMemKeyStorage keyStorage = InMemKeyStorage();
+  CommonDatabase database = sqlite3.openInMemory();
 
+  String id = Uuid().v4();
   String ptr = const Uuid().v4();
-  TitleRecord title =
-      await tikiSdk.title.create(ptr, tags: [TitleTag.emailAddress()]);
-  print("Created a Title Record with id ${title.id} for PTR: $ptr");
-  LicenseRecord first = await tikiSdk.license.create(
+
+  TikiSdk.withId(id, keyStorage);
+  TikiSdk tiki = await TikiSdk.init('PUBLISHING_ID',
+      'com.mytiki.tiki_trail.example', keyStorage, id, database);
+
+  TitleRecord title = await tiki.title.create(ptr, tags: [TitleTag.userId()]);
+  print("Title Record created with id ${title.id} for ptr: $ptr");
+
+  LicenseRecord license = await tiki.license.create(
       title,
       [
         LicenseUse([LicenseUsecase.attribution()])
       ],
       'terms');
-  print("Created a License Record with id ${first.id} for PTR: $ptr");
-  tikiSdk.guard(ptr, [LicenseUsecase.attribution()],
-      onPass: () => print(
-          "There is a valid License Record for attribution use for Title Record with PTR $ptr"));
-  tikiSdk.guard(ptr, [LicenseUsecase.support()],
+  print(
+      "License Record created with id ${license.id} for title: ${license.title.id}");
+
+  tiki.guard(ptr, [LicenseUsecase.attribution()],
+      onPass: () => print("There is a valid license for usecase attribution."));
+
+  tiki.guard(ptr, [LicenseUsecase.support()],
       onFail: (cause) => print(
-          "There is no valid License Record for support use for Title Record with PTR $ptr. Cause: $cause"));
+          "There is not a valid license for usecase support. Cause: $cause"));
+
   exit(0);
 }

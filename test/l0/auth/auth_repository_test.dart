@@ -5,8 +5,8 @@
 
 import 'package:nock/nock.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/l0/auth/auth_model_jwt.dart';
-import 'package:tiki_sdk_dart/l0/auth/auth_repository.dart';
+import 'package:tiki_trail/l0/auth/auth_model_jwt.dart';
+import 'package:tiki_trail/l0/auth/auth_repository.dart';
 
 import 'auth_nock.dart';
 

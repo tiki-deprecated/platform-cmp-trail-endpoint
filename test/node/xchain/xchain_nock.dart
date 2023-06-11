@@ -7,7 +7,7 @@ import 'dart:convert';
 
 import 'package:nock/nock.dart';
 import 'package:test/expect.dart';
-import 'package:tiki_sdk_dart/l0/storage/storage_repository.dart';
+import 'package:tiki_trail/l0/storage/storage_repository.dart';
 
 class XChainNock {
   String appId = '2ab3efdb-8e91-4148-a43b-a7c198b4d3d7';

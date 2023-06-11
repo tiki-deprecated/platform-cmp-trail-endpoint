@@ -5,15 +5,15 @@
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/cache/license/license_model.dart';
-import 'package:tiki_sdk_dart/cache/license/license_repository.dart';
-import 'package:tiki_sdk_dart/cache/license/license_use.dart';
-import 'package:tiki_sdk_dart/cache/license/license_usecase.dart';
-import 'package:tiki_sdk_dart/cache/payable/payable_model.dart';
-import 'package:tiki_sdk_dart/cache/payable/payable_repository.dart';
-import 'package:tiki_sdk_dart/cache/title/title_model.dart';
-import 'package:tiki_sdk_dart/cache/title/title_repository.dart';
-import 'package:tiki_sdk_dart/utils/bytes.dart';
+import 'package:tiki_trail/cache/license/license_model.dart';
+import 'package:tiki_trail/cache/license/license_repository.dart';
+import 'package:tiki_trail/cache/license/license_use.dart';
+import 'package:tiki_trail/cache/license/license_usecase.dart';
+import 'package:tiki_trail/cache/payable/payable_model.dart';
+import 'package:tiki_trail/cache/payable/payable_repository.dart';
+import 'package:tiki_trail/cache/title/title_model.dart';
+import 'package:tiki_trail/cache/title/title_repository.dart';
+import 'package:tiki_trail/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
