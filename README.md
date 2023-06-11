@@ -1,4 +1,7 @@
 ![Image](https://img.shields.io/pub/v/tiki_sdk_dart?logo=dart)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 ![Image](https://img.shields.io/pub/points/tiki_sdk_dart?logo=dart)
 ![Image](https://img.shields.io/github/license/tiki/tiki-sdk-dart)
 
@@ -50,3 +53,25 @@ The client-side interface for TIKI's L0 Storage service. A free, long-term (10 y
 🎯 Dart compiles to both machine code for native mobile/desktop apps and JS for web.
 
 The vast majority of data origination and person-to-business exchange happens at the edge (web/mobile). Plus, edge execution can offer significant privacy and performance advantages.
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://civichacker.com"><img src="https://avatars.githubusercontent.com/u/316840?v=4?s=100" width="100px;" alt="Jurnell Cockhren"/><br /><sub><b>Jurnell Cockhren</b></sub></a><br /><a href="https://github.com/tiki/core/commits?author=jcockhren" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
