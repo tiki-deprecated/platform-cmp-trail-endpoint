@@ -1,7 +1,7 @@
 ![Image](https://img.shields.io/pub/v/tiki_trail_dart?logo=dart)
 ![Image](https://img.shields.io/pub/points/tiki_trail_dart?logo=dart)
 ![Image](https://img.shields.io/github/license/tiki/tiki-trail)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # TIKI Trail
@@ -90,9 +90,13 @@ CommonDatabase database = sqlite3.openInMemory();
 String id = Uuid().v4();
 String ptr = const Uuid().v4();
 
+### [🎬 How to get started ➝](https://docs.mytiki.com/docs/tiki-sdk-dart-getting-started)
+- **[API Reference ➝](https://docs.mytiki.com/reference/tiki-sdk-dart-tiki-sdk)**
+- **[Dart Docs ➝](https://pub.dev/documentation/tiki_sdk_dart/latest/)**
 TikiTrail.withId
 (id, keyStorage);
 
+###  Basic Architecture
 TikiTrail tiki = await
 TikiTrail.init
 ('PUBLISHING_ID
@@ -102,25 +106,38 @@ TikiTrail.init
 '
 , keyStorage, id, database);
 
+We leverage a novel blockchain-inspired data structure to create immutable, decentralized records of data ownership, consent grants, and rewards.
 TitleRecord title = await tiki.title.create(ptr, tags: [TitleTag.userId()]);
 print("Title Record created with id ${title.id} for ptr: $ptr");
 
+Unlike typical shared-state ⛓️ blockchains, TIKI operates on no consensus model, pushing scope responsibility to the application layer —kind of like shared cloud storage.
 LicenseRecord license = await tiki.license.create(title,
 [LicenseUse([LicenseUsecase.attribution()])],'terms');
 print("License Record created with id ${license.id} for title: ${license.title.id}");
 
+The structure enables tokenization at the edge (no cost, high speed). Read more about it [here](https://github.com/tiki/tiki-sdk-dart/blob/main/WHITEPAPER.md).
 tiki.guard(ptr, [LicenseUsecase.attribution()],
 onPass: () => print("There is a valid license for usecase attribution."));
 
+✨ Highlights:
+- No compute costs
+- No backend changes
+- Data remains private (never sent to a TIKI server)
+- No P2P networking
+- Fast AF and horizontally scalable (benchmarked on iPhones at 20,000 TPS)
+- Immutable backup for 10+ yrs. via TIKI's L0 Storage service.
 tiki.guard(ptr, [LicenseUsecase.support()],
 onFail: (cause) => print(
 "There is not a valid license for usecase support. Cause: $cause"));
 ```
 
+#### Node
 ### Backend Services
 
+Manages transaction creation, block packaging, backups, chain validation, and key management. Basically, all the blockchain stuff.
 The TIKI Trail project interacts with the following backend services:
 
+#### Ownership and Consent
 - [Storage](https://github.com/tiki/l0-storage) - Writing backups to the shared
   WORM repository.
 - [Index](https://github.com/tiki/l0-index) - Search and fetch records using
@@ -128,14 +145,19 @@ The TIKI Trail project interacts with the following backend services:
 - [Registry](https://github.com/tiki/l0-registry) - Sync user records across
   multiple devices.
 
+A cache layer (SQLite) on top of the chain data structure. Simplifies the execution of actions such as tokenization, consent modification, and consent application.
 ## Contributing
 
+#### SStorage (L0 Storage)
 The more, the merrier. Just open an issue or fork the project and create a PR.
 That's it to make the fancy table 👀.
 
+The client-side interface for TIKI's L0 Storage service. A free, long-term (10 yrs.), immutable backup service. Learn more about it [here](https://github.com/tiki/l0-storage).
 Please follow
 our [Code of Conduct](https://github.com/tiki/.github/blob/main/CODE_OF_CONDUCT.md).
 
+### Why Dart?
+🎯 Dart compiles to both machine code for native mobile/desktop apps and JS for web.
 ### Contributors
 
 Thanks goes to these wonderful
@@ -150,6 +172,7 @@ people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
       <td align="center" valign="top" width="14.28%"><a href="http://mytiki.com"><img src="https://avatars.githubusercontent.com/u/3769672?v=4?s=100" width="100px;" alt="Mike Audi"/><br /><sub><b>Mike Audi</b></sub></a><br /><a href="https://github.com/tiki/core/commits?author=mike-audi" title="Code">💻</a> <a href="https://github.com/tiki/core/pulls?q=is%3Apr+reviewed-by%3Amike-audi" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/tiki/core/commits?author=mike-audi" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/ricardolg/"><img src="https://avatars.githubusercontent.com/u/8357343?v=4?s=100" width="100px;" alt="Ricardo Gonçalves"/><br /><sub><b>Ricardo Gonçalves</b></sub></a><br /><a href="https://github.com/tiki/core/commits?author=ricardobrg" title="Code">💻</a> <a href="https://github.com/tiki/core/pulls?q=is%3Apr+reviewed-by%3Aricardobrg" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/tiki/core/commits?author=ricardobrg" title="Documentation">📖</a></td>
 	  <td align="center" valign="top" width="14.28%"><a href="https://civichacker.com"><img src="https://avatars.githubusercontent.com/u/316840?v=4?s=100" width="100px;" alt="Jurnell Cockhren"/><br /><sub><b>Jurnell Cockhren</b></sub></a><br /><a href="https://github.com/tiki/core/commits?author=jcockhren" title="Code">💻</a></td>
+	  <td align="center" valign="top" width="14.28%"><a href="http://harshit933.github.io"><img src="https://avatars.githubusercontent.com/u/90508384?v=4?s=100" width="100px;" alt="Harshit"/><br /><sub><b>Harshit</b></sub></a><br /><a href="https://github.com/tiki/core/commits?author=Harshit933" title="Tests">⚠️</a></td>	
 	</tr>
   </tbody>
 </table>

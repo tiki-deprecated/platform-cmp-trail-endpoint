@@ -37,7 +37,16 @@
       "contributions": [
         "code"
 	  ]
-	}
+	},
+	{
+      "login": "Harshit933",
+      "name": "Harshit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/90508384?v=4",
+      "profile": "http://harshit933.github.io",
+      "contributions": [
+        "test"
+      ]
+    }
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
