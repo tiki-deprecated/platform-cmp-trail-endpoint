@@ -1,0 +1,28 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "ricardobrg",
+      "name": "Ricardo Gonçalves",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8357343?v=4",
+      "profile": "https://www.linkedin.com/in/ricardolg/",
+      "contributions": [
+        "code",
+        "review",
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "core",
+  "projectOwner": "tiki"
+}
