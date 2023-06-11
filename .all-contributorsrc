@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "Harshit933",
+      "name": "Harshit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/90508384?v=4",
+      "profile": "http://harshit933.github.io",
+      "contributions": [
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "core",
+  "projectOwner": "tiki"
+}
