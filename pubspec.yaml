@@ -1,10 +1,10 @@
-name: tiki_sdk_dart
-description: Create and enforce immutable data licensing records client-side. The core-implementation of TIKI's client-side infrastructure.
+name: tiki_trail
+description: Create and enforce TIKI's immutable data transaction records.
 version: 3.0.0
 homepage: https://mytiki.com
-documentation: https://docs.mytiki.com/docs/sdk-overview
-repository: https://github.com/tiki/tiki-sdk-dart
-issue_tracker: https://github.com/tiki/tiki-sdk-dart/issues
+documentation: https://mytiki.com/docs
+repository: https://github.com/tiki/tiki-trail
+issue_tracker: https://github.com/tiki/tiki-trail/issues
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
