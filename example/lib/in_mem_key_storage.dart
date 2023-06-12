@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import 'package:tiki_trail/tiki_sdk.dart';
+import 'package:tiki_trail/tiki_trail.dart';
 import 'package:tiki_trail/utils/rsa/rsa.dart';
 
 class InMemKeyStorage extends KeyStorage {

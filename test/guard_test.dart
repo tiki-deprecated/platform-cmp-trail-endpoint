@@ -4,7 +4,7 @@
  */
 
 import 'package:test/test.dart';
-import 'package:tiki_trail/tiki_sdk.dart';
+import 'package:tiki_trail/tiki_trail.dart';
 import 'package:tiki_trail/utils/guard.dart';
 
 void main() {
@@ -13,7 +13,7 @@ void main() {
         expiry: expiry);
   }
 
-  group('TIKI SDK Guard tests', () {
+  group('TIKI Trail Guard tests', () {
     test('no uses - False', () async {
       List<LicenseUse> uses = [];
       bool pass = Guard.check(fakeLicense(uses), uses) == null;

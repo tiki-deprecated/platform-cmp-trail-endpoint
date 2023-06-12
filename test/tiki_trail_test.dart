@@ -8,39 +8,39 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
-import 'package:tiki_trail/tiki_sdk.dart';
+import 'package:tiki_trail/tiki_trail.dart';
 import 'package:uuid/uuid.dart';
 
 import 'in_mem.dart';
 
 void main() {
-  group('TIKI SDK License tests', () {
+  group('TIKI Trail License tests', () {
     test('construct - Success', () async {
-      await InMemBuilders.tikiSdk();
+      await InMemBuilders.tikiTrail();
       expect(1, 1);
     });
 
     test('title - Success', () async {
-      TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
+      TikiTrail trail = await InMemBuilders.tikiTrail();
       String ptr = const Uuid().v4();
       String hashedPtr = base64.encode(
           Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
       TitleRecord title =
-          await tikiSdk.title.create(ptr, tags: [TitleTag.emailAddress()]);
+          await trail.title.create(ptr, tags: [TitleTag.emailAddress()]);
       expect(title.tags.elementAt(0).value, TitleTag.emailAddress().value);
-      expect(title.origin, 'com.mytiki.tiki_sdk_dart.test');
+      expect(title.origin, 'com.mytiki.tiki_trail.test');
       expect(title.hashedPtr, hashedPtr);
       expect(title.description, null);
     });
 
     test('license - update - Success', () async {
-      TikiSdk tikiSdk = await InMemBuilders.tikiSdk();
+      TikiTrail trail = await InMemBuilders.tikiTrail();
       String ptr = const Uuid().v4();
       String hashedPtr = base64.encode(
           Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
       TitleRecord title =
-          await tikiSdk.title.create(ptr, tags: [TitleTag.emailAddress()]);
-      LicenseRecord first = await tikiSdk.license.create(
+          await trail.title.create(ptr, tags: [TitleTag.emailAddress()]);
+      LicenseRecord first = await trail.license.create(
           title,
           [
             LicenseUse([LicenseUsecase.attribution()])
@@ -51,7 +51,7 @@ void main() {
           LicenseUsecase.attribution().value);
       expect(first.terms, 'terms');
       expect(first.title.hashedPtr, hashedPtr);
-      LicenseRecord second = await tikiSdk.license.create(title, [], 'terms');
+      LicenseRecord second = await trail.license.create(title, [], 'terms');
       expect(second.uses.length, 0);
     });
   });

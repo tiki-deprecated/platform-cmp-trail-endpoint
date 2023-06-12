@@ -5,18 +5,18 @@
 
 import 'cache/license/license_model.dart';
 import 'cache/license/license_service.dart';
-import 'tiki_sdk.dart';
+import 'tiki_trail.dart';
 import 'utils/bytes.dart';
 
 /// Methods for creating and retrieving [LicenseRecord]s. Use like a namespace,
-/// and call from [TikiSdk]. E.g. `tikiSdk.license.create(...)`.
+/// and call from [TikiTrail]. E.g. `tikiTrail.license.create(...)`.
 class License {
   final LicenseService _licenseService;
-  final TikiSdk _sdk;
+  final TikiTrail _trail;
 
-  /// Use [TikiSdk] to construct.
+  /// Use [TikiTrail] to construct.
   /// @nodoc
-  License(this._licenseService, this._sdk);
+  License(this._licenseService, this._trail);
 
   /// Create a new [LicenseRecord]
   ///
@@ -52,7 +52,7 @@ class License {
   /// license records are not found.
   ///
   /// The [LicenseRecord] returned may be expired or not applicable to a
-  /// specific [LicenseUse]. To check license validity, use the [guard]
+  /// specific [LicenseUse]. To check license validity, use the [TikiTrail.guard]
   /// method.
   LicenseRecord? latest(TitleRecord title) {
     LicenseModel? license =
@@ -64,7 +64,7 @@ class License {
   /// Returns all [LicenseRecord]s for a [title].
   ///
   /// The [LicenseRecord]s returned may be expired or not applicable to a
-  /// specific [LicenseUse]. To check license validity, use the [guard]
+  /// specific [LicenseUse]. To check license validity, use the [TikiTrail.guard]
   /// method.
   List<LicenseRecord> all(TitleRecord title) {
     List<LicenseModel> licenses =
@@ -77,7 +77,7 @@ class License {
   LicenseRecord? get(String id) {
     LicenseModel? license = _licenseService.getById(Bytes.base64UrlDecode(id));
     if (license == null) return null;
-    TitleRecord? title = _sdk.title.id(Bytes.base64UrlEncode(license.title));
+    TitleRecord? title = _trail.title.id(Bytes.base64UrlEncode(license.title));
     if (title == null) return null;
     return license.toRecord(title);
   }

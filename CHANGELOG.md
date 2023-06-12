@@ -1,3 +1,9 @@
+### 3.0.3
+
+- fix:
+    - rename TikiSdk to TikiTrail
+    - remove doc references to TikiSdk
+
 ### 3.0.2
 
 - no code changes.

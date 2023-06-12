@@ -19,7 +19,7 @@ import 'package:tiki_trail/node/node_service.dart';
 import 'package:tiki_trail/node/transaction/transaction_service.dart';
 import 'package:tiki_trail/node/xchain/xchain_client.dart';
 import 'package:tiki_trail/node/xchain/xchain_service.dart';
-import 'package:tiki_trail/tiki_sdk.dart';
+import 'package:tiki_trail/tiki_trail.dart';
 import 'package:tiki_trail/utils/rsa/rsa.dart';
 import 'package:tiki_trail/utils/rsa/rsa_private_key.dart';
 import 'package:uuid/uuid.dart';
@@ -128,14 +128,15 @@ class InMemBuilders {
     return nodeService;
   }
 
-  static Future<TikiSdk> tikiSdk(
-      {String? id, String origin = 'com.mytiki.tiki_sdk_dart.test'}) async {
+  static Future<TikiTrail> tikiTrail(
+      {String? id, String origin = 'com.mytiki.tiki_trail.test'}) async {
     id ??= const Uuid().v4();
     InMemKeyStorage keyStorage = InMemKeyStorage();
 
-    String address = await TikiSdk.withId(id, keyStorage);
+    String address = await TikiTrail.withId(id, keyStorage);
     NodeService nodeService =
         await InMemBuilders.nodeService(id: id, keyStorage: keyStorage);
-    return TikiSdk(origin, nodeService, InMemRegistryService(address: address));
+    return TikiTrail(
+        origin, nodeService, InMemRegistryService(address: address));
   }
 }

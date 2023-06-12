@@ -10,15 +10,15 @@ import 'package:pointycastle/api.dart';
 
 import 'cache/title/title_model.dart';
 import 'cache/title/title_service.dart';
-import 'tiki_sdk.dart';
+import 'tiki_trail.dart';
 import 'utils/bytes.dart';
 
 /// Methods for creating and retrieving [TitleRecord]s. Use like a namespace,
-/// and call from [TikiSdk]. E.g. `tikiSdk.title.create(...)`
+/// and call from [TikiTrail]. E.g. `tikiTrail.title.create(...)`
 class Title {
   final TitleService _titleService;
 
-  /// Use [TikiSdk] to construct.
+  /// Use [TikiTrail] to construct.
   /// @nodoc
   Title(this._titleService);
 
@@ -32,7 +32,7 @@ class Title {
   /// about selecting good pointer records.
   ///
   /// • [origin] - An optional override of the default [origin] specified in
-  /// [init]. We recommend following a reverse-DNS syntax.
+  /// [TikiTrail.init]. We recommend following a reverse-DNS syntax.
   /// _i.e. com.myco.myapp_
   ///
   /// • [tags] - A `List` of metadata tags included in the [TitleRecord]
@@ -65,7 +65,7 @@ class Title {
   /// about selecting good pointer records.
   ///
   /// • [origin] - An optional override of the default [origin] specified in
-  /// [init]. We recommend following a reverse-DNS syntax.
+  /// [TikiTrail.init]. We recommend following a reverse-DNS syntax.
   /// _i.e. com.myco.myapp_
   TitleRecord? get(String ptr, {String? origin}) {
     ptr = _hashPtr(ptr);
