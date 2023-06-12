@@ -7,7 +7,6 @@ import 'dart:typed_data';
 
 import 'cache/receipt/receipt_model.dart';
 import 'cache/receipt/receipt_service.dart';
-import 'receipt_record.dart';
 import 'tiki_sdk.dart';
 import 'utils/bytes.dart';
 
