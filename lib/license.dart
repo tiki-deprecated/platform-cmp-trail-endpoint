@@ -52,7 +52,7 @@ class License {
   /// license records are not found.
   ///
   /// The [LicenseRecord] returned may be expired or not applicable to a
-  /// specific [LicenseUse]. To check license validity, use the [guard]
+  /// specific [LicenseUse]. To check license validity, use the [TikiTrail.guard]
   /// method.
   LicenseRecord? latest(TitleRecord title) {
     LicenseModel? license =
@@ -64,7 +64,7 @@ class License {
   /// Returns all [LicenseRecord]s for a [title].
   ///
   /// The [LicenseRecord]s returned may be expired or not applicable to a
-  /// specific [LicenseUse]. To check license validity, use the [guard]
+  /// specific [LicenseUse]. To check license validity, use the [TikiTrail.guard]
   /// method.
   List<LicenseRecord> all(TitleRecord title) {
     List<LicenseModel> licenses =

@@ -32,9 +32,6 @@ class Receipt {
   /// • [description] - An optional, short, human-readable, description of
   /// the [ReceiptRecord].
   ///
-  /// • [expiry] - The date when the payable expires — leave `null` if
-  /// it never expires.
-  ///
   /// • [reference] - A customer-specific reference identifier. Use this
   /// to connect the record to your system.
   ///

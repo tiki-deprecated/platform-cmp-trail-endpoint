@@ -2,7 +2,10 @@
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
-library tiki_sdk_dart;
+
+/// The TIKI trail project is an immutable, distributed, record system for data
+/// transactions. Use [TikiTrail] as the primary entrypoint.
+library tiki_trail;
 
 import 'dart:typed_data';
 
@@ -56,7 +59,7 @@ export 'receipt_record.dart';
 export 'title.dart';
 export 'title_record.dart';
 
-/// The primary entrypoint for the SDK —use to create, get, and enforce records.
+/// The primary entrypoint for the library —use to create, get, and enforce records.
 class TikiTrail {
   final NodeService _nodeService;
 

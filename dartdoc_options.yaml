@@ -1,4 +1,4 @@
 dartdoc:
   include: [
-    tiki_sdk_dart
+    tiki_trail
   ]

@@ -13,7 +13,7 @@ void main() {
         expiry: expiry);
   }
 
-  group('TIKI SDK Guard tests', () {
+  group('TIKI Trail Guard tests', () {
     test('no uses - False', () async {
       List<LicenseUse> uses = [];
       bool pass = Guard.check(fakeLicense(uses), uses) == null;

@@ -14,7 +14,7 @@ import 'package:uuid/uuid.dart';
 import 'in_mem.dart';
 
 void main() {
-  group('TIKI SDK License tests', () {
+  group('TIKI Trail License tests', () {
     test('construct - Success', () async {
       await InMemBuilders.tikiTrail();
       expect(1, 1);
@@ -28,7 +28,7 @@ void main() {
       TitleRecord title =
           await trail.title.create(ptr, tags: [TitleTag.emailAddress()]);
       expect(title.tags.elementAt(0).value, TitleTag.emailAddress().value);
-      expect(title.origin, 'com.mytiki.tiki_sdk_dart.test');
+      expect(title.origin, 'com.mytiki.tiki_trail.test');
       expect(title.hashedPtr, hashedPtr);
       expect(title.description, null);
     });
