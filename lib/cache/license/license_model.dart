@@ -6,11 +6,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import '../../tiki_sdk.dart';
+import '../../license_record.dart';
+import '../../title_record.dart';
 import '../../utils/bytes.dart';
 import '../../utils/compact_size.dart';
 import '../title/title_model.dart';
 import 'license_repository.dart';
+import 'license_use.dart';
 
 /// Describes the license for an asset ([TitleModel]).
 class LicenseModel {

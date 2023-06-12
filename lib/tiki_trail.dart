@@ -57,7 +57,7 @@ export 'title.dart';
 export 'title_record.dart';
 
 /// The primary entrypoint for the SDK —use to create, get, and enforce records.
-class TikiSdk {
+class TikiTrail {
   final NodeService _nodeService;
 
   /// Interact with [TitleRecord]s.
@@ -74,7 +74,7 @@ class TikiSdk {
 
   /// Prefer [withId] and [init] instead.
   /// @nodoc
-  TikiSdk(
+  TikiTrail(
       String origin, NodeService nodeService, RegistryService registryService)
       : _nodeService = nodeService {
     TitleService titleService =
@@ -107,7 +107,7 @@ class TikiSdk {
     return Bytes.base64UrlEncode(primaryKey.address);
   }
 
-  /// Returns a new initialized [TikiSdk] instance.
+  /// Returns a new initialized [TikiTrail] instance.
   ///
   /// Parameters:
   ///
@@ -137,7 +137,7 @@ class TikiSdk {
   /// • [customerAuth] - A customer provided Authorization Token (JWT) for
   /// use in [id] registration. Use [customerAuth] to add user identity
   /// verification. Configure in [console](https://console.mytiki.com)
-  static Future<TikiSdk> init(String publishingId, String origin,
+  static Future<TikiTrail> init(String publishingId, String origin,
       KeyStorage keyStorage, String id, CommonDatabase database,
       {int maxTransactions = 1,
       Duration blockInterval = const Duration(minutes: 1),
@@ -169,7 +169,7 @@ class TikiSdk {
         storageService, database, primaryKey, nodeService.getBlock);
     await nodeService.init();
 
-    return TikiSdk(origin, nodeService, registryService);
+    return TikiTrail(origin, nodeService, registryService);
   }
 
   /// Returns the in-use wallet [address].

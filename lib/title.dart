@@ -10,15 +10,15 @@ import 'package:pointycastle/api.dart';
 
 import 'cache/title/title_model.dart';
 import 'cache/title/title_service.dart';
-import 'tiki_sdk.dart';
+import 'tiki_trail.dart';
 import 'utils/bytes.dart';
 
 /// Methods for creating and retrieving [TitleRecord]s. Use like a namespace,
-/// and call from [TikiSdk]. E.g. `tikiSdk.title.create(...)`
+/// and call from [TikiTrail]. E.g. `tikiTrail.title.create(...)`
 class Title {
   final TitleService _titleService;
 
-  /// Use [TikiSdk] to construct.
+  /// Use [TikiTrail] to construct.
   /// @nodoc
   Title(this._titleService);
 

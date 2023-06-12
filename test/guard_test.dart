@@ -4,7 +4,7 @@
  */
 
 import 'package:test/test.dart';
-import 'package:tiki_trail/tiki_sdk.dart';
+import 'package:tiki_trail/tiki_trail.dart';
 import 'package:tiki_trail/utils/guard.dart';
 
 void main() {

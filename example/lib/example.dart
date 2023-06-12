@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:example/in_mem_key_storage.dart';
 import 'package:sqlite3/common.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_trail/tiki_sdk.dart';
+import 'package:tiki_trail/tiki_trail.dart';
 import 'package:uuid/uuid.dart';
 
 void main(List<String> arguments) async {
@@ -18,8 +18,8 @@ void main(List<String> arguments) async {
   String id = Uuid().v4();
   String ptr = const Uuid().v4();
 
-  TikiSdk.withId(id, keyStorage);
-  TikiSdk tiki = await TikiSdk.init('PUBLISHING_ID',
+  TikiTrail.withId(id, keyStorage);
+  TikiTrail tiki = await TikiTrail.init('PUBLISHING_ID',
       'com.mytiki.tiki_trail.example', keyStorage, id, database);
 
   TitleRecord title = await tiki.title.create(ptr, tags: [TitleTag.userId()]);

@@ -7,18 +7,18 @@ import 'dart:typed_data';
 
 import 'cache/receipt/receipt_model.dart';
 import 'cache/receipt/receipt_service.dart';
-import 'tiki_sdk.dart';
+import 'tiki_trail.dart';
 import 'utils/bytes.dart';
 
 /// Methods for creating and retrieving [ReceiptRecord]s. Use like a namespace,
-/// and call from [TikiSdk]. E.g. `tikiSdk.receipt.create(...)`.
+/// and call from [TikiTrail]. E.g. `tikiTrail.receipt.create(...)`.
 class Receipt {
   final ReceiptService _receiptService;
-  final TikiSdk _sdk;
+  final TikiTrail _trail;
 
-  /// Use [TikiSdk] to construct.
+  /// Use [TikiTrail] to construct.
   /// @nodoc
-  Receipt(this._receiptService, this._sdk);
+  Receipt(this._receiptService, this._trail);
 
   /// Create a new [ReceiptRecord].
   ///
@@ -60,7 +60,7 @@ class Receipt {
     ReceiptModel? receipt = _receiptService.getById(Bytes.base64UrlDecode(id));
     if (receipt == null) return null;
     PayableRecord? payable =
-        _sdk.payable.get(Bytes.base64UrlEncode(receipt.payable));
+        _trail.payable.get(Bytes.base64UrlEncode(receipt.payable));
     if (payable == null) return null;
     return receipt.toRecord(payable);
   }

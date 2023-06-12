@@ -7,18 +7,18 @@ import 'dart:typed_data';
 
 import 'cache/payable/payable_model.dart';
 import 'cache/payable/payable_service.dart';
-import 'tiki_sdk.dart';
+import 'tiki_trail.dart';
 import 'utils/bytes.dart';
 
 /// Methods for creating and retrieving [PayableRecord]s. Use like a namespace,
-/// and call from [TikiSdk]. E.g. `tikiSdk.payable.create(...)`.
+/// and call from [TikiTrail]. E.g. `tikiTrail.payable.create(...)`.
 class Payable {
   final PayableService _payableService;
-  final TikiSdk _sdk;
+  final TikiTrail _trail;
 
-  /// Use [TikiSdk] to construct.
+  /// Use [TikiTrail] to construct.
   /// @nodoc
-  Payable(this._payableService, this._sdk);
+  Payable(this._payableService, this._trail);
 
   /// Create a new [PayableRecord].
   ///
@@ -64,7 +64,7 @@ class Payable {
     PayableModel? payable = _payableService.getById(Bytes.base64UrlDecode(id));
     if (payable == null) return null;
     LicenseRecord? license =
-        _sdk.license.get(Bytes.base64UrlEncode(payable.license));
+        _trail.license.get(Bytes.base64UrlEncode(payable.license));
     if (license == null) return null;
     return payable.toRecord(license);
   }
