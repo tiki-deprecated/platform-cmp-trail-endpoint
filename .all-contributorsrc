@@ -1,0 +1,57 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "mike-audi",
+      "name": "Mike Audi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3769672?v=4",
+      "profile": "http://mytiki.com",
+      "contributions": [
+        "code",
+        "review",
+        "doc"
+      ]
+    },
+	{
+      "login": "ricardobrg",
+      "name": "Ricardo Gonçalves",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8357343?v=4",
+      "profile": "https://www.linkedin.com/in/ricardolg/",
+      "contributions": [
+        "code",
+        "review",
+        "doc"
+      ]
+    },
+	{
+      "login": "jcockhren",
+      "name": "Jurnell Cockhren",
+      "avatar_url": "https://avatars.githubusercontent.com/u/316840?v=4",
+      "profile": "https://civichacker.com",
+      "contributions": [
+        "code"
+	  ]
+	},
+	{
+      "login": "Harshit933",
+      "name": "Harshit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/90508384?v=4",
+      "profile": "http://harshit933.github.io",
+      "contributions": [
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "core",
+  "projectOwner": "tiki"
+}

@@ -7,8 +7,8 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/node/block/block_model.dart';
-import 'package:tiki_sdk_dart/node/block/block_service.dart';
+import 'package:tiki_trail/node/block/block_model.dart';
+import 'package:tiki_trail/node/block/block_service.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {

@@ -8,7 +8,7 @@ import 'dart:typed_data';
 
 import 'package:nock/nock.dart';
 import 'package:test/expect.dart';
-import 'package:tiki_sdk_dart/l0/storage/storage_repository.dart';
+import 'package:tiki_trail/l0/storage/storage_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class StorageNock {

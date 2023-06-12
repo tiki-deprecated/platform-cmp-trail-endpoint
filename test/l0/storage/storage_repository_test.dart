@@ -8,12 +8,12 @@ import 'dart:typed_data';
 
 import 'package:nock/nock.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/l0/storage/storage_model_token_req.dart';
-import 'package:tiki_sdk_dart/l0/storage/storage_model_token_rsp.dart';
-import 'package:tiki_sdk_dart/l0/storage/storage_model_upload.dart';
-import 'package:tiki_sdk_dart/l0/storage/storage_repository.dart';
-import 'package:tiki_sdk_dart/utils/rsa/rsa.dart';
-import 'package:tiki_sdk_dart/utils/rsa/rsa_private_key.dart';
+import 'package:tiki_trail/l0/storage/storage_model_token_req.dart';
+import 'package:tiki_trail/l0/storage/storage_model_token_rsp.dart';
+import 'package:tiki_trail/l0/storage/storage_model_upload.dart';
+import 'package:tiki_trail/l0/storage/storage_repository.dart';
+import 'package:tiki_trail/utils/rsa/rsa.dart';
+import 'package:tiki_trail/utils/rsa/rsa_private_key.dart';
 import 'package:uuid/uuid.dart';
 
 import 'storage_nock.dart';

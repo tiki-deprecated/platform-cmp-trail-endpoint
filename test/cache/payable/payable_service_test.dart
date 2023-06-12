@@ -6,14 +6,14 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/cache/license/license_service.dart';
-import 'package:tiki_sdk_dart/cache/license/license_use.dart';
-import 'package:tiki_sdk_dart/cache/license/license_usecase.dart';
-import 'package:tiki_sdk_dart/cache/payable/payable_model.dart';
-import 'package:tiki_sdk_dart/cache/payable/payable_service.dart';
-import 'package:tiki_sdk_dart/cache/title/title_service.dart';
-import 'package:tiki_sdk_dart/node/node_service.dart';
-import 'package:tiki_sdk_dart/utils/bytes.dart';
+import 'package:tiki_trail/cache/license/license_service.dart';
+import 'package:tiki_trail/cache/license/license_use.dart';
+import 'package:tiki_trail/cache/license/license_usecase.dart';
+import 'package:tiki_trail/cache/payable/payable_model.dart';
+import 'package:tiki_trail/cache/payable/payable_service.dart';
+import 'package:tiki_trail/cache/title/title_service.dart';
+import 'package:tiki_trail/node/node_service.dart';
+import 'package:tiki_trail/utils/bytes.dart';
 
 import '../../in_mem.dart';
 

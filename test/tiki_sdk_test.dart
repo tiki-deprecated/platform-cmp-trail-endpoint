@@ -8,7 +8,7 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/api.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/tiki_sdk.dart';
+import 'package:tiki_trail/tiki_sdk.dart';
 import 'package:uuid/uuid.dart';
 
 import 'in_mem.dart';

@@ -21,13 +21,14 @@ class PayableRecord {
   /// Describes the type of payment (e.g. loyalty-point, cash, coupon, etc.)
   String type;
 
-  /// A human-readable description of the payable
+  /// An optional, human-readable description of the payable.
   String? description;
 
-  /// The date when the payable expires
+  /// The date when the payable expires — null if it never expires
   DateTime? expiry;
 
-  /// A customer-specific reference identifier
+  /// An optional, customer-specific reference identifier. Use to connect
+  /// the record to your system.
   String? reference;
 
   PayableRecord(this.id, this.license, this.amount, this.type,

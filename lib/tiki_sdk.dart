@@ -34,7 +34,9 @@ import 'node/node_service.dart';
 import 'node/transaction/transaction_service.dart';
 import 'node/xchain/xchain_service.dart';
 import 'payable.dart';
+import 'payable_record.dart';
 import 'receipt.dart';
+import 'receipt_record.dart';
 import 'title.dart';
 import 'title_record.dart';
 import 'utils/bytes.dart';
@@ -49,21 +51,28 @@ export 'license_record.dart';
 export 'node/key/key_storage.dart';
 export 'payable.dart';
 export 'payable_record.dart';
+export 'receipt.dart';
+export 'receipt_record.dart';
 export 'title.dart';
 export 'title_record.dart';
 
-/// The primary class for the tiki_sdk_dart library.
-/// Use this to create, get, and enforce [LicenseRecord]s and
-/// [TitleRecord]s.
+/// The primary entrypoint for the SDK —use to create, get, and enforce records.
 class TikiSdk {
   final NodeService _nodeService;
 
+  /// Interact with [TitleRecord]s.
   late final Title title;
+
+  /// Interact with [LicenseRecord]s.
   late final License license;
+
+  /// Interact with [PayableRecord]s.
   late final Payable payable;
+
+  /// Interact with [ReceiptRecord]s.
   late final Receipt receipt;
 
-  /// Prefer [withAddress] and [init] instead.
+  /// Prefer [withId] and [init] instead.
   /// @nodoc
   TikiSdk(
       String origin, NodeService nodeService, RegistryService registryService)
@@ -114,7 +123,8 @@ class TikiSdk {
   /// Private key MUST be previously registered in the provided [keyStorage].
   /// Use [withId].
   ///
-  /// • [database] - Platform-specific sqlite3 implementation, opened.
+  /// • [database] - Platform-specific sqlite3 implementation. Always open
+  /// beforehand.
   ///
   /// • [maxTransactions] - The maximum number of transactions to bundle
   /// in a block. Use in combination with [blockInterval]. Default is 1.
@@ -164,24 +174,24 @@ class TikiSdk {
 
   /// Returns the in-use wallet [address].
   ///
-  /// Refers to the blockchain wallet address currently in use by this [TikiSdk]
-  /// instance. This [address] serves as a unique identifier for a particular
-  /// combination of user and device. If either the user or the device changes,
-  /// use a a different [address].
+  /// Refers to the wallet address currently in use by the instance. This
+  /// [address] serves as a unique identifier for a particular combination of
+  /// user and device. If either the user or the device changes,
+  /// use a different [address].
   String get address => _nodeService.address;
 
-  // Returns the in-use id [id]
+  // Returns the in-use id [id].
   //
-  // A customer provided identifier for the user, in use by this [TikiSdk]
-  // instance. This [id] serves as a unique identifier for a user. Set the
+  // The customer provided identifier for the user in use by the instance.
+  // This [id] serves as a unique identifier for a user. Set the
   // [id] using the [withId] method before calling [init].
   String get id => _nodeService.id;
 
   /// Guard against an invalid [LicenseRecord] for a List of [usecases] and
   /// [destinations].
   ///
-  /// Use this method to verify a non-expired, [LicenseRecord] for the [ptr]
-  /// exists, and permits the listed [usecases] and [destinations].
+  /// Use this method to verify a non-expired [LicenseRecord] for the [ptr]
+  /// exists and permits the listed [usecases] and [destinations].
   ///
   /// Parameters:
   ///
@@ -247,8 +257,8 @@ class TikiSdk {
     }
   }
 
-  /// Method to sync missing blocks and transactions for the [id] using
-  /// the L0 Registry Service.
+  /// Use the Registry Service to sync new blocks and transactions created on
+  /// other devices for the [id].
   Future<void> _syncRegistry(
           TitleService titleService,
           LicenseService licenseService,

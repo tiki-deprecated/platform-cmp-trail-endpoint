@@ -5,9 +5,9 @@
 
 import 'package:nock/nock.dart';
 import 'package:test/test.dart';
-import 'package:tiki_sdk_dart/l0/registry/registry_model_req.dart';
-import 'package:tiki_sdk_dart/l0/registry/registry_model_rsp.dart';
-import 'package:tiki_sdk_dart/l0/registry/registry_repository.dart';
+import 'package:tiki_trail/l0/registry/registry_model_req.dart';
+import 'package:tiki_trail/l0/registry/registry_model_rsp.dart';
+import 'package:tiki_trail/l0/registry/registry_repository.dart';
 import 'package:uuid/uuid.dart';
 
 import 'registry_nock.dart';

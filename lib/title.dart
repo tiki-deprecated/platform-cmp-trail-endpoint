@@ -10,13 +10,16 @@ import 'package:pointycastle/api.dart';
 
 import 'cache/title/title_model.dart';
 import 'cache/title/title_service.dart';
-import 'cache/title/title_tag.dart';
-import 'title_record.dart';
+import 'tiki_sdk.dart';
 import 'utils/bytes.dart';
 
+/// Methods for creating and retrieving [TitleRecord]s. Use like a namespace,
+/// and call from [TikiSdk]. E.g. `tikiSdk.title.create(...)`
 class Title {
   final TitleService _titleService;
 
+  /// Use [TikiSdk] to construct.
+  /// @nodoc
   Title(this._titleService);
 
   /// Create a new [TitleRecord].
@@ -29,14 +32,15 @@ class Title {
   /// about selecting good pointer records.
   ///
   /// • [origin] - An optional override of the default [origin] specified in
-  /// [init]. Follow a reverse-DNS syntax. _i.e. com.myco.myapp_
+  /// [init]. We recommend following a reverse-DNS syntax.
+  /// _i.e. com.myco.myapp_
   ///
   /// • [tags] - A `List` of metadata tags included in the [TitleRecord]
-  /// describing the asset, for your use in record search and filtering.
+  /// describing the asset, for use in record search and filtering.
   /// [Learn more](https://docs.mytiki.com/docs/adding-tags)
   /// about adding tags.
   ///
-  /// • [description] - A short, human-readable, description of
+  /// • [description] - An optional, short, human-readable, description of
   /// the [TitleRecord] as a future reminder.
   ///
   /// Returns the created [TitleRecord]
@@ -50,8 +54,19 @@ class Title {
     return title.toRecord();
   }
 
-  /// Returns the [TitleRecord] for an [ptr] or null if the record is
+  /// Returns the [TitleRecord] for a specified [ptr] or null if the record is
   /// not found.
+  ///
+  /// Parameters:
+  ///
+  /// • [ptr] - The Pointer Records identifies data stored in your system,
+  /// similar to a foreign key.
+  /// [Learn more](https://docs.mytiki.com/docs/selecting-a-pointer-record)
+  /// about selecting good pointer records.
+  ///
+  /// • [origin] - An optional override of the default [origin] specified in
+  /// [init]. We recommend following a reverse-DNS syntax.
+  /// _i.e. com.myco.myapp_
   TitleRecord? get(String ptr, {String? origin}) {
     ptr = _hashPtr(ptr);
     TitleModel? model = _titleService.getByPtr(ptr, origin: origin);
@@ -59,7 +74,7 @@ class Title {
     return model.toRecord();
   }
 
-  /// Returns the [TitleRecord] for an [id] or null if the record is
+  /// Returns the [TitleRecord] for a specified [id] or null if the record is
   /// not found.
   TitleRecord? id(String id) {
     TitleModel? model = _titleService.getById(Bytes.base64UrlDecode(id));
@@ -67,7 +82,8 @@ class Title {
     return model.toRecord();
   }
 
-  /// Helper method to SHA3-256 hash customer provided Pointer Records ([ptr]).
+  /// Helper method to consistently hash customer provided
+  /// Pointer Records ([ptr]).
   String _hashPtr(String ptr) => base64
       .encode(Digest("SHA3-256").process(Uint8List.fromList(utf8.encode(ptr))));
 }
