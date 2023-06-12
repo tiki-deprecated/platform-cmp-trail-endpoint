@@ -1,3 +1,8 @@
+### 3.0.2
+
+- no code changes.
+- fix bug with shields in README.md
+
 ### 3.0.1
 
 - no code changes.
