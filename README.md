@@ -1,4 +1,4 @@
-_![Image](https://img.shields.io/pub/v/tiki_trail_dart?logo=dart)
+![Image](https://img.shields.io/pub/v/tiki_trail_dart?logo=dart)
 ![Image](https://img.shields.io/pub/points/tiki_trail_dart?logo=dart)
 ![Image](https://img.shields.io/github/license/tiki/tiki-trail)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg)](#contributors-)
