@@ -10,7 +10,7 @@ import 'package:sqlite3/common.dart';
 import '../../utils/bytes.dart';
 import 'xchain_model.dart';
 
-/// The repository for [XChainModel] persistance in [CommonDatabase].
+/// The repository for [XChainModel] persistence in [CommonDatabase].
 class XChainRepository {
   /// The [XChainModel] table name in [db].
   static const table = 'xchain';

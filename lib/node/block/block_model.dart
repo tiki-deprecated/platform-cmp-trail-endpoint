@@ -36,7 +36,7 @@ class BlockModel {
   /// The block creation timestamp.
   late final DateTime timestamp;
 
-  /// Buils a new [BlockModel].
+  /// Builds a new [BlockModel].
   ///
   /// If no [timestamp] is provided, it is considered a new [BlockModel] and
   /// the object creation time becomes the [timestamp].
@@ -51,7 +51,7 @@ class BlockModel {
   /// Builds a [BlockModel] from a [map].
   ///
   /// It is used mainly for retrieving data from [BlockRepository].
-  /// The map strucure is
+  /// The map structure is
   /// ```
   ///   Map<String, dynamic> map = {
   ///     BlockRepository.columnId : Uint8List

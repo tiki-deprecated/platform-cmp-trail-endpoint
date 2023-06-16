@@ -20,7 +20,7 @@ class BlockService {
 
   CommonDatabase get database => _repository.db;
 
-  /// Creates a new block to be commited later.
+  /// Creates a new block to be committed later.
   ///
   /// It gets the last created block from the [BlockRepository] to extract
   /// [BlockModel.previousHash] from it. If there are no blocks it means that it

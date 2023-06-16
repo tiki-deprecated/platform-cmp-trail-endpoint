@@ -7,18 +7,18 @@ import 'package:sqlite3/common.dart';
 
 import 'backup_model.dart';
 
-/// The repository for [BackupModel] persistance in [CommonDatabase].
+/// The repository for [BackupModel] persistence in [CommonDatabase].
 class BackupRepository {
   /// The [BackupModel] table name in [_db].
   static const table = 'backup';
 
-  /// The [BackupModel.path] collumn
+  /// The [BackupModel.path] column
   static const columnPath = 'path';
 
-  /// The [BackupModel.signature] collumn
+  /// The [BackupModel.signature] column
   static const columnSignature = 'signature';
 
-  /// The [BackupModel.timestamp] collumn
+  /// The [BackupModel.timestamp] column
   static const columnTimestamp = 'timestamp';
 
   /// The [CommonDatabase] used to persist [BackupModel].

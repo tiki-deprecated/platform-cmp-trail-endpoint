@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-/// The interface for platform-specific private key persistance.
+/// The interface for platform-specific private key persistence.
 ///
 /// The implementation should use OS level encrypted storage. It should not be
 /// accessible to other applications or users because it will store the private
