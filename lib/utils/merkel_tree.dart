@@ -23,7 +23,7 @@ class MerkelTree {
 
   int depth = 1;
 
-  /// Builds this Mekel Tree from a list of hashes.
+  /// Builds this Merkel Tree from a list of hashes.
   MerkelTree.build(this.hashes) {
     if (hashes.length == 1) {
       Uint8List hash = hashes.single;
@@ -41,7 +41,7 @@ class MerkelTree {
     }
   }
 
-  /// Validates the inclusion of the [hash] in [root] by renuilding it using [proof]
+  /// Validates the inclusion of the [hash] in [root] by rebuilding it using [proof]
   static bool validate(Uint8List hash, Uint8List proof, Uint8List root) {
     int pos = proof[0];
     Uint8List hashPair = proof.sublist(1, 33);

@@ -10,7 +10,7 @@ import 'package:sqlite3/common.dart';
 import '../../utils/bytes.dart';
 import 'block_model.dart';
 
-/// The repository for [BlockModel] persistance in [CommonDatabase].
+/// The repository for [BlockModel] persistence in [CommonDatabase].
 class BlockRepository {
   /// The [BlockModel] table name in [db].
   static const table = 'block';

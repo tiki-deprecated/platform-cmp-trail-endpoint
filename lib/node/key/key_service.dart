@@ -14,7 +14,7 @@ import 'key_model.dart';
 import 'key_repository.dart';
 import 'key_storage.dart';
 
-/// The service that handles keys creation and persistance.
+/// The service that handles keys creation and persistence.
 class KeyService {
   final KeyRepository _repository;
 

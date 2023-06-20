@@ -71,7 +71,7 @@ class TransactionModel {
   /// Builds a [BlockModel] from a [map].
   ///
   /// It is used mainly for retrieving data from [BlockRepository].
-  /// The map strucure is
+  /// The map structure is
   /// ```
   ///   Map<String, dynamic> map = {
   ///     TransactionRepository.columnId : String,
@@ -158,7 +158,7 @@ class TransactionModel {
         .toBytes();
   }
 
-  /// Overrides [==] operator to use [id] as the diferentiation parameter.
+  /// Overrides [==] operator to use [id] as the differentiation parameter.
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

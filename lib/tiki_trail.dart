@@ -212,7 +212,7 @@ class TikiTrail {
   /// • [onPass] - A Function to execute automatically upon successfully
   /// resolving the [LicenseRecord] against the [usecases] and [destinations]
   ///
-  /// • [onFail] - A Fucntion to execute automatically upon failure to resolve
+  /// • [onFail] - A Function to execute automatically upon failure to resolve
   /// the [LicenseRecord]. Accepts a String parameter, holding an error
   /// message describing the reason for failure.
   ///

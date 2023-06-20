@@ -26,7 +26,7 @@ class BackupModel {
   /// Builds a [BackupModel] from a [map].
   ///
   /// It is used mainly for retrieving data from [BackupRepository].
-  /// The map strucure is
+  /// The map structure is
   /// ```
   ///   Map<String, dynamic> map = {
   ///     BackupRepository.columnPath : String,
