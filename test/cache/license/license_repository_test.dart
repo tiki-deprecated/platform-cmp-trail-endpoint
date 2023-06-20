@@ -17,7 +17,7 @@ import 'package:tiki_trail/node/node_service.dart';
 import 'package:tiki_trail/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../in_mem.dart';
+import '../../fixtures/in_mem.dart';
 
 void main() {
   group('License Repository Tests', () {
@@ -62,7 +62,7 @@ void main() {
     test('getLatestByTitle - Success', () async {
       NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.tiki.test', nodeService, nodeService.database);
+          TitleService('com.tiki.test', nodeService.database, nodeService);
       LicenseService licenseService =
           LicenseService(nodeService.database, nodeService);
       LicenseRepository licenseRepository =
@@ -71,7 +71,7 @@ void main() {
       TitleModel title = await titleService.create('ptr');
       int numRecords = 10;
       for (int i = 0; i < numRecords; i++) {
-        licenseService.create(title.transactionId!, [], 'record: $i');
+        await licenseService.create(title.transactionId!, [], 'record: $i');
       }
 
       await Future.delayed(const Duration(seconds: 5));

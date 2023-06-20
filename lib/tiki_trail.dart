@@ -10,6 +10,7 @@ library tiki_trail;
 import 'dart:typed_data';
 
 import 'package:sqlite3/common.dart';
+import 'package:tiki_idp/tiki_idp.dart';
 
 import 'cache/content_schema.dart';
 import 'cache/license/license_model.dart';
@@ -22,17 +23,12 @@ import 'cache/receipt/receipt_model.dart';
 import 'cache/receipt/receipt_service.dart';
 import 'cache/title/title_model.dart';
 import 'cache/title/title_service.dart';
-import 'l0/auth/auth_service.dart';
-import 'l0/registry/registry_model_rsp.dart';
-import 'l0/registry/registry_service.dart';
+import 'key.dart';
 import 'l0/storage/storage_service.dart';
 import 'license.dart';
 import 'license_record.dart';
 import 'node/backup/backup_service.dart';
 import 'node/block/block_service.dart';
-import 'node/key/key_model.dart';
-import 'node/key/key_service.dart';
-import 'node/key/key_storage.dart';
 import 'node/node_service.dart';
 import 'node/transaction/transaction_service.dart';
 import 'node/xchain/xchain_service.dart';
@@ -51,7 +47,6 @@ export 'cache/license/license_usecase.dart';
 export 'cache/title/title_tag.dart';
 export 'license.dart';
 export 'license_record.dart';
-export 'node/key/key_storage.dart';
 export 'payable.dart';
 export 'payable_record.dart';
 export 'receipt.dart';
@@ -77,23 +72,21 @@ class TikiTrail {
 
   /// Prefer [withId] and [init] instead.
   /// @nodoc
-  TikiTrail(
-      String origin, NodeService nodeService, RegistryService registryService)
-      : _nodeService = nodeService {
+  TikiTrail(String origin, this._nodeService, TikiIdp idp) {
     TitleService titleService =
-        TitleService(origin, nodeService, nodeService.database);
+        TitleService(origin, _nodeService.database, _nodeService);
     LicenseService licenseService =
-        LicenseService(nodeService.database, nodeService);
+        LicenseService(_nodeService.database, _nodeService);
     PayableService payableService =
-        PayableService(nodeService.database, nodeService);
+        PayableService(_nodeService.database, _nodeService);
     ReceiptService receiptService =
-        ReceiptService(nodeService.database, nodeService);
+        ReceiptService(_nodeService.database, _nodeService);
     title = Title(titleService);
     license = License(licenseService, this);
     payable = Payable(payableService, this);
     receipt = Receipt(receiptService, this);
-    _syncRegistry(titleService, licenseService, payableService, receiptService,
-        registryService);
+    _syncRegistry(_nodeService.id, titleService, licenseService, payableService,
+        receiptService, idp);
   }
 
   /// Use before [init] to add a wallet address and keypair
@@ -103,11 +96,9 @@ class TikiTrail {
   /// private key is created and registered to the [id].
   ///
   /// Returns the valid (created or provided) address
-  static Future<String> withId(String id, KeyStorage keyStorage) async {
-    KeyService keyService = KeyService(keyStorage);
-    KeyModel primaryKey =
-        await keyService.get(id) ?? await keyService.create(id: id);
-    return Bytes.base64UrlEncode(primaryKey.address);
+  static Future<Key> withId(String id, TikiIdp idp) async {
+    await idp.key(id);
+    return Key.pem(id, await idp.export(id, public: true));
   }
 
   /// Returns a new initialized [TikiTrail] instance.
@@ -140,39 +131,30 @@ class TikiTrail {
   /// • [customerAuth] - A customer provided Authorization Token (JWT) for
   /// use in [id] registration. Use [customerAuth] to add user identity
   /// verification. Configure in [console](https://console.mytiki.com)
-  static Future<TikiTrail> init(String publishingId, String origin,
-      KeyStorage keyStorage, String id, CommonDatabase database,
+  static Future<TikiTrail> init(String publishingId, String origin, TikiIdp idp,
+      Key key, CommonDatabase database,
       {int maxTransactions = 1,
       Duration blockInterval = const Duration(minutes: 1),
       String? customerAuth}) async {
-    KeyService keyService = KeyService(keyStorage);
-    KeyModel? primaryKey = await keyService.get(id);
-    if (primaryKey == null) {
-      throw StateError("Use keystore() to initialize address");
-    }
+    StorageService storageService = StorageService(key.id, idp);
 
-    AuthService authService = AuthService(publishingId);
-    StorageService storageService =
-        StorageService(primaryKey.privateKey, authService);
-    RegistryService registryService =
-        RegistryService(primaryKey.privateKey, authService);
-    RegistryModelRsp registryRsp = await registryService.register(
-        id, Bytes.base64UrlEncode(primaryKey.address),
-        customerAuth: customerAuth);
+    Registry registry =
+        await idp.register(key.id, key.address, token: customerAuth);
 
     NodeService nodeService = NodeService()
       ..blockInterval = blockInterval
       ..maxTransactions = maxTransactions
       ..transactionService =
-          TransactionService(database, appKey: registryRsp.signKey)
+          TransactionService(database, idp, appKeyId: registry.appKeyId)
       ..blockService = BlockService(database)
-      ..xChainService = XChainService(storageService, database)
-      ..primaryKey = primaryKey;
-    nodeService.backupService = BackupService(
-        storageService, database, primaryKey, nodeService.getBlock);
+      ..xChainService = XChainService(storageService, idp, database)
+      ..key = key;
+    nodeService.backupService = await BackupService(
+            storageService, idp, database, nodeService.getBlock, key)
+        .init();
     await nodeService.init();
 
-    return TikiTrail(origin, nodeService, registryService);
+    return TikiTrail(origin, nodeService, idp);
   }
 
   /// Returns the in-use wallet [address].
@@ -263,13 +245,14 @@ class TikiTrail {
   /// Use the Registry Service to sync new blocks and transactions created on
   /// other devices for the [id].
   Future<void> _syncRegistry(
+          String keyId,
           TitleService titleService,
           LicenseService licenseService,
           PayableService payableService,
           ReceiptService receiptService,
-          RegistryService registryService) =>
-      registryService.get(id).then((rsp) {
-        rsp.addresses?.forEach((address) => _nodeService.sync(address, (txn) {
+          TikiIdp idp) =>
+      idp.registry(keyId, id).then((rsp) {
+        rsp.addresses.forEach((address) => _nodeService.sync(address, (txn) {
               List<Uint8List> decodedContents =
                   CompactSize.decode(txn.contents);
               ContentSchema schema = ContentSchema.fromValue(

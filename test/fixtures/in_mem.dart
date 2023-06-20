@@ -3,34 +3,46 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:pointycastle/export.dart';
 import 'package:sqlite3/common.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:tiki_trail/l0/auth/auth_service.dart';
-import 'package:tiki_trail/l0/registry/registry_model_rsp.dart';
-import 'package:tiki_trail/l0/registry/registry_service.dart';
+import 'package:tiki_idp/tiki_idp.dart';
+import 'package:tiki_trail/key.dart';
 import 'package:tiki_trail/node/backup/backup_client.dart';
 import 'package:tiki_trail/node/backup/backup_service.dart';
 import 'package:tiki_trail/node/block/block_service.dart';
-import 'package:tiki_trail/node/key/key_model.dart';
-import 'package:tiki_trail/node/key/key_service.dart';
 import 'package:tiki_trail/node/node_service.dart';
 import 'package:tiki_trail/node/transaction/transaction_service.dart';
 import 'package:tiki_trail/node/xchain/xchain_client.dart';
 import 'package:tiki_trail/node/xchain/xchain_service.dart';
 import 'package:tiki_trail/tiki_trail.dart';
-import 'package:tiki_trail/utils/rsa/rsa.dart';
-import 'package:tiki_trail/utils/rsa/rsa_private_key.dart';
 import 'package:uuid/uuid.dart';
 
-class InMemKeyStorage extends KeyStorage {
+import 'idp.dart' as idpFixture;
+
+class InMemKeyStorage extends KeyPlatform {
   Map<String, String> storage = {};
 
   @override
   Future<String> generate() async {
-    RsaKeyPair rsaKeyPair = await Rsa.generateAsync();
-    return rsaKeyPair.privateKey.encode();
+    FortunaRandom secureRandom = FortunaRandom();
+    Random random = Random.secure();
+    final seeds = <int>[];
+    for (int i = 0; i < 32; i++) {
+      seeds.add(random.nextInt(255));
+    }
+    secureRandom.seed(KeyParameter(Uint8List.fromList(seeds)));
+    final keyGen = RSAKeyGenerator()
+      ..init(ParametersWithRandom(
+          RSAKeyGeneratorParameters(BigInt.parse('65537'), 2048, 64),
+          secureRandom));
+
+    AsymmetricKeyPair<PublicKey, PrivateKey> keyPair = keyGen.generateKeyPair();
+    RSAPrivateKey pk = keyPair.privateKey as RSAPrivateKey;
+    return TikiIdp.pkcs8(pk.modulus!, pk.privateExponent!, pk.p!, pk.q!);
   }
 
   @override
@@ -72,58 +84,24 @@ class InMemL0Storage implements BackupClient, XChainClient {
   }
 }
 
-class InMemAuthService implements AuthService {
-  @override
-  Future<String?> get token => Future.value('dummy');
-}
-
-class InMemRegistryService implements RegistryService {
-  final RsaPrivateKey privateKey = Rsa.generate().privateKey;
-  final Set<String> addresses = {};
-
-  InMemRegistryService({String? address}) {
-    if (address != null) addresses.add(address);
-  }
-
-  @override
-  Future<RegistryModelRsp> get(String id, {String? customerAuth}) {
-    return Future.value(
-        RegistryModelRsp(signKey: privateKey, addresses: addresses.toList()));
-  }
-
-  @override
-  Future<RegistryModelRsp> register(String id, String address,
-      {String? customerAuth}) {
-    addresses.add(address);
-    return Future.value(
-        RegistryModelRsp(signKey: privateKey, addresses: addresses.toList()));
-  }
-}
-
 class InMemBuilders {
   static const Duration _blockInterval = Duration(seconds: 1);
   static const int _maxTransactions = 200;
 
-  static Future<NodeService> nodeService(
-      {String? id, KeyStorage? keyStorage}) async {
+  static Future<NodeService> nodeService({Key? key}) async {
+    key ??= await idpFixture.key;
     InMemL0Storage backupClient = InMemL0Storage();
-    keyStorage ??= InMemKeyStorage();
     CommonDatabase database = sqlite3.openInMemory();
-
-    KeyService keyService = KeyService(keyStorage);
-    KeyModel primaryKey = id != null
-        ? await keyService.get(id) ?? await keyService.create()
-        : await keyService.create();
-
     NodeService nodeService = NodeService()
       ..blockInterval = _blockInterval
       ..maxTransactions = _maxTransactions
-      ..transactionService = TransactionService(database)
+      ..transactionService = TransactionService(database, idpFixture.idp)
       ..blockService = BlockService(database)
-      ..primaryKey = primaryKey
-      ..xChainService = XChainService(backupClient, database);
-    nodeService.backupService =
-        BackupService(backupClient, database, primaryKey, nodeService.getBlock);
+      ..key = key
+      ..xChainService = XChainService(backupClient, idpFixture.idp, database);
+    nodeService.backupService = await BackupService(
+            backupClient, idpFixture.idp, database, nodeService.getBlock, key)
+        .init();
     await nodeService.init();
     return nodeService;
   }
@@ -131,12 +109,8 @@ class InMemBuilders {
   static Future<TikiTrail> tikiTrail(
       {String? id, String origin = 'com.mytiki.tiki_trail.test'}) async {
     id ??= const Uuid().v4();
-    InMemKeyStorage keyStorage = InMemKeyStorage();
-
-    String address = await TikiTrail.withId(id, keyStorage);
-    NodeService nodeService =
-        await InMemBuilders.nodeService(id: id, keyStorage: keyStorage);
-    return TikiTrail(
-        origin, nodeService, InMemRegistryService(address: address));
+    Key key = await TikiTrail.withId(id, idpFixture.idp);
+    NodeService nodeService = await InMemBuilders.nodeService(key: key);
+    return TikiTrail(origin, nodeService, idpFixture.idp);
   }
 }

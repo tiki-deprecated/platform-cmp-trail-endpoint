@@ -10,50 +10,44 @@ import 'package:pointycastle/api.dart';
 import 'package:sqlite3/common.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
+import 'package:tiki_trail/key.dart';
 import 'package:tiki_trail/node/backup/backup_service.dart';
 import 'package:tiki_trail/node/block/block_model.dart';
 import 'package:tiki_trail/node/block/block_repository.dart';
 import 'package:tiki_trail/node/block/block_service.dart';
-import 'package:tiki_trail/node/key/key_model.dart';
-import 'package:tiki_trail/node/key/key_service.dart';
 import 'package:tiki_trail/node/node_service.dart';
 import 'package:tiki_trail/node/transaction/transaction_model.dart';
 import 'package:tiki_trail/node/transaction/transaction_repository.dart';
 import 'package:tiki_trail/node/transaction/transaction_service.dart';
 import 'package:tiki_trail/utils/bytes.dart';
-import 'package:tiki_trail/utils/rsa/rsa_public_key.dart';
 import 'package:uuid/uuid.dart';
 
-import '../in_mem.dart';
+import '../fixtures/idp.dart' as idpFixture;
+import '../fixtures/in_mem.dart';
 
 void main() {
   group('Node tests', () {
     test('Init - No Primary - Success ', () async {
       InMemL0Storage backupClient = InMemL0Storage();
       CommonDatabase database = sqlite3.openInMemory();
-      KeyService keyService = KeyService(InMemKeyStorage());
-      KeyModel primaryKey = await keyService.create();
+
+      Key key = await idpFixture.key;
       NodeService node = NodeService()
         ..blockInterval = const Duration(minutes: 1)
         ..maxTransactions = 200
-        ..transactionService = TransactionService(database)
+        ..transactionService = TransactionService(database, idpFixture.idp)
         ..blockService = BlockService(database)
-        ..primaryKey = primaryKey;
-      node.backupService =
-          BackupService(backupClient, database, primaryKey, node.getBlock);
+        ..key = key;
+      node.backupService = await BackupService(
+              backupClient, idpFixture.idp, database, node.getBlock, key)
+          .init();
 
-      Uint8List address = Bytes.base64UrlDecode(node.address);
-      Uint8List? publicKey = await backupClient
-          .read('${Bytes.base64UrlEncode(address)}/public.key');
+      Uint8List? publicKey =
+          await backupClient.read('${node.address}/public.key');
 
       expect(publicKey != null, true);
-      expect(Digest("SHA3-256").process(publicKey!), address);
-
-      KeyModel? key = await keyService.get(primaryKey.id);
-      RsaPublicKey rsaPublicKey = RsaPublicKey.decode(base64.encode(publicKey));
-
-      expect(key != null, true);
-      expect(rsaPublicKey, key?.privateKey.public);
+      expect(Digest("SHA3-256").process(publicKey!),
+          Bytes.base64UrlDecode(node.address));
 
       await Future.delayed(const Duration(seconds: 3));
 

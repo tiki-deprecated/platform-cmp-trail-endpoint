@@ -15,14 +15,14 @@ import 'package:tiki_trail/cache/title/title_service.dart';
 import 'package:tiki_trail/node/node_service.dart';
 import 'package:tiki_trail/utils/bytes.dart';
 
-import '../../in_mem.dart';
+import '../../fixtures/in_mem.dart';
 
 void main() {
   group('Payable Service Tests', () {
     test('create - Success', () async {
       NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.mytiki', nodeService, nodeService.database);
+          TitleService('com.mytiki', nodeService.database, nodeService);
       LicenseService licenseService =
           LicenseService(nodeService.database, nodeService);
 
@@ -55,7 +55,7 @@ void main() {
     test('getAll - Success', () async {
       NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.mytiki', nodeService, nodeService.database);
+          TitleService('com.mytiki', nodeService.database, nodeService);
       LicenseService licenseService =
           LicenseService(nodeService.database, nodeService);
 

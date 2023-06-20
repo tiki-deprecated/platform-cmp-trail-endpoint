@@ -8,30 +8,29 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
+import 'package:tiki_trail/key.dart';
 import 'package:tiki_trail/node/block/block_model.dart';
 import 'package:tiki_trail/node/block/block_service.dart';
-import 'package:tiki_trail/node/key/key_model.dart';
-import 'package:tiki_trail/node/key/key_service.dart';
 import 'package:tiki_trail/node/transaction/transaction_model.dart';
 import 'package:tiki_trail/node/transaction/transaction_service.dart';
 import 'package:tiki_trail/utils/merkel_tree.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../in_mem.dart';
+import '../../fixtures/idp.dart' as idpFixture;
 
 void main() {
   group('Transaction Service tests', () {
     test('Create/Commit/GetPending - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database);
+      TransactionService service = TransactionService(database, idpFixture.idp);
       BlockService blockService = BlockService(database);
 
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
+      Key key = await idpFixture.key;
       Uint8List contents = Uint8List.fromList(utf8.encode(const Uuid().v4()));
       Uint8List merkelProof =
           Uint8List.fromList(utf8.encode(const Uuid().v4()));
 
-      TransactionModel transaction = service.create(contents, key);
+      TransactionModel transaction = await service.create(contents, key);
       List<TransactionModel> pending = service.getPending();
 
       expect(pending.length, 1);
@@ -57,15 +56,15 @@ void main() {
 
     test('Create/Commit/GetByBlock - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database);
+      TransactionService service = TransactionService(database, idpFixture.idp);
       BlockService blockService = BlockService(database);
 
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
+      Key key = await idpFixture.key;
       Uint8List contents = Uint8List.fromList(utf8.encode(const Uuid().v4()));
       Uint8List merkelProof =
           Uint8List.fromList(utf8.encode(const Uuid().v4()));
 
-      TransactionModel transaction = service.create(contents, key);
+      TransactionModel transaction = await service.create(contents, key);
       BlockModel block = blockService
           .create(Uint8List.fromList(utf8.encode(const Uuid().v4())));
 
@@ -94,14 +93,14 @@ void main() {
 
     test('ValidateInclusion - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database);
+      TransactionService service = TransactionService(database, idpFixture.idp);
 
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
+      Key key = await idpFixture.key;
 
       List<TransactionModel> transactions = [];
       List<Uint8List> hashes = [];
       for (int i = 0; i < 5; i++) {
-        TransactionModel transaction = service.create(
+        TransactionModel transaction = await service.create(
             Uint8List.fromList(utf8.encode(const Uuid().v4())), key);
         hashes.add(transaction.id!);
         transactions.add(transaction);
@@ -121,23 +120,24 @@ void main() {
 
     test('ValidateAuthor - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database);
+      TransactionService service = TransactionService(database, idpFixture.idp);
 
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
-      TransactionModel transaction = service.create(
+      Key key = await idpFixture.key;
+      TransactionModel transaction = await service.create(
           Uint8List.fromList(utf8.encode(const Uuid().v4())), key);
 
       expect(
-          TransactionService.validateAuthor(transaction, key.privateKey.public),
+          await TransactionService.validateAuthor(
+              transaction, key.id, idpFixture.idp),
           true);
     });
 
     test('ValidateIntegrity - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database);
+      TransactionService service = TransactionService(database, idpFixture.idp);
 
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
-      TransactionModel transaction = service.create(
+      Key key = await idpFixture.key;
+      TransactionModel transaction = await service.create(
           Uint8List.fromList(utf8.encode(const Uuid().v4())), key);
 
       expect(TransactionService.validateIntegrity(transaction), true);

@@ -8,13 +8,13 @@ import 'dart:typed_data';
 
 import 'package:sqlite3/common.dart';
 
+import '../key.dart';
 import '../utils/bytes.dart';
 import '../utils/compact_size.dart';
 import '../utils/merkel_tree.dart';
 import 'backup/backup_service.dart';
 import 'block/block_model.dart';
 import 'block/block_service.dart';
-import 'key/key_model.dart';
 import 'transaction/transaction_model.dart';
 import 'transaction/transaction_service.dart';
 import 'xchain/xchain_service.dart';
@@ -25,42 +25,43 @@ import 'xchain/xchain_service.dart';
 class NodeService {
   late final TransactionService _transactionService;
   late final BlockService _blockService;
-  late final KeyModel _primaryKey;
   late final BackupService _backupService;
   late final Duration _blockInterval;
   late final int _maxTransactions;
   late final XChainService _xChainService;
+  late final Key _key;
 
   Timer? _blockTimer;
 
   /// Returns the in-use [address]
-  String get address => Bytes.base64UrlEncode(_primaryKey.address);
+  String get address => _key.address;
 
   /// Returns the in-use [id]
-  String get id => _primaryKey.id;
+  String get id => _key.id;
 
   /// Returns the in-use [database]
   CommonDatabase get database => _blockService.database;
 
   /// Set the interval on which to create a block if there
   /// are any pending transactions
-  set blockInterval(Duration val) => _blockInterval = val;
+  set blockInterval(Duration duration) => _blockInterval = duration;
 
   /// Set limit of pending transactions at which to automatically
   /// create a block
-  set maxTransactions(int val) => _maxTransactions = val;
+  set maxTransactions(int max) => _maxTransactions = max;
 
   /// The [TransactionService] to use
-  set transactionService(TransactionService val) => _transactionService = val;
+  set transactionService(TransactionService service) =>
+      _transactionService = service;
 
   /// The [BlockService] to use
-  set blockService(BlockService val) => _blockService = val;
+  set blockService(BlockService service) => _blockService = service;
 
   /// The [BackupService] to use
-  set backupService(BackupService val) => _backupService = val;
+  set backupService(BackupService service) => _backupService = service;
 
-  /// The [KeyModel] for the wallet to use
-  set primaryKey(KeyModel val) => _primaryKey = val;
+  /// The [Key] for the wallet to use
+  set key(Key key) => _key = key;
 
   /// The [XChainService] to use
   set xChainService(XChainService val) => _xChainService = val;
@@ -81,7 +82,7 @@ class NodeService {
   Future<TransactionModel> write(Uint8List contents,
       {String assetRef = ''}) async {
     TransactionModel transaction =
-        _transactionService.create(contents, _primaryKey, assetRef: assetRef);
+        await _transactionService.create(contents, _key, assetRef: assetRef);
     List<TransactionModel> transactions = _transactionService.getPending();
     if (transactions.length >= _maxTransactions) {
       await _createBlock(transactions);

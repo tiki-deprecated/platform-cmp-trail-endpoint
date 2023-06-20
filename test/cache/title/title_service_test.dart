@@ -14,14 +14,14 @@ import 'package:tiki_trail/node/transaction/transaction_model.dart';
 import 'package:tiki_trail/utils/bytes.dart';
 import 'package:tiki_trail/utils/compact_size.dart';
 
-import '../../in_mem.dart';
+import '../../fixtures/in_mem.dart';
 
 void main() {
   group('Title Service Tests', () {
     test('create - Success', () async {
       NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.tiki.test', nodeService, nodeService.database);
+          TitleService('com.tiki.test', nodeService.database, nodeService);
       await titleService.create('create test');
       TransactionModel transaction = TransactionModel.fromMap(
           nodeService.database.select("SELECT * FROM txn LIMIT 1").first);
@@ -37,7 +37,7 @@ void main() {
     test('getByPtr - Success', () async {
       NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.tiki.test', nodeService, nodeService.database);
+          TitleService('com.tiki.test', nodeService.database, nodeService);
       Uint8List titleId =
           (await titleService.create('create test')).transactionId!;
 
@@ -50,7 +50,7 @@ void main() {
     test('getByPtr - Null', () async {
       NodeService nodeService = await InMemBuilders.nodeService();
       TitleService titleService =
-          TitleService('com.tiki.test', nodeService, nodeService.database);
+          TitleService('com.tiki.test', nodeService.database, nodeService);
       TitleModel? titleRecord = titleService.getByPtr('NOT');
       expect(titleRecord == null, true);
     });

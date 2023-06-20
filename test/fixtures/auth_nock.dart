@@ -6,7 +6,7 @@
 import 'dart:convert';
 
 import 'package:nock/nock.dart';
-import 'package:tiki_trail/l0/auth/auth_repository.dart';
+import 'package:tiki_idp/auth/auth_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class AuthNock {

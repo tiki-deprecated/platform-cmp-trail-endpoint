@@ -7,13 +7,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:tiki_idp/tiki_idp.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../node/backup/backup_client.dart';
 import '../../node/xchain/xchain_client.dart';
-import '../../utils/rsa/rsa.dart';
-import '../../utils/rsa/rsa_private_key.dart';
-import '../auth/auth_service.dart';
 import 'storage_model_list.dart';
 import 'storage_model_list_obj.dart';
 import 'storage_model_token_req.dart';
@@ -28,24 +26,13 @@ import 'storage_repository.dart';
 /// Use to [read] objects from and [write] to the hosted storage.
 class StorageService implements BackupClient, XChainClient {
   final StorageRepository _repository;
-  final RsaPrivateKey _privateKey;
-  final AuthService _authService;
+  final String _keyId;
+  final TikiIdp _idp;
 
   StorageModelTokenRsp? _token;
 
-  StorageService(RsaPrivateKey privateKey, AuthService authService)
+  StorageService(this._keyId, this._idp)
       : _repository = StorageRepository(),
-        _privateKey = privateKey,
-        _authService = authService,
-        super();
-
-  /// Convenience constructor using [publishingId]
-  ///
-  /// On construction a new [AuthService] with the [publishingId] is created
-  StorageService.publishingId(RsaPrivateKey privateKey, String publishingId)
-      : _repository = StorageRepository(),
-        _privateKey = privateKey,
-        _authService = AuthService(publishingId),
         super();
 
   /// Write a binary object to hosted storage
@@ -142,12 +129,12 @@ class StorageService implements BackupClient, XChainClient {
   Future<StorageModelTokenRsp> _requestToken() async {
     String stringToSign = const Uuid().v4();
     Uint8List signature =
-        Rsa.sign(_privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
+        await _idp.sign(_keyId, Uint8List.fromList(utf8.encode(stringToSign)));
     StorageModelTokenReq req = StorageModelTokenReq(
-        pubKey: _privateKey.public.encode(),
+        pubKey: await _idp.export(_keyId),
         signature: base64Encode(signature),
         stringToSign: stringToSign);
-    return await _repository.token(await _authService.token, req);
+    return await _repository.token((await _idp.token).accessToken, req);
   }
 
   String _appId(String? s) => s?.split('/')[0] ?? '';

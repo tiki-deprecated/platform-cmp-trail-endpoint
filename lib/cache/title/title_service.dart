@@ -20,7 +20,7 @@ class TitleService {
 
   final NodeService nodeService;
 
-  TitleService(this._defaultOrigin, this.nodeService, db)
+  TitleService(this._defaultOrigin, db, this.nodeService)
       : _repository = TitleRepository(db);
 
   /// Creates an on-chain [TitleModel].
