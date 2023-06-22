@@ -11,7 +11,7 @@ import 'package:test/test.dart';
 import 'package:tiki_trail/tiki_trail.dart';
 import 'package:uuid/uuid.dart';
 
-import 'in_mem.dart';
+import 'fixtures/in_mem.dart';
 
 void main() {
   group('TIKI Trail License tests', () {

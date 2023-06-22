@@ -9,23 +9,22 @@ import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-import 'package:tiki_trail/node/key/key_model.dart';
-import 'package:tiki_trail/node/key/key_service.dart';
+import 'package:tiki_trail/key.dart';
 import 'package:tiki_trail/node/transaction/transaction_model.dart';
 import 'package:tiki_trail/node/transaction/transaction_service.dart';
 import 'package:tiki_trail/utils/merkel_tree.dart';
 import 'package:uuid/uuid.dart';
 
-import '../in_mem.dart';
+import '../fixtures/idp.dart' as fixture;
 
 void main() {
   group('Merkel Tests', () {
     test('Build/Validate - 1 Txn - Success', () async {
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
       TransactionService transactionService =
-          TransactionService(sqlite3.openInMemory());
-      TransactionModel txn = transactionService.create(
-          Uint8List.fromList(utf8.encode(const Uuid().v4())), key);
+          TransactionService(sqlite3.openInMemory(), fixture.idp);
+      TransactionModel txn = await transactionService.create(
+          Uint8List.fromList(utf8.encode(const Uuid().v4())),
+          await fixture.key);
 
       txn.id = Digest("SHA3-256").process(txn.serialize());
       MerkelTree merkelTree = MerkelTree.build([txn.id!]);
@@ -35,13 +34,14 @@ void main() {
     });
 
     test('Build/Validate - 10 Txn - Success', () async {
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
+      Key key = await fixture.key;
       TransactionService transactionService =
-          TransactionService(sqlite3.openInMemory());
-      List<TransactionModel> txns = List.generate(
+          TransactionService(sqlite3.openInMemory(), fixture.idp);
+      List<TransactionModel> txns = await Future.wait(List.generate(
           10,
           (index) => transactionService.create(
-              Uint8List.fromList(utf8.encode(const Uuid().v4())), key));
+              Uint8List.fromList(utf8.encode(const Uuid().v4())), key)));
+
       MerkelTree merkelTree =
           MerkelTree.build(txns.map((txn) => txn.id!).toList());
       for (int i = 0; i < txns.length; i++) {
@@ -53,13 +53,13 @@ void main() {
     });
 
     test('Build/Validate - 100 Txn - Success', () async {
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
+      Key key = await fixture.key;
       TransactionService transactionService =
-          TransactionService(sqlite3.openInMemory());
-      List<TransactionModel> txns = List.generate(
+          TransactionService(sqlite3.openInMemory(), fixture.idp);
+      List<TransactionModel> txns = await Future.wait(List.generate(
           100,
           (index) => transactionService.create(
-              Uint8List.fromList(utf8.encode(const Uuid().v4())), key));
+              Uint8List.fromList(utf8.encode(const Uuid().v4())), key)));
       MerkelTree merkelTree =
           MerkelTree.build(txns.map((txn) => txn.id!).toList());
       for (int i = 0; i < txns.length; i++) {
@@ -71,13 +71,13 @@ void main() {
     });
 
     test('Build/Validate - 1000 Txn - Success', () async {
-      KeyModel key = await KeyService(InMemKeyStorage()).create();
+      Key key = await fixture.key;
       TransactionService transactionService =
-          TransactionService(sqlite3.openInMemory());
-      List<TransactionModel> txns = List.generate(
+          TransactionService(sqlite3.openInMemory(), fixture.idp);
+      List<TransactionModel> txns = await Future.wait(List.generate(
           100,
           (index) => transactionService.create(
-              Uint8List.fromList(utf8.encode(const Uuid().v4())), key));
+              Uint8List.fromList(utf8.encode(const Uuid().v4())), key)));
       MerkelTree merkelTree =
           MerkelTree.build(txns.map((txn) => txn.id!).toList());
       for (int i = 0; i < txns.length; i++) {

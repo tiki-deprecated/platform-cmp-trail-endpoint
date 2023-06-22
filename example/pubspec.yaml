@@ -15,6 +15,7 @@ dependencies:
   uuid: ^3.0.7
   tiki_trail:
     path: ../.
+  tiki_idp: ^0.1.0
 
 dev_dependencies:
   lints: ^2.1.1

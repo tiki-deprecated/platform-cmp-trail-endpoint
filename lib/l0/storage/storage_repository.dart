@@ -11,7 +11,6 @@ import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 
 import '../../utils/xml_parse.dart';
-import '../auth/auth_service.dart';
 import 'storage_model_list.dart';
 import 'storage_model_token_req.dart';
 import 'storage_model_token_rsp.dart';

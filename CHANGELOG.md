@@ -1,3 +1,7 @@
+### 3.0.4
+
+- feat: split key, auth, and registry into dedicated tiki_idp library
+
 ### 3.0.3
 
 - fix:

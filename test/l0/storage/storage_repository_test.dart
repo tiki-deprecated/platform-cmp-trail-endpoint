@@ -8,18 +8,18 @@ import 'dart:typed_data';
 
 import 'package:nock/nock.dart';
 import 'package:test/test.dart';
+import 'package:tiki_trail/key.dart';
 import 'package:tiki_trail/l0/storage/storage_model_token_req.dart';
 import 'package:tiki_trail/l0/storage/storage_model_token_rsp.dart';
 import 'package:tiki_trail/l0/storage/storage_model_upload.dart';
 import 'package:tiki_trail/l0/storage/storage_repository.dart';
-import 'package:tiki_trail/utils/rsa/rsa.dart';
-import 'package:tiki_trail/utils/rsa/rsa_private_key.dart';
 import 'package:uuid/uuid.dart';
 
-import 'storage_nock.dart';
+import '../../fixtures/idp.dart' as idp_fixture;
+import '../../fixtures/storage_nock.dart';
 
-void main() {
-  RsaPrivateKey privateKey = Rsa.generate().privateKey;
+Future<void> main() async {
+  Key key = await idp_fixture.key;
 
   setUpAll(() => nock.init());
   setUp(() => nock.cleanAll());
@@ -31,10 +31,12 @@ void main() {
 
       StorageRepository repository = StorageRepository();
       String stringToSign = const Uuid().v4();
-      Uint8List signature =
-          Rsa.sign(privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
+
+      Uint8List signature = await idp_fixture.idp
+          .sign(key.id, Uint8List.fromList(utf8.encode(stringToSign)));
+
       StorageModelTokenReq req = StorageModelTokenReq(
-          pubKey: privateKey.public.encode(),
+          pubKey: await idp_fixture.idp.export(key.id),
           signature: base64Encode(signature),
           stringToSign: stringToSign);
       StorageModelTokenRsp rsp = await repository.token('authorization', req);
@@ -52,23 +54,23 @@ void main() {
 
       StorageRepository repository = StorageRepository();
       String stringToSign = const Uuid().v4();
-      Uint8List signature =
-          Rsa.sign(privateKey, Uint8List.fromList(utf8.encode(stringToSign)));
+      Uint8List signature = await idp_fixture.idp
+          .sign(key.id, Uint8List.fromList(utf8.encode(stringToSign)));
       StorageModelTokenReq req = StorageModelTokenReq(
-          pubKey: privateKey.public.encode(),
+          pubKey: await idp_fixture.idp.export(key.id),
           signature: base64Encode(signature),
           stringToSign: stringToSign);
 
       StorageModelTokenRsp rsp = await repository.token('authorization', req);
       Uint8List content = Uint8List.fromList(utf8.encode('hello world'));
-      String key = '${rsp.urnPrefix}${const Uuid().v4()}';
+      String uploadKey = '${rsp.urnPrefix}${const Uuid().v4()}';
 
       final uploadInterceptor = storageNock.uploadInterceptor;
-      final readInterceptor = storageNock.readInterceptor(key, content);
+      final readInterceptor = storageNock.readInterceptor(uploadKey, content);
 
       await repository.upload(
-          rsp.token, StorageModelUpload(key: key, content: content));
-      Uint8List saved = await repository.get(key);
+          rsp.token, StorageModelUpload(key: uploadKey, content: content));
+      Uint8List saved = await repository.get(uploadKey);
 
       expect(tokenInterceptor.isDone, true);
       expect(uploadInterceptor.isDone, true);

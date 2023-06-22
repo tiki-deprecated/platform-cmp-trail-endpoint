@@ -369,13 +369,21 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.3"
+  tiki_idp:
+    dependency: "direct main"
+    description:
+      name: tiki_idp
+      sha256: "074fae1313de2b3a8dbcc24729468a4092b32ed4a56123745a1fed70c9956337"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   tiki_trail:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "3.0.2"
+    version: "3.0.3"
   typed_data:
     dependency: transitive
     description:

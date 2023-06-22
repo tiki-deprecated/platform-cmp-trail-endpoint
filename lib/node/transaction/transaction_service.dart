@@ -7,25 +7,24 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 import 'package:sqlite3/common.dart';
+import 'package:tiki_idp/tiki_idp.dart';
 
+import '../../key.dart';
 import '../../utils/bytes.dart';
 import '../../utils/merkel_tree.dart';
-import '../../utils/rsa/rsa.dart';
-import '../../utils/rsa/rsa_private_key.dart';
-import '../../utils/rsa/rsa_public_key.dart';
 import '../block/block_model.dart';
-import '../key/key_model.dart';
 import 'transaction_model.dart';
 import 'transaction_repository.dart';
 
 /// The service to manage transactions in the chain.
 class TransactionService {
   final TransactionRepository _repository;
-  final RsaPrivateKey? _appKey;
+  final TikiIdp _idp;
+  final String? _appKeyId;
 
-  TransactionService(CommonDatabase db, {RsaPrivateKey? appKey})
+  TransactionService(CommonDatabase db, this._idp, {String? appKeyId})
       : _repository = TransactionRepository(db),
-        _appKey = appKey;
+        _appKeyId = appKeyId;
 
   /// Creates a [TransactionModel] with [contents].
   ///
@@ -34,14 +33,16 @@ class TransactionService {
   /// [TransactionModel]. The [TransactionModel] should be added to a
   /// [BlockModel] by setting the [TransactionModel.block] and
   /// [TransactionModel.merkelProof] values and calling the [commit] method.
-  TransactionModel create(Uint8List contents, KeyModel key,
-      {String assetRef = ''}) {
+  Future<TransactionModel> create(Uint8List contents, Key key,
+      {String assetRef = ''}) async {
     TransactionModel txn = TransactionModel(
-        address: key.address, contents: contents, assetRef: assetRef);
+        address: Bytes.base64UrlDecode(key.address),
+        contents: contents,
+        assetRef: assetRef);
     Uint8List serializedWithoutSigs = txn.serialize(includeSignature: false);
-    txn.userSignature = Rsa.sign(key.privateKey, serializedWithoutSigs);
-    if (_appKey != null) {
-      txn.appSignature = Rsa.sign(_appKey!, serializedWithoutSigs);
+    txn.userSignature = await _idp.sign(key.id, serializedWithoutSigs);
+    if (_appKeyId != null) {
+      txn.appSignature = await _idp.sign(_appKeyId!, serializedWithoutSigs);
     }
     txn.id = Digest("SHA3-256").process(txn.serialize());
     _repository.save(txn);
@@ -76,9 +77,9 @@ class TransactionService {
 
   /// Validates the author of the [TransactionModel] by calling [Rsa.verify] with
   /// its [TransactionModel.userSignature].
-  static bool validateAuthor(
-          TransactionModel transaction, RsaPublicKey pubKey) =>
-      Rsa.verify(pubKey, transaction.serialize(includeSignature: false),
+  static Future<bool> validateAuthor(
+          TransactionModel transaction, String pubKeyId, TikiIdp idp) =>
+      idp.verify(pubKeyId, transaction.serialize(includeSignature: false),
           transaction.userSignature!);
 
   /// Gets all the transactions from a [BlockModel] by its [BlockModel.id].
