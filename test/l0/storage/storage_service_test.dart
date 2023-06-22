@@ -13,11 +13,11 @@ import 'package:tiki_trail/l0/storage/storage_service.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../fixtures/auth_nock.dart';
-import '../../fixtures/idp.dart' as idpFixture;
+import '../../fixtures/idp.dart' as idp_fixture;
 import '../../fixtures/storage_nock.dart';
 
 Future<void> main() async {
-  Key key = await idpFixture.key;
+  Key key = await idp_fixture.key;
 
   setUpAll(() => nock.init());
   setUp(() => nock.cleanAll());
@@ -30,7 +30,7 @@ Future<void> main() async {
       final tokenInterceptor = storageNock.tokenInterceptor;
       final uploadInterceptor = storageNock.uploadInterceptor;
 
-      StorageService service = StorageService(key.id, idpFixture.idp);
+      StorageService service = StorageService(key.id, idp_fixture.idp);
       String address = key.address;
       address = address.replaceAll("=", '');
 
@@ -48,7 +48,7 @@ Future<void> main() async {
       StorageNock storageNock = StorageNock();
       final tokenInterceptor = storageNock.tokenInterceptor;
 
-      StorageService service = StorageService(key.id, idpFixture.idp);
+      StorageService service = StorageService(key.id, idp_fixture.idp);
       String address = key.address;
       address = address.replaceAll("=", '');
 

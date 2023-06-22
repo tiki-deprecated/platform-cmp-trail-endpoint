@@ -252,44 +252,44 @@ class TikiTrail {
           ReceiptService receiptService,
           TikiIdp idp) =>
       idp.registry(keyId, id).then((rsp) {
-        rsp.addresses.forEach((address) => _nodeService.sync(address, (txn) {
-              List<Uint8List> decodedContents =
-                  CompactSize.decode(txn.contents);
-              ContentSchema schema = ContentSchema.fromValue(
-                  Bytes.decodeBigInt(decodedContents[0]).toInt());
-              if (schema == ContentSchema.title) {
-                TitleModel title =
-                    TitleModel.decode(decodedContents.sublist(1));
-                title.transactionId = txn.id;
-                titleService.tryAdd(title);
-              } else if (schema == ContentSchema.license) {
-                if (txn.assetRef.startsWith("txn://")) {
-                  Uint8List title =
-                      Bytes.base64UrlDecode(txn.assetRef.split("://").last);
-                  LicenseModel license =
-                      LicenseModel.decode(title, decodedContents.sublist(1));
-                  license.transactionId = txn.id;
-                  licenseService.tryAdd(license);
-                }
-              } else if (schema == ContentSchema.payable) {
-                if (txn.assetRef.startsWith("txn://")) {
-                  Uint8List license =
-                      Bytes.base64UrlDecode(txn.assetRef.split("://").last);
-                  PayableModel payable =
-                      PayableModel.decode(license, decodedContents.sublist(1));
-                  payable.transactionId = txn.id;
-                  payableService.tryAdd(payable);
-                }
-              } else if (schema == ContentSchema.receipt) {
-                if (txn.assetRef.startsWith("txn://")) {
-                  Uint8List payable =
-                      Bytes.base64UrlDecode(txn.assetRef.split("://").last);
-                  ReceiptModel receipt =
-                      ReceiptModel.decode(payable, decodedContents.sublist(1));
-                  receipt.transactionId = txn.id;
-                  receiptService.tryAdd(receipt);
-                }
+        for (String address in rsp.addresses) {
+          _nodeService.sync(address, (txn) {
+            List<Uint8List> decodedContents = CompactSize.decode(txn.contents);
+            ContentSchema schema = ContentSchema.fromValue(
+                Bytes.decodeBigInt(decodedContents[0]).toInt());
+            if (schema == ContentSchema.title) {
+              TitleModel title = TitleModel.decode(decodedContents.sublist(1));
+              title.transactionId = txn.id;
+              titleService.tryAdd(title);
+            } else if (schema == ContentSchema.license) {
+              if (txn.assetRef.startsWith("txn://")) {
+                Uint8List title =
+                    Bytes.base64UrlDecode(txn.assetRef.split("://").last);
+                LicenseModel license =
+                    LicenseModel.decode(title, decodedContents.sublist(1));
+                license.transactionId = txn.id;
+                licenseService.tryAdd(license);
               }
-            }));
+            } else if (schema == ContentSchema.payable) {
+              if (txn.assetRef.startsWith("txn://")) {
+                Uint8List license =
+                    Bytes.base64UrlDecode(txn.assetRef.split("://").last);
+                PayableModel payable =
+                    PayableModel.decode(license, decodedContents.sublist(1));
+                payable.transactionId = txn.id;
+                payableService.tryAdd(payable);
+              }
+            } else if (schema == ContentSchema.receipt) {
+              if (txn.assetRef.startsWith("txn://")) {
+                Uint8List payable =
+                    Bytes.base64UrlDecode(txn.assetRef.split("://").last);
+                ReceiptModel receipt =
+                    ReceiptModel.decode(payable, decodedContents.sublist(1));
+                receipt.transactionId = txn.id;
+                receiptService.tryAdd(receipt);
+              }
+            }
+          });
+        }
       });
 }

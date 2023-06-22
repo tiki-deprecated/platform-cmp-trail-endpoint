@@ -15,11 +15,11 @@ import 'package:tiki_trail/l0/storage/storage_model_upload.dart';
 import 'package:tiki_trail/l0/storage/storage_repository.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../fixtures/idp.dart' as idpFixture;
+import '../../fixtures/idp.dart' as idp_fixture;
 import '../../fixtures/storage_nock.dart';
 
 Future<void> main() async {
-  Key key = await idpFixture.key;
+  Key key = await idp_fixture.key;
 
   setUpAll(() => nock.init());
   setUp(() => nock.cleanAll());
@@ -32,11 +32,11 @@ Future<void> main() async {
       StorageRepository repository = StorageRepository();
       String stringToSign = const Uuid().v4();
 
-      Uint8List signature = await idpFixture.idp
+      Uint8List signature = await idp_fixture.idp
           .sign(key.id, Uint8List.fromList(utf8.encode(stringToSign)));
 
       StorageModelTokenReq req = StorageModelTokenReq(
-          pubKey: await idpFixture.idp.export(key.id),
+          pubKey: await idp_fixture.idp.export(key.id),
           signature: base64Encode(signature),
           stringToSign: stringToSign);
       StorageModelTokenRsp rsp = await repository.token('authorization', req);
@@ -54,10 +54,10 @@ Future<void> main() async {
 
       StorageRepository repository = StorageRepository();
       String stringToSign = const Uuid().v4();
-      Uint8List signature = await idpFixture.idp
+      Uint8List signature = await idp_fixture.idp
           .sign(key.id, Uint8List.fromList(utf8.encode(stringToSign)));
       StorageModelTokenReq req = StorageModelTokenReq(
-          pubKey: await idpFixture.idp.export(key.id),
+          pubKey: await idp_fixture.idp.export(key.id),
           signature: base64Encode(signature),
           stringToSign: stringToSign);
 

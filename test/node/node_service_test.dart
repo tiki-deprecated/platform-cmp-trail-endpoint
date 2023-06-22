@@ -22,7 +22,7 @@ import 'package:tiki_trail/node/transaction/transaction_service.dart';
 import 'package:tiki_trail/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
 
-import '../fixtures/idp.dart' as idpFixture;
+import '../fixtures/idp.dart' as idp_fixture;
 import '../fixtures/in_mem.dart';
 
 void main() {
@@ -31,15 +31,15 @@ void main() {
       InMemL0Storage backupClient = InMemL0Storage();
       CommonDatabase database = sqlite3.openInMemory();
 
-      Key key = await idpFixture.key;
+      Key key = await idp_fixture.key;
       NodeService node = NodeService()
         ..blockInterval = const Duration(minutes: 1)
         ..maxTransactions = 200
-        ..transactionService = TransactionService(database, idpFixture.idp)
+        ..transactionService = TransactionService(database, idp_fixture.idp)
         ..blockService = BlockService(database)
         ..key = key;
       node.backupService = await BackupService(
-              backupClient, idpFixture.idp, database, node.getBlock, key)
+              backupClient, idp_fixture.idp, database, node.getBlock, key)
           .init();
 
       Uint8List? publicKey =

@@ -16,16 +16,17 @@ import 'package:tiki_trail/node/transaction/transaction_service.dart';
 import 'package:tiki_trail/utils/merkel_tree.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../fixtures/idp.dart' as idpFixture;
+import '../../fixtures/idp.dart' as idp_fixture;
 
 void main() {
   group('Transaction Service tests', () {
     test('Create/Commit/GetPending - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database, idpFixture.idp);
+      TransactionService service =
+          TransactionService(database, idp_fixture.idp);
       BlockService blockService = BlockService(database);
 
-      Key key = await idpFixture.key;
+      Key key = await idp_fixture.key;
       Uint8List contents = Uint8List.fromList(utf8.encode(const Uuid().v4()));
       Uint8List merkelProof =
           Uint8List.fromList(utf8.encode(const Uuid().v4()));
@@ -56,10 +57,11 @@ void main() {
 
     test('Create/Commit/GetByBlock - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database, idpFixture.idp);
+      TransactionService service =
+          TransactionService(database, idp_fixture.idp);
       BlockService blockService = BlockService(database);
 
-      Key key = await idpFixture.key;
+      Key key = await idp_fixture.key;
       Uint8List contents = Uint8List.fromList(utf8.encode(const Uuid().v4()));
       Uint8List merkelProof =
           Uint8List.fromList(utf8.encode(const Uuid().v4()));
@@ -93,9 +95,10 @@ void main() {
 
     test('ValidateInclusion - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database, idpFixture.idp);
+      TransactionService service =
+          TransactionService(database, idp_fixture.idp);
 
-      Key key = await idpFixture.key;
+      Key key = await idp_fixture.key;
 
       List<TransactionModel> transactions = [];
       List<Uint8List> hashes = [];
@@ -120,23 +123,25 @@ void main() {
 
     test('ValidateAuthor - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database, idpFixture.idp);
+      TransactionService service =
+          TransactionService(database, idp_fixture.idp);
 
-      Key key = await idpFixture.key;
+      Key key = await idp_fixture.key;
       TransactionModel transaction = await service.create(
           Uint8List.fromList(utf8.encode(const Uuid().v4())), key);
 
       expect(
           await TransactionService.validateAuthor(
-              transaction, key.id, idpFixture.idp),
+              transaction, key.id, idp_fixture.idp),
           true);
     });
 
     test('ValidateIntegrity - Success', () async {
       Database database = sqlite3.openInMemory();
-      TransactionService service = TransactionService(database, idpFixture.idp);
+      TransactionService service =
+          TransactionService(database, idp_fixture.idp);
 
-      Key key = await idpFixture.key;
+      Key key = await idp_fixture.key;
       TransactionModel transaction = await service.create(
           Uint8List.fromList(utf8.encode(const Uuid().v4())), key);
 

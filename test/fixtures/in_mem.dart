@@ -21,7 +21,7 @@ import 'package:tiki_trail/node/xchain/xchain_service.dart';
 import 'package:tiki_trail/tiki_trail.dart';
 import 'package:uuid/uuid.dart';
 
-import 'idp.dart' as idpFixture;
+import 'idp.dart' as idp_fixture;
 
 class InMemKeyStorage extends KeyPlatform {
   Map<String, String> storage = {};
@@ -89,18 +89,18 @@ class InMemBuilders {
   static const int _maxTransactions = 200;
 
   static Future<NodeService> nodeService({Key? key}) async {
-    key ??= await idpFixture.key;
+    key ??= await idp_fixture.key;
     InMemL0Storage backupClient = InMemL0Storage();
     CommonDatabase database = sqlite3.openInMemory();
     NodeService nodeService = NodeService()
       ..blockInterval = _blockInterval
       ..maxTransactions = _maxTransactions
-      ..transactionService = TransactionService(database, idpFixture.idp)
+      ..transactionService = TransactionService(database, idp_fixture.idp)
       ..blockService = BlockService(database)
       ..key = key
-      ..xChainService = XChainService(backupClient, idpFixture.idp, database);
+      ..xChainService = XChainService(backupClient, idp_fixture.idp, database);
     nodeService.backupService = await BackupService(
-            backupClient, idpFixture.idp, database, nodeService.getBlock, key)
+            backupClient, idp_fixture.idp, database, nodeService.getBlock, key)
         .init();
     await nodeService.init();
     return nodeService;
@@ -109,8 +109,8 @@ class InMemBuilders {
   static Future<TikiTrail> tikiTrail(
       {String? id, String origin = 'com.mytiki.tiki_trail.test'}) async {
     id ??= const Uuid().v4();
-    Key key = await TikiTrail.withId(id, idpFixture.idp);
+    Key key = await TikiTrail.withId(id, idp_fixture.idp);
     NodeService nodeService = await InMemBuilders.nodeService(key: key);
-    return TikiTrail(origin, nodeService, idpFixture.idp);
+    return TikiTrail(origin, nodeService, idp_fixture.idp);
   }
 }

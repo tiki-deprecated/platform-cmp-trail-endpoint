@@ -15,7 +15,7 @@ import 'package:tiki_trail/node/xchain/xchain_service.dart';
 import 'package:tiki_trail/utils/bytes.dart';
 
 import '../../fixtures/auth_nock.dart';
-import '../../fixtures/idp.dart' as idpFixture;
+import '../../fixtures/idp.dart' as idp_fixture;
 import '../../fixtures/storage_nock.dart';
 import '../../fixtures/xchain_nock.dart';
 
@@ -25,7 +25,7 @@ void main() {
 
   group('XChain Service tests', skip: true, () {
     test('Sync - Success', () async {
-      Key key = await idpFixture.key;
+      Key key = await idp_fixture.key;
       AuthNock authNock = AuthNock();
 
       authNock.interceptor;
@@ -40,10 +40,10 @@ void main() {
       final bIntercept = xChainNock.bInterceptor;
       final listIntercept = xChainNock.listInterceptor;
 
-      StorageService storageService = StorageService(key.id, idpFixture.idp);
+      StorageService storageService = StorageService(key.id, idp_fixture.idp);
       CommonDatabase database = sqlite3.openInMemory();
       XChainService service =
-          XChainService(storageService, idpFixture.idp, database);
+          XChainService(storageService, idp_fixture.idp, database);
 
       BlockModel? syncedBlock;
       List<TransactionModel>? syncedTxns;
