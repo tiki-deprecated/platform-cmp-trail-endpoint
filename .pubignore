@@ -34,7 +34,7 @@ coverage/
 doc/api
 
 # Don't publish
-upload/
-channel/
+upload
+channel
 WHITEPAPER.md
 analysis_options.yaml
