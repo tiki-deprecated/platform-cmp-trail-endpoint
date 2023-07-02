@@ -37,8 +37,8 @@ void main() async {
 
     test('all - license - invalid - title - success', () async {
       String invalidPTR = const Uuid().v4();
-      TitleRecord titleRecord = await tikiTrail.title
-          .create(invalidPTR, origin: "com.myco.myapp");
+      TitleRecord titleRecord =
+          await tikiTrail.title.create(invalidPTR, origin: "com.myco.myapp");
       List<LicenseRecord> invalidRecord = tikiTrail.license.all(titleRecord);
       expect(invalidRecord, []);
     });
@@ -48,11 +48,52 @@ void main() async {
       String origin = 'com.myco.myapp';
       List<TitleTag> tags = [TitleTag.contacts(), TitleTag.audio()];
       String description = 'New Description';
-      TitleRecord titleRecord = await tikiTrail.title.create(ptr,
-          origin: origin, tags: tags, description: description);
-      List<LicenseRecord> record =
-          tikiTrail.license.all(titleRecord);
+      TitleRecord titleRecord = await tikiTrail.title
+          .create(ptr, origin: origin, tags: tags, description: description);
+      List<LicenseRecord> record = tikiTrail.license.all(titleRecord);
       expect(record, []);
+    });
+  });
+
+  group('Latest method test', () {
+    test('latest - license - success', () async {
+      String ptr = const Uuid().v4();
+      String origin = 'com.myco.myapp';
+      List<TitleTag> tags = [TitleTag.contacts(), TitleTag.audio()];
+      String description = 'New Description';
+      TitleRecord titleRecord = await tikiTrail.title
+          .create(ptr, origin: origin, tags: tags, description: description);
+      String terms = "This is a new term";
+      List<LicenseUse> uses = [
+        LicenseUse([LicenseUsecase.aiTraining()]),
+        LicenseUse([LicenseUsecase.analytics()]),
+      ];
+      LicenseRecord licenseRecord = await tikiTrail.license
+          .create(titleRecord, uses, terms, expiry: DateTime(1));
+      LicenseRecord? licenseRecordLatest = tikiTrail.license.latest(titleRecord);
+      expect(licenseRecordLatest!.terms, licenseRecord.terms);
+      expect(licenseRecordLatest.title, licenseRecord.title);
+      expect(licenseRecordLatest.expiry, DateTime(1));
+      expect(licenseRecordLatest.description, licenseRecord.description);
+    });
+
+    test('latest - license - for - a - title - with - no - licenses - success', () async {
+      String ptr = const Uuid().v4();
+      String origin = 'com.myco.myapp';
+      List<TitleTag> tags = [TitleTag.contacts(), TitleTag.audio()];
+      String description = 'New Description';
+      TitleRecord titleRecord = await tikiTrail.title
+          .create(ptr, origin: origin, tags: tags, description: description);
+      LicenseRecord? licenseRecordLatest = tikiTrail.license.latest(titleRecord);
+      expect(licenseRecordLatest, null);
+    });
+
+    test('latest - license - for - an - invalid - title - and - origin - success', () async {
+      String invalidPtr = const Uuid().v4();
+      String origin = 'com.myco.myapp';
+      TitleRecord invalidTitleRecord = await tikiTrail.title.create(invalidPtr, origin: origin);
+      LicenseRecord? licenseRecordLatest = tikiTrail.license.latest(invalidTitleRecord);
+      expect(licenseRecordLatest, null);
     });
   });
 }
