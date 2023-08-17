@@ -23,6 +23,7 @@ class LicenseRepository {
   static const columnDescription = 'description';
   static const columnTransactionId = 'transaction_id';
   static const columnExpiry = 'expiry';
+  static const timestamp = 'timestamp';
 
   /// Builds a [LicenseRepository] that will use [_db] for persistence.
   ///
@@ -93,6 +94,8 @@ class LicenseRepository {
   List<LicenseModel> _select({String? whereStmt, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT * FROM $table
+      LEFT JOIN ${TransactionRepository.table} 
+      ON $table.$columnTransactionId = ${TransactionRepository.table}.${TransactionRepository.columnId} 
       ${whereStmt ?? ''};
       ''', params);
     return _toLicense(results);
@@ -107,7 +110,8 @@ class LicenseRepository {
         columnUses: jsonDecode(row[columnUses]),
         columnTerms: row[columnTerms],
         columnDescription: row[columnDescription],
-        columnExpiry: row[columnExpiry]
+        columnExpiry: row[columnExpiry],
+        timestamp: row[timestamp]
       };
       LicenseModel license = LicenseModel.fromMap(map);
       licenses.add(license);

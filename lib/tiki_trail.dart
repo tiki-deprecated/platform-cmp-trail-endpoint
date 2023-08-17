@@ -258,15 +258,17 @@ class TikiTrail {
             ContentSchema schema = ContentSchema.fromValue(
                 Bytes.decodeBigInt(decodedContents[0]).toInt());
             if (schema == ContentSchema.title) {
-              TitleModel title = TitleModel.decode(decodedContents.sublist(1));
+              TitleModel title = TitleModel.decode(decodedContents.sublist(1),
+                  timestamp: txn.timestamp);
               title.transactionId = txn.id;
               titleService.tryAdd(title);
             } else if (schema == ContentSchema.license) {
               if (txn.assetRef.startsWith("txn://")) {
                 Uint8List title =
                     Bytes.base64UrlDecode(txn.assetRef.split("://").last);
-                LicenseModel license =
-                    LicenseModel.decode(title, decodedContents.sublist(1));
+                LicenseModel license = LicenseModel.decode(
+                    title, decodedContents.sublist(1),
+                    timestamp: txn.timestamp);
                 license.transactionId = txn.id;
                 licenseService.tryAdd(license);
               }
@@ -274,8 +276,9 @@ class TikiTrail {
               if (txn.assetRef.startsWith("txn://")) {
                 Uint8List license =
                     Bytes.base64UrlDecode(txn.assetRef.split("://").last);
-                PayableModel payable =
-                    PayableModel.decode(license, decodedContents.sublist(1));
+                PayableModel payable = PayableModel.decode(
+                    license, decodedContents.sublist(1),
+                    timestamp: txn.timestamp);
                 payable.transactionId = txn.id;
                 payableService.tryAdd(payable);
               }
@@ -283,8 +286,9 @@ class TikiTrail {
               if (txn.assetRef.startsWith("txn://")) {
                 Uint8List payable =
                     Bytes.base64UrlDecode(txn.assetRef.split("://").last);
-                ReceiptModel receipt =
-                    ReceiptModel.decode(payable, decodedContents.sublist(1));
+                ReceiptModel receipt = ReceiptModel.decode(
+                    payable, decodedContents.sublist(1),
+                    timestamp: txn.timestamp);
                 receipt.transactionId = txn.id;
                 receiptService.tryAdd(receipt);
               }

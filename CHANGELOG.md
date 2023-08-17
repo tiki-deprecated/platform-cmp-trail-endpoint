@@ -1,3 +1,7 @@
+### 3.1.0
+
+- feat: add transaction timestamp to Records (Title, License, Payable, Receipt)
+
 ### 3.0.4
 
 - feat: split key, auth, and registry into dedicated tiki_idp library

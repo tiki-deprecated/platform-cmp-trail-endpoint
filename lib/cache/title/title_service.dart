@@ -44,6 +44,8 @@ class TitleService {
           ..add(titleRecord.serialize()))
         .toBytes();
     TransactionModel transaction = await nodeService.write(contents);
+
+    titleRecord.timestamp = transaction.timestamp;
     titleRecord.transactionId = transaction.id;
     _repository.save(titleRecord);
     return titleRecord;

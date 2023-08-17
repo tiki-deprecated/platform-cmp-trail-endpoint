@@ -25,6 +25,9 @@ class ReceiptRecord {
   /// the record to your system.
   String? reference;
 
+  /// The date when the record was created
+  DateTime? timestamp;
+
   ReceiptRecord(this.id, this.payable, this.amount,
-      {this.description, this.reference});
+      {this.description, this.reference, this.timestamp});
 }

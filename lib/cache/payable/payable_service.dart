@@ -37,6 +37,7 @@ class PayableService {
     TransactionModel transaction =
         await _nodeService.write(contents, assetRef: assetRef);
 
+    payable.timestamp = transaction.timestamp;
     payable.transactionId = transaction.id!;
     _repository.save(payable);
     return payable;

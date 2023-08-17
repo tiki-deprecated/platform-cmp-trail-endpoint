@@ -31,6 +31,9 @@ class PayableRecord {
   /// the record to your system.
   String? reference;
 
+  /// The date when the record was created
+  DateTime? timestamp;
+
   PayableRecord(this.id, this.license, this.amount, this.type,
-      {this.description, this.expiry, this.reference});
+      {this.description, this.expiry, this.reference, this.timestamp});
 }

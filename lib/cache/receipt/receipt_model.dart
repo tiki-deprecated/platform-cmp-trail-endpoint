@@ -22,6 +22,9 @@ class ReceiptModel {
   /// The transaction id of this record.
   Uint8List? transactionId;
 
+  /// The record timestamp
+  DateTime? timestamp;
+
   /// A human-readable description of the receipt.
   String? description;
 
@@ -29,7 +32,7 @@ class ReceiptModel {
   String? reference;
 
   ReceiptModel(this.payable, this.amount,
-      {this.description, this.transactionId, this.reference});
+      {this.description, this.transactionId, this.reference, this.timestamp});
 
   /// Construct a [PayableModel] from a [map].
   ///
@@ -39,7 +42,11 @@ class ReceiptModel {
         amount = map[ReceiptRepository.columnAmount],
         transactionId = map[ReceiptRepository.columnTransactionId],
         description = map[ReceiptRepository.columnDescription],
-        reference = map[ReceiptRepository.columnReference];
+        reference = map[ReceiptRepository.columnReference],
+        timestamp = map[ReceiptRepository.timestamp] != null
+            ? DateTime.fromMillisecondsSinceEpoch(
+                map[ReceiptRepository.timestamp])
+            : null;
 
   /// Converts this to Map
   ///
@@ -50,6 +57,7 @@ class ReceiptModel {
         ReceiptRepository.columnDescription: description,
         ReceiptRepository.columnReference: reference,
         ReceiptRepository.columnTransactionId: transactionId,
+        ReceiptRepository.timestamp: timestamp?.millisecondsSinceEpoch
       };
 
   /// Serializes this to binary.
@@ -71,18 +79,22 @@ class ReceiptModel {
   /// Construct a new [PayableModel] from binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory ReceiptModel.deserialize(Uint8List payable, Uint8List serialized) =>
-      ReceiptModel.decode(payable, CompactSize.decode(serialized));
+  factory ReceiptModel.deserialize(Uint8List payable, Uint8List serialized,
+          {DateTime? timestamp}) =>
+      ReceiptModel.decode(payable, CompactSize.decode(serialized),
+          timestamp: timestamp);
 
   /// Construct a new [PayableModel] from decoded binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory ReceiptModel.decode(Uint8List payable, List<Uint8List> bytes) =>
+  factory ReceiptModel.decode(Uint8List payable, List<Uint8List> bytes,
+          {DateTime? timestamp}) =>
       ReceiptModel(payable, Bytes.utf8Decode(bytes[0]),
           description: Bytes.utf8Decode(bytes[1]),
-          reference: Bytes.utf8Decode(bytes[2]));
+          reference: Bytes.utf8Decode(bytes[2]),
+          timestamp: timestamp);
 
   ReceiptRecord toRecord(PayableRecord payable) =>
       ReceiptRecord(Bytes.base64UrlEncode(transactionId!), payable, amount,
-          description: description, reference: reference);
+          description: description, reference: reference, timestamp: timestamp);
 }

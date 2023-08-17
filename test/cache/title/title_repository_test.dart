@@ -7,6 +7,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 import 'package:tiki_trail/cache/title/title_model.dart';
 import 'package:tiki_trail/cache/title/title_repository.dart';
+import 'package:tiki_trail/node/transaction/transaction_repository.dart';
 import 'package:tiki_trail/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
 
@@ -14,6 +15,7 @@ void main() {
   group('Title Repository Tests', () {
     test('getAll - Success', () {
       Database db = sqlite3.openInMemory();
+      TransactionRepository(db);
       TitleRepository repository = TitleRepository(db);
 
       int numRecords = 3;
@@ -29,6 +31,7 @@ void main() {
 
     test('getByPtr - Success', () {
       Database db = sqlite3.openInMemory();
+      TransactionRepository(db);
       TitleRepository repository = TitleRepository(db);
 
       int numRecords = 3;

@@ -23,6 +23,7 @@ class PayableRepository {
   static const columnTransactionId = 'transaction_id';
   static const columnExpiry = 'expiry';
   static const columnReference = 'reference';
+  static const timestamp = 'timestamp';
 
   /// Builds a [LicenseRepository] that will use [_db] for persistence.
   ///
@@ -82,6 +83,8 @@ class PayableRepository {
   List<PayableModel> _select({String? whereStmt, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT * FROM $table
+      LEFT JOIN ${TransactionRepository.table} 
+      ON $table.$columnTransactionId = ${TransactionRepository.table}.${TransactionRepository.columnId} 
       ${whereStmt ?? ''};
       ''', params);
     return _toPayable(results);
@@ -97,7 +100,8 @@ class PayableRepository {
         columnType: row[columnType],
         columnDescription: row[columnDescription],
         columnExpiry: row[columnExpiry],
-        columnReference: row[columnReference]
+        columnReference: row[columnReference],
+        timestamp: row[timestamp]
       };
       PayableModel license = PayableModel.fromMap(map);
       payables.add(license);

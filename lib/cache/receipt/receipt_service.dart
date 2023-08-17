@@ -37,6 +37,7 @@ class ReceiptService {
     TransactionModel transaction =
         await _nodeService.write(contents, assetRef: assetRef);
 
+    receipt.timestamp = transaction.timestamp;
     receipt.transactionId = transaction.id!;
     _repository.save(receipt);
     return receipt;
