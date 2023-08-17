@@ -25,6 +25,9 @@ class LicenseModel {
   /// The legal terms for the license
   String terms;
 
+  /// The record timestamp
+  DateTime? timestamp;
+
   /// A human-readable description of the license
   String? description;
 
@@ -35,7 +38,7 @@ class LicenseModel {
   DateTime? expiry;
 
   LicenseModel(this.title, this.uses, this.terms,
-      {this.description, this.transactionId, this.expiry});
+      {this.description, this.transactionId, this.expiry, this.timestamp});
 
   /// Construct a [LicenseModel] from a [map].
   ///
@@ -47,6 +50,10 @@ class LicenseModel {
             .toList(),
         terms = map[LicenseRepository.columnTerms],
         description = map[LicenseRepository.columnDescription],
+        timestamp = map[LicenseRepository.timestamp] != null
+            ? DateTime.fromMillisecondsSinceEpoch(
+                map[LicenseRepository.timestamp])
+            : null,
         transactionId = map[LicenseRepository.columnTransactionId],
         expiry = map[LicenseRepository.columnExpiry] != null
             ? DateTime.fromMillisecondsSinceEpoch(
@@ -62,7 +69,8 @@ class LicenseModel {
         LicenseRepository.columnTerms: terms,
         LicenseRepository.columnDescription: description,
         LicenseRepository.columnTransactionId: transactionId,
-        LicenseRepository.columnExpiry: expiry?.millisecondsSinceEpoch
+        LicenseRepository.columnExpiry: expiry?.millisecondsSinceEpoch,
+        LicenseRepository.timestamp: timestamp?.millisecondsSinceEpoch
       };
 
   /// Serializes this to binary.
@@ -87,17 +95,21 @@ class LicenseModel {
   /// Construct a new [LicenseModel] from binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory LicenseModel.deserialize(Uint8List title, Uint8List serialized) =>
-      LicenseModel.decode(title, CompactSize.decode(serialized));
+  factory LicenseModel.deserialize(Uint8List title, Uint8List serialized,
+          {DateTime? timestamp}) =>
+      LicenseModel.decode(title, CompactSize.decode(serialized),
+          timestamp: timestamp);
 
   /// Construct a new [LicenseModel] from decoded binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory LicenseModel.decode(Uint8List title, List<Uint8List> bytes) {
+  factory LicenseModel.decode(Uint8List title, List<Uint8List> bytes,
+      {DateTime? timestamp}) {
     List<LicenseUse> uses = jsonDecode(Bytes.utf8Decode(bytes[0]))
         .map<LicenseUse>((use) => LicenseUse.fromMap(use))
         .toList();
     return LicenseModel(title, uses, Bytes.utf8Decode(bytes[1]),
+        timestamp: timestamp,
         description: Bytes.utf8Decode(bytes[2]),
         expiry: DateTime.fromMillisecondsSinceEpoch(
             Bytes.decodeBigInt(bytes[3]).toInt() * 1000));
@@ -105,5 +117,5 @@ class LicenseModel {
 
   LicenseRecord toRecord(TitleRecord title) =>
       LicenseRecord(Bytes.base64UrlEncode(transactionId!), title, uses, terms,
-          description: description, expiry: expiry);
+          description: description, expiry: expiry, timestamp: timestamp);
 }

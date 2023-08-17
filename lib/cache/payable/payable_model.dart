@@ -26,6 +26,9 @@ class PayableModel {
   /// The transaction id of this record.
   Uint8List? transactionId;
 
+  /// The record timestamp
+  DateTime? timestamp;
+
   /// A human-readable description of the payment.
   String? description;
 
@@ -36,7 +39,11 @@ class PayableModel {
   DateTime? expiry;
 
   PayableModel(this.license, this.amount, this.type,
-      {this.description, this.transactionId, this.expiry, this.reference});
+      {this.description,
+      this.transactionId,
+      this.expiry,
+      this.reference,
+      this.timestamp});
 
   /// Construct a [PayableModel] from a [map].
   ///
@@ -47,6 +54,10 @@ class PayableModel {
         type = map[PayableRepository.columnType],
         transactionId = map[PayableRepository.columnTransactionId],
         description = map[PayableRepository.columnDescription],
+        timestamp = map[PayableRepository.timestamp] != null
+            ? DateTime.fromMillisecondsSinceEpoch(
+                map[PayableRepository.timestamp])
+            : null,
         reference = map[PayableRepository.columnReference],
         expiry = map[PayableRepository.columnExpiry] != null
             ? DateTime.fromMillisecondsSinceEpoch(
@@ -63,7 +74,8 @@ class PayableModel {
         PayableRepository.columnDescription: description,
         PayableRepository.columnReference: reference,
         PayableRepository.columnTransactionId: transactionId,
-        PayableRepository.columnExpiry: expiry?.millisecondsSinceEpoch
+        PayableRepository.columnExpiry: expiry?.millisecondsSinceEpoch,
+        PayableRepository.timestamp: timestamp?.millisecondsSinceEpoch
       };
 
   /// Serializes this to binary.
@@ -90,21 +102,28 @@ class PayableModel {
   /// Construct a new [PayableModel] from binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory PayableModel.deserialize(Uint8List license, Uint8List serialized) =>
-      PayableModel.decode(license, CompactSize.decode(serialized));
+  factory PayableModel.deserialize(Uint8List license, Uint8List serialized,
+          {DateTime? timestamp}) =>
+      PayableModel.decode(license, CompactSize.decode(serialized),
+          timestamp: timestamp);
 
   /// Construct a new [PayableModel] from decoded binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory PayableModel.decode(Uint8List license, List<Uint8List> bytes) =>
+  factory PayableModel.decode(Uint8List license, List<Uint8List> bytes,
+          {DateTime? timestamp}) =>
       PayableModel(
           license, Bytes.utf8Decode(bytes[0]), Bytes.utf8Decode(bytes[1]),
           description: Bytes.utf8Decode(bytes[2]),
+          timestamp: timestamp,
           expiry: DateTime.fromMillisecondsSinceEpoch(
               Bytes.decodeBigInt(bytes[3]).toInt() * 1000),
           reference: Bytes.utf8Decode(bytes[4]));
 
   PayableRecord toRecord(LicenseRecord license) => PayableRecord(
       Bytes.base64UrlEncode(transactionId!), license, amount, type,
-      description: description, reference: reference, expiry: expiry);
+      description: description,
+      reference: reference,
+      expiry: expiry,
+      timestamp: timestamp);
 }

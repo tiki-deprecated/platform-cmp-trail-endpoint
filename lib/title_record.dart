@@ -28,6 +28,9 @@ class TitleRecord {
   /// An optional, human-readable description of the asset.
   String? description;
 
+  /// The date when the record was created
+  DateTime? timestamp;
+
   TitleRecord(this.id, this.hashedPtr,
-      {this.origin, this.tags = const [], this.description});
+      {this.origin, this.tags = const [], this.description, this.timestamp});
 }

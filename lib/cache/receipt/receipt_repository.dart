@@ -22,6 +22,7 @@ class ReceiptRepository {
   static const columnDescription = 'description';
   static const columnTransactionId = 'transaction_id';
   static const columnReference = 'reference';
+  static const timestamp = 'timestamp';
 
   /// Builds a [LicenseRepository] that will use [_db] for persistence.
   ///
@@ -77,6 +78,8 @@ class ReceiptRepository {
   List<ReceiptModel> _select({String? whereStmt, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT * FROM $table
+      LEFT JOIN ${TransactionRepository.table} 
+      ON $table.$columnTransactionId = ${TransactionRepository.table}.${TransactionRepository.columnId} 
       ${whereStmt ?? ''};
       ''', params);
     return _toReceipt(results);
@@ -90,7 +93,8 @@ class ReceiptRepository {
         columnPayable: row[columnPayable],
         columnAmount: row[columnAmount],
         columnDescription: row[columnDescription],
-        columnReference: row[columnReference]
+        columnReference: row[columnReference],
+        timestamp: row[timestamp]
       };
       ReceiptModel license = ReceiptModel.fromMap(map);
       receipts.add(license);

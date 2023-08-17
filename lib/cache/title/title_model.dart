@@ -24,6 +24,9 @@ class TitleModel {
   /// The transaction id of this record.
   Uint8List? transactionId;
 
+  /// The record timestamp
+  DateTime? timestamp;
+
   /// A human-readable description of the asset.
   String? description;
 
@@ -34,6 +37,7 @@ class TitleModel {
     this.origin,
     this.ptr, {
     this.transactionId,
+    this.timestamp,
     this.tags = const [],
     this.description,
   });
@@ -44,6 +48,10 @@ class TitleModel {
   TitleModel.fromMap(Map<String, dynamic> map)
       : ptr = map[TitleRepository.columnPtr],
         origin = map[TitleRepository.columnOrigin],
+        timestamp = map[TitleRepository.timestamp] != null
+            ? DateTime.fromMillisecondsSinceEpoch(
+                map[TitleRepository.timestamp])
+            : null,
         description = map[TitleRepository.columnDescription],
         transactionId = map[TitleRepository.columnTransactionId],
         tags = map[TitleRepository.columnTags] != null
@@ -59,7 +67,8 @@ class TitleModel {
         TitleRepository.columnDescription: description,
         TitleRepository.columnTags:
             tags.map<String>((tag) => tag.value).toList(),
-        TitleRepository.columnTransactionId: transactionId
+        TitleRepository.columnTransactionId: transactionId,
+        TitleRepository.timestamp: timestamp?.millisecondsSinceEpoch
       };
 
   /// Serializes this to binary.
@@ -81,14 +90,15 @@ class TitleModel {
   /// Construct a new [TitleModel] from binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory TitleModel.deserialize(Uint8List serialized) =>
-      TitleModel.decode(CompactSize.decode(serialized));
+  factory TitleModel.deserialize(Uint8List serialized, {DateTime? timestamp}) =>
+      TitleModel.decode(CompactSize.decode(serialized), timestamp: timestamp);
 
   /// Construct a new [TitleModel] from decoded binary data.
   ///
   /// See [serialize] for supported binary format.
-  factory TitleModel.decode(List<Uint8List> bytes) {
+  factory TitleModel.decode(List<Uint8List> bytes, {DateTime? timestamp}) {
     return TitleModel(Bytes.utf8Decode(bytes[1]), Bytes.utf8Decode(bytes[0]),
+        timestamp: timestamp,
         description: Bytes.utf8Decode(bytes[2]),
         tags: jsonDecode(Bytes.utf8Decode(bytes[3]))
             .map<TitleTag>((tag) => TitleTag.from(tag))
@@ -97,5 +107,8 @@ class TitleModel {
 
   TitleRecord toRecord() =>
       TitleRecord(Bytes.base64UrlEncode(transactionId!), ptr,
-          origin: origin, tags: tags, description: description);
+          origin: origin,
+          tags: tags,
+          description: description,
+          timestamp: timestamp);
 }

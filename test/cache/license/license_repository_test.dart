@@ -14,6 +14,7 @@ import 'package:tiki_trail/cache/title/title_model.dart';
 import 'package:tiki_trail/cache/title/title_repository.dart';
 import 'package:tiki_trail/cache/title/title_service.dart';
 import 'package:tiki_trail/node/node_service.dart';
+import 'package:tiki_trail/node/transaction/transaction_repository.dart';
 import 'package:tiki_trail/utils/bytes.dart';
 import 'package:uuid/uuid.dart';
 
@@ -23,6 +24,7 @@ void main() {
   group('License Repository Tests', () {
     test('getByTitle - Success', () {
       Database db = sqlite3.openInMemory();
+      TransactionRepository(db);
       TitleRepository titleRepository = TitleRepository(db);
       LicenseRepository licenseRepository = LicenseRepository(db);
 

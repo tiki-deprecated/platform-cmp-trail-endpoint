@@ -39,6 +39,7 @@ class LicenseService {
     TransactionModel transaction =
         await _nodeService.write(contents, assetRef: assetRef);
 
+    license.timestamp = transaction.timestamp;
     license.transactionId = transaction.id!;
     _repository.save(license);
     return license;

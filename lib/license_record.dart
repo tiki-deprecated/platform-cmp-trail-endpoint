@@ -29,6 +29,9 @@ class LicenseRecord {
   /// The date when the license expires — null if it never expires.
   DateTime? expiry;
 
+  /// The date when the record was created
+  DateTime? timestamp;
+
   LicenseRecord(this.id, this.title, this.uses, this.terms,
-      {this.description, this.expiry});
+      {this.description, this.expiry, this.timestamp});
 }

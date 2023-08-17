@@ -1,9 +1,9 @@
-// ignore_for_file: unused_field
-
 /*
  * Copyright (c) TIKI Inc.
  * MIT license. See LICENSE file in root directory.
  */
+
+// ignore_for_file: unused_field
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -23,6 +23,7 @@ class TitleRepository {
   static const String columnTransactionId = 'transaction_id';
   static const String columnDescription = 'description';
   static const String columnTags = 'tags';
+  static const timestamp = 'timestamp';
 
   /// Builds a [TitleRepository] that will use [_db] for persistence.
   ///
@@ -81,6 +82,8 @@ class TitleRepository {
   List<TitleModel> _select({String? whereStmt, List params = const []}) {
     ResultSet results = _db.select('''
       SELECT * FROM $table
+      LEFT JOIN ${TransactionRepository.table} 
+      ON $table.$columnTransactionId = ${TransactionRepository.table}.${TransactionRepository.columnId} 
       ${whereStmt ?? ''};
       ''', params);
     List<TitleModel> titles = [];
@@ -92,7 +95,8 @@ class TitleRepository {
         columnDescription: row[columnDescription],
         columnTags: jsonDecode(row[columnTags])
             .map<String>((e) => e.toString())
-            .toList()
+            .toList(),
+        timestamp: row[timestamp]
       };
       TitleModel record = TitleModel.fromMap(map);
       titles.add(record);
