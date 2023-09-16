@@ -1,6 +1,0 @@
-[submodule "channel"]
-	path = channel
-	url = https://github.com/tiki/tiki-trail-platform-channel
-[submodule "upload"]
-	path = upload
-	url = https://github.com/tiki/tiki-trail-upload
