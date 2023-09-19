@@ -9,6 +9,9 @@ on:
       - ready_for_review
       - review_requested
       - review_request_removed
+  issues:
+    types:
+      - opened
 
 jobs:
   add-pr:
