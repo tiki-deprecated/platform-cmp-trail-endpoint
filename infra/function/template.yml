@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Ocean Trail Function
+
+Parameters:
+  Semver:
+    Description: Semantic version number
+    Type: String
+    Default: 0.0.1
+
+Resources:
+  Function:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: rust-cargolambda
+    Properties:
+      CodeUri: ..
+      Handler: bootstrap
+      Runtime: provided.al2
+      MemorySize: 1024
+      Timeout: 900
+      Architectures:
+        - x86_64
+      FunctionUrlConfig:
+        AuthType: NONE
+        InvokeMode: BUFFERED
+        Cors:
+          AllowCredentials: True
+          AllowOrigins:
+            - "*"
+          AllowMethods:
+            - GET
+            - POST
+
+  Version:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !GetAtt Function.Arn
+      Description: !Ref Semver
+      ProvisionedConcurrencyConfig:
+        ProvisionedConcurrentExecutions: 2
