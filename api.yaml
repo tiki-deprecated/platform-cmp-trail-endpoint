@@ -4,7 +4,6 @@ info:
   version: 1.0.0
 
 security:
-  - addressToken: []
   - providerToken: []
 
 paths:
@@ -50,7 +49,7 @@ paths:
   /licenses:
     post:
       security:
-        - addressToken: []
+        - providerToken: []
       summary: Create License
       requestBody:
         required: true
@@ -69,7 +68,6 @@ paths:
           description: Forbidden
     get:
       security:
-        - addressToken: []
         - providerToken: []
       summary: Get Licenses
       parameters:
@@ -94,7 +92,7 @@ paths:
   /payables:
     post:
       security:
-        - addressToken: []
+        - providerToken: []
       summary: Create Payable
       requestBody:
         required: true
@@ -113,7 +111,6 @@ paths:
           description: Forbidden
     get:
       security:
-        - addressToken: []
         - providerToken: []
       summary: Get Payables
       parameters:
@@ -139,7 +136,7 @@ paths:
   /receipt:
     post:
       security:
-        - addressToken: []
+        - providerToken: []
       summary: Create Receipt
       requestBody:
         required: true
@@ -158,7 +155,6 @@ paths:
           description: Forbidden
     get:
       security:
-        - addressToken: []
         - providerToken: []
       summary: Get Receipts
       parameters:
@@ -184,7 +180,6 @@ paths:
   /guard:
     post:
       security:
-        - addressToken: []
         - providerToken: []
       summary: Create Guard
       requestBody:
@@ -209,11 +204,6 @@ paths:
 
 components:
   securitySchemes:
-    addressToken:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      
     providerToken:
       type: http
       scheme: bearer
