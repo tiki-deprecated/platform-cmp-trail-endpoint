@@ -1,0 +1,427 @@
+openapi: 3.0.2
+info:
+  title: TIKI Trail API
+  version: 1.0.0
+
+security:
+  - addressToken: []
+  - providerToken: []
+
+paths:
+  /titles:
+    post:
+      summary: Create Title
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Title"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+    get:
+      summary: Get Title
+      parameters:
+        - name: hashedPtr
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Title"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+
+  /licenses:
+    post:
+      security:
+        - addressToken: []
+      summary: Create License
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostLicense"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+    get:
+      security:
+        - addressToken: []
+        - providerToken: []
+      summary: Get Licenses
+      parameters:
+        - name: hashedPtr
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspLicenses"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+
+  /payables:
+    post:
+      security:
+        - addressToken: []
+      summary: Create Payable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostPayable"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+    get:
+      security:
+        - addressToken: []
+        - providerToken: []
+      summary: Get Payables
+      parameters:
+        - name: licenseId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspPayables"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+
+  /receipt:
+    post:
+      security:
+        - addressToken: []
+      summary: Create Receipt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostReceipt"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+    get:
+      security:
+        - addressToken: []
+        - providerToken: []
+      summary: Get Receipts
+      parameters:
+        - name: payableId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspReceipts"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+
+  /guard:
+    post:
+      security:
+        - addressToken: []
+        - providerToken: []
+      summary: Create Guard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostGuard"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspGuard"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+
+components:
+  securitySchemes:
+    addressToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+    providerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Title:
+      type: object
+      properties:
+        id:
+          type: string
+        hashedPtr:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        timestamp:
+          type: string
+          format: date-time
+        description:
+          type: string
+
+    License:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          $ref: "#/components/schemas/Title"
+        uses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Usecase"
+        terms:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        description:
+          type: string
+        expiry:
+          type: string
+          format: date-time
+
+    Payable:
+      type: object
+      properties:
+        id:
+          type: string
+        license:
+          $ref: "#/components/schemas/License"
+        amount:
+          type: string
+        type:
+          type: string
+        expiry:
+          type: string
+          format: date-time
+        description:
+          type: string
+        reference:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    Receipt:
+      type: object
+      properties:
+        id:
+          type: string
+        payable:
+          $ref: "#/components/schemas/Payable"
+        amount:
+          type: string
+        description:
+          type: string
+        reference:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+
+    PostLicense:
+      type: object
+      properties:
+        ptr:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        uses:
+          $ref: "#/components/schemas/Use"
+        terms:
+          type: string
+        expiry:
+          type: string
+          format: date-time
+        titleDesc:
+          type: string
+        licenseDesc:
+          type: string
+
+    RspLicenses:
+      type: object
+      properties:
+        licenses:
+          type: array
+          items:
+            $ref: "#/components/schemas/License"
+        requestId:
+          type: string
+
+    PostPayable:
+      type: object
+      properties:
+        licenseId:
+          type: string
+        amount:
+          type: string
+        type:
+          type: string
+        expiry:
+          type: string
+          format: date-time
+        description:
+          type: string
+        reference:
+          type: string
+
+    RspPayables:
+      type: object
+      properties:
+        payables:
+          type: array
+          items:
+            $ref: "#/components/schemas/Payable"
+        requestId:
+          type: string
+
+    PostReceipt:
+      type: object
+      properties:
+        payableId:
+          type: string
+        amount:
+          type: string
+        description:
+          type: string
+        reference:
+          type: string
+
+    RspReceipts:
+      type: object
+      properties:
+        receipts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Receipt"
+        requestId:
+          type: string
+
+    PostGuard:
+      type: object
+      properties:
+        ptr:
+          type: string
+        usecases:
+          type: array
+          items:
+            type: string
+        destinations:
+          type: array
+          items:
+            type: string
+
+    RspGuard:
+      type: object
+      properties:
+        success:
+          type: boolean
+        reason:
+          type: string
+  
+    Use:
+      type: object
+      properties:
+        usecases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Usecase'
+        destinations:
+          type: array
+          items:
+            type: string
+      required:
+        - usecases
+        
+    Usecase:
+      type: object
+      properties:
+        value:
+          type: string
+      required:
+        - value
+      example:
+        value: "attribution"
