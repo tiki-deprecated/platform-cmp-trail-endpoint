@@ -1,3 +1,7 @@
+### 4.0.0
+
+- BREAKING: Move the trail functionality to a REST API
+
 ### 3.1.0
 
 - feat: add transaction timestamp to Records (Title, License, Payable, Receipt)
