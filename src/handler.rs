@@ -5,7 +5,8 @@
 
 
 mod license;
-mod validate;
+mod verify;
+mod tag;
 
 use std::error::Error;
 use aws_lambda_events::apigw::ApiGatewayProxyRequest;
@@ -16,6 +17,6 @@ pub async fn handle(event: LambdaEvent<ApiGatewayProxyRequest>) -> Result<(), Bo
     Ok(())
 }
 
-async fn handle_create_license() -> Result<(), Box<dyn Error>> {}
+async fn handle_create_license() -> Result<(), Box<dyn Error>> { Ok(()) }
 
-async fn hadle_validate_license() -> Result<(), Box<dyn Error>> {}
+async fn hadle_validate_license() -> Result<(), Box<dyn Error>> { Ok(()) }
