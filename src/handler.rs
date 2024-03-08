@@ -6,8 +6,17 @@
 
 mod license;
 mod verify;
+
 mod tag;
+use tag::{Tag, TagType};
+
 mod use_case;
+use use_case::{UseCase, UseCaseType};
+
+mod license_use;
+use license_use::LicenseUse;
+
+
 
 use std::error::Error;
 use aws_lambda_events::apigw::ApiGatewayProxyRequest;
