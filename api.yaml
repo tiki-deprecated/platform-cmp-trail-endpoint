@@ -1,188 +1,115 @@
-openapi: 3.0.2
+openapi: 3.0.1
 info:
-  title: TIKI Trail API
+  title: TIKI API
+  description: TIKI's REST API
+  license:
+    name: MIT
+    url: https://github.com/tiki/core/blob/main/LICENSE
   version: 1.0.0
+servers:
+  - url: https://mytiki.com/api/{version}
+    variables:
+      version:
+        default: latest
 
 security:
-  - providerToken: []
+  - addressToken: []
 
 paths:
-  /titles:
-    post:
-      summary: Create Title
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Title"
-      responses:
-        "201":
-          description: Created
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-    get:
-      summary: Get Title
-      parameters:
-        - name: hashedPtr
-          in: query
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Title"
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-
-  /licenses:
+  /trail/licenses:
     post:
       security:
-        - providerToken: []
+        - addressToken: []
       summary: Create License
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PostLicense"
+              $ref: "#/components/schemas/CreateLicense"
       responses:
         "201":
           description: Created
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/License"
         "400":
           description: Bad Request
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-    get:
-      security:
-        - providerToken: []
-      summary: Get Licenses
-      parameters:
-        - name: hashedPtr
-          in: query
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RspLicenses"
-        "400":
-          description: Bad Request
+                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-
-  /payables:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspError"
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspError"
+  /trail/licenses/verify:
     post:
       security:
-        - providerToken: []
-      summary: Create Payable
+        - addressToken: []
+      summary: Check if the license is Verify
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PostPayable"
-      responses:
-        "201":
-          description: Created
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-    get:
-      security:
-        - providerToken: []
-      summary: Get Payables
-      parameters:
-        - name: licenseId
-          in: query
-          required: true
-          schema:
-            type: string
+              $ref: "#/components/schemas/PostLicenseVerify"
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RspPayables"
+                $ref: "#/components/schemas/RspLicenseVerify"
         "400":
           description: Bad Request
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-
-  /receipts:
-    post:
-      security:
-        - providerToken: []
-      summary: Create Receipt
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PostReceipt"
-      responses:
-        "201":
-          description: Created
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-    get:
-      security:
-        - providerToken: []
-      summary: Get Receipts
-      parameters:
-        - name: payableId
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RspReceipts"
-        "400":
-          description: Bad Request
+                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspError"
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RspError"
 
 components:
   securitySchemes:
-    providerToken:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    addressToken:
+      type: oauth2
+      description: See https://mytiki.com/reference/authorization#address-token
+      flows:
+        clientCredentials:
+          tokenUrl: https://account.mytiki.com/api/latest/auth
+          scopes: {}
 
   schemas:
     Title:
@@ -190,7 +117,7 @@ components:
       properties:
         id:
           type: string
-        hashedPtr:
+        ptr:
           type: string
         tags:
           type: array
@@ -224,49 +151,14 @@ components:
           type: string
           format: date-time
 
-    Payable:
+    CreateLicense:
       type: object
-      properties:
-        id:
-          type: string
-        license:
-          $ref: "#/components/schemas/License"
-        amount:
-          type: string
-        type:
-          type: string
-        expiry:
-          type: string
-          format: date-time
-        description:
-          type: string
-        reference:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-
-    Receipt:
-      type: object
-      properties:
-        id:
-          type: string
-        payable:
-          $ref: "#/components/schemas/Payable"
-        amount:
-          type: string
-        description:
-          type: string
-        reference:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-        requestId:
-          type: string
-
-    PostLicense:
-      type: object
+      required:
+        - ptr
+        - tags
+        - uses
+        - terms
+        - licenseDesc
       properties:
         ptr:
           type: string
@@ -278,74 +170,23 @@ components:
           $ref: "#/components/schemas/Use"
         terms:
           type: string
-        expiry:
-          type: string
-          format: date-time
-        titleDesc:
-          type: string
         licenseDesc:
           type: string
-
-    RspLicenses:
-      type: object
-      properties:
-        licenses:
-          type: array
-          items:
-            $ref: "#/components/schemas/License"
-        requestId:
-          type: string
-
-    PostPayable:
-      type: object
-      properties:
-        licenseId:
-          type: string
-        amount:
-          type: string
-        type:
+        titleDesc:
           type: string
         expiry:
           type: string
           format: date-time
-        description:
-          type: string
-        reference:
-          type: string
-
-    RspPayables:
+          
+    RspError:
       type: object
       properties:
-        payables:
-          type: array
-          items:
-            $ref: "#/components/schemas/Payable"
-        requestId:
+        message:
           type: string
+        code:
+          type: integer
 
-    PostReceipt:
-      type: object
-      properties:
-        payableId:
-          type: string
-        amount:
-          type: string
-        description:
-          type: string
-        reference:
-          type: string
-
-    RspReceipts:
-      type: object
-      properties:
-        receipts:
-          type: array
-          items:
-            $ref: "#/components/schemas/Receipt"
-        requestId:
-          type: string
-
-    PostGuard:
+    PostLicenseVerify:
       type: object
       properties:
         ptr:
@@ -359,7 +200,7 @@ components:
           items:
             type: string
 
-    RspGuard:
+    RspLicenseVerify:
       type: object
       properties:
         success:
@@ -373,7 +214,7 @@ components:
         usecases:
           type: array
           items:
-            $ref: '#/components/schemas/Usecase'
+            $ref: "#/components/schemas/Usecase"
         destinations:
           type: array
           items:
@@ -388,5 +229,3 @@ components:
           type: string
       required:
         - value
-      example:
-        value: "attribution"
