@@ -7,6 +7,7 @@
 mod license;
 mod verify;
 mod tag;
+mod use_case;
 
 use std::error::Error;
 use aws_lambda_events::apigw::ApiGatewayProxyRequest;
