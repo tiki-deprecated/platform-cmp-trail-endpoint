@@ -1,22 +1,13 @@
-openapi: 3.0.1
+openapi: 3.0.2
 info:
-  title: TIKI API
-  description: TIKI's REST API
-  license:
-    name: MIT
-    url: https://github.com/tiki/core/blob/main/LICENSE
+  title: TIKI Trail API
   version: 1.0.0
-servers:
-  - url: https://mytiki.com/api/{version}
-    variables:
-      version:
-        default: latest
 
 security:
-  - addressToken: []
+  - providerToken: []
 
 paths:
-  /trail/titles:
+  /titles:
     post:
       summary: Create Title
       requestBody:
@@ -30,35 +21,15 @@ paths:
           description: Created
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/titles/{id}:
     get:
       summary: Get Title
       parameters:
-        - name: id
-          in: path
-          required: true
+        - name: hashedPtr
+          in: query
           schema:
             type: string
       responses:
@@ -70,29 +41,12 @@ paths:
                 $ref: "#/components/schemas/Title"
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/licenses:
+
+  /licenses:
     post:
       security:
         - providerToken: []
@@ -102,43 +56,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/License"
+              $ref: "#/components/schemas/PostLicense"
       responses:
         "201":
           description: Created
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/licenses/id/{id}:
     get:
       security:
         - providerToken: []
       summary: Get Licenses
       parameters:
-        - name: id
-          in: path
-          required: true
+        - name: hashedPtr
+          in: query
           schema:
             type: string
       responses:
@@ -150,71 +84,12 @@ paths:
                 $ref: "#/components/schemas/RspLicenses"
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/licenses/valid:
-    post:
-      security:
-        - providerToken: []
-      summary: Check if the license is valid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PostLicenseValid"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspLicenseValid"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/payables:
+
+  /payables:
     post:
       security:
         - providerToken: []
@@ -224,42 +99,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreatePayable"
+              $ref: "#/components/schemas/PostPayable"
       responses:
         "201":
           description: Created
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/payables/id/{id}:
     get:
       security:
         - providerToken: []
       summary: Get Payables
       parameters:
-        - name: id
-          in: path
+        - name: licenseId
+          in: query
           required: true
           schema:
             type: string
@@ -272,29 +128,12 @@ paths:
                 $ref: "#/components/schemas/RspPayables"
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/receipts:
+
+  /receipts:
     post:
       security:
         - providerToken: []
@@ -310,36 +149,17 @@ paths:
           description: Created
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/receipts/id/{id}:
     get:
       security:
         - providerToken: []
       summary: Get Receipts
       parameters:
-        - name: id
-          in: path
+        - name: payableId
+          in: query
           required: true
           schema:
             type: string
@@ -352,48 +172,17 @@ paths:
                 $ref: "#/components/schemas/RspReceipts"
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "401":
           description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
         "403":
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
 
 components:
   securitySchemes:
     providerToken:
-      type: oauth2
-      description: See https://mytiki.com/reference/authorization#provider-token
-      flows:
-        clientCredentials:
-          tokenUrl: https://account.mytiki.com/api/latest/auth
-          scopes:
-            account:provider: used to register and list device addresses
-            trail: used to submit audit trail events, like titles and licenses
-            publish: used to submit new data events
-    addressToken:
-      type: oauth2
-      description: See https://mytiki.com/reference/authorization#address-token
-      flows:
-        clientCredentials:
-          tokenUrl: https://account.mytiki.com/api/latest/auth
-          scopes: {}
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
   schemas:
     Title:
@@ -401,7 +190,7 @@ components:
       properties:
         id:
           type: string
-        ptr:
+        hashedPtr:
           type: string
         tags:
           type: array
@@ -476,7 +265,7 @@ components:
         requestId:
           type: string
 
-    CreateLicense:
+    PostLicense:
       type: object
       properties:
         ptr:
@@ -507,7 +296,7 @@ components:
         requestId:
           type: string
 
-    CreatePayable:
+    PostPayable:
       type: object
       properties:
         licenseId:
@@ -534,14 +323,6 @@ components:
         requestId:
           type: string
 
-    RspError:
-      type: object
-      properties:
-        message:
-          type: string
-        code:
-          type: integer
-
     PostReceipt:
       type: object
       properties:
@@ -564,7 +345,7 @@ components:
         requestId:
           type: string
 
-    PostLicenseValid:
+    PostGuard:
       type: object
       properties:
         ptr:
@@ -578,7 +359,7 @@ components:
           items:
             type: string
 
-    RspLicenseValid:
+    RspGuard:
       type: object
       properties:
         success:
@@ -592,7 +373,7 @@ components:
         usecases:
           type: array
           items:
-            $ref: "#/components/schemas/Usecase"
+            $ref: '#/components/schemas/Usecase'
         destinations:
           type: array
           items:
@@ -607,3 +388,5 @@ components:
           type: string
       required:
         - value
+      example:
+        value: "attribution"
