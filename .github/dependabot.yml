@@ -8,3 +8,24 @@ updates:
       prefix: "gh-action"
     labels:
       - "chore"
+    groups:
+      all:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "cargo"
+    labels:
+      - "chore"
+    groups:
+      minor:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
