@@ -4,6 +4,10 @@
  */
 
 mod tag;
-mod contents;
-
 pub use tag::{Tag, TagType};
+
+mod contents;
+pub use contents::Contents;
+
+mod model;
+

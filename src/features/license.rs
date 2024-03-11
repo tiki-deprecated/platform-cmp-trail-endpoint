@@ -21,5 +21,6 @@ mod service;
 
 mod use_case;
 mod contents;
+mod model;
 
 pub use use_case::{UseCase, UseCaseType};

@@ -43,6 +43,15 @@ impl UseCase {
             }
         }
     }
+    
+    pub fn attribution() -> Self { Self::new("attribution") }
+    pub fn retargeting() -> Self { Self::new("retargeting") }
+    pub fn personalization() -> Self { Self::new("personalization") }
+    pub fn ai_training() -> Self { Self::new("ai_training") }
+    pub fn distribution() -> Self { Self::new("distribution") }
+    pub fn analytics() -> Self { Self::new("analytics") }
+    pub fn support() -> Self { Self::new("support") }
+    pub fn custom(string: &str) -> Self { Self::new(&format!("customer:{}", string)) }
 }
 
 impl Serialize for UseCase {

@@ -28,11 +28,11 @@ impl SqsClient {
         let region = RegionProviderChain::default_provider()
             .or_else("us-east-2")
             .region().await.unwrap();
-        let bucket = match env::var("TIKI_QUEUE") {
+        let queue = match env::var("TIKI_QUEUE") {
             Ok(queue) => queue,
-            Err(_) => panic!("Please set TIKI_BUCKET"),
+            Err(_) => panic!("Please set TIKI_QUEUE"),
         };
-        Self::new(region.as_ref(), &bucket).await
+        Self::new(region.as_ref(), &queue).await
     }
 
     pub async fn send<T>(&self, group_id: &str, message: &T) -> Result<(), Box<dyn Error>> where T: Serialize {

@@ -9,3 +9,6 @@ pub use error_response::ErrorResponse;
 mod sqs_client;
 pub use sqs_client::SqsClient;
 
+mod content_schema;
+pub use content_schema::{ContentType, ContentSchema};
+
