@@ -3,13 +3,33 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-use chrono::{DateTime, Utc};
+use std::error::Error;
+use mytiki_core_trail_storage::{byte_helpers, compact_size};
 use super::Tag;
 
 pub struct Contents {
     ptr: String,
-    origin: Option<String>,
+    origin: String,
     tags: Vec<Tag>,
-    description: Option<String>,
-    timestamp: DateTime<Utc>
+    description: Option<String>
+}
+
+impl Contents {
+    pub fn new(ptr: &str, origin: &str, tags: Vec<Tag>, description: Option<String>) -> Self {
+        Self { ptr: ptr.to_string(), origin: origin.to_string(), tags, description }
+    }
+
+    pub fn to_bytes(&self) -> Result<Vec<u8>, Box<dyn Error>> {
+        let mut bytes = Vec::<u8>::new();
+        let tags = serde_json::to_string(&self.tags)?;
+        bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(&self.ptr)));
+        bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(&self.origin)));
+        if self.description.is_some() {
+            let description = self.description.as_ref().unwrap();
+            bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(&description))); 
+        }
+        else { bytes.append(&mut vec![1]); };
+        bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(&tags)));
+        Ok(bytes)
+    }
 }

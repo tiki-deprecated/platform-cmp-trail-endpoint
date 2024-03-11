@@ -17,8 +17,8 @@ pub struct Contents {
 }
 
 impl Contents {
-    pub fn new(uses: Vec<UseCase>, terms: String, description: Option<String>, expiry: Option<DateTime<Utc>>) -> Self {
-        Self { uses, terms, description, expiry }
+    pub fn new(uses: Vec<UseCase>, terms: &str, description: Option<String>, expiry: Option<DateTime<Utc>>) -> Self {
+        Self { uses, terms: terms.to_string(), description, expiry }
     }
     
     pub fn to_bytes(&self) -> Result<Vec<u8>, Box<dyn Error>> {
@@ -26,7 +26,9 @@ impl Contents {
         let uses = serde_json::to_string(&self.uses)?;
         bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(&uses)));
         bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(&self.terms)));
-        if self.description.is_some() { bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(&self.terms))); } 
+        if self.description.is_some() { 
+            let description = self.description.as_ref().unwrap();
+            bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(description))); } 
         else { bytes.append(&mut vec![1]); };
         if self.expiry.is_some() {
             let expiry_bigint = &BigInt::from(self.expiry.unwrap().timestamp());
