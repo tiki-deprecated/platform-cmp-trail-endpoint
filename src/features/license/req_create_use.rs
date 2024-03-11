@@ -8,13 +8,13 @@ use super::UseCase;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct LicenseUse {
+pub struct ReqCreateUse {
     #[serde(alias = "usecases")]
     use_cases: Vec<UseCase>,
     destinations: Option<Vec<String>>
 }
 
-impl LicenseUse {
+impl ReqCreateUse {
     pub fn use_cases(&self) -> &Vec<UseCase> { &self.use_cases }
     pub fn destinations(&self) -> &Option<Vec<String>> { &self.destinations }
 }
