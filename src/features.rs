@@ -4,6 +4,7 @@
  */
 
 pub mod license;
+pub mod record;
 mod title;
 mod repository;
 use repository::Repository;

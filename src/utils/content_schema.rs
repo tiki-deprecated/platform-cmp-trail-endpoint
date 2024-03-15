@@ -48,7 +48,6 @@ impl ContentSchema {
         Ok((schema, decoded[1].clone()))
     }
 
-
     pub fn typ(&self) -> &ContentType { &self.typ }
     pub fn schema(&self) -> u16 { self.schema }
 }
