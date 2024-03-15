@@ -4,10 +4,7 @@
  */
 
 use std::error::Error;
-use chrono::DateTime;
-use num_bigint::BigInt;
-use mytiki_core_trail_storage::{byte_helpers, compact_size, ModelTxn};
-use crate::utils::{ContentSchema, ContentType};
+use mytiki_core_trail_storage::{byte_helpers, compact_size};
 
 use super::Tag;
 
@@ -41,6 +38,4 @@ impl Contents {
         bytes.append(&mut compact_size::encode(byte_helpers::utf8_encode(&tags)));
         Ok(bytes)
     }
-
-    
 }

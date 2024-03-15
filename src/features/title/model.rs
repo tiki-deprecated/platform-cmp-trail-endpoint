@@ -24,7 +24,6 @@ impl Model {
     }
 }
 
-
 impl Record<Model> for Model {
 
   fn from_transaction(transaction: ModelTxn) -> Result<Self, Box<dyn Error>> {
