@@ -5,6 +5,7 @@
 
 use std::error::Error;
 use chrono::{DateTime, Utc};
+use mytiki_core_trail_storage::Owner;
 use crate::utils::{ContentSchema, ContentType};
 use crate::features::record::Record;
 
@@ -45,15 +46,15 @@ impl Record<Model> for Model {
     })
   }
   
-  fn to_transaction(&self, address: &str, signer: &Signer) -> Result<ModelTxn, Box<dyn Error>> {
+  fn to_transaction(&self, owner: &Owner, signer: &Signer) -> Result<ModelTxn, Box<dyn Error>> {
       let contents = &self.contents.to_bytes()?;
       let bytes = ContentSchema::title().serialize(&contents)?;
       let txn = ModelTxn::new(
-        address,
         self.timestamp,
         "", 
         base64_encode(contents).as_str(),
         self.user_signature.as_str(),
+        owner,
         signer,
       );
       Ok(txn?)

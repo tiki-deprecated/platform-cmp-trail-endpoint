@@ -8,7 +8,7 @@ use chrono::{DateTime, Utc};
 use crate::features::record::Record;
 
 use super::{super::{super::utils::{ContentSchema, ContentType}, repository}, contents::Contents};
-use mytiki_core_trail_storage::{byte_helpers::{self, base64_encode}, ModelTxn, Signer};
+use mytiki_core_trail_storage::{byte_helpers::{self, base64_encode}, ModelTxn, Owner, Signer};
 
 pub struct Model {
     id: Option<String>,
@@ -39,15 +39,15 @@ impl Record<Model> for Model {
         })
     }
 
-    fn to_transaction(&self, address: &str, signer: &Signer) -> Result<ModelTxn, Box<dyn Error>> {
+    fn to_transaction(&self, owner: &Owner, signer: &Signer) -> Result<ModelTxn, Box<dyn Error>> {
       let contents = &self.contents.to_bytes()?;
       let bytes = ContentSchema::title().serialize(&contents)?;
       let txn = ModelTxn::new(
-        address,
         self.timestamp,
         self.title.as_str(), 
         base64_encode(contents).as_str(),
         self.user_signature.as_str(),
+        owner,
         signer,
       );
       Ok(txn?)

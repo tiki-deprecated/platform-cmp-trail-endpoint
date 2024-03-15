@@ -12,7 +12,7 @@ pub struct Reader {
 
 impl Reader {
     pub async fn new() -> Self {
-        let s3 = S3Client::new_from_env().await;
+        let s3 = S3Client::from_env().await;
         Self { client: s3 }
     }
     
