@@ -4,6 +4,7 @@
  */
 
 mod error_response;
+pub mod json_body;
 pub use error_response::ErrorResponse;
 
 mod sqs_client;

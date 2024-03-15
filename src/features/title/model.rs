@@ -9,7 +9,7 @@ use mytiki_core_trail_storage::Owner;
 use crate::utils::{ContentSchema, ContentType};
 use crate::features::record::Record;
 
-use super::Contents;
+use super::{Contents, Tag};
 use mytiki_core_trail_storage::{byte_helpers::{self, base64_encode}, compact_size, ModelTxn, Signer};
 
 pub struct Model {
@@ -20,8 +20,9 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn new(contents: Contents, user_signature: &str) -> Model {
-        Model { id: None, timestamp: Utc::now(), contents, user_signature: user_signature.to_string() }
+    pub fn new(ptr: &str, origin: &str, tags: Vec<Tag>, description: Option<String>, user_signature: &str) -> Model {
+      let contents = Contents::new(ptr, origin, tags, description);
+      Model { id: None, timestamp: Utc::now(), contents, user_signature: user_signature.to_string() }
     }
 }
 
@@ -56,7 +57,8 @@ impl Record<Model> for Model {
         self.user_signature.as_str(),
         owner,
         signer,
-      );
-      Ok(txn?)
+      )?;
+      self.id = Some(txn.id().to_string());
+      Ok(txn)
   }
 }

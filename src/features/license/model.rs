@@ -7,7 +7,7 @@ use std::error::Error;
 use chrono::{DateTime, Utc};
 use crate::features::record::Record;
 
-use super::{super::{super::utils::{ContentSchema, ContentType}, repository}, contents::Contents};
+use super::{super::{super::utils::{ContentSchema, ContentType}, repository}, contents::Contents, UseCase};
 use mytiki_core_trail_storage::{byte_helpers::{self, base64_encode}, ModelTxn, Owner, Signer};
 
 pub struct Model {
@@ -19,7 +19,8 @@ pub struct Model {
 }
 
 impl Model {
-  pub fn new(title: String, contents: Contents, user_signature: &str) -> Model {
+  pub fn new(title: String, uses: Vec<UseCase>, terms: &str, description: Option<String>, expiry: Option<DateTime<Utc>>, user_signature: &str) -> Model {
+      let contents = Contents::new(uses, terms, description, expiry);
       Model { id: None, title, timestamp: Utc::now(), contents, user_signature: user_signature.to_string() }
   }
 }
@@ -49,7 +50,8 @@ impl Record<Model> for Model {
         self.user_signature.as_str(),
         owner,
         signer,
-      );
-      Ok(txn?)
+      )?;
+      self.id = Some(txn.id().to_string());
+      Ok(txn)
     }
 }

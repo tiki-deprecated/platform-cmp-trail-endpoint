@@ -9,5 +9,6 @@ pub use tag::{Tag, TagType};
 mod contents;
 pub use contents::Contents;
 
-mod model;
+pub mod model;
+pub use model as Title;
 

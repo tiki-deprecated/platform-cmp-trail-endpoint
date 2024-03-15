@@ -21,10 +21,10 @@ pub struct ReqCreate {
 
 #[allow(unused)]
 impl ReqCreate {
-    pub fn ptr(&self) -> &str { &self.ptr }
-    pub fn tags(&self) -> &Vec<Tag> { &self.tags }
-    pub fn uses(&self) -> &Vec<ReqCreateUse> { &self.uses }
-    pub fn terms(&self) -> &str { &self.terms }
-    pub fn description(&self) -> &Option<String> { &self.description }
-    pub fn expiry(&self) -> Option<DateTime<Utc>> { self.expiry }
+  pub fn ptr(&self) -> &str { &self.ptr }
+  pub fn tags(&self) -> &Vec<Tag> { &self.tags }
+  pub fn uses(&self) -> &Vec<ReqCreateUse> { &self.uses }
+  pub fn terms(&self) -> &str { &self.terms }
+  pub fn description(&self) -> &Option<String> { &self.description }
+  pub fn expiry(&self) -> Option<DateTime<Utc>> { self.expiry }
 }
