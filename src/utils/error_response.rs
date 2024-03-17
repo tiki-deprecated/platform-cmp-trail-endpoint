@@ -3,10 +3,10 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-use std::{error, fmt};
-use std::collections::HashMap;
 use lambda_http::http::StatusCode;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::{error, fmt};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,12 +17,16 @@ pub struct ErrorResponse {
     detail: Option<String>,
     properties: Option<HashMap<String, String>>,
     #[serde(skip)]
-    source: Option<Box<dyn error::Error>>
+    source: Option<Box<dyn error::Error>>,
 }
 
 impl fmt::Display for ErrorResponse {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}: {} - {{ id: {:#?}, detail: {:#?}, properties: {:#?} }}", self.status, self.message, self.id, self.detail, self.properties)
+        write!(
+            f,
+            "{}: {} - {{ id: {:#?}, detail: {:#?}, properties: {:#?} }}",
+            self.status, self.message, self.id, self.detail, self.properties
+        )
     }
 }
 
@@ -39,7 +43,7 @@ impl ErrorResponse {
             source: None,
         }
     }
-    
+
     pub fn with_id(mut self, id: &str) -> Self {
         self.id = Some(id.to_string());
         self
@@ -54,17 +58,37 @@ impl ErrorResponse {
         self.properties = Some(properties);
         self
     }
-    
+
     pub fn with_source(mut self, source: Box<dyn error::Error>) -> Self {
         self.source = Some(source);
         self
     }
-    
-    pub fn status(&self) -> u16 { self.status }
-    pub fn status_code(&self) -> StatusCode { StatusCode::from_u16(self.status).unwrap() }
-    pub fn message(&self) -> &str { &self.message }
-    pub fn id(&self) -> &Option<String> { &self.id }
-    pub fn detail(&self) -> &Option<String> { &self.detail }
-    pub fn properties(&self) -> &Option<HashMap<String, String>> { &self.properties }
-    pub fn source(&self) -> &Option<Box<dyn error::Error>> { &self.source }
+
+    pub fn status(&self) -> u16 {
+        self.status
+    }
+
+    pub fn status_code(&self) -> StatusCode {
+        StatusCode::from_u16(self.status).unwrap()
+    }
+
+    pub fn message(&self) -> &str {
+        &self.message
+    }
+
+    pub fn id(&self) -> &Option<String> {
+        &self.id
+    }
+
+    pub fn detail(&self) -> &Option<String> {
+        &self.detail
+    }
+
+    pub fn properties(&self) -> &Option<HashMap<String, String>> {
+        &self.properties
+    }
+
+    pub fn source(&self) -> &Option<Box<dyn error::Error>> {
+        &self.source
+    }
 }

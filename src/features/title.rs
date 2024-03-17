@@ -3,12 +3,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-mod tag;
-pub use tag::{Tag, TagType};
+mod create_request;
+use create_request::CreateRequest;
 
-mod contents;
-pub use contents::Contents;
-
-pub mod model;
-pub use model as Title;
-
+mod title_service;
+pub use title_service::TitleService as Service;

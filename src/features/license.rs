@@ -3,24 +3,25 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-mod req_create;
-pub use req_create::ReqCreate;
+mod create_request;
+use create_request::CreateRequest;
 
-mod req_create_use;
-pub use req_create_use::ReqCreateUse;
+mod create_request_use;
+use create_request_use::CreateRequestUse;
 
-mod req_verify;
-pub use req_verify::ReqVerify;
+mod create_rsp;
+pub use create_rsp::CreateRsp;
 
-mod rsp_verify;
-pub use rsp_verify::RspVerify;
+mod verify_request;
+use verify_request::VerifyRequest;
 
-pub mod controller;
+mod verify_response;
+pub use verify_response::VerifyRsp;
 
-mod service;
+mod license_controller;
+pub use license_controller as Controller;
 
-mod use_case;
-mod contents;
-mod model;
+mod combo_request;
+mod license_service;
 
-pub use use_case::{UseCase, UseCaseType};
+pub use license_service::LicenseService as Service;

@@ -7,7 +7,4 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct RspVerify {
-    pub verified: bool,
-    pub reason: Option<String>
-}
+pub struct VerifyRequest {}
