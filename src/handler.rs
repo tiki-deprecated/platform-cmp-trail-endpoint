@@ -25,12 +25,8 @@ where
 
 pub async fn entry(event: Request) -> Result<(StatusCode, String), Box<dyn Error>> {
     match (event.method(), event.raw_http_path()) {
-        (&Method::POST, "/license/create") => {
-            json_body(event, license::license_controller::create).await
-        }
-        (&Method::POST, "/license/verify") => {
-            json_body(event, license::license_controller::verify).await
-        }
+        (&Method::POST, "/license/create") => json_body(event, license::create).await,
+        (&Method::POST, "/license/verify") => json_body(event, license::verify).await,
         _ => Err(ErrorResponse::new(StatusCode::NOT_FOUND).into()),
     }
 }

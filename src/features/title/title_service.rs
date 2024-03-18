@@ -28,7 +28,7 @@ impl TitleService {
         &self,
         owner: &Owner,
         signer: &Signer,
-        req: CreateRequest,
+        req: &CreateRequest,
     ) -> Result<CreateResponse, Box<dyn Error>> {
         let title = Title::new(
             req.ptr(),
