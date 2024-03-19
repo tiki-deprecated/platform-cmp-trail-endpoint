@@ -3,9 +3,8 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-use super::CreateRequestUse;
 use chrono::{DateTime, Utc};
-use mytiki_core_trail_storage::content::Tag;
+use mytiki_core_trail_storage::content::{Tag, Use};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -14,7 +13,7 @@ pub struct ComboRequest {
     ptr: String,
     origin: String,
     tags: Vec<Tag>,
-    uses: Vec<CreateRequestUse>,
+    uses: Vec<Use>,
     terms: String,
     description: Option<String>,
     expiry: Option<DateTime<Utc>>,
@@ -34,7 +33,7 @@ impl ComboRequest {
         &self.tags
     }
 
-    pub fn uses(&self) -> &Vec<CreateRequestUse> {
+    pub fn uses(&self) -> &Vec<Use> {
         &self.uses
     }
 

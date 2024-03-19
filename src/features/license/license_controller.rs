@@ -3,31 +3,28 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-use std::error::Error;
-
+use super::super::{
+    super::utils::{AuthorizationContext, CreateResponse, ErrorResponse},
+    license, title,
+};
 use lambda_http::{http::StatusCode, Request, RequestExt, RequestPayloadExt};
-
 use mytiki_core_trail_storage::content::{License, SchemaType};
 use mytiki_core_trail_storage::{
     utils::{S3Client, SqsClient},
     Block, Metadata, Signer,
 };
-
-use super::super::{
-    super::utils::{AuthorizationContext, CreateResponse, ErrorResponse},
-    license, title,
-};
+use std::error::Error;
 
 pub async fn create(event: Request) -> Result<(StatusCode, CreateResponse), Box<dyn Error>> {
     let s3_client = S3Client::from_env().await;
     let sqs_client = SqsClient::from_env().await;
-    let context = AuthorizationContext::new(&event.request_context());
+    let context = AuthorizationContext::new(&event.request_context())?;
     let signer = Signer::get(&s3_client, &context.owner()).await?;
-    let request = event.payload::<license::ComboRequest>()?.ok_or(
-        ErrorResponse::new(StatusCode::BAD_REQUEST)
-            .with_detail("Invalid body")
-            .into(),
-    )?;
+    let request = event
+        .payload::<license::ComboRequest>()?
+        .ok_or::<ErrorResponse>(
+            ErrorResponse::new(StatusCode::BAD_REQUEST).with_detail("Invalid body"),
+        )?;
     let title_request = title::CreateRequest::new(
         request.ptr(),
         request.origin(),
@@ -56,7 +53,7 @@ pub async fn create(event: Request) -> Result<(StatusCode, CreateResponse), Box<
 
 pub async fn verify(event: Request) -> Result<(StatusCode, license::VerifyRsp), Box<dyn Error>> {
     let s3_client = S3Client::from_env().await;
-    let context = AuthorizationContext::new(&event.request_context());
+    let context = AuthorizationContext::new(&event.request_context())?;
     let metadata = Metadata::get(&s3_client, &context.owner()).await?;
     for block in metadata.blocks() {
         let block = Block::read(&s3_client, &context.owner(), block).await?;

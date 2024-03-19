@@ -32,20 +32,19 @@ impl TitleService {
     ) -> Result<CreateResponse, Box<dyn Error>> {
         let title = Title::new(
             req.ptr(),
-            req.orign(),
+            req.origin(),
             req.tags().clone(),
             req.description().clone(),
         );
         let transaction = Transaction::new(
-            &self.sqs,
             owner,
             None,
-            Schema::title(),
+            &Schema::title(),
             title,
             req.signature(),
             &signer,
-        )
-        .await?;
+        )?;
+        transaction.submit(&self.sqs, owner).await?;
         Ok(CreateResponse::new(
             transaction.id(),
             transaction.timestamp()?,

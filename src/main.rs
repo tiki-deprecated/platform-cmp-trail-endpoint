@@ -5,14 +5,15 @@
 
 extern crate core;
 
+mod features;
 mod handler;
 mod utils;
-mod features;
 
-
+use lambda_http::{
+    http::{Response, StatusCode},
+    run, service_fn, Error, IntoResponse, Request,
+};
 use utils::ErrorResponse;
-use lambda_http::{run, service_fn, Request, IntoResponse, Error, http::{StatusCode, Response}, RequestPayloadExt};
-use serde_json::json;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -21,7 +22,8 @@ async fn main() -> Result<(), Error> {
         .with_target(false)
         .without_time()
         .init();
-    run(service_fn(catch_all)).await
+    run(service_fn(catch_all)).await?;
+    Ok(())
 }
 
 async fn catch_all(event: Request) -> Result<impl IntoResponse, Error> {
@@ -31,9 +33,11 @@ async fn catch_all(event: Request) -> Result<impl IntoResponse, Error> {
         if err.is::<ErrorResponse>() {
             match err.downcast::<ErrorResponse>() {
                 Ok(err) => (err.status_code(), serde_json::to_string(&err).unwrap()),
-                Err(err) => internal_error(err)
+                Err(err) => internal_error(err),
             }
-        }else { internal_error(err) }
+        } else {
+            internal_error(err)
+        }
     });
     let response = Response::builder()
         .status(response.0)
@@ -44,6 +48,10 @@ async fn catch_all(event: Request) -> Result<impl IntoResponse, Error> {
 }
 
 fn internal_error(err: Box<dyn std::error::Error>) -> (StatusCode, String) {
-    let response = ErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR).with_detail(&err.to_string());
-    (response.status_code(), serde_json::to_string(&response).unwrap())
+    let response =
+        ErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR).with_detail(&err.to_string());
+    (
+        response.status_code(),
+        serde_json::to_string(&response).unwrap(),
+    )
 }

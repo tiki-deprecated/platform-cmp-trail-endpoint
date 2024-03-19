@@ -7,6 +7,7 @@ use super::ErrorResponse;
 use lambda_http::http::StatusCode;
 use lambda_http::request::RequestContext;
 use mytiki_core_trail_storage::Owner;
+use std::error::Error;
 
 pub struct AuthorizationContext {
     namespace: Option<String>,
@@ -15,10 +16,10 @@ pub struct AuthorizationContext {
 }
 
 impl AuthorizationContext {
-    pub fn new(request_context: &RequestContext) -> Self {
+    pub fn new(request_context: &RequestContext) -> Result<Self, Box<dyn Error>> {
         let fields = request_context
             .authorizer()
-            .ok_or(ErrorResponse::new(StatusCode::UNAUTHORIZED).into())?
+            .ok_or::<ErrorResponse>(ErrorResponse::new(StatusCode::UNAUTHORIZED))?
             .clone()
             .fields;
         let namespace = fields
@@ -27,7 +28,7 @@ impl AuthorizationContext {
         let id = fields.get("id").map_or(None, serde_json::Value::as_str);
         let scopes = fields
             .get("scopes")
-            .unwrap_or(&vec![])
+            .unwrap_or(&serde_json::Value::from(Vec::<String>::new()))
             .as_array()
             .unwrap_or(&vec![])
             .iter()
@@ -36,17 +37,17 @@ impl AuthorizationContext {
         let owner = match id {
             Some(id) => {
                 let split = id.split(":").collect::<Vec<&str>>();
-                let provider = split.get(0).map_or(None, str::to_string);
-                let id = split.get(1).map_or(None, str::to_string);
-                Owner::new(provider.map(str::to_string), id.map(str::to_string))
+                let provider = split.get(0).map_or(None, |v| Some(v.to_string()));
+                let id = split.get(1).map_or(None, |v| Some(v.to_string()));
+                Owner::new(provider, id)
             }
             None => Owner::new(None, None),
         };
-        Self {
+        Ok(Self {
             namespace: namespace.map(str::to_string),
             owner,
             scopes,
-        }
+        })
     }
 
     pub fn namespace(&self) -> &Option<String> {

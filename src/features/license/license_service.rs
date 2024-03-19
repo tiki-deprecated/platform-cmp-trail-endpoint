@@ -3,13 +3,15 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-use super::{super::super::utils::CreateResponse, CreateRequest};
+use std::error::Error;
+
 use mytiki_core_trail_storage::{
-    content::{License, Schema, Title},
+    content::{License, Schema},
     utils::{S3Client, SqsClient},
     Owner, Signer, Transaction,
 };
-use std::error::Error;
+
+use super::{super::super::utils::CreateResponse, CreateRequest};
 
 pub struct LicenseService {
     s3: S3Client,
@@ -37,15 +39,14 @@ impl LicenseService {
             req.expiry(),
         );
         let transaction = Transaction::new(
-            &self.sqs,
             owner,
             Some(req.title().to_string()),
             &Schema::license(),
             license,
             req.signature(),
             &signer,
-        )
-        .await?;
+        )?;
+        transaction.submit(&self.sqs, owner).await?;
         Ok(CreateResponse::new(
             transaction.id(),
             transaction.timestamp()?,
