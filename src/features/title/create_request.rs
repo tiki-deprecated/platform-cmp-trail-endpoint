@@ -17,6 +17,22 @@ pub struct CreateRequest {
 }
 
 impl CreateRequest {
+    pub fn new(
+        ptr: &str,
+        origin: &str,
+        tags: Vec<Tag>,
+        description: Option<String>,
+        signature: &str,
+    ) -> Self {
+        Self {
+            ptr: ptr.to_string(),
+            origin: origin.to_string(),
+            tags,
+            description,
+            signature: signature.to_string(),
+        }
+    }
+
     pub fn ptr(&self) -> &str {
         &self.ptr
     }

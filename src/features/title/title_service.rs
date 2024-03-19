@@ -17,10 +17,10 @@ pub struct TitleService {
 }
 
 impl TitleService {
-    pub async fn new() -> Self {
+    pub async fn new(s3_client: &S3Client, sqs_client: &SqsClient) -> Self {
         Self {
-            s3: S3Client::from_env().await,
-            sqs: SqsClient::from_env().await,
+            s3: s3_client.clone(),
+            sqs: sqs_client.clone(),
         }
     }
 

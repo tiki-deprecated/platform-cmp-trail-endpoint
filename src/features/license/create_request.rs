@@ -19,6 +19,24 @@ pub struct CreateRequest {
 }
 
 impl CreateRequest {
+    pub fn new(
+        title: &str,
+        uses: Vec<Use>,
+        terms: &str,
+        description: Option<String>,
+        expiry: Option<DateTime<Utc>>,
+        signature: &str,
+    ) -> Self {
+        Self {
+            title: title.to_string(),
+            uses,
+            terms: terms.to_string(),
+            description,
+            expiry,
+            signature: signature.to_string(),
+        }
+    }
+
     pub fn title(&self) -> &str {
         &self.title
     }

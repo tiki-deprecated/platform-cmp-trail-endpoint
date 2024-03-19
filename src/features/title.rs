@@ -4,7 +4,7 @@
  */
 
 mod create_request;
-use create_request::CreateRequest;
+pub use create_request::CreateRequest;
 
 mod title_service;
 pub use title_service::TitleService as Service;
