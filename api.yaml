@@ -16,96 +16,24 @@ security:
   - addressToken: []
 
 paths:
-  /trail/titles:
-    post:
-      summary: Create Title
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Title"
-      responses:
-        "201":
-          description: Created
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/titles/{id}:
-    get:
-      summary: Get Title
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Title"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
   /trail/licenses:
     post:
       security:
-        - providerToken: []
+        - addressToken: []
       summary: Create License
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/License"
+              $ref: "#/components/schemas/CreateLicense"
       responses:
         "201":
           description: Created
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/License"
         "400":
           description: Bad Request
           content:
@@ -130,226 +58,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RspError"
-  /trail/licenses/id/{id}:
-    get:
-      security:
-        - providerToken: []
-      summary: Get Licenses
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspLicenses"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/licenses/valid:
+  /trail/licenses/verify:
     post:
       security:
-        - providerToken: []
-      summary: Check if the license is valid
+        - addressToken: []
+      summary: Check if the license is Verify
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PostLicenseValid"
+              $ref: "#/components/schemas/PostLicenseVerify"
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RspLicenseValid"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/payables:
-    post:
-      security:
-        - providerToken: []
-      summary: Create Payable
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreatePayable"
-      responses:
-        "201":
-          description: Created
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/payables/id/{id}:
-    get:
-      security:
-        - providerToken: []
-      summary: Get Payables
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspPayables"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/receipts:
-    post:
-      security:
-        - providerToken: []
-      summary: Create Receipt
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PostReceipt"
-      responses:
-        "201":
-          description: Created
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-        "500":
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspError"
-  /trail/receipts/id/{id}:
-    get:
-      security:
-        - providerToken: []
-      summary: Get Receipts
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RspReceipts"
+                $ref: "#/components/schemas/RspLicenseVerify"
         "400":
           description: Bad Request
           content:
@@ -377,16 +103,6 @@ paths:
 
 components:
   securitySchemes:
-    providerToken:
-      type: oauth2
-      description: See https://mytiki.com/reference/authorization#provider-token
-      flows:
-        clientCredentials:
-          tokenUrl: https://account.mytiki.com/api/latest/auth
-          scopes:
-            account:provider: used to register and list device addresses
-            trail: used to submit audit trail events, like titles and licenses
-            publish: used to submit new data events
     addressToken:
       type: oauth2
       description: See https://mytiki.com/reference/authorization#address-token
@@ -435,49 +151,14 @@ components:
           type: string
           format: date-time
 
-    Payable:
-      type: object
-      properties:
-        id:
-          type: string
-        license:
-          $ref: "#/components/schemas/License"
-        amount:
-          type: string
-        type:
-          type: string
-        expiry:
-          type: string
-          format: date-time
-        description:
-          type: string
-        reference:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-
-    Receipt:
-      type: object
-      properties:
-        id:
-          type: string
-        payable:
-          $ref: "#/components/schemas/Payable"
-        amount:
-          type: string
-        description:
-          type: string
-        reference:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-        requestId:
-          type: string
-
     CreateLicense:
       type: object
+      required:
+        - ptr
+        - tags
+        - uses
+        - terms
+        - licenseDesc
       properties:
         ptr:
           type: string
@@ -489,51 +170,14 @@ components:
           $ref: "#/components/schemas/Use"
         terms:
           type: string
-        expiry:
-          type: string
-          format: date-time
-        titleDesc:
-          type: string
         licenseDesc:
           type: string
-
-    RspLicenses:
-      type: object
-      properties:
-        licenses:
-          type: array
-          items:
-            $ref: "#/components/schemas/License"
-        requestId:
-          type: string
-
-    CreatePayable:
-      type: object
-      properties:
-        licenseId:
-          type: string
-        amount:
-          type: string
-        type:
+        titleDesc:
           type: string
         expiry:
           type: string
           format: date-time
-        description:
-          type: string
-        reference:
-          type: string
-
-    RspPayables:
-      type: object
-      properties:
-        payables:
-          type: array
-          items:
-            $ref: "#/components/schemas/Payable"
-        requestId:
-          type: string
-
+          
     RspError:
       type: object
       properties:
@@ -542,29 +186,7 @@ components:
         code:
           type: integer
 
-    PostReceipt:
-      type: object
-      properties:
-        payableId:
-          type: string
-        amount:
-          type: string
-        description:
-          type: string
-        reference:
-          type: string
-
-    RspReceipts:
-      type: object
-      properties:
-        receipts:
-          type: array
-          items:
-            $ref: "#/components/schemas/Receipt"
-        requestId:
-          type: string
-
-    PostLicenseValid:
+    PostLicenseVerify:
       type: object
       properties:
         ptr:
@@ -578,7 +200,7 @@ components:
           items:
             type: string
 
-    RspLicenseValid:
+    RspLicenseVerify:
       type: object
       properties:
         success:
