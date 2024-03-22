@@ -3,39 +3,121 @@ Transform: AWS::Serverless-2016-10-31
 Description: Ocean Trail Function
 
 Parameters:
-  Semver:
+  Name:
+    Description: The name of the project.
+    Type: String
+    Default: core-trail-endpoint
+  Authorizer:
+    Description: The arn of the Lambda function for JWT Request authorization.
+    Type: String
+  Queue:
+    Description: The url of the writer queue to publish transactions to.
+    Type: String
+  Bucket:
+    Description: The bucket name to store transactions.
+    Type: String
+  Version:
     Description: Semantic version number
     Type: String
     Default: 0.0.1
 
 Resources:
+
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Ref Name
+      StageName: latest
+      TracingEnabled: true
+      MethodSettings:
+        - LoggingLevel: ERROR
+          ResourcePath: '/*'
+          HttpMethod: '*'
+          DataTraceEnabled: true
+          MetricsEnabled: true
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ../../openapi.yaml
+
   Function:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: rust-cargolambda
     Properties:
-      CodeUri: ..
+      FunctionName: !Ref Name
+      Description: core-trail endpoint function
+      CodeUri: ../..
       Handler: bootstrap
       Runtime: provided.al2
       MemorySize: 1024
       Timeout: 900
+      Tracing: Active
+      VersionDescription: !Ref Version
       Architectures:
         - x86_64
-      FunctionUrlConfig:
-        AuthType: NONE
-        InvokeMode: BUFFERED
-        Cors:
-          AllowCredentials: True
-          AllowOrigins:
-            - "*"
-          AllowMethods:
-            - GET
-            - POST
+      Environment:
+        Variables:
+          TIKI_BUCKET: !Ref Bucket
+          TIKI_QUEUE: !Ref Queue
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:GetObjectVersion
+                - s3:ListBucket
+              Resource: 
+                - !Sub arn:aws:s3:::${Bucket}
+                - !Sub arn:aws:s3:::${Bucket}/*
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - xray:PutTraceSegments
+                - xray:PutTelemetryRecords
+              Resource: "*"
 
-  Version:
-    Type: AWS::Lambda::Version
+  ApiRole:
+    Type: AWS::IAM::Role
     Properties:
-      FunctionName: !GetAtt Function.Arn
-      Description: !Ref Semver
-      ProvisionedConcurrencyConfig:
-        ProvisionedConcurrentExecutions: 2
+      RoleName: !Ref Name
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - states.amazonaws.com
+      Policies:
+        - PolicyName: XRay
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Resource: "*"
+                Action:
+                  - xray:PutTraceSegments
+                  - xray:PutTelemetryRecords
+                  - xray:GetSamplingRules
+                  - xray:GetSamplingTargets
+        - PolicyName: CloudWatch
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Resource: "*"
+                Action:
+                  - logs:CreateLogDelivery
+                  - logs:CreateLogStream
+                  - logs:GetLogDelivery
+                  - logs:UpdateLogDelivery
+                  - logs:DeleteLogDelivery
+                  - logs:ListLogDeliveries
+                  - logs:PutLogEvents
+                  - logs:PutResourcePolicy
+                  - logs:DescribeResourcePolicies
+                  - logs:DescribeLogGroups
