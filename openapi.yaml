@@ -13,7 +13,7 @@ servers:
         default: latest
 
 security:
-  - CoreAwsAuthorizer: []
+  - CoreAwsAuthorizer: [ ]
 
 paths:
   /{proxy+}:
@@ -24,9 +24,9 @@ paths:
           required: true
           schema:
             type: "string"
-      responses: {}
+      responses: { }
       security:
-        - CoreAwsAuthorizer: []
+        - CoreAwsAuthorizer: [ ]
       x-amazon-apigateway-integration:
         httpMethod: "POST"
         uri:
@@ -42,8 +42,8 @@ components:
       in: "header"
       x-amazon-apigateway-authtype: "custom"
       x-amazon-apigateway-authorizer:
-        authorizerUri: 
-          Fn::Sub: ${Authorizer}
+        authorizerUri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Authorizer}/invocations"
         authorizerResultTtlInSeconds: 300
         identitySource: "method.request.header.Authorization"
         type: "request"
