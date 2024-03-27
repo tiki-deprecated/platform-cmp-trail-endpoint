@@ -8,7 +8,7 @@ Parameters:
     Type: String
     Default: core-trail-endpoint
   Authorizer:
-    Description: The arn of the Lambda function for JWT Request authorization.
+    Description: The arn of the Lambda function for JWT Request authorization (include :alias).
     Type: String
   Queue:
     Description: The url of the writer queue to publish transactions to.
