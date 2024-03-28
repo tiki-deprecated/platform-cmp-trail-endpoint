@@ -55,20 +55,30 @@ pub async fn verify(event: Request) -> Result<(StatusCode, license::VerifyRsp), 
     let context = AuthorizationContext::new(&event.request_context())?;
     let metadata = Metadata::get(&s3_client, &context.owner()).await?;
     for block in metadata.blocks() {
-        let block = Block::read(&s3_client, &context.owner(), block).await?;
-        for transaction in block.transactions() {
-            if transaction.schema().typ().eq(&SchemaType::License) {
-                let license = transaction.contents::<License>()?;
-                if !license.uses().is_empty() {
-                    return Ok((
-                        StatusCode::OK,
-                        license::VerifyRsp {
-                            verified: true,
-                            reason: None,
-                        },
-                    ));
+        let block = Block::read(&s3_client, &context.owner(), block).await;
+        match block {
+            Ok(block) => {
+                for transaction in block.transactions() {
+                    if transaction.schema().typ().eq(&SchemaType::License) {
+                        let license = transaction.contents::<License>();
+                        match license {
+                            Ok(license) => {
+                                if !license.uses().is_empty() {
+                                    return Ok((
+                                        StatusCode::OK,
+                                        license::VerifyRsp {
+                                            verified: true,
+                                            reason: None,
+                                        },
+                                    ));
+                                }
+                            }
+                            Err(e) => tracing::warn!("Failed to read license. Skipping. {:?}", e),
+                        }
+                    }
                 }
             }
+            Err(e) => tracing::warn!("Failed to read block. Skipping. {:?}", e),
         }
     }
     Ok((
