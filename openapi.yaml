@@ -38,7 +38,7 @@ components:
   securitySchemes:
     CoreAwsAuthorizer:
       type: "apiKey"
-      name: "Unused"
+      name: "Authorization"
       in: "header"
       x-amazon-apigateway-authtype: "custom"
       x-amazon-apigateway-authorizer:
