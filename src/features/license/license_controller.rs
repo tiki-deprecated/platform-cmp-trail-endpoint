@@ -33,7 +33,6 @@ pub async fn create(event: Request) -> Result<(StatusCode, CreateResponse), Box<
         request.signature(),
     );
     let title_response = title::Service::new(&s3_client, &sqs_client)
-        .await
         .create(&context.owner(), &signer, &title_request)
         .await?;
     let license_request = license::CreateRequest::new(
