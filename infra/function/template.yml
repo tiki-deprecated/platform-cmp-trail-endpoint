@@ -11,7 +11,7 @@ Parameters:
     Description: The arn of the Lambda function for JWT Request authorization (include :alias).
     Type: String
   Queue:
-    Description: The url of the writer queue to publish transactions to.
+    Description: The name of the writer queue to publish transactions to.
     Type: String
   Bucket:
     Description: The bucket name to store transactions.
@@ -59,7 +59,7 @@ Resources:
       Environment:
         Variables:
           TIKI_BUCKET: !Ref Bucket
-          TIKI_QUEUE: !Ref Queue
+          TIKI_QUEUE: !Sub "https://sqs.${AWS::Region}.amazonaws.com/${AWS::AccountId}/${Queue}"
       Events:
         ApiProxy:
           Type: Api
@@ -85,3 +85,9 @@ Resources:
                 - xray:PutTraceSegments
                 - xray:PutTelemetryRecords
               Resource: "*"
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - sqs:SendMessage
+              Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${Queue}"
