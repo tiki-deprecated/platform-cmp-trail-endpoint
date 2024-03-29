@@ -1,9 +1,9 @@
 version = 0.1
 
 [default.global.parameters]
-stack_name = "core-trail-src"
-s3_bucket = "com.mytiki.core.bucket"
-s3_prefix = "core/trail/src"
+stack_name = "core-trail-endpoint-function"
+s3_bucket = "mytiki-core-ocean-cf-deploy"
+s3_prefix = "core/trail/endpoint/function"
 region = "us-east-2"
 
 [default.build.parameters]
