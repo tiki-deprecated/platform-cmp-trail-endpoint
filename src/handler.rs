@@ -3,10 +3,12 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-use super::{features::license, utils::ErrorResponse};
+use std::{error::Error, future::Future};
+
 use lambda_http::{http, Request, RequestExt};
 use serde::Serialize;
-use std::{error::Error, future::Future};
+
+use super::{features::license, utils::ErrorResponse};
 
 async fn json_body<Fut, T>(
     event: Request,

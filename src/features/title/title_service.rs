@@ -17,7 +17,7 @@ pub struct TitleService {
 }
 
 impl TitleService {
-    pub async fn new(s3_client: &S3Client, sqs_client: &SqsClient) -> Self {
+    pub fn new(s3_client: &S3Client, sqs_client: &SqsClient) -> Self {
         Self {
             s3: s3_client.clone(),
             sqs: sqs_client.clone(),
