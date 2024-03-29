@@ -45,6 +45,9 @@ async fn catch_all(event: Request) -> Result<impl IntoResponse, Error> {
     let response = Response::builder()
         .status(response.0)
         .header("Content-Type", "application/json")
+        .header("Access-Control-Allow-Origin", "*")
+        .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        .header("Access-Control-Allow-Headers", "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Access-Control-Allow-Credentials")
         .body(response.1)
         .map_err(Box::new)?;
     Ok(response)

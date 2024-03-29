@@ -12,28 +12,56 @@ servers:
       version:
         default: latest
 
-security:
-  - CoreAwsAuthorizer: [ ]
-
 paths:
   /{proxy+}:
-    x-amazon-apigateway-any-method:
+    post:
       parameters:
-        - name: "proxy"
-          in: "path"
-          required: true
-          schema:
-            type: "string"
-      responses: { }
+      - name: "proxy"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
       security:
-        - CoreAwsAuthorizer: [ ]
+      - CoreAwsAuthorizer: []
       x-amazon-apigateway-integration:
+        type: "aws_proxy"
         httpMethod: "POST"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function.Arn}/invocations"
         passthroughBehavior: "when_no_match"
-        type: "aws_proxy"
-
+    options:
+      parameters:
+      - name: "proxy"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content: {}
+      x-amazon-apigateway-integration:
+        type: "mock"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Access-Control-Allow-Credentials'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
 components:
   securitySchemes:
     CoreAwsAuthorizer:
@@ -42,8 +70,8 @@ components:
       in: "header"
       x-amazon-apigateway-authtype: "custom"
       x-amazon-apigateway-authorizer:
+        type: "request"
         authorizerUri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Authorizer}/invocations"
         authorizerResultTtlInSeconds: 300
         identitySource: "method.request.header.Authorization"
-        type: "request"
