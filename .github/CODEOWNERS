@@ -1,16 +1,6 @@
-# -------------------------------------------------------------------------------------
-# Backend owns this repo as a whole.
-# -------------------------------------------------------------------------------------
-*                    @tiki/backend
-
-
-# -------------------------------------------------------------------------------------
-# Content should have eyes on any Markdown changes.
-# -------------------------------------------------------------------------------------
-*.md                 @tiki/content
-
-
-# -------------------------------------------------------------------------------------
-# Infrastructure should all have eyes on any changes under .github/
-# -------------------------------------------------------------------------------------
-/.github/            @tiki/infrastructure
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence,
+# @org/team will be requested for review when someone opens
+# a pull request. Order is important; the last matching
+# pattern takes the most precedence.
+*                    @mytiki/backend
