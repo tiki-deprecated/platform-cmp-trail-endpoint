@@ -1,0 +1,34 @@
+name: User Story
+description: Advanced! Leave this to the maintainers.
+labels:
+  - story
+title: "As [persona], I want to [action], so that I can [benefit]."
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Smaller the better
+        Double check with the team if it's more than a couple days of work.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What is required for the story to be shipped? "Done done, not just done".
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: Add each technical task required to complete the story.
+      placeholder: |
+        * [ ] I'm a cool task
+    validations:
+      required: true
+  - type: textarea
+    id: relates
+    attributes:
+      label: Relates to
+      description: Add any other related issues, such as bugs or features addressed.
+    validations:
+      required: false
