@@ -1,0 +1,30 @@
+name: Story Task
+description: Advanced! Leave this to the maintainers.
+labels:
+  - task
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Time to get technical.
+  - type: input
+    id: story
+    attributes:
+      label: User Story
+      description: Add the story this task belongs to.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the work with enough detail that someone else can understand what needs to be done.
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Add any specific criteria required before marking as complete
+      placeholder: |
+        - [ ] criteria 1
